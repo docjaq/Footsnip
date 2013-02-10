@@ -1,11 +1,11 @@
-public class Main{
+public class Main {
 
-	public Main(){
+	public Main() {
 
 	}
 
-	public static void main(String[] args){
-		System.out.println("Hello Footsnip");
+	public static void main(String[] args) {
+		System.out.println("Hello Cuntsnip");
 		new Main();
 	}
 }
