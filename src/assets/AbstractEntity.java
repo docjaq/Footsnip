@@ -2,7 +2,12 @@ package assets;
 
 import geometry.GeometryObject;
 
-public abstract class Entity {
+/************************
+ * @author docjaq
+ * This is the abstract class that all entities should subclass. So Characters, loot, etc
+ */
+
+public abstract class AbstractEntity implements Asset{
 
 	public Position position;
 	
@@ -15,7 +20,7 @@ public abstract class Entity {
 	//May require acceleration, mass, etc
 	private float movementRate;
 	
-	public Entity(Position position, GeometryObject geometry, float size){
+	public AbstractEntity(Position position, GeometryObject geometry, float size){
 		this.position = position;
 		this.geometry = geometry;
 		this.size = size;

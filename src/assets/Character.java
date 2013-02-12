@@ -2,7 +2,7 @@ package assets;
 
 import geometry.GeometryObject;
 
-public class Character extends Entity{
+public class Character extends AbstractEntity{
 
 	private String name;
 	
