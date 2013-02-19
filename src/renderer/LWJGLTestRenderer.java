@@ -3,9 +3,11 @@ package renderer;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.Sphere;
 
@@ -31,8 +33,14 @@ public class LWJGLTestRenderer {
 
 	public void start() {
 		try {
+			/*PixelFormat pixelFormat = new PixelFormat();
+			ContextAttribs contextAtrributes = new ContextAttribs(3, 2)
+			.withForwardCompatible(false)
+			.withProfileCore(true);*/
+			
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-			Display.create();
+			Display.create(/*pixelFormat, contextAtrributes*/);
+			System.out.println("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(0);
@@ -138,8 +146,7 @@ public class LWJGLTestRenderer {
 
 		//GL11.glColor3f(1.0f, 0.0f, 0.0f);
 
-		System.out.println("Position: " + x + "," + y + "," + z);
-		
+		//System.out.println("Position: " + x + "," + y + "," + z);
 		
 		// draw quad
 		GL11.glPushMatrix();
