@@ -11,7 +11,7 @@ import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.Sphere;
 
-public class LWJGLTestRenderer {
+public class Renderer_1_4 {
 
 	/** position of quad */
 	float x = 0, y = 0, z = -400;
@@ -215,7 +215,7 @@ public class LWJGLTestRenderer {
 	}
 	
 	public static void main(String[] argv) {
-		LWJGLTestRenderer example = new LWJGLTestRenderer();
+		Renderer_1_4 example = new Renderer_1_4();
 		example.start();
 	}
 }
