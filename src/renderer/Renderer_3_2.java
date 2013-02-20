@@ -75,7 +75,14 @@ public class Renderer_3_2 {
 		// Initialize OpenGL (Display)
 		setupOpenGL(WIDTH, HEIGHT, WINDOW_TITLE);
 
+		// The vector3f defines the starting camera position. This is not
+		// actually modified I don't think...
 		glWorld = new GLWorld(WIDTH, HEIGHT, new Vector3f(0, 0, 0));
+
+		// game threads
+		// update entity stuff
+
+		// start renderer while loop
 
 		this.setupQuad();
 		this.setupShaders();
