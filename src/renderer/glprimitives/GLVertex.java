@@ -1,4 +1,4 @@
-package renderer;
+package renderer.glprimitives;
 
 public class GLVertex {
 

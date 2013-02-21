@@ -8,8 +8,12 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-
 public class GLWorld {
+
+	public static final Vector3f BASIS_X = new Vector3f(1, 0, 0);
+	public static final Vector3f BASIS_Y = new Vector3f(0, 1, 0);
+	public static final Vector3f BASIS_Z = new Vector3f(0, 0, 1);
+
 	// Public for speed...
 	public Matrix4f projectionMatrix;
 	public Matrix4f viewMatrix;
