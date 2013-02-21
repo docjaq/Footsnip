@@ -2,17 +2,13 @@ package renderer;
 
 import static maths.LinearAlgebra.degreesToRadians;
 import static renderer.GLUtilityMethods.exitOnGLError;
-import static renderer.GLUtilityMethods.loadPNGTexture;
 import static renderer.GLUtilityMethods.loadShader;
 import static renderer.GLUtilityMethods.setupOpenGL;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -25,32 +21,28 @@ public class Renderer_3_2 {
 	}
 
 	// Setup variables
-	private final String WINDOW_TITLE = "The Quad: Moving";
+	private final String WINDOW_TITLE = "Footsnip";
 	private final int WIDTH = 800;
 	private final int HEIGHT = 600;
-
-	// Quad Texture variables
-	private int[] texIds = new int[] { 0, 0 };
-	// private int textureSelector = 0;
 
 	// Shader variables
 	private int vsId = 0; // vertex shader ID
 	private int fsId = 0; // fragment/pixel shader ID
 	private int pId = 0; // program ID
 
-	// This is obviously still very hard coded
+	// TODO: For now, have a data-structure here of all our entities, etc
 	private GLTexturedQuad texturedQuad;
 
 	/*
-	 * TODO: - Move the texturing stuff into the model
+	 * TODO:
 	 * 
-	 * - Figure out what the hell do do with the VertexData object
+	 * - Create a datastructure of all the models - Figure out some way to
+	 * notify all the models in some list and update their positions, angles,
+	 * scales, etc
 	 * 
-	 * - Create a list or something of models - Figure out some way to notify
-	 * all the models in some list and update their positions, angles, scales,
-	 * etc
-	 * 
-	 * - Figure out where to put the shader. I'm not entirely sure what it does.
+	 * - I think these shaders simply allow texturing and transforms, so they're
+	 * 'pipeline' shaders. I imagine each model could also have shaders (or
+	 * share shaders in some static pool)
 	 */
 
 	private GLWorld glWorld;
@@ -73,7 +65,9 @@ public class Renderer_3_2 {
 		texturedQuad = new GLTexturedQuad(modelPos, modelAngle, modelScale);
 
 		this.setupShaders();
-		this.setupTextures();
+		// this.setupTextures();
+
+		texturedQuad.setupTextures();
 
 		while (!Display.isCloseRequested()) {
 			// Do a single loop (logic/render)
@@ -87,16 +81,6 @@ public class Renderer_3_2 {
 
 		// Destroy OpenGL (Display)
 		this.destroyOpenGL();
-	}
-
-	private void setupTextures() {
-		// Reads a PNG, creates an texture, binds it to memory within OPENGL,
-		// sets it up (parameterisation-wise) and returns an int 'pointer' which
-		// can be used to reference it in OpenGL
-		texIds[0] = loadPNGTexture("resources/images/stGrid1.png", GL13.GL_TEXTURE0);
-		texIds[1] = loadPNGTexture("resources/images/stGrid2.png", GL13.GL_TEXTURE0);
-
-		exitOnGLError("setupTexture");
 	}
 
 	private void setupShaders() {
@@ -128,6 +112,9 @@ public class Renderer_3_2 {
 		exitOnGLError("setupShaders");
 	}
 
+	// TODO: Sort this method out so we can apply transforms and shit to our
+	// 'data strcure' of models. Currently it's pretty hard-coded to our
+	// texturedQuad model
 	private void logicCycle() {
 		// -- Input processing
 		float rotationDelta = 0.05f;
@@ -207,31 +194,7 @@ public class Renderer_3_2 {
 		// This seems to activate the shaders
 		GL20.glUseProgram(pId);
 
-		// Bind the texture
-		// This is the texture unit
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		// This is the index to the specific texture to use
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texIds[0]);
-
-		// Bind to the VAO that has all the information about the vertices
-		GL30.glBindVertexArray(texturedQuad.vaoId);
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glEnableVertexAttribArray(2);
-
-		// Bind to the index VBO that has all the information about the order of
-		// the vertices
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, texturedQuad.vboiId);
-
-		// Draw the vertices
-		GL11.glDrawElements(GL11.GL_TRIANGLES, texturedQuad.indicesCount, GL11.GL_UNSIGNED_BYTE, 0);
-
-		// Put everything back to default (deselect)
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
-		GL20.glDisableVertexAttribArray(2);
-		GL30.glBindVertexArray(0);
+		texturedQuad.draw();
 
 		// Deactivates the shaders
 		GL20.glUseProgram(0);
@@ -248,18 +211,9 @@ public class Renderer_3_2 {
 		exitOnGLError("loopCycle");
 	}
 
-	/*
-	 * TODO: To move this into the GLUtilityMethods class, I'll have to be able
-	 * to globally all of the textures, shaders, etc. So I guess some method
-	 * that rips all the stuff out of all the objects (like a garbage
-	 * collector), and passes all the lists here
-	 */
 	private void destroyOpenGL() {
-		// Delete the texture
-		GL11.glDeleteTextures(texIds[0]);
-		GL11.glDeleteTextures(texIds[1]);
 
-		// Delete the shaders
+		// Delete the core shaders.
 		GL20.glUseProgram(0);
 		GL20.glDetachShader(pId, vsId);
 		GL20.glDetachShader(pId, fsId);
@@ -268,26 +222,8 @@ public class Renderer_3_2 {
 		GL20.glDeleteShader(fsId);
 		GL20.glDeleteProgram(pId);
 
-		// Select the VAO
-		GL30.glBindVertexArray(texturedQuad.vaoId);
-
-		// Disable the VBO index from the VAO attributes list
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
-
-		// Delete the vertex VBO
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		GL15.glDeleteBuffers(texturedQuad.vboId);
-
-		// Delete the index VBO
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-		GL15.glDeleteBuffers(texturedQuad.vboiId);
-
-		// Delete the VAO
-		GL30.glBindVertexArray(0);
-		GL30.glDeleteVertexArrays(texturedQuad.vaoId);
-
-		exitOnGLError("destroyOpenGL");
+		// Clean up all of our models
+		texturedQuad.cleanUp();
 
 		Display.destroy();
 	}

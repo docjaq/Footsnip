@@ -16,11 +16,6 @@ import renderer.glprimitives.GLVertex;
 
 public class GLTexturedQuad extends GLModel {
 
-	// Quad variables
-	public int vaoId = 0;
-	public int vboId = 0;
-	public int vboiId = 0;
-	public int indicesCount = 0;
 	public GLVertex[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
 
@@ -71,6 +66,11 @@ public class GLTexturedQuad extends GLModel {
 		vboId = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesFloatBuffer, GL15.GL_STREAM_DRAW);
+
+		// This is a bit of jiggery pokery; I think this essentially could be
+		// done by having a separate VBO for position, for colour and for
+		// texture, but the way it's done here is to load it all into ONE vbo,
+		// and then call these commands to then separate it out in the VAO
 
 		// Put the position coordinates in attribute list 0
 		GL20.glVertexAttribPointer(0, GLVertex.positionElementCount, GL11.GL_FLOAT, false, GLVertex.stride, GLVertex.positionByteOffset);
