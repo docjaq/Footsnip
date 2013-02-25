@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.text.MessageFormat;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
@@ -20,13 +21,14 @@ import org.lwjgl.util.glu.GLU;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
+import exception.RendererException;
 
 public class GLUtilityMethods {
 
 	private GLUtilityMethods() {
 	};
 
-	public static int loadShader(String filename, int type) {
+	public static int loadShader(String filename, int type) throws RendererException {
 		StringBuilder shaderSource = new StringBuilder();
 		int shaderID = 0;
 
@@ -47,11 +49,12 @@ public class GLUtilityMethods {
 		GL20.glShaderSource(shaderID, shaderSource);
 		GL20.glCompileShader(shaderID);
 
-		if (GL20.glGetShader(shaderID, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-			System.err.println("Could not compile shader.");
-			System.exit(-1);
+		if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
+			String message = "Could not compile shader from file: {0}. The error was: {1}";
+			throw new RendererException(MessageFormat.format(message, filename, GL20.glGetShaderInfoLog(shaderID, GL20.GL_INFO_LOG_LENGTH)));
 		}
 
+		//TODO: Should this be in a catch block further up the stack?
 		exitOnGLError("loadShader");
 
 		return shaderID;

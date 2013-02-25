@@ -13,11 +13,17 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLTexturedQuad;
+import exception.RendererException;
 
 public class Renderer_3_2 {
 	// Entry point for the application
 	public static void main(String[] args) {
-		new Renderer_3_2();
+		try {
+			new Renderer_3_2();
+		} catch (RendererException ex) {
+			ex.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
 	// Setup variables
@@ -47,7 +53,7 @@ public class Renderer_3_2 {
 
 	private GLWorld glWorld;
 
-	public Renderer_3_2() {
+	public Renderer_3_2() throws RendererException {
 		// Initialize OpenGL (Display)
 		setupOpenGL(WIDTH, HEIGHT, WINDOW_TITLE);
 
@@ -83,7 +89,7 @@ public class Renderer_3_2 {
 		this.destroyOpenGL();
 	}
 
-	private void setupShaders() {
+	private void setupShaders() throws RendererException {
 		// Load the vertex shader
 		vsId = loadShader("resources/shaders/moving/vertex.glsl", GL20.GL_VERTEX_SHADER);
 		// Load the fragment shader
