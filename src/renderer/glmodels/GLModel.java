@@ -98,10 +98,7 @@ public class GLModel {
 		for (int i : texIds) {
 			GL11.glDeleteTextures(i);
 		}
-
-		/******
-		 * Clean up geometry
-		 */
+		// Clean up geometry
 
 		// Select the VAO
 		GL30.glBindVertexArray(vaoId);
