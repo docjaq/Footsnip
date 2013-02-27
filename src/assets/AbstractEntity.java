@@ -25,7 +25,9 @@ public abstract class AbstractEntity implements Asset {
 		this.model = model;
 	}
 
-	private GLModel model;
+	// TODO: If this is fast enough, it works nicely. If not, just make model
+	// public. Same with some of the variables in GLModel Etc
+	protected GLModel model;
 
 	public GLModel getModel() {
 		return model;
@@ -33,6 +35,12 @@ public abstract class AbstractEntity implements Asset {
 
 	public void draw() {
 		model.draw();
+	}
+
+	public void destroy() {
+		model.cleanUp();
+
+		// Cleanup non-gl stuff
 	}
 
 	/****************

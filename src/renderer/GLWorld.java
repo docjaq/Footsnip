@@ -1,12 +1,20 @@
 package renderer;
 
+import static maths.LinearAlgebra.degreesToRadians;
+
 import java.nio.FloatBuffer;
 
 import maths.LinearAlgebra;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+
+import renderer.glshaders.GLShader;
+import renderer.glshaders.GLWorldShader;
+import assets.AbstractEntity;
+import exception.RendererException;
 
 public class GLWorld {
 
@@ -29,11 +37,17 @@ public class GLWorld {
 	// I *think* this should be here.
 	public Vector3f cameraPos;
 
-	public GLWorld(int width, int height, Vector3f cameraPos) {
+	private GLShader worldShader;
+
+	public GLWorld(int width, int height, Vector3f cameraPos) throws RendererException {
 		this.width = width;
 		this.height = height;
 		this.cameraPos = cameraPos;
+
 		setupMatrices();
+
+		worldShader = new GLWorldShader(this);
+		worldShader.create();
 	}
 
 	private void setupMatrices() {
@@ -62,5 +76,52 @@ public class GLWorld {
 
 		// Create a FloatBuffer with the proper size to store our matrices later
 		matrix44Buffer = BufferUtils.createFloatBuffer(16);
+	}
+
+	// Maybe don't need new objects here
+	public void clearMatricies() {
+		viewMatrix = new Matrix4f();
+		modelMatrix = new Matrix4f();
+	}
+
+	public void transformCamera() {
+		Matrix4f.translate(cameraPos, viewMatrix, viewMatrix);
+	}
+
+	public void transformEntity(AbstractEntity entity) {
+		Matrix4f.scale(entity.getModel().modelScale, modelMatrix, modelMatrix);
+		Matrix4f.translate(entity.getModel().modelPos, modelMatrix, modelMatrix);
+		Matrix4f.rotate(degreesToRadians(entity.getModel().modelAngle.z), GLWorld.BASIS_Z, modelMatrix, modelMatrix);
+		Matrix4f.rotate(degreesToRadians(entity.getModel().modelAngle.y), GLWorld.BASIS_Y, modelMatrix, modelMatrix);
+		Matrix4f.rotate(degreesToRadians(entity.getModel().modelAngle.x), GLWorld.BASIS_X, modelMatrix, modelMatrix);
+	}
+
+	public void cleanUp() {
+		projectionMatrix.store(matrix44Buffer);
+		matrix44Buffer.flip();
+		GL20.glUniformMatrix4(projectionMatrixLocation, false, matrix44Buffer);
+		viewMatrix.store(matrix44Buffer);
+		matrix44Buffer.flip();
+		GL20.glUniformMatrix4(viewMatrixLocation, false, matrix44Buffer);
+		modelMatrix.store(matrix44Buffer);
+		matrix44Buffer.flip();
+		GL20.glUniformMatrix4(modelMatrixLocation, false, matrix44Buffer);
+	}
+
+	public void startShader() {
+		GL20.glUseProgram(worldShader.programID);
+	}
+
+	public void stopShader() {
+		GL20.glUseProgram(0);
+	}
+
+	// Maybe clean up more stuff here?
+	public void destroy() {
+		// Set no shaders in use
+		GL20.glUseProgram(0);
+
+		// Clean up world shader
+		worldShader.destroy();
 	}
 }

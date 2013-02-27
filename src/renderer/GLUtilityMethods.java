@@ -19,6 +19,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
+import assets.Player;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import exception.RendererException;
@@ -54,7 +55,7 @@ public class GLUtilityMethods {
 			throw new RendererException(MessageFormat.format(message, filename, GL20.glGetShaderInfoLog(shaderID, GL20.GL_INFO_LOG_LENGTH)));
 		}
 
-		//TODO: Should this be in a catch block further up the stack?
+		// TODO: Should this be in a catch block further up the stack?
 		exitOnGLError("loadShader");
 
 		return shaderID;
@@ -96,6 +97,19 @@ public class GLUtilityMethods {
 		GL11.glViewport(0, 0, width, height);
 
 		exitOnGLError("setupOpenGL");
+	}
+
+	public static void destroyOpenGL(GLWorld glWorld, Player player) {
+
+		// Clean up world shader
+		glWorld.destroy();
+
+		// Clean up all of our models
+		// This should probably clean all the shaders attached to a model as
+		// well
+		player.destroy();
+
+		Display.destroy();
 	}
 
 	public static int loadPNGTexture(String filename, int textureUnit) {
