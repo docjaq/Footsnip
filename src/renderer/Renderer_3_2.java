@@ -64,6 +64,7 @@ public class Renderer_3_2 {
 		texturedQuad = new GLTexturedQuad(modelPos, modelAngle, modelScale);
 
 		worldShader = new GLWorldShader(glWorld);
+		worldShader.create();
 		// this.setupShaders();
 		// this.setupTextures();
 

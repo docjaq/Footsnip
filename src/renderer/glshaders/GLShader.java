@@ -13,7 +13,11 @@ public abstract class GLShader {
 	private int vertID;
 	private int fragID;
 
-	public GLShader() throws RendererException {
+	public GLShader() {
+
+	}
+
+	public void create() throws RendererException {
 		// Load the vertex shader
 		vertID = loadShader("resources/shaders/moving/vertex.glsl", GL20.GL_VERTEX_SHADER);
 		// Load the fragment shader

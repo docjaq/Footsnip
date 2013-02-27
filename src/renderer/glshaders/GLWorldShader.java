@@ -3,7 +3,6 @@ package renderer.glshaders;
 import org.lwjgl.opengl.GL20;
 
 import renderer.GLWorld;
-
 import exception.RendererException;
 
 public class GLWorldShader extends GLShader {
@@ -11,7 +10,7 @@ public class GLWorldShader extends GLShader {
 	private GLWorld glWorld;
 
 	public GLWorldShader(GLWorld glWorld) throws RendererException {
-		super();
+		// super();
 		this.glWorld = glWorld;
 	}
 
