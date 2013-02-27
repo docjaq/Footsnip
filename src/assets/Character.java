@@ -1,13 +1,21 @@
 package assets;
 
-import geometry.GeometryObject;
+import renderer.glmodels.GLModel;
 
-public class Character extends AbstractEntity{
+public class Character extends AbstractEntity {
 
 	private String name;
-	
-	public Character(Position position, GeometryObject geometry, float size, String name){
-		super(position, geometry, size);
+
+	public Character(GLModel model, String name) {
+		super(model);
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
 		this.name = name;
 	}
 }

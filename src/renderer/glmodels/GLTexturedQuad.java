@@ -90,6 +90,9 @@ public class GLTexturedQuad extends GLModel {
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 
+		// TODO: Not sure if this should be here on in parent class
+		setupTextures();
+
 		exitOnGLError("setupQuad");
 	}
 

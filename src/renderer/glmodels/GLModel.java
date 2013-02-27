@@ -2,6 +2,7 @@ package renderer.glmodels;
 
 import static renderer.GLUtilityMethods.exitOnGLError;
 import static renderer.GLUtilityMethods.loadPNGTexture;
+import geometry.BoundingBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,4 +126,8 @@ public class GLModel {
 		exitOnGLError("destroyOpenGL");
 	}
 
+	// TODO: Implement this method
+	public BoundingBox getBoundingBox() {
+		return new BoundingBox();
+	}
 }

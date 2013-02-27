@@ -1,41 +1,43 @@
 package assets;
 
-import geometry.GeometryObject;
+import renderer.glmodels.GLModel;
 
 /************************
- * @author docjaq
- * This is the abstract class that all entities should subclass. So Characters, loot, etc
+ * @author docjaq This is the abstract class that all entities should subclass.
+ *         So Characters, loot, etc
  */
 
-public abstract class AbstractEntity implements Asset{
+public abstract class AbstractEntity implements Asset {
 
-	public Position position;
-	
-	//Is this a scaling factor for the geometry, or something else?
-	private float size;
+	// This was moved into the geometry.
+	// public Position position;
 
-	//May or may refer to animation, whether the object can be destroyed, or  whether it 'physically' moves
+	// May or may refer to animation, whether the object can be destroyed, or
+	// whether it 'physically' moves
 	private boolean dynamic;
 
-	//May require acceleration, mass, etc
-	private float movementRate;
-	
-	public AbstractEntity(Position position, GeometryObject geometry, float size){
-		this.position = position;
-		this.geometry = geometry;
-		this.size = size;
-		this.dynamic = true; //hard coded until we know what it is
+	// Physical properties
+	private float speed;
+	private float acceleration;
+	private float size;
+
+	public AbstractEntity(GLModel model) {
+		this.model = model;
 	}
 
-	private GeometryObject geometry;
+	private GLModel model;
 
-	public void draw(){
-		geometry.draw(position); //Maybe pass the current position to the geometry class,
+	public GLModel getModel() {
+		return model;
 	}
-	
+
+	public void draw() {
+		model.draw();
+	}
+
 	/****************
 	 * Potential methods
 	 */
-	//public abstract void update();
-	//public abstract void checkStillAlive();
+	// public abstract void update();
+	// public abstract void checkStillAlive();
 }

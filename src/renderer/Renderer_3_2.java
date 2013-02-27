@@ -11,9 +11,11 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTexturedQuad;
 import renderer.glshaders.GLShader;
 import renderer.glshaders.GLWorldShader;
+import assets.Player;
 import exception.RendererException;
 
 public class Renderer_3_2 {
@@ -29,20 +31,15 @@ public class Renderer_3_2 {
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
-	private final int WIDTH = 800;
-	private final int HEIGHT = 600;
+	private final int WIDTH = 1024;
+	private final int HEIGHT = 768;
 
 	private GLShader worldShader;
-
-	// Shader variables
-	// private int vsId = 0; // vertex shader ID
-	// private int fsId = 0; // fragment/pixel shader ID
-	// private int pId = 0; // program ID
 
 	// TODO: For now, have a data-structure here of all our entities, etc
 	// TODO: Figure out some way to notify all the models in the data structure
 	// and update their positions, angles, scales, etc
-	private GLTexturedQuad texturedQuad;
+	private Player player;
 
 	private GLWorld glWorld;
 
@@ -57,18 +54,12 @@ public class Renderer_3_2 {
 		// game threads
 		// update entity stuff
 
-		// start renderer while loop
-		Vector3f modelPos = new Vector3f(0, 0, 0);
-		Vector3f modelAngle = new Vector3f(0, 0, 0);
-		Vector3f modelScale = new Vector3f(0.2f, 0.2f, 0.2f);
-		texturedQuad = new GLTexturedQuad(modelPos, modelAngle, modelScale);
-
 		worldShader = new GLWorldShader(glWorld);
 		worldShader.create();
 		// this.setupShaders();
 		// this.setupTextures();
 
-		texturedQuad.setupTextures();
+		createEntities();
 
 		while (!Display.isCloseRequested()) {
 			// Do a single loop (logic/render)
@@ -82,6 +73,17 @@ public class Renderer_3_2 {
 
 		// Destroy OpenGL (Display)
 		this.destroyOpenGL();
+	}
+
+	// Debug method for creating some test stuff
+	private void createEntities() {
+		// start renderer while loop
+		Vector3f modelPos = new Vector3f(1, 0, 0);
+		Vector3f modelAngle = new Vector3f(0, 0, 0);
+		Vector3f modelScale = new Vector3f(0.1f, 0.1f, 0.1f);
+		GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale);
+		player = new Player(model, "Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f });
+
 	}
 
 	// TODO: Sort this method out so we can apply transforms and shit to our
@@ -105,21 +107,21 @@ public class Renderer_3_2 {
 		 */
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT))
-			texturedQuad.modelPos.x -= posDelta;
+			player.getModel().modelPos.x -= posDelta;
 		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
-			texturedQuad.modelPos.x += posDelta;
+			player.getModel().modelPos.x += posDelta;
 		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN))
-			texturedQuad.modelPos.y -= posDelta;
+			player.getModel().modelPos.y -= posDelta;
 		if (Keyboard.isKeyDown(Keyboard.KEY_UP))
-			texturedQuad.modelPos.y += posDelta;
+			player.getModel().modelPos.y += posDelta;
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_PERIOD))
-			Vector3f.add(texturedQuad.modelScale, scaleAddResolution, texturedQuad.modelScale);
+			Vector3f.add(player.getModel().modelScale, scaleAddResolution, player.getModel().modelScale);
 		if (Keyboard.isKeyDown(Keyboard.KEY_COMMA))
-			Vector3f.add(texturedQuad.modelScale, scaleMinusResolution, texturedQuad.modelScale);
+			Vector3f.add(player.getModel().modelScale, scaleMinusResolution, player.getModel().modelScale);
 
 		// Just set up a standard rotation for testing
-		texturedQuad.modelAngle.z += rotationDelta;
+		player.getModel().modelAngle.z += rotationDelta;
 
 		// -- Update matrices
 		// Reset view and model matrices
@@ -130,11 +132,11 @@ public class Renderer_3_2 {
 		Matrix4f.translate(glWorld.cameraPos, glWorld.viewMatrix, glWorld.viewMatrix);
 
 		// Scale, translate and rotate model
-		Matrix4f.scale(texturedQuad.modelScale, glWorld.modelMatrix, glWorld.modelMatrix);
-		Matrix4f.translate(texturedQuad.modelPos, glWorld.modelMatrix, glWorld.modelMatrix);
-		Matrix4f.rotate(degreesToRadians(texturedQuad.modelAngle.z), GLWorld.BASIS_Z, glWorld.modelMatrix, glWorld.modelMatrix);
-		Matrix4f.rotate(degreesToRadians(texturedQuad.modelAngle.y), GLWorld.BASIS_Y, glWorld.modelMatrix, glWorld.modelMatrix);
-		Matrix4f.rotate(degreesToRadians(texturedQuad.modelAngle.x), GLWorld.BASIS_X, glWorld.modelMatrix, glWorld.modelMatrix);
+		Matrix4f.scale(player.getModel().modelScale, glWorld.modelMatrix, glWorld.modelMatrix);
+		Matrix4f.translate(player.getModel().modelPos, glWorld.modelMatrix, glWorld.modelMatrix);
+		Matrix4f.rotate(degreesToRadians(player.getModel().modelAngle.z), GLWorld.BASIS_Z, glWorld.modelMatrix, glWorld.modelMatrix);
+		Matrix4f.rotate(degreesToRadians(player.getModel().modelAngle.y), GLWorld.BASIS_Y, glWorld.modelMatrix, glWorld.modelMatrix);
+		Matrix4f.rotate(degreesToRadians(player.getModel().modelAngle.x), GLWorld.BASIS_X, glWorld.modelMatrix, glWorld.modelMatrix);
 
 		// Upload matrices to the uniform variables
 		GL20.glUseProgram(worldShader.programID);
@@ -162,7 +164,7 @@ public class Renderer_3_2 {
 		// This seems to activate the shaders
 		GL20.glUseProgram(worldShader.programID);
 
-		texturedQuad.draw();
+		player.draw();
 
 		// Deactivates the shaders
 		GL20.glUseProgram(0);
@@ -190,7 +192,7 @@ public class Renderer_3_2 {
 		// Clean up all of our models
 		// This should probably clean all the shaders attached to a model as
 		// well
-		texturedQuad.cleanUp();
+		player.getModel().cleanUp();
 
 		Display.destroy();
 	}

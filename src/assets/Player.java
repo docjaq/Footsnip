@@ -1,16 +1,24 @@
 package assets;
 
-import geometry.GeometryObject;
+import renderer.glmodels.GLModel;
 
 public class Player extends Character {
-	
+
 	private int age;
 	private float[] color;
-	
-	public Player (Position position, GeometryObject geometry, float size, String name, int age, float[] color){
-		super(position, geometry, size, name);
+
+	public Player(GLModel model, String name, int age, float[] color) {
+		super(model, name);
 		this.age = age;
 		this.color = color;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public float[] getColor() {
+		return color;
 	}
 
 }
