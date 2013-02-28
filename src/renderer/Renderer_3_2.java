@@ -4,6 +4,8 @@ import static renderer.GLUtilityMethods.destroyOpenGL;
 import static renderer.GLUtilityMethods.exitOnGLError;
 import static renderer.GLUtilityMethods.setupOpenGL;
 
+import java.util.List;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -11,6 +13,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTexturedQuad;
+import assets.Monster;
 import assets.Player;
 import exception.RendererException;
 
@@ -32,6 +35,10 @@ public class Renderer_3_2 {
 
 	// TODO: For now, have a data-structure here of all our entities, etc
 	private Player player;
+
+	// TODO: List is a bit shit, need some datastructure here so I can just call
+	// draw() transform() etc on the whole datastructure
+	private List<Monster> monsters;
 
 	private GLWorld glWorld;
 
@@ -62,11 +69,21 @@ public class Renderer_3_2 {
 	// Debug method for creating some test stuff
 	private void createEntities() {
 		// start renderer while loop
-		Vector3f modelPos = new Vector3f(1, 0, 0);
+		Vector3f modelPos = new Vector3f(0, 0, 0);
 		Vector3f modelAngle = new Vector3f(0, 0, 0);
 		Vector3f modelScale = new Vector3f(0.1f, 0.1f, 0.1f);
 		GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale);
 		player = new Player(model, "Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f });
+
+		for (int i = 0; i < 5; i++) {
+			modelPos = new Vector3f((float) Math.random() * 10, (float) Math.random() * 10, 0);
+			modelAngle = new Vector3f(0, 0, 0);
+			float scale = ((float) Math.random() * 0.5f);
+			modelScale = new Vector3f(scale, scale, 0.1f);
+			model = new GLTexturedQuad(modelPos, modelAngle, modelScale);
+			player = new Player(model, "Monster_" + i, 0,
+					new float[] { (float) Math.random(), (float) Math.random(), (float) Math.random() });
+		}
 
 	}
 
@@ -101,6 +118,10 @@ public class Renderer_3_2 {
 		// Just set up a standard rotation for testing
 		player.rotate();
 
+		for (Monster m : monsters) {
+			m.rotate();
+		}
+
 		// -- Update matrices
 		// Reset view and model matrices
 		glWorld.clearMatricies();
@@ -112,6 +133,9 @@ public class Renderer_3_2 {
 		// GLModel object... not quite right I think
 		// Scale, translate and rotate ALL MODELS
 		glWorld.transformEntity(player);
+		for (Monster m : monsters) {
+			glWorld.transformEntity(m);
+		}
 
 		// Activate world shader (upload matrices to the uniform variables)
 		glWorld.startShader();
@@ -131,6 +155,9 @@ public class Renderer_3_2 {
 		glWorld.startShader();
 
 		player.draw();
+		for (Monster m : monsters) {
+			m.draw();
+		}
 
 		// Deactivates world the shader
 		glWorld.stopShader();

@@ -29,6 +29,10 @@ public class Player extends Character {
 		return color;
 	}
 
+	// TODO: Move these methods to the AbstractEntity class. I have not done
+	// this, as they are probably wrong. up/down/left/right are not probably the
+	// final movements
+
 	public void moveLeft() {
 		model.modelPos.x -= posDelta;
 	}
