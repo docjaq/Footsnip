@@ -30,6 +30,7 @@ public class GLWorld {
 	public int projectionMatrixLocation;
 	public int viewMatrixLocation;
 	public int modelMatrixLocation;
+	public int fragColorLocation;
 
 	// I *think* this should be here.
 	public Vector3f cameraPos;

@@ -26,6 +26,7 @@ public class GLWorldShader extends GLShader {
 		glWorld.projectionMatrixLocation = GL20.glGetUniformLocation(programID, "projectionMatrix");
 		glWorld.viewMatrixLocation = GL20.glGetUniformLocation(programID, "viewMatrix");
 		glWorld.modelMatrixLocation = GL20.glGetUniformLocation(programID, "modelMatrix");
+		// Allows for a colour in the fragment shader
+		glWorld.fragColorLocation = GL20.glGetUniformLocation(programID, "fragColor");
 	}
-
 }

@@ -32,6 +32,8 @@ public class GLModel {
 	public int vboiId = 0;
 	public int indicesCount = 0;
 
+	private float[] color;
+
 	// Textures
 	private List<Integer> texIds;
 
@@ -40,11 +42,12 @@ public class GLModel {
 
 	// public FloatBuffer matrix44Buffer = null;
 
-	public GLModel(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale) {
+	public GLModel(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, float[] color) {
 		// Set the default quad rotation, scale and position values
 		this.modelPos = modelPos;
 		this.modelAngle = modelAngle;
 		this.modelScale = modelScale;
+		this.color = color;
 
 		texIds = new ArrayList<Integer>();
 
@@ -99,12 +102,12 @@ public class GLModel {
 	// TODO: This method should accept a string, the
 	// texture name, and then it should read it into a list of texture ids (not
 	// a fixed length array)
-	public void setupTextures() {
+	public void setupTextures(String textureLocation) {
 		// Reads a PNG, creates an texture, binds it to memory within OPENGL,
 		// sets it up (parameterisation-wise) and returns an int 'pointer' which
 		// can be used to reference it in OpenGL
 
-		texIds.add(loadPNGTexture("resources/images/bacteria.png", GL13.GL_TEXTURE0));
+		texIds.add(loadPNGTexture(textureLocation, GL13.GL_TEXTURE0));
 		// texIds[1] = loadPNGTexture("resources/images/stGrid2.png",
 		// GL13.GL_TEXTURE0); modelMatrix = new Matrix4f();
 
@@ -163,10 +166,12 @@ public class GLModel {
 	// ATTENTION: Before, had a local Floatbuffer in the class, but as it's just
 	// used to copy stuff to the shader, seems a waste. Maybe a better way than
 	// sending the reference around though?
-	public void copyModelMatrixToShader(int modelMatrixLocation, FloatBuffer matrix44Buffer) {
+	public void copyModelMatrixToShader(int modelMatrixLocation, FloatBuffer matrix44Buffer, int fragColorLocation) {
 		modelMatrix.store(matrix44Buffer);
 		matrix44Buffer.flip();
 		GL20.glUniformMatrix4(modelMatrixLocation, false, matrix44Buffer);
+		// This copies the colour to the (fragment) shader
+		GL20.glUniform3f(fragColorLocation, color[0], color[1], color[2]);
 	}
 
 	// public void matrixCleanup() {

@@ -34,6 +34,10 @@ public class Renderer_3_2 {
 	private final int WIDTH = 1024;
 	private final int HEIGHT = 768;
 
+	// ATTENTION: Just for now
+	private final String PLAYER_TEXTURE = "resources/images/bacteria.png";
+	private final String[] MONSTER_TEXTURES = { "resources/images/virus1.png", "resources/images/virus2.png", "resources/images/virus3.png" };
+
 	// TODO: For now, have a data-structure here of all our entities, etc
 	private Player player;
 
@@ -73,19 +77,21 @@ public class Renderer_3_2 {
 		Vector3f modelPos = new Vector3f(0, 0, 0);
 		Vector3f modelAngle = new Vector3f(0, 0, 0);
 		Vector3f modelScale = new Vector3f(0.1f, 0.1f, 0.1f);
-		GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale);
+		float[] modelColor = { 1.0f, 1.0f, 1.0f };
+		GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale, modelColor, PLAYER_TEXTURE);
 		player = new Player(model, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f });
 
 		// ATTENTION: Takes some time to load as it's re-loading the texture for
 		// EVERY model :)
 		monsters = new ArrayList<Monster>();
-		for (int i = 0; i < 10; i++) {
-			Vector3f monsterPos = new Vector3f((float) Math.random() * 10f - 5f, (float) Math.random() * 7f - 3.5f, 0);
+		for (int i = 0; i < 20; i++) {
+			Vector3f monsterPos = new Vector3f((float) Math.random() * 20f - 10f, (float) Math.random() * 14f - 7f, 0);
 			Vector3f monsterAngle = new Vector3f(0, 0, 0);
-			// float scale = ((float) Math.random() * 0.5f);
 			Vector3f monsterScale = new Vector3f(0.05f, 0.05f, 0.05f);
-			GLModel monsterModel = new GLTexturedQuad(monsterPos, monsterAngle, monsterScale);
-			Monster monster = new Monster(monsterModel, "Monster_" + i, 0, new float[] { 1.0f, 0.0f, 0.0f });
+			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random() };
+			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 3)];
+			GLModel monsterModel = new GLTexturedQuad(monsterPos, monsterAngle, monsterScale, monsterColor, texture);
+			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
 			monster.setRotationDelta((float) Math.random() * 2f - 1f);
 			monsters.add(monster);
 		}
@@ -137,8 +143,8 @@ public class Renderer_3_2 {
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-		renderPlayer();
 		renderMonsters();
+		renderPlayer();
 
 		exitOnGLError("logicCycle");
 	}
@@ -146,7 +152,7 @@ public class Renderer_3_2 {
 	private void renderPlayer() {
 		player.getModel().transform();
 		glWorld.bindShader();
-		player.getModel().copyModelMatrixToShader(glWorld.modelMatrixLocation, glWorld.matrix44Buffer);
+		player.getModel().copyModelMatrixToShader(glWorld.modelMatrixLocation, glWorld.matrix44Buffer, glWorld.fragColorLocation);
 		player.draw();
 		glWorld.unbindShader();
 	}
@@ -155,7 +161,7 @@ public class Renderer_3_2 {
 		for (Monster m : monsters) {
 			m.getModel().transform();
 			glWorld.bindShader();
-			m.getModel().copyModelMatrixToShader(glWorld.modelMatrixLocation, glWorld.matrix44Buffer);
+			m.getModel().copyModelMatrixToShader(glWorld.modelMatrixLocation, glWorld.matrix44Buffer, glWorld.fragColorLocation);
 			m.draw();
 			glWorld.unbindShader();
 		}

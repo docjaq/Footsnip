@@ -9,7 +9,6 @@ import renderer.glmodels.GLModel;
 public class Monster extends Character {
 
 	private int level;
-	private float[] color;
 
 	private float rotationDelta = 0.5f;
 
@@ -22,10 +21,9 @@ public class Monster extends Character {
 	private Vector3f scaleAddResolution = new Vector3f(scaleDelta, scaleDelta, scaleDelta);
 	private Vector3f scaleMinusResolution = new Vector3f(-scaleDelta, -scaleDelta, -scaleDelta);
 
-	public Monster(GLModel model, String name, int level, float[] color) {
+	public Monster(GLModel model, String name, int level) {
 		super(model, name);
 		this.level = level;
-		this.color = color;
 	}
 
 	public int getLevel() {

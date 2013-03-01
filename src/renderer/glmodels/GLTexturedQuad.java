@@ -19,8 +19,8 @@ public class GLTexturedQuad extends GLModel {
 	public GLVertex[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
 
-	public GLTexturedQuad(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale) {
-		super(modelPos, modelAngle, modelScale);
+	public GLTexturedQuad(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, float[] color, String textureLocation) {
+		super(modelPos, modelAngle, modelScale, color);
 		// We'll define our quad using 4 vertices of the custom 'TexturedVertex'
 		// class
 		GLVertex v0 = new GLVertex();
@@ -93,7 +93,7 @@ public class GLTexturedQuad extends GLModel {
 		// TODO: Weird that this is being called from the child class. ALSO,
 		// need to store shared textures, as this being loaded EVERY time for
 		// each quad
-		setupTextures();
+		setupTextures(textureLocation);
 
 		exitOnGLError("setupQuad");
 	}
