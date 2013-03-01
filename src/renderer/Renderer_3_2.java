@@ -58,7 +58,7 @@ public class Renderer_3_2 {
 
 			// update entity stuff
 			// Force a maximum FPS of about 60
-			Display.sync(0);
+			Display.sync(60);
 			// Let the CPU synchronize with the GPU if GPU is tagging behind
 			Display.update();
 		}
@@ -74,17 +74,20 @@ public class Renderer_3_2 {
 		Vector3f modelAngle = new Vector3f(0, 0, 0);
 		Vector3f modelScale = new Vector3f(0.1f, 0.1f, 0.1f);
 		GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale);
-		player = new Player(model, "Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f });
+		player = new Player(model, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f });
 
+		// ATTENTION: Takes some time to load as it's re-loading the texture for
+		// EVERY model :)
 		monsters = new ArrayList<Monster>();
-		for (int i = 0; i < 5; i++) {
-			Vector3f monsterPos = new Vector3f((float) Math.random() * 10, (float) Math.random() * 10, 0);
+		for (int i = 0; i < 10; i++) {
+			Vector3f monsterPos = new Vector3f((float) Math.random() * 10f - 5f, (float) Math.random() * 7f - 3.5f, 0);
 			Vector3f monsterAngle = new Vector3f(0, 0, 0);
-			float scale = ((float) Math.random() * 0.5f);
-			Vector3f monsterScale = new Vector3f(scale, scale, 0.1f);
+			// float scale = ((float) Math.random() * 0.5f);
+			Vector3f monsterScale = new Vector3f(0.05f, 0.05f, 0.05f);
 			GLModel monsterModel = new GLTexturedQuad(monsterPos, monsterAngle, monsterScale);
-			monsters.add(new Monster(monsterModel, "Monster_" + i, 0, new float[] { (float) Math.random(), (float) Math.random(),
-					(float) Math.random() }));
+			Monster monster = new Monster(monsterModel, "Monster_" + i, 0, new float[] { 1.0f, 0.0f, 0.0f });
+			monster.setRotationDelta((float) Math.random() * 2f - 1f);
+			monsters.add(monster);
 		}
 
 	}
@@ -120,60 +123,47 @@ public class Renderer_3_2 {
 		// Just set up a standard rotation for testing
 		player.rotate();
 
-		// for (Monster m : monsters) {
-		// m.rotate();
-		// }
+		for (Monster m : monsters) {
+			m.rotate();
+		}
 
 		// -- Update matrices
 		// Reset view and model matrices
-		glWorld.clearMatricies();
+		glWorld.clearViewMatrix();
 
 		// Translate camera
 		glWorld.transformCamera();
+		glWorld.copyMatricesToShader();
 
-		// Weird to send a non GL object (entity) to this, rather than the
-		// GLModel object... not quite right I think
-		// Scale, translate and rotate ALL MODELS
-		glWorld.transformEntity(player);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-		// TODO: These transformations are applying to ALL objects. SORT!
-		// for (Monster m : monsters) {
-		// glWorld.transformEntity(monsters.get(0));
-		// }
-
-		// Activate world shader (upload matrices to the uniform variables)
-		glWorld.startShader();
-
-		// Clean up
-		glWorld.cleanUp();
-
-		glWorld.stopShader();
+		renderPlayer();
+		renderMonsters();
 
 		exitOnGLError("logicCycle");
 	}
 
-	private void renderCycle() {
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-
-		// Activate world shader (upload matrices to the uniform variables)
-		glWorld.startShader();
-
+	private void renderPlayer() {
+		player.getModel().transform();
+		glWorld.bindShader();
+		player.getModel().copyModelMatrixToShader(glWorld.modelMatrixLocation, glWorld.matrix44Buffer);
 		player.draw();
-		// for (Monster m : monsters) {
-		// m.draw();
-		// }
+		glWorld.unbindShader();
+	}
 
-		// Deactivates world the shader
-		glWorld.stopShader();
-
-		exitOnGLError("renderCycle");
+	private void renderMonsters() {
+		for (Monster m : monsters) {
+			m.getModel().transform();
+			glWorld.bindShader();
+			m.getModel().copyModelMatrixToShader(glWorld.modelMatrixLocation, glWorld.matrix44Buffer);
+			m.draw();
+			glWorld.unbindShader();
+		}
 	}
 
 	private void loopCycle() {
-		// Update logic
+		// Update logic and render
 		this.logicCycle();
-		// Update rendered frame
-		this.renderCycle();
 
 		exitOnGLError("loopCycle");
 	}

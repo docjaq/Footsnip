@@ -11,9 +11,14 @@ public class Monster extends Character {
 	private int level;
 	private float[] color;
 
-	private float rotationDelta = 0.01f;
+	private float rotationDelta = 0.5f;
+
+	public void setRotationDelta(float rotationDelta) {
+		this.rotationDelta = rotationDelta;
+	}
+
 	private float scaleDelta = 0.001f;
-	private float posDelta = 0.001f;
+	private float posDelta = 0.1f;
 	private Vector3f scaleAddResolution = new Vector3f(scaleDelta, scaleDelta, scaleDelta);
 	private Vector3f scaleMinusResolution = new Vector3f(-scaleDelta, -scaleDelta, -scaleDelta);
 

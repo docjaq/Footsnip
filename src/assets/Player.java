@@ -9,9 +9,9 @@ public class Player extends Character {
 	private int age;
 	private float[] color;
 
-	private float rotationDelta = 0.05f;
+	private float rotationDelta = 5.0f;
 	private float scaleDelta = 0.001f;
-	private float posDelta = 0.001f;
+	private float posDelta = 0.2f;
 	private Vector3f scaleAddResolution = new Vector3f(scaleDelta, scaleDelta, scaleDelta);
 	private Vector3f scaleMinusResolution = new Vector3f(-scaleDelta, -scaleDelta, -scaleDelta);
 
