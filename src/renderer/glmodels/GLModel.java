@@ -80,6 +80,10 @@ public class GLModel {
 		// the vertices
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
+		// Enables transparency in Texture (things have to be drawn in the right
+		// order. Just doing this for some debugging)
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		// Draw the vertices
 		// Currently, our GLModel, therefore, can only consist of triangles
 		GL11.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_BYTE, 0);
@@ -100,7 +104,7 @@ public class GLModel {
 		// sets it up (parameterisation-wise) and returns an int 'pointer' which
 		// can be used to reference it in OpenGL
 
-		texIds.add(loadPNGTexture("resources/images/stGrid1.png", GL13.GL_TEXTURE0));
+		texIds.add(loadPNGTexture("resources/images/bacteria.png", GL13.GL_TEXTURE0));
 		// texIds[1] = loadPNGTexture("resources/images/stGrid2.png",
 		// GL13.GL_TEXTURE0); modelMatrix = new Matrix4f();
 
