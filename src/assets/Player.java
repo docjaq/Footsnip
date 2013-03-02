@@ -1,5 +1,7 @@
 package assets;
 
+import maths.LinearAlgebra;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
@@ -9,7 +11,7 @@ public class Player extends Character {
 	private int age;
 	private float[] color;
 
-	private float rotationDelta = 5.0f;
+	private float rotationDelta = 1.0f;
 	private float scaleDelta = 0.001f;
 	private float posDelta = 0.02f;
 	private Vector3f scaleAddResolution = new Vector3f(scaleDelta, scaleDelta, scaleDelta);
@@ -49,6 +51,24 @@ public class Player extends Character {
 		model.modelPos.y -= posDelta;
 	}
 
+	public void moveForward() {
+		// TODO: Trig is apparently not optimal. I don't know what is...
+		double xScale = Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z));
+		double yScale = Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z));
+
+		model.modelPos.x += posDelta * xScale;
+		model.modelPos.y += posDelta * yScale;
+	}
+
+	public void moveBackward() {
+		// TODO: Trig is apparently not optimal. I don't know what is...
+		double xScale = Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z));
+		double yScale = Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z));
+
+		model.modelPos.x -= posDelta * xScale;
+		model.modelPos.y -= posDelta * yScale;
+	}
+
 	public void increaseScale() {
 		Vector3f.add(model.modelScale, scaleAddResolution, model.modelScale);
 	}
@@ -58,11 +78,11 @@ public class Player extends Character {
 	}
 
 	public void rotateCCW() {
-		model.modelAngle.z -= rotationDelta;
+		model.modelAngle.z += rotationDelta;
 	}
 
 	public void rotateCW() {
-		model.modelAngle.z += rotationDelta;
+		model.modelAngle.z -= rotationDelta;
 	}
 
 }

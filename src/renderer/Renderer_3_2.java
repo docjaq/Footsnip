@@ -115,19 +115,19 @@ public class Renderer_3_2 {
 
 		// Modify player model
 		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT))
-			player.moveLeft();
+			player.rotateCCW();
 		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
-			player.moveRight();
+			player.rotateCW();
 		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN))
-			player.moveDown();
+			player.moveBackward();
 		if (Keyboard.isKeyDown(Keyboard.KEY_UP))
-			player.moveUp();
+			player.moveForward();
 		if (Keyboard.isKeyDown(Keyboard.KEY_PERIOD))
 			player.increaseScale();
 		if (Keyboard.isKeyDown(Keyboard.KEY_COMMA))
 			player.decreaseScale();
 		// Just set up a standard rotation for testing
-		player.rotate();
+		// player.rotate();
 
 		for (Monster m : monsters) {
 			m.rotate();
