@@ -11,7 +11,7 @@ public class Player extends Character {
 
 	private float rotationDelta = 5.0f;
 	private float scaleDelta = 0.001f;
-	private float posDelta = 0.2f;
+	private float posDelta = 0.02f;
 	private Vector3f scaleAddResolution = new Vector3f(scaleDelta, scaleDelta, scaleDelta);
 	private Vector3f scaleMinusResolution = new Vector3f(-scaleDelta, -scaleDelta, -scaleDelta);
 
@@ -57,7 +57,11 @@ public class Player extends Character {
 		Vector3f.add(model.modelScale, scaleMinusResolution, model.modelScale);
 	}
 
-	public void rotate() {
+	public void rotateCCW() {
+		model.modelAngle.z -= rotationDelta;
+	}
+
+	public void rotateCW() {
 		model.modelAngle.z += rotationDelta;
 	}
 
