@@ -13,6 +13,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTexturedQuad;
+import thread.GameThread;
 import assets.Monster;
 import assets.Player;
 import control.ControlThread;
@@ -56,8 +57,12 @@ public class Renderer_3_2 {
 
 		createEntities();
 
-		ControlThread controlThread = new ControlThread(player);
+		List<GameThread> childThreads = new ArrayList<GameThread>(1);
+
+		// Thread for input.
+		GameThread controlThread = new ControlThread(player, 10);
 		controlThread.start();
+		childThreads.add(controlThread);
 
 		while (!Display.isCloseRequested()) {
 			// Do a single loop (logic/render)
@@ -70,8 +75,10 @@ public class Renderer_3_2 {
 			Display.update();
 		}
 
-		// Nicely stop the control thread.
-		controlThread.kill();
+		// Nicely stop the child threads.
+		for (GameThread thread : childThreads) {
+			thread.stopThread();
+		}
 
 		// TODO: Modify this to accept the whole entity data-structure
 		destroyOpenGL(glWorld, player);

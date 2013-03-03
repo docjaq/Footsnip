@@ -2,92 +2,73 @@ package control;
 
 import org.lwjgl.input.Keyboard;
 
+import thread.GameThread;
 import assets.Player;
 
 /**
- * First stab at a thread for handling input for player. TODO: Should probably
- * extend some abstract base thread.
+ * First stab at a thread for handling input for player.
  */
-public class ControlThread extends Thread {
-	private Player player;
+public class ControlThread extends GameThread {
 
-	private boolean stop = false;
+	private boolean leftPressed = false;
+	private boolean rightPressed = false;
+	private boolean upPressed = false;
+	private boolean downPressed = false;
 
-	public ControlThread(Player player) {
-		this.player = player;
+	public ControlThread(Player player, int threadDelay) {
+		super(player, threadDelay);
 	}
 
-	public void run() {
-		// Allows you to hold the key down
-		// Keyboard.enableRepeatEvents(true);
-
-		boolean leftPressed = false;
-		boolean rightPressed = false;
-		boolean upPressed = false;
-		boolean downPressed = false;
-
-		while (!stop) {
-			// Iterate over the key events buffer.
-			while (Keyboard.next()) {
-				// Identify which button(s) have been pressed / released.
-				if (Keyboard.getEventKey() == Keyboard.KEY_LEFT) {
-					leftPressed = Keyboard.getEventKeyState();
-				}
-				if (Keyboard.getEventKey() == Keyboard.KEY_RIGHT) {
-					rightPressed = Keyboard.getEventKeyState();
-				}
-				if (Keyboard.getEventKey() == Keyboard.KEY_UP) {
-					upPressed = Keyboard.getEventKeyState();
-				}
-				if (Keyboard.getEventKey() == Keyboard.KEY_DOWN) {
-					downPressed = Keyboard.getEventKeyState();
-				}
+	public void gameLoop() {
+		// Iterate over the key events buffer.
+		while (Keyboard.next()) {
+			// Identify which button(s) have been pressed / released.
+			if (Keyboard.getEventKey() == Keyboard.KEY_LEFT) {
+				leftPressed = Keyboard.getEventKeyState();
 			}
-
-			// All the time that either left or right are pressed, increase the
-			// rotation speed.
-			// TODO: This really doesn't make any sense, but, meh.
-			if (leftPressed || rightPressed) {
-				player.accelerateRotation();
-				if (leftPressed) {
-					player.rotateCCW();
-				} else {
-					player.rotateCW();
-				}
-			} else {
-				player.resetRotationSpeed();
+			if (Keyboard.getEventKey() == Keyboard.KEY_RIGHT) {
+				rightPressed = Keyboard.getEventKeyState();
 			}
-
-			// Ditto for up/down.
-			if (downPressed || upPressed) {
-				player.accelerateMovement();
-				if (downPressed) {
-					player.moveBackward();
-				} else {
-					player.moveForward();
-				}
-			} else {
-				player.resetMovementSpeed();
+			if (Keyboard.getEventKey() == Keyboard.KEY_UP) {
+				upPressed = Keyboard.getEventKeyState();
 			}
-
-			if (Keyboard.isKeyDown(Keyboard.KEY_PERIOD)) {
-				player.increaseScale();
-			}
-
-			if (Keyboard.isKeyDown(Keyboard.KEY_COMMA)) {
-				player.decreaseScale();
-			}
-
-			// TODO: There must be a better option than this...
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			if (Keyboard.getEventKey() == Keyboard.KEY_DOWN) {
+				downPressed = Keyboard.getEventKeyState();
 			}
 		}
-	}
 
-	public void kill() {
-		stop = true;
+		// All the time that either left or right are pressed, increase the
+		// rotation speed.
+		// TODO: This really doesn't make any sense, but, meh.
+		if (leftPressed || rightPressed) {
+			player.accelerateRotation();
+			if (leftPressed) {
+				player.rotateCCW();
+			} else {
+				player.rotateCW();
+			}
+		} else {
+			player.resetRotationSpeed();
+		}
+
+		// Ditto for up/down.
+		if (downPressed || upPressed) {
+			player.accelerateMovement();
+			if (downPressed) {
+				player.moveBackward();
+			} else {
+				player.moveForward();
+			}
+		} else {
+			player.resetMovementSpeed();
+		}
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_PERIOD)) {
+			player.increaseScale();
+		}
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_COMMA)) {
+			player.decreaseScale();
+		}
 	}
 }
