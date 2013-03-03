@@ -8,12 +8,18 @@ import renderer.glmodels.GLModel;
 
 public class Player extends Character {
 
+	private static final float DEFAULT_ROTATION_SPEED = 1.0f;
+	private static final float ROTATION_ACCELERATION = 0.01f;
+
+	private static final float DEFAULT_MOVEMENT_SPEED = 0.02f;
+	private static final float MOVEMENT_ACCELERATION = 0.0001f;
+
 	private int age;
 	private float[] color;
 
-	private float rotationDelta = 1.0f;
+	private float rotationDelta = DEFAULT_ROTATION_SPEED;
 	private float scaleDelta = 0.001f;
-	private float posDelta = 0.02f;
+	private float posDelta = DEFAULT_MOVEMENT_SPEED;
 	private Vector3f scaleAddResolution = new Vector3f(scaleDelta, scaleDelta, scaleDelta);
 	private Vector3f scaleMinusResolution = new Vector3f(-scaleDelta, -scaleDelta, -scaleDelta);
 
@@ -83,6 +89,22 @@ public class Player extends Character {
 
 	public void rotateCW() {
 		model.modelAngle.z -= rotationDelta;
+	}
+
+	public void accelerateRotation() {
+		rotationDelta += ROTATION_ACCELERATION;
+	}
+
+	public void resetRotationSpeed() {
+		rotationDelta = DEFAULT_ROTATION_SPEED;
+	}
+
+	public void accelerateMovement() {
+		posDelta += MOVEMENT_ACCELERATION;
+	}
+
+	public void resetMovementSpeed() {
+		posDelta = DEFAULT_MOVEMENT_SPEED;
 	}
 
 }

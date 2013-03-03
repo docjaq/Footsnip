@@ -7,7 +7,6 @@ import static renderer.GLUtilityMethods.setupOpenGL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
@@ -16,6 +15,7 @@ import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTexturedQuad;
 import assets.Monster;
 import assets.Player;
+import control.ControlThread;
 import exception.RendererException;
 
 public class Renderer_3_2 {
@@ -56,6 +56,9 @@ public class Renderer_3_2 {
 
 		createEntities();
 
+		ControlThread controlThread = new ControlThread(player);
+		controlThread.start();
+
 		while (!Display.isCloseRequested()) {
 			// Do a single loop (logic/render)
 			this.loopCycle();
@@ -66,6 +69,9 @@ public class Renderer_3_2 {
 			// Let the CPU synchronize with the GPU if GPU is tagging behind
 			Display.update();
 		}
+
+		// Nicely stop the control thread.
+		controlThread.kill();
 
 		// TODO: Modify this to accept the whole entity data-structure
 		destroyOpenGL(glWorld, player);
@@ -102,30 +108,6 @@ public class Renderer_3_2 {
 	// 'data structure' of models. Currently it's pretty hard-coded to our
 	// texturedQuad model
 	private void logicCycle() {
-		// -- Input processing
-
-		// Allows you to hold the key down
-		Keyboard.enableRepeatEvents(true);
-
-		/*
-		 * if (Keyboard.isKeyDown(Keyboard.KEY_1) && !Keyboard.isRepeatEvent())
-		 * textureSelector = 0; if (Keyboard.isKeyDown(Keyboard.KEY_2) &&
-		 * !Keyboard.isRepeatEvent()) textureSelector = 1;
-		 */
-
-		// Modify player model
-		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT))
-			player.rotateCCW();
-		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
-			player.rotateCW();
-		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN))
-			player.moveBackward();
-		if (Keyboard.isKeyDown(Keyboard.KEY_UP))
-			player.moveForward();
-		if (Keyboard.isKeyDown(Keyboard.KEY_PERIOD))
-			player.increaseScale();
-		if (Keyboard.isKeyDown(Keyboard.KEY_COMMA))
-			player.decreaseScale();
 		// Just set up a standard rotation for testing
 		// player.rotate();
 
