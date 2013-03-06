@@ -36,8 +36,9 @@ public class Renderer_3_2 {
 	private final int HEIGHT = 768;
 
 	// ATTENTION: Just for now
-	private final String PLAYER_TEXTURE = "resources/images/bacteria.png";
-	private final String[] MONSTER_TEXTURES = { "resources/images/virus1.png", "resources/images/virus2.png", "resources/images/virus3.png" };
+	private final String PLAYER_TEXTURE = "resources/images/Ship.png";
+	private final String[] MONSTER_TEXTURES = { "resources/images/virus1.png", "resources/images/virus2.png",
+			"resources/images/virus3.png", "resources/images/Bacteria.png" };
 
 	// TODO: For now, have a data-structure here of all our entities, etc
 	private Player player;
@@ -97,12 +98,12 @@ public class Renderer_3_2 {
 		// ATTENTION: Takes some time to load as it's re-loading the texture for
 		// EVERY model :)
 		monsters = new ArrayList<Monster>();
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 30; i++) {
 			Vector3f monsterPos = new Vector3f((float) Math.random() * 20f - 10f, (float) Math.random() * 14f - 7f, 0);
 			Vector3f monsterAngle = new Vector3f(0, 0, 0);
 			Vector3f monsterScale = new Vector3f(0.05f, 0.05f, 0.05f);
 			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random() };
-			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 3)];
+			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 4)];
 			GLModel monsterModel = new GLTexturedQuad(monsterPos, monsterAngle, monsterScale, monsterColor, texture);
 			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
 			monster.setRotationDelta((float) Math.random() * 2f - 1f);
