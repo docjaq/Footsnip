@@ -14,33 +14,25 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glprimitives.GLVertex;
 
-public class GLTexturedQuad extends GLTexturedModel {
+public class GLTexturedCube extends GLTexturedModel {
 
 	public GLVertex[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
 
-	public GLTexturedQuad(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, float[] color, String textureLocation) {
+	public GLTexturedCube(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, float[] color, String textureLocation) {
 		super(modelPos, modelAngle, modelScale, color);
-		// We'll define our quad using 4 vertices of the custom 'TexturedVertex'
-		// class
-		GLVertex v0 = new GLVertex();
-		v0.setXYZ(-0.5f, 0.5f, 0);
-		v0.setRGB(1, 0, 0);
-		v0.setST(0, 0);
-		GLVertex v1 = new GLVertex();
-		v1.setXYZ(-0.5f, -0.5f, 0);
-		v1.setRGB(0, 1, 0);
-		v1.setST(0, 1);
-		GLVertex v2 = new GLVertex();
-		v2.setXYZ(0.5f, -0.5f, 0);
-		v2.setRGB(0, 0, 1);
-		v2.setST(1, 1);
-		GLVertex v3 = new GLVertex();
-		v3.setXYZ(0.5f, 0.5f, 0);
-		v3.setRGB(1, 1, 1);
-		v3.setST(1, 0);
 
-		vertices = new GLVertex[] { v0, v1, v2, v3 };
+		float[] rgba = { 1, 0, 0, 1 };
+
+		GLVertex v0 = new GLVertex(-0.5f, 0.5f, 0f, rgba, 0f, 0f);
+		GLVertex v1 = new GLVertex(-0.5f, -0.5f, 0f, rgba, 0f, 1f);
+		GLVertex v2 = new GLVertex(0.5f, -0.5f, 0f, rgba, 1f, 1f);
+		GLVertex v3 = new GLVertex(0.5f, 0.5f, 0f, rgba, 1f, 0f);
+
+		GLVertex v4 = new GLVertex(-0.5f, 0.5f, 0.5f, rgba, 0f, 0f);
+		GLVertex v5 = new GLVertex(-0.5f, -0.5f, 0.5f, rgba, 0f, 1f);
+
+		vertices = new GLVertex[] { v0, v1, v2, v3, v4, v5 };
 
 		// Put each 'Vertex' in one FloatBuffer
 		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertex.stride);
@@ -52,7 +44,7 @@ public class GLTexturedQuad extends GLTexturedModel {
 		verticesFloatBuffer.flip();
 
 		// OpenGL expects to draw vertices in counter clockwise order by default
-		byte[] indices = { 0, 1, 2, 2, 3, 0 };
+		byte[] indices = { 0, 1, 2, 2, 3, 0, 0, 1, 4, 4, 5, 1 };
 		indicesCount = indices.length;
 		ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(indicesCount);
 		indicesBuffer.put(indices);
@@ -97,5 +89,4 @@ public class GLTexturedQuad extends GLTexturedModel {
 
 		exitOnGLError("setupQuad");
 	}
-
 }

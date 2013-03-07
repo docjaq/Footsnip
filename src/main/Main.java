@@ -20,3 +20,11 @@ public class Main {
 		new Main();
 	}
 }
+
+/**
+ * TODO: J I think we need to implement a different shader to handle
+ * non-textured entities. Basically, we're sending no texture to the geometry
+ * shader, and therefore it's just using the old texture. In opengl <2.0, you
+ * could just enable and disable the texture unit, but not possible anymore, so
+ * I think we need to use a different shader.
+ */

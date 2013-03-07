@@ -1,4 +1,4 @@
-#version 150 core
+#version 420 core
 
 uniform sampler2D texture_diffuse;
 

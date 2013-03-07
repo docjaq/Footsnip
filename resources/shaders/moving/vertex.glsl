@@ -1,4 +1,4 @@
-#version 150 core
+#version 420 core
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;

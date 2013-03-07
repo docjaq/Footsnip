@@ -26,9 +26,30 @@ public class GLVertex {
 	public static final int stride = positionBytesCount + colorByteCount + textureByteCount;
 
 	// Vertex data
-	private float[] xyzw = new float[] { 0f, 0f, 0f, 1f };
-	private float[] rgba = new float[] { 1f, 1f, 1f, 1f };
-	private float[] st = new float[] { 0f, 0f };
+	private float[] xyzw;// = new float[] { 0f, 0f, 0f, 1f };
+	private float[] rgba;// = new float[] { 1f, 1f, 1f, 1f };
+	private float[] st;// = new float[] { 0f, 0f };
+
+	public GLVertex() {
+	}
+
+	public GLVertex(float x, float y, float z, float w, float r, float g, float b, float a, float s, float t) {
+		this.xyzw = new float[] { x, y, z, w };
+		this.rgba = new float[] { r, g, b, a };
+		this.st = new float[] { s, t };
+	}
+
+	public GLVertex(float x, float y, float z, float w, float[] rgba, float s, float t) {
+		this.xyzw = new float[] { x, y, z, w };
+		this.rgba = rgba;
+		this.st = new float[] { s, t };
+	}
+
+	public GLVertex(float x, float y, float z, float[] rgba, float s, float t) {
+		this.xyzw = new float[] { x, y, z, 1f };
+		this.rgba = rgba;
+		this.st = new float[] { s, t };
+	}
 
 	// Setters
 	public void setXYZ(float x, float y, float z) {
