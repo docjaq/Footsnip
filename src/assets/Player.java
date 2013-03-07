@@ -11,12 +11,15 @@ public class Player extends Character {
 	private static final float DEFAULT_ROTATION_SPEED = 1.0f;
 	private static final float ROTATION_ACCELERATION = 0.01f;
 
-	private static final float DEFAULT_MOVEMENT_SPEED = 0.02f;
+	private static final float DEFAULT_MOVEMENT_SPEED = 0.00f;
 	private static final float MOVEMENT_ACCELERATION = 0.0001f;
+
+	private static final float MAX_MOVEMENT_SPEED = 0.07f;
 
 	private int age;
 	private float[] color;
 
+	// TODO: J: Clean this up I guess
 	private float rotationDelta = DEFAULT_ROTATION_SPEED;
 	private float scaleDelta = 0.001f;
 	private float posDelta = DEFAULT_MOVEMENT_SPEED;
@@ -57,7 +60,7 @@ public class Player extends Character {
 		model.modelPos.y -= posDelta;
 	}
 
-	public void moveForward() {
+	public void move() {
 		// TODO: Trig is apparently not optimal. I don't know what is...
 		double xScale = Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z));
 		double yScale = Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z));
@@ -66,14 +69,15 @@ public class Player extends Character {
 		model.modelPos.y += posDelta * yScale;
 	}
 
-	public void moveBackward() {
-		// TODO: Trig is apparently not optimal. I don't know what is...
-		double xScale = Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z));
-		double yScale = Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z));
-
-		model.modelPos.x -= posDelta * xScale;
-		model.modelPos.y -= posDelta * yScale;
-	}
+	/*
+	 * public void moveBackward() { // TODO: Trig is apparently not optimal. I
+	 * don't know what is... double xScale =
+	 * Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z)); double
+	 * yScale = Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z));
+	 * 
+	 * model.modelPos.x -= posDelta * xScale; model.modelPos.y -= posDelta *
+	 * yScale; }
+	 */
 
 	public void increaseScale() {
 		Vector3f.add(model.modelScale, scaleAddResolution, model.modelScale);
@@ -101,10 +105,29 @@ public class Player extends Character {
 
 	public void accelerateMovement() {
 		posDelta += MOVEMENT_ACCELERATION;
+		capMaxMovementSpeed();
+	}
+
+	public void delerateMovement() {
+		posDelta -= MOVEMENT_ACCELERATION;
+		capMinMovementSpeed();
 	}
 
 	public void resetMovementSpeed() {
 		posDelta = DEFAULT_MOVEMENT_SPEED;
 	}
 
+	private void capMaxMovementSpeed() {
+		if (posDelta > MAX_MOVEMENT_SPEED) {
+			posDelta = MAX_MOVEMENT_SPEED;
+		}
+	}
+
+	// Could do this in one method, but this way means we only need one if
+	// statement and or no abs() function
+	private void capMinMovementSpeed() {
+		if (posDelta < -MAX_MOVEMENT_SPEED) {
+			posDelta = -MAX_MOVEMENT_SPEED;
+		}
+	}
 }

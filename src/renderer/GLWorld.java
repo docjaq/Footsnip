@@ -19,7 +19,7 @@ public class GLWorld {
 	public static final Vector3f BASIS_Y = new Vector3f(0, 1, 0);
 	public static final Vector3f BASIS_Z = new Vector3f(0, 0, 1);
 
-	// Public for speed...
+	/** Public for speed... */
 	public Matrix4f projectionMatrix;
 	public Matrix4f viewMatrix;
 	// * public Matrix4f modelMatrix;

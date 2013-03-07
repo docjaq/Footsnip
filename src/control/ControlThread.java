@@ -51,16 +51,19 @@ public class ControlThread extends GameThread {
 			player.resetRotationSpeed();
 		}
 
-		// Ditto for up/down.
+		player.move();
 		if (downPressed || upPressed) {
-			player.accelerateMovement();
+
+			// player.accelerateMovement();
 			if (downPressed) {
-				player.moveBackward();
+				// player.moveBackward();
+				player.delerateMovement();
 			} else {
-				player.moveForward();
+				// player.moveForward();
+				player.accelerateMovement();
 			}
 		} else {
-			player.resetMovementSpeed();
+			// player.resetMovementSpeed();
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_PERIOD)) {

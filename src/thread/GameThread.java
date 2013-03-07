@@ -4,6 +4,8 @@ import assets.Player;
 
 public abstract class GameThread extends Thread {
 	/** Everything must need a player. */
+	// TODO: J: Should this be here? If this is a standard game thread? I'm
+	// confused.
 	protected Player player;
 
 	/** Flag to determine when to stop the loop. */

@@ -51,7 +51,8 @@ public class Renderer_3_2 {
 
 	public Renderer_3_2() throws RendererException {
 
-		setupOpenGL(WIDTH, HEIGHT, WINDOW_TITLE);
+		float[] backgroundColor = { 0.8f, 0.35f, 0.35f, 1.0f };
+		setupOpenGL(WIDTH, HEIGHT, WINDOW_TITLE, backgroundColor);
 
 		// Camera is actually static at this stage
 		glWorld = new GLWorld(WIDTH, HEIGHT, new Vector3f(0, 0, 0));
@@ -90,7 +91,7 @@ public class Renderer_3_2 {
 		// start renderer while loop
 		Vector3f modelPos = new Vector3f(0, 0, 0);
 		Vector3f modelAngle = new Vector3f(0, 0, 0);
-		Vector3f modelScale = new Vector3f(0.1f, 0.1f, 0.1f);
+		Vector3f modelScale = new Vector3f(0.05f, 0.05f, 0.05f);
 		float[] modelColor = { 1.0f, 1.0f, 1.0f };
 		GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale, modelColor, PLAYER_TEXTURE);
 		player = new Player(model, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f });
@@ -131,7 +132,7 @@ public class Renderer_3_2 {
 		glWorld.transformCamera();
 		glWorld.copyMatricesToShader();
 
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 
 		renderMonsters();
 		renderPlayer();

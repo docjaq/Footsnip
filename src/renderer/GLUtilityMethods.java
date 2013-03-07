@@ -16,6 +16,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL42;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
@@ -25,6 +26,8 @@ import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import exception.RendererException;
 
 public class GLUtilityMethods {
+
+	private static final int NUM_MIPMAPS = 3;
 
 	private GLUtilityMethods() {
 	};
@@ -74,7 +77,7 @@ public class GLUtilityMethods {
 		}
 	}
 
-	public static void setupOpenGL(int width, int height, String windowTitle) {
+	public static void setupOpenGL(int width, int height, String windowTitle, float[] backgroundColor) {
 		// Setup an OpenGL context with API version 3.2
 		try {
 			PixelFormat pixelFormat = new PixelFormat();
@@ -91,7 +94,8 @@ public class GLUtilityMethods {
 		}
 
 		// Setup an XNA like background color
-		GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f);
+		// GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f);
+		GL11.glClearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3]);
 
 		// Map the internal OpenGL coordinate system to the entire screen
 		GL11.glViewport(0, 0, width, height);
@@ -147,7 +151,12 @@ public class GLUtilityMethods {
 		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 
 		// Upload the texture data and generate mip maps (for scaling)
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, tWidth, tHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
+		// GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, tWidth,
+		// tHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
+
+		GL42.glTexStorage2D(GL11.GL_TEXTURE_2D, NUM_MIPMAPS, GL11.GL_RGBA8, tWidth, tHeight);
+		GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, tWidth, tHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
+
 		GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 
 		// Setup the ST coordinate system
