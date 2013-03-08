@@ -16,7 +16,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL42;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
@@ -28,6 +27,7 @@ import exception.RendererException;
 public class GLUtilityMethods {
 
 	private static final int NUM_MIPMAPS = 3;
+	private static final boolean ENABLE_MIPMAPPING = true;
 
 	private GLUtilityMethods() {
 	};
@@ -151,13 +151,17 @@ public class GLUtilityMethods {
 		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 
 		// Upload the texture data and generate mip maps (for scaling)
-		// GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, tWidth,
-		// tHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, tWidth, tHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
 
-		GL42.glTexStorage2D(GL11.GL_TEXTURE_2D, NUM_MIPMAPS, GL11.GL_RGBA8, tWidth, tHeight);
-		GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, tWidth, tHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
+		/** Replace line above with code below for OpenGL 4.2 */
+		// GL42.glTexStorage2D(GL11.GL_TEXTURE_2D, NUM_MIPMAPS, GL11.GL_RGBA8,
+		// tWidth, tHeight);
+		// GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, tWidth, tHeight,
+		// GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
 
-		GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+		if (ENABLE_MIPMAPPING) {
+			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+		}
 
 		// Setup the ST coordinate system
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
@@ -165,11 +169,14 @@ public class GLUtilityMethods {
 
 		// Setup what to do when the texture has to be scaled
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
+		if (ENABLE_MIPMAPPING) {
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_NEAREST);
+		} else {
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+		}
 
 		exitOnGLError("loadPNGTexture");
 
 		return texId;
 	}
-
 }
