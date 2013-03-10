@@ -11,8 +11,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
-import renderer.glmodels.GLTexturedCube;
 import renderer.glmodels.GLModel;
+import renderer.glmodels.GLTexturedCube;
 import renderer.glmodels.GLTexturedQuad;
 import thread.GameThread;
 import assets.Monster;
@@ -37,7 +37,7 @@ public class Renderer_3_2 {
 	private final int HEIGHT = 768;
 
 	// ATTENTION: Just for now
-	private final String PLAYER_TEXTURE = "resources/images/Ship.png";
+	private final String PLAYER_TEXTURE = "resources/images/ship.png";
 	private final String[] MONSTER_TEXTURES = { "resources/images/virus1.png", "resources/images/virus2.png",
 			"resources/images/virus3.png", "resources/images/Bacteria.png" };
 

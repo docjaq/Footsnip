@@ -66,12 +66,5 @@ public class ControlThread extends GameThread {
 			// player.resetMovementSpeed();
 		}
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_PERIOD)) {
-			player.increaseScale();
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_COMMA)) {
-			player.decreaseScale();
-		}
 	}
 }

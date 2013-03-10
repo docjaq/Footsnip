@@ -15,4 +15,8 @@ public class LinearAlgebra {
 	public static float degreesToRadians(float degrees) {
 		return degrees * (float) (PI / 180d);
 	}
+
+	public static float radiansToDegrees(float radians) {
+		return radians * (float) (180d / PI);
+	}
 }
