@@ -14,6 +14,9 @@ import org.lwjgl.util.vector.Vector3f;
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTexturedCube;
 import renderer.glmodels.GLTexturedQuad;
+import renderer.glshaders.GLGeneralShader;
+import renderer.glshaders.GLShader;
+import renderer.glshaders.GLTexturedShader;
 import thread.GameThread;
 import assets.Monster;
 import assets.Player;
@@ -40,6 +43,9 @@ public class Renderer_3_2 {
 	private final String PLAYER_TEXTURE = "resources/images/ship.png";
 	private final String[] MONSTER_TEXTURES = { "resources/images/virus1.png", "resources/images/virus2.png",
 			"resources/images/virus3.png", "resources/images/Bacteria.png" };
+
+	private final String[] GEN_SHADER_NAME = { "resources/shaders/general/vertex.glsl", "resources/shaders/general/fragment.glsl" };
+	private final String[] TEX_SHADER_NAME = { "resources/shaders/textured/vertex.glsl", "resources/shaders/textured/fragment.glsl" };
 
 	// TODO: For now, have a data-structure here of all our entities, etc
 	private Player player;
@@ -88,13 +94,23 @@ public class Renderer_3_2 {
 	}
 
 	// Debug method for creating some test stuff
-	private void createEntities() {
+	private void createEntities() throws RendererException {
+
+		GLShader generalShader = new GLGeneralShader();
+		generalShader.create(GEN_SHADER_NAME);
+		System.out.println("General shader ID " + generalShader.getProgramID());
+
+		GLShader texturedShader = new GLTexturedShader();
+		texturedShader.create(TEX_SHADER_NAME);
+		System.out.println("Textured shader ID " + texturedShader.getProgramID());
+
 		// start renderer while loop
 		Vector3f modelPos = new Vector3f(0, 0, 0);
 		Vector3f modelAngle = new Vector3f(0, 0, 0);
 		Vector3f modelScale = new Vector3f(0.05f, 0.05f, 0.05f);
 		float[] modelColor = { 1.0f, 1.0f, 1.0f };
 		GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale, modelColor, PLAYER_TEXTURE);
+		model.setShader(texturedShader);
 		player = new Player(model, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f });
 
 		// ATTENTION: Takes some time to load as it's re-loading the texture for
@@ -107,6 +123,7 @@ public class Renderer_3_2 {
 			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random() };
 			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 4)];
 			GLModel monsterModel = new GLTexturedCube(monsterPos, monsterAngle, monsterScale, monsterColor, texture);
+			monsterModel.setShader(generalShader);
 			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
 			monster.setRotationDelta((float) Math.random() * 2f - 1f);
 			monsters.add(monster);
@@ -131,31 +148,33 @@ public class Renderer_3_2 {
 
 		// Translate camera
 		glWorld.transformCamera();
-		glWorld.copyMatricesToShader();
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 
-		renderMonsters();
 		renderPlayer();
+		renderMonsters();
 
 		exitOnGLError("logicCycle");
 	}
 
 	private void renderPlayer() {
+		glWorld.copyCameraMatricesToShader(player.getModel().shader);
 		player.getModel().transform();
-		glWorld.bindShader();
-		player.getModel().copyModelMatrixToShader(glWorld.modelMatrixLocation, glWorld.matrix44Buffer, glWorld.fragColorLocation);
+		player.getModel().shader.bindShader();
+		player.getModel().copyModelMatrixToShader();
 		player.draw();
-		glWorld.unbindShader();
+		player.getModel().shader.unbindShader();
 	}
 
 	private void renderMonsters() {
+		// Fix this so all the monsters share a shader
+		glWorld.copyCameraMatricesToShader(monsters.get(0).getModel().shader);
 		for (Monster m : monsters) {
 			m.getModel().transform();
-			glWorld.bindShader();
-			m.getModel().copyModelMatrixToShader(glWorld.modelMatrixLocation, glWorld.matrix44Buffer, glWorld.fragColorLocation);
+			m.getModel().shader.bindShader();
+			m.getModel().copyModelMatrixToShader();
 			m.draw();
-			glWorld.unbindShader();
+			m.getModel().shader.unbindShader();
 		}
 	}
 

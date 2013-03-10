@@ -1,12 +1,9 @@
 package renderer;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.text.MessageFormat;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
@@ -14,7 +11,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
@@ -22,7 +18,6 @@ import org.lwjgl.util.glu.GLU;
 import assets.Player;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
-import exception.RendererException;
 
 public class GLUtilityMethods {
 
@@ -31,38 +26,6 @@ public class GLUtilityMethods {
 
 	private GLUtilityMethods() {
 	};
-
-	public static int loadShader(String filename, int type) throws RendererException {
-		StringBuilder shaderSource = new StringBuilder();
-		int shaderID = 0;
-
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(filename));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				shaderSource.append(line).append("\n");
-			}
-			reader.close();
-		} catch (IOException e) {
-			System.err.println("Could not read file.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
-
-		shaderID = GL20.glCreateShader(type);
-		GL20.glShaderSource(shaderID, shaderSource);
-		GL20.glCompileShader(shaderID);
-
-		if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-			String message = "Could not compile shader from file: {0}. The error was: {1}";
-			throw new RendererException(MessageFormat.format(message, filename, GL20.glGetShaderInfoLog(shaderID, GL20.GL_INFO_LOG_LENGTH)));
-		}
-
-		// TODO: Should this be in a catch block further up the stack?
-		exitOnGLError("loadShader");
-
-		return shaderID;
-	}
 
 	public static void exitOnGLError(String errorMessage) {
 		int errorValue = GL11.glGetError();
@@ -106,7 +69,7 @@ public class GLUtilityMethods {
 	public static void destroyOpenGL(GLWorld glWorld, Player player) {
 
 		// Clean up world shader
-		glWorld.destroy();
+		// glWorld.destroy();
 
 		// Clean up all of our models
 		// This should probably clean all the shaders attached to a model as

@@ -6,6 +6,7 @@ import geometry.BoundingBox;
 
 import java.nio.FloatBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -14,6 +15,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.GLWorld;
+import renderer.glshaders.GLShader;
 
 public class GLModel {
 
@@ -33,7 +35,17 @@ public class GLModel {
 	// Model Matrix
 	public Matrix4f modelMatrix;
 
-	// public FloatBuffer matrix44Buffer = null;
+	public GLShader shader;
+
+	private FloatBuffer matrix44Buffer = null;
+
+	public GLShader getShader() {
+		return shader;
+	}
+
+	public void setShader(GLShader shader) {
+		this.shader = shader;
+	}
 
 	public GLModel(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, float[] color) {
 		// Set the default quad rotation, scale and position values
@@ -44,7 +56,7 @@ public class GLModel {
 
 		modelMatrix = new Matrix4f();
 
-		// matrix44Buffer = BufferUtils.createFloatBuffer(16);
+		matrix44Buffer = BufferUtils.createFloatBuffer(16);
 	}
 
 	// TODO: Check to see if there is a texture before rendering. Either that,
@@ -131,12 +143,12 @@ public class GLModel {
 	// ATTENTION: Before, had a local Floatbuffer in the class, but as it's just
 	// used to copy stuff to the shader, seems a waste. Maybe a better way than
 	// sending the reference around though?
-	public void copyModelMatrixToShader(int modelMatrixLocation, FloatBuffer matrix44Buffer, int fragColorLocation) {
+	public void copyModelMatrixToShader() {
 		modelMatrix.store(matrix44Buffer);
 		matrix44Buffer.flip();
-		GL20.glUniformMatrix4(modelMatrixLocation, false, matrix44Buffer);
+		GL20.glUniformMatrix4(shader.getModelMatrixLocation(), false, matrix44Buffer);
 		// This copies the colour to the (fragment) shader
-		GL20.glUniform3f(fragColorLocation, color[0], color[1], color[2]);
+		GL20.glUniform3f(shader.getFragColorLocation(), color[0], color[1], color[2]);
 	}
 
 	// public void matrixCleanup() {

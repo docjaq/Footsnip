@@ -10,7 +10,6 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glshaders.GLShader;
-import renderer.glshaders.GLWorldShader;
 import exception.RendererException;
 
 public class GLWorld {
@@ -23,19 +22,19 @@ public class GLWorld {
 	public Matrix4f projectionMatrix;
 	public Matrix4f viewMatrix;
 	// * public Matrix4f modelMatrix;
-	public FloatBuffer matrix44Buffer = null;
+	private FloatBuffer matrix44Buffer = null;
 	private int width;
 	private int height;
 
-	public int projectionMatrixLocation;
-	public int viewMatrixLocation;
-	public int modelMatrixLocation;
-	public int fragColorLocation;
+	// public int projectionMatrixLocation;
+	// public int viewMatrixLocation;
+	// public int modelMatrixLocation;
+	// public int fragColorLocation;
 
 	// I *think* this should be here.
 	public Vector3f cameraPos;
 
-	private GLShader worldShader;
+	// private GLShader worldShader;
 
 	public GLWorld(int width, int height, Vector3f cameraPos) throws RendererException {
 		this.width = width;
@@ -44,8 +43,8 @@ public class GLWorld {
 
 		setupMatrices();
 
-		worldShader = new GLWorldShader(this);
-		worldShader.create();
+		// worldShader = new GLWorldShader(this);
+		// worldShader.create();
 	}
 
 	private void setupMatrices() {
@@ -87,30 +86,14 @@ public class GLWorld {
 		Matrix4f.translate(cameraPos, viewMatrix, viewMatrix);
 	}
 
-	public void copyMatricesToShader() {
-		bindShader();
+	public void copyCameraMatricesToShader(GLShader shader) {
+		shader.bindShader();
 		projectionMatrix.store(matrix44Buffer);
 		matrix44Buffer.flip();
-		GL20.glUniformMatrix4(projectionMatrixLocation, false, matrix44Buffer);
+		GL20.glUniformMatrix4(shader.getProjectionMatrixLocation(), false, matrix44Buffer);
 		viewMatrix.store(matrix44Buffer);
 		matrix44Buffer.flip();
-		GL20.glUniformMatrix4(viewMatrixLocation, false, matrix44Buffer);
-		unbindShader();
-	}
-
-	public void bindShader() {
-		GL20.glUseProgram(worldShader.programID);
-	}
-
-	public void unbindShader() {
-		GL20.glUseProgram(0);
-	}
-
-	// Maybe clean up more stuff here?
-	public void destroy() {
-		unbindShader();
-
-		// Clean up world shader
-		worldShader.destroy();
+		GL20.glUniformMatrix4(shader.getViewMatrixLocation(), false, matrix44Buffer);
+		shader.unbindShader();
 	}
 }
