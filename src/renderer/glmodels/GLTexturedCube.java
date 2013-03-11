@@ -29,10 +29,12 @@ public class GLTexturedCube extends GLTexturedModel {
 		GLVertex v2 = new GLVertex(0.5f, -0.5f, 0f, rgba, 1f, 1f);
 		GLVertex v3 = new GLVertex(0.5f, 0.5f, 0f, rgba, 1f, 0f);
 
-		GLVertex v4 = new GLVertex(-0.5f, 0.5f, 0.5f, rgba, 0f, 0f);
-		GLVertex v5 = new GLVertex(-0.5f, -0.5f, 0.5f, rgba, 0f, 1f);
+		GLVertex v4 = new GLVertex(-0.5f, 0.5f, 1f, rgba, 0f, 0f);
+		GLVertex v5 = new GLVertex(-0.5f, -0.5f, 1f, rgba, 0f, 1f);
+		GLVertex v6 = new GLVertex(0.5f, -0.5f, 1f, rgba, 0f, 1f);
+		GLVertex v7 = new GLVertex(0.5f, 0.5f, 1f, rgba, 0f, 0f);
 
-		vertices = new GLVertex[] { v0, v1, v2, v3, v4, v5 };
+		vertices = new GLVertex[] { v0, v1, v2, v3, v4, v5, v6, v7 };
 
 		// Put each 'Vertex' in one FloatBuffer
 		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertex.stride);
@@ -44,7 +46,12 @@ public class GLTexturedCube extends GLTexturedModel {
 		verticesFloatBuffer.flip();
 
 		// OpenGL expects to draw vertices in counter clockwise order by default
-		byte[] indices = { 0, 1, 2, 2, 3, 0, 0, 1, 4, 4, 5, 1 };
+		byte[] indices = { 0, 1, 2, 2, 3, 0, /* */
+		0, 1, 4, 4, 5, 1, /* */
+		1, 2, 5, 5, 6, 2, /* */
+		3, 0, 7, 7, 4, 0, /* */
+		6, 2, 7, 7, 2, 3, /* */
+		6, 7, 4, 4, 5, 6 };
 		indicesCount = indices.length;
 		ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(indicesCount);
 		indicesBuffer.put(indices);

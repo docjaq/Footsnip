@@ -25,10 +25,10 @@ public class GLModel {
 	public Vector3f modelScale;
 
 	// Quad variables
-	public int vaoId = 0;
-	public int vboId = 0;
-	public int vboiId = 0;
-	public int indicesCount = 0;
+	protected int vaoId = 0;
+	protected int vboId = 0;
+	protected int vboiId = 0;
+	protected int indicesCount = 0;
 
 	private float[] color;
 
@@ -61,7 +61,9 @@ public class GLModel {
 
 	public void draw() {
 
-		// copyModelMatrixToShader();
+		transform();
+		getShader().bindShader();
+		copyModelMatrixToShader();
 
 		// Bind to the VAO that has all the information about the vertices
 		GL30.glBindVertexArray(vaoId);
@@ -87,6 +89,8 @@ public class GLModel {
 		GL20.glDisableVertexAttribArray(1);
 		GL20.glDisableVertexAttribArray(2);
 		GL30.glBindVertexArray(0);
+
+		getShader().unbindShader();
 	}
 
 	public void cleanUp() {
@@ -146,7 +150,7 @@ public class GLModel {
 		matrix44Buffer.flip();
 		GL20.glUniformMatrix4(shader.getModelMatrixLocation(), false, matrix44Buffer);
 		// This copies the colour to the (fragment) shader
-		GL20.glUniform3f(shader.getFragColorLocation(), color[0], color[1], color[2]);
+		GL20.glUniform4f(shader.getFragColorLocation(), color[0], color[1], color[2], color[3]);
 	}
 
 	// public void matrixCleanup() {

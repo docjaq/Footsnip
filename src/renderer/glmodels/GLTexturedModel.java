@@ -26,6 +26,10 @@ public class GLTexturedModel extends GLModel {
 
 	public void draw() {
 
+		transform();
+		getShader().bindShader();
+		copyModelMatrixToShader();
+
 		// Bind the texture
 		// This is the texture unit
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -62,6 +66,8 @@ public class GLTexturedModel extends GLModel {
 		GL20.glDisableVertexAttribArray(1);
 		GL20.glDisableVertexAttribArray(2);
 		GL30.glBindVertexArray(0);
+
+		getShader().unbindShader();
 
 	}
 

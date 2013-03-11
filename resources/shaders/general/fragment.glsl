@@ -7,13 +7,13 @@ in vec4 pass_Color;
 
 out vec4 out_Color;
 
-uniform vec3 fragColor;
+uniform vec4 fragColor;
 
 void main(void) {
 	out_Color = pass_Color;
 	// Override out_Color with our texture pixel
 	//out_Color = texture(texture_diffuse, pass_TextureCoord);
-	out_Color = vec4(fragColor.x, fragColor.y, fragColor.z, 1f);
+	out_Color = vec4(fragColor.x, fragColor.y, fragColor.z, fragColor.w);
 }
 
 

@@ -56,5 +56,7 @@ public class Monster extends Character {
 
 	public void rotate() {
 		model.modelAngle.z += rotationDelta;
+		model.modelAngle.y += rotationDelta;
+		model.modelAngle.x += rotationDelta;
 	}
 }

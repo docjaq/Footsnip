@@ -7,7 +7,7 @@ in vec2 pass_TextureCoord;
 
 out vec4 out_Color;
 
-uniform vec3 fragColor;
+uniform vec4 fragColor;
 
 void main(void) {
 	out_Color = pass_Color;

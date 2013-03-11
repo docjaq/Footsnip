@@ -58,7 +58,7 @@ public class Renderer_3_2 {
 
 	public Renderer_3_2() throws RendererException {
 
-		float[] backgroundColor = { 0.8f, 0.35f, 0.35f, 1.0f };
+		float[] backgroundColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 		setupOpenGL(WIDTH, HEIGHT, WINDOW_TITLE, backgroundColor);
 
 		// Camera is actually static at this stage
@@ -108,7 +108,7 @@ public class Renderer_3_2 {
 		Vector3f modelPos = new Vector3f(0, 0, 0);
 		Vector3f modelAngle = new Vector3f(0, 0, 0);
 		Vector3f modelScale = new Vector3f(0.05f, 0.05f, 0.05f);
-		float[] modelColor = { 1.0f, 1.0f, 1.0f };
+		float[] modelColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale, modelColor, PLAYER_TEXTURE);
 		model.setShader(texturedShader);
 		player = new Player(model, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f });
@@ -120,7 +120,7 @@ public class Renderer_3_2 {
 			Vector3f monsterPos = new Vector3f((float) Math.random() * 20f - 10f, (float) Math.random() * 14f - 7f, 0);
 			Vector3f monsterAngle = new Vector3f(0, 0, 0);
 			Vector3f monsterScale = new Vector3f(0.05f, 0.05f, 0.05f);
-			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random() };
+			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) Math.random() };
 			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 4)];
 			GLModel monsterModel = new GLTexturedCube(monsterPos, monsterAngle, monsterScale, monsterColor, texture);
 			monsterModel.setShader(generalShader);
@@ -151,34 +151,27 @@ public class Renderer_3_2 {
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 
-		renderMonsters();
 		renderPlayer();
+		renderMonsters();
 
 		exitOnGLError("logicCycle");
 	}
 
 	private void renderPlayer() {
 		glWorld.copyCameraMatricesToShader(player.getModel().getShader());
-		player.getModel().transform();
-		player.getModel().getShader().bindShader();
-		player.getModel().copyModelMatrixToShader();
 		player.getModel().draw();
-		player.getModel().getShader().unbindShader();
 	}
 
 	private void renderMonsters() {
 		/**
-		 * The getShader() method points to the same shader, so just grab it
-		 * from the first monster. A better solution would be to grab it from
-		 * some parent container I guess
+		 * All the getShader() method calls for the monsters points to the same
+		 * shader, so just grab it from the first monster and set up the
+		 * matricies once. A better solution would be to grab it from some
+		 * parent container I guess
 		 */
 		glWorld.copyCameraMatricesToShader(monsters.get(0).getModel().getShader());
 		for (Monster m : monsters) {
-			m.getModel().transform();
-			m.getModel().getShader().bindShader();
-			m.getModel().copyModelMatrixToShader();
 			m.getModel().draw();
-			m.getModel().getShader().unbindShader();
 		}
 	}
 
