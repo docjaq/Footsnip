@@ -15,6 +15,10 @@ public class Player extends Character {
 
 	private static final float MAX_MOVEMENT_SPEED = 100f;
 
+	private float defaultYaw;
+	private float yawDiff;
+	private static final float MAX_YAW_DIFF = 45f;
+
 	private int age;
 	private float[] color;
 
@@ -31,6 +35,8 @@ public class Player extends Character {
 		rotationDelta = DEFAULT_ROTATION_SPEED;
 		this.movementVector = new Vector3f(0f, 0f, 0f);
 		this.currentDirectionVector = new Vector3f(0f, 0f, 0f);
+
+		this.defaultYaw = model.modelAngle.x;
 	}
 
 	public int getAge() {
@@ -48,10 +54,20 @@ public class Player extends Character {
 
 	public void rotateCCW() {
 		model.modelAngle.z += rotationDelta;
+		/** Currently looks a bit crap */
+		/*
+		 * yawDiff -= rotationDelta; capMinYaw(); model.modelAngle.x =
+		 * defaultYaw + yawDiff;
+		 */
 	}
 
 	public void rotateCW() {
 		model.modelAngle.z -= rotationDelta;
+		/** Currently looks a bit crap */
+		/*
+		 * yawDiff += rotationDelta; capMaxYaw(); model.modelAngle.x =
+		 * defaultYaw + yawDiff;
+		 */
 	}
 
 	public void accelerateRotation() {
@@ -60,6 +76,8 @@ public class Player extends Character {
 
 	public void resetRotationSpeed() {
 		rotationDelta = DEFAULT_ROTATION_SPEED;
+		model.modelAngle.x = defaultYaw;
+		yawDiff = 0;
 	}
 
 	public void accelerateMovement() {
@@ -85,5 +103,13 @@ public class Player extends Character {
 			movementVector.x *= diff;
 			movementVector.y *= diff;
 		}
+	}
+
+	private void capMaxYaw() {
+		yawDiff = Math.min(yawDiff, MAX_YAW_DIFF);
+	}
+
+	private void capMinYaw() {
+		yawDiff = Math.max(yawDiff, -MAX_YAW_DIFF);
 	}
 }
