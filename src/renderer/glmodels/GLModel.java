@@ -33,9 +33,9 @@ public class GLModel {
 	private float[] color;
 
 	// Model Matrix
-	public Matrix4f modelMatrix;
+	private Matrix4f modelMatrix;
 
-	public GLShader shader;
+	private GLShader shader;
 
 	private FloatBuffer matrix44Buffer = null;
 
@@ -59,11 +59,9 @@ public class GLModel {
 		matrix44Buffer = BufferUtils.createFloatBuffer(16);
 	}
 
-	// TODO: Check to see if there is a texture before rendering. Either that,
-	// or subclass this into textured and non-textured objects
-	// TODO:Presumably bind multiple textures, or have a choice which texture to
-	// bind... or whatevs, like
 	public void draw() {
+
+		// copyModelMatrixToShader();
 
 		// Bind to the VAO that has all the information about the vertices
 		GL30.glBindVertexArray(vaoId);

@@ -1,9 +1,9 @@
 #version 330 core
 
-uniform sampler2D texture_diffuse;
+//uniform sampler2D texture_diffuse;
 
 in vec4 pass_Color;
-in vec2 pass_TextureCoord;
+//in vec2 pass_TextureCoord;
 
 out vec4 out_Color;
 

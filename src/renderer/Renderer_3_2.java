@@ -151,30 +151,34 @@ public class Renderer_3_2 {
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 
-		renderPlayer();
 		renderMonsters();
+		renderPlayer();
 
 		exitOnGLError("logicCycle");
 	}
 
 	private void renderPlayer() {
-		glWorld.copyCameraMatricesToShader(player.getModel().shader);
+		glWorld.copyCameraMatricesToShader(player.getModel().getShader());
 		player.getModel().transform();
-		player.getModel().shader.bindShader();
+		player.getModel().getShader().bindShader();
 		player.getModel().copyModelMatrixToShader();
-		player.draw();
-		player.getModel().shader.unbindShader();
+		player.getModel().draw();
+		player.getModel().getShader().unbindShader();
 	}
 
 	private void renderMonsters() {
-		// Fix this so all the monsters share a shader
-		glWorld.copyCameraMatricesToShader(monsters.get(0).getModel().shader);
+		/**
+		 * The getShader() method points to the same shader, so just grab it
+		 * from the first monster. A better solution would be to grab it from
+		 * some parent container I guess
+		 */
+		glWorld.copyCameraMatricesToShader(monsters.get(0).getModel().getShader());
 		for (Monster m : monsters) {
 			m.getModel().transform();
-			m.getModel().shader.bindShader();
+			m.getModel().getShader().bindShader();
 			m.getModel().copyModelMatrixToShader();
-			m.draw();
-			m.getModel().shader.unbindShader();
+			m.getModel().draw();
+			m.getModel().getShader().unbindShader();
 		}
 	}
 

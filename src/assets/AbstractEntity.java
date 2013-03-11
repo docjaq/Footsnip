@@ -33,9 +33,9 @@ public abstract class AbstractEntity implements Asset {
 		return model;
 	}
 
-	public void draw() {
-		model.draw();
-	}
+	// public void draw() {
+	// model.draw();
+	// }
 
 	public void destroy() {
 		model.cleanUp();
