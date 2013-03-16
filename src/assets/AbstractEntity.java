@@ -21,6 +21,10 @@ public abstract class AbstractEntity implements Asset {
 	private float acceleration;
 	private float size;
 
+	public AbstractEntity() {
+		// Default constructor.
+	}
+
 	public AbstractEntity(GLModel model) {
 		this.model = model;
 	}
@@ -31,6 +35,14 @@ public abstract class AbstractEntity implements Asset {
 
 	public GLModel getModel() {
 		return model;
+	}
+
+	public void setModel(GLModel model) {
+		if (this.model != null) {
+			throw new RuntimeException("You can only set the model once.");
+		}
+
+		this.model = model;
 	}
 
 	// public void draw() {

@@ -1,6 +1,6 @@
 package exception;
 
-public class RendererException extends Exception {
+public class RendererException extends GameException {
 
 	/** Generated SerialVersionUID. */
 	private static final long serialVersionUID = 4403292469223864L;

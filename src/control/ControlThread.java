@@ -1,5 +1,7 @@
 package control;
 
+import main.Main;
+
 import org.lwjgl.input.Keyboard;
 
 import thread.GameThread;
@@ -15,8 +17,8 @@ public class ControlThread extends GameThread {
 	private boolean upPressed = false;
 	private boolean downPressed = false;
 
-	public ControlThread(Player player, int threadDelay) {
-		super(player, threadDelay);
+	public ControlThread(Player player, int threadDelay, Main mainApplication) {
+		super(player, threadDelay, mainApplication);
 	}
 
 	public void gameLoop() {
@@ -53,17 +55,11 @@ public class ControlThread extends GameThread {
 
 		player.move();
 		if (downPressed || upPressed) {
-
-			// player.accelerateMovement();
 			if (downPressed) {
-				// player.moveBackward();
 				player.delerateMovement();
 			} else {
-				// player.moveForward();
 				player.accelerateMovement();
 			}
-		} else {
-			// player.resetMovementSpeed();
 		}
 
 	}

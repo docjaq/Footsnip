@@ -1,8 +1,11 @@
 package thread;
 
+import main.Main;
 import assets.Player;
 
 public abstract class GameThread extends Thread {
+	protected Main mainApplication;
+
 	/** Everything must need a player. */
 	// TODO: J: Should this be here? If this is a standard game thread? I'm
 	// confused.
@@ -14,9 +17,10 @@ public abstract class GameThread extends Thread {
 	/** Pause between iterations. */
 	private int threadDelay;
 
-	public GameThread(Player player, int threadDelay) {
+	public GameThread(Player player, int threadDelay, Main mainApplication) {
 		this.player = player;
 		this.threadDelay = threadDelay;
+		this.mainApplication = mainApplication;
 	}
 
 	public void stopThread() {
@@ -24,6 +28,8 @@ public abstract class GameThread extends Thread {
 	}
 
 	public void run() {
+		beforeLoop();
+
 		while (!timeToStop) {
 			gameLoop();
 
@@ -33,6 +39,16 @@ public abstract class GameThread extends Thread {
 				e.printStackTrace();
 			}
 		}
+
+		afterLoop();
+	}
+
+	protected void beforeLoop() {
+		// No default functionality.
+	}
+
+	protected void afterLoop() {
+		// No default functionality.
 	}
 
 	protected abstract void gameLoop();

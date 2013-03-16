@@ -1,6 +1,17 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import renderer.Renderer_3_2;
+import thread.GameThread;
+import assets.Player;
+import control.ControlThread;
+import exception.RendererException;
+
 public class Main {
+
+	List<GameThread> childThreads = new ArrayList<GameThread>(2);
 
 	/*********************************
 	 * JAQ Levels should maybe be entities, as it would seemingly make
@@ -11,13 +22,38 @@ public class Main {
 	 * Hmm.
 	 */
 
-	public Main() {
-
+	public static void main(String[] args) {
+		try {
+			new Main();
+		} catch (RendererException ex) {
+			ex.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
-	public static void main(String[] args) {
-		System.out.println("Hello Creamsnip");
-		new Main();
+	public Main() throws RendererException {
+		Player player = new Player("Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f });
+
+		GameThread rendererThread = new Renderer_3_2(player, 10, this);
+		rendererThread.start();
+		childThreads.add(rendererThread);
+
+		// Thread for input.
+		GameThread controlThread = new ControlThread(player, 10, this);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		controlThread.start();
+		childThreads.add(controlThread);
+	}
+
+	public void quitGame() {
+		// Nicely stop the child threads.
+		for (GameThread thread : childThreads) {
+			thread.stopThread();
+		}
 	}
 }
 
