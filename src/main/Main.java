@@ -38,13 +38,21 @@ public class Main {
 		rendererThread.start();
 		childThreads.add(rendererThread);
 
+		// Wait for the renderer thread to be set up.
+		// TODO: Some kind of notification mechanism would probably be better
+		// here...
+		while (!rendererThread.isSetupDone()) {
+			try {
+				Thread.sleep(100l);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		System.out.println("Setting up control");
+
 		// Thread for input.
 		GameThread controlThread = new ControlThread(player, 10, this);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		controlThread.start();
 		childThreads.add(controlThread);
 	}

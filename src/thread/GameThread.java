@@ -11,6 +11,12 @@ public abstract class GameThread extends Thread {
 	// confused.
 	protected Player player;
 
+	/**
+	 * TODO: Is this a bit shit? Probably - a flag to show that the set up stuff
+	 * of this thread is done. Some kind of listener pattern would be better.
+	 */
+	private boolean setupDone = false;
+
 	/** Flag to determine when to stop the loop. */
 	private boolean timeToStop = false;
 
@@ -29,6 +35,7 @@ public abstract class GameThread extends Thread {
 
 	public void run() {
 		beforeLoop();
+		setupDone = true;
 
 		while (!timeToStop) {
 			gameLoop();
@@ -52,4 +59,8 @@ public abstract class GameThread extends Thread {
 	}
 
 	protected abstract void gameLoop();
+
+	public boolean isSetupDone() {
+		return setupDone;
+	}
 }
