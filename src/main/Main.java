@@ -5,13 +5,17 @@ import java.util.List;
 
 import renderer.Renderer_3_2;
 import thread.GameThread;
+import thread.ObservableThread;
+import thread.ThreadObserver;
 import assets.Player;
 import control.ControlThread;
 import exception.RendererException;
 
 public class Main {
 
-	List<GameThread> childThreads = new ArrayList<GameThread>(2);
+	private List<GameThread> childThreads = new ArrayList<GameThread>(2);
+
+	private Player player;
 
 	/*********************************
 	 * JAQ Levels should maybe be entities, as it would seemingly make
@@ -32,29 +36,21 @@ public class Main {
 	}
 
 	public Main() throws RendererException {
-		Player player = new Player("Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f });
+		player = new Player("Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f });
 
 		GameThread rendererThread = new Renderer_3_2(player, 10, this);
 		rendererThread.start();
 		childThreads.add(rendererThread);
 
-		// Wait for the renderer thread to be set up.
-		// TODO: Some kind of notification mechanism would probably be better
-		// here...
-		while (!rendererThread.isSetupDone()) {
-			try {
-				Thread.sleep(100l);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		rendererThread.registerSetupObserver(new ThreadObserver() {
+			@Override
+			public void setupDone(ObservableThread subject) {
+				// Renderer is set up, so start the control thread.
+				GameThread controlThread = new ControlThread(player, 10, Main.this);
+				controlThread.start();
+				childThreads.add(controlThread);
 			}
-		}
-
-		System.out.println("Setting up control");
-
-		// Thread for input.
-		GameThread controlThread = new ControlThread(player, 10, this);
-		controlThread.start();
-		childThreads.add(controlThread);
+		});
 	}
 
 	public void quitGame() {

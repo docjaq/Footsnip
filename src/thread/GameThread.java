@@ -1,9 +1,12 @@
 package thread;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import main.Main;
 import assets.Player;
 
-public abstract class GameThread extends Thread {
+public abstract class GameThread extends Thread implements ObservableThread {
 	protected Main mainApplication;
 
 	/** Everything must need a player. */
@@ -11,11 +14,8 @@ public abstract class GameThread extends Thread {
 	// confused.
 	protected Player player;
 
-	/**
-	 * TODO: Is this a bit shit? Probably - a flag to show that the set up stuff
-	 * of this thread is done. Some kind of listener pattern would be better.
-	 */
-	private boolean setupDone = false;
+	/** List of listeners that care about when the initial setup is complete. */
+	private List<ThreadObserver> setupObservers = new ArrayList<ThreadObserver>();
 
 	/** Flag to determine when to stop the loop. */
 	private boolean timeToStop = false;
@@ -34,8 +34,7 @@ public abstract class GameThread extends Thread {
 	}
 
 	public void run() {
-		beforeLoop();
-		setupDone = true;
+		setup();
 
 		while (!timeToStop) {
 			gameLoop();
@@ -60,7 +59,16 @@ public abstract class GameThread extends Thread {
 
 	protected abstract void gameLoop();
 
-	public boolean isSetupDone() {
-		return setupDone;
+	private void setup() {
+		beforeLoop();
+
+		// Notify observers that setup is complete.
+		for (ThreadObserver observer : setupObservers) {
+			observer.setupDone(this);
+		}
+	}
+
+	public void registerSetupObserver(ThreadObserver observer) {
+		setupObservers.add(observer);
 	}
 }
