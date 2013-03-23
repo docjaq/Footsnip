@@ -5,6 +5,7 @@ import static renderer.GLUtilityMethods.exitOnGLError;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.text.MessageFormat;
 
 import org.lwjgl.opengl.GL11;
@@ -52,6 +53,8 @@ public abstract class GLShader {
 	}
 
 	public abstract void setupShaderVariables();
+
+	public abstract void copyUniformsToShader(FloatBuffer modelMatrixBuffer, float[] color);
 
 	public void destroy() {
 		GL20.glDetachShader(programID, vertID);

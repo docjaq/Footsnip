@@ -1,6 +1,9 @@
 package renderer.glshaders;
 
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glUniform4f;
+
+import java.nio.FloatBuffer;
 
 import org.lwjgl.opengl.GL20;
 
@@ -47,6 +50,23 @@ public class GLPhongShader extends GLShader {
 		// "Projection");
 		// glUniformBlockBinding(programID, projectionBlock,
 		// projectionBlockIndex);
+
+	}
+
+	@Override
+	public void copyUniformsToShader(FloatBuffer matrix44Buffer, float[] color) {
+
+		GL20.glUniformMatrix4(getModelMatrixLocation(), false, matrix44Buffer);
+		GL20.glUniform4f(getFragColorLocation(), color[0], color[1], color[2], color[3]);
+
+		glUniform4f(lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
+		glUniform4f(ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
+
+		// IMPLEMENT THIS
+		// glUniform3(cameraSpaceLightPosUnif,
+		// lightPosCameraSpace.fillAndFlipBuffer(vec4Buffer));
+		// glUniform1f(lightAttenuationUnif, lightAttenuation);
+		// glUniform1f(shininessFactorUnif, shininessFactor);
 
 	}
 
