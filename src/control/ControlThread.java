@@ -5,7 +5,7 @@ import main.Main;
 import org.lwjgl.input.Keyboard;
 
 import thread.GameThread;
-import assets.Player;
+import assets.AssetContainer;
 
 /**
  * First stab at a thread for handling input for player.
@@ -17,8 +17,8 @@ public class ControlThread extends GameThread {
 	private boolean upPressed = false;
 	private boolean downPressed = false;
 
-	public ControlThread(Player player, int threadDelay, Main mainApplication) {
-		super(player, threadDelay, mainApplication);
+	public ControlThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
+		super(assContainer, threadDelay, mainApplication);
 	}
 
 	public void gameLoop() {
@@ -43,22 +43,22 @@ public class ControlThread extends GameThread {
 		// rotation speed.
 		// TODO: This really doesn't make any sense, but, meh.
 		if (leftPressed || rightPressed) {
-			player.accelerateRotation();
+			assContainer.getPlayer().accelerateRotation();
 			if (leftPressed) {
-				player.rotateCCW();
+				assContainer.getPlayer().rotateCCW();
 			} else {
-				player.rotateCW();
+				assContainer.getPlayer().rotateCW();
 			}
 		} else {
-			player.resetRotationSpeed();
+			assContainer.getPlayer().resetRotationSpeed();
 		}
 
-		player.move();
+		assContainer.getPlayer().move();
 		if (downPressed || upPressed) {
 			if (downPressed) {
-				player.delerateMovement();
+				assContainer.getPlayer().delerateMovement();
 			} else {
-				player.accelerateMovement();
+				assContainer.getPlayer().accelerateMovement();
 			}
 		}
 

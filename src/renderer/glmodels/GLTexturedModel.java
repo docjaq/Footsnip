@@ -13,13 +13,15 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
+import renderer.glshaders.GLShader;
+
 public class GLTexturedModel extends GLModel {
 
 	// Textures
 	private List<Integer> texIds;
 
-	public GLTexturedModel(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, float[] color) {
-		super(modelPos, modelAngle, modelScale, color);
+	public GLTexturedModel(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color) {
+		super(modelPos, modelAngle, modelScale, shader, color);
 
 		texIds = new ArrayList<Integer>();
 	}

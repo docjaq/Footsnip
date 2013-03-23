@@ -47,11 +47,12 @@ public class GLModel {
 		this.shader = shader;
 	}
 
-	public GLModel(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, float[] color) {
+	public GLModel(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color) {
 		// Set the default quad rotation, scale and position values
 		this.modelPos = modelPos;
 		this.modelAngle = modelAngle;
 		this.modelScale = modelScale;
+		this.shader = shader;
 		this.color = color;
 
 		modelMatrix = new Matrix4f();

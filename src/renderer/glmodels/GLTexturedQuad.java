@@ -13,14 +13,16 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glprimitives.GLVertex;
+import renderer.glshaders.GLShader;
 
 public class GLTexturedQuad extends GLTexturedModel {
 
 	public GLVertex[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
 
-	public GLTexturedQuad(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, float[] color, String textureLocation) {
-		super(modelPos, modelAngle, modelScale, color);
+	public GLTexturedQuad(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color,
+			String textureLocation) {
+		super(modelPos, modelAngle, modelScale, shader, color);
 		// We'll define our quad using 4 vertices of the custom 'TexturedVertex'
 		// class
 		GLVertex v0 = new GLVertex();

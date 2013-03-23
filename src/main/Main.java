@@ -7,15 +7,13 @@ import renderer.Renderer_3_2;
 import thread.GameThread;
 import thread.ObservableThread;
 import thread.ThreadObserver;
-import assets.Player;
+import assets.AssetContainer;
 import control.ControlThread;
 import exception.RendererException;
 
 public class Main {
 
 	private List<GameThread> childThreads = new ArrayList<GameThread>(2);
-
-	private Player player;
 
 	/*********************************
 	 * JAQ Levels should maybe be entities, as it would seemingly make
@@ -36,9 +34,13 @@ public class Main {
 	}
 
 	public Main() throws RendererException {
-		player = new Player("Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f });
+		// player = new Player("Dave the Cunt", 0, new float[] { 1.0f, 0.0f,
+		// 0.0f });
 
-		GameThread rendererThread = new Renderer_3_2(player, 10, this);
+		final AssetContainer assContainer = new AssetContainer();
+
+		GameThread rendererThread = new Renderer_3_2(assContainer, 10, this);
+		rendererThread.setPriority(Thread.MAX_PRIORITY);
 		rendererThread.start();
 		childThreads.add(rendererThread);
 
@@ -46,7 +48,8 @@ public class Main {
 			@Override
 			public void setupDone(ObservableThread subject) {
 				// Renderer is set up, so start the control thread.
-				GameThread controlThread = new ControlThread(player, 10, Main.this);
+				GameThread controlThread = new ControlThread(assContainer, 10, Main.this);
+				controlThread.setPriority(Thread.MIN_PRIORITY);
 				controlThread.start();
 				childThreads.add(controlThread);
 			}

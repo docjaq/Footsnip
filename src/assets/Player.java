@@ -27,16 +27,6 @@ public class Player extends Character {
 	private Vector3f movementVector;
 	private Vector3f currentDirectionVector;
 
-	public Player(String name, int age, float[] color) {
-		super(name);
-		this.age = age;
-		this.color = color;
-
-		rotationDelta = DEFAULT_ROTATION_SPEED;
-		this.movementVector = new Vector3f(0f, 0f, 0f);
-		this.currentDirectionVector = new Vector3f(0f, 0f, 0f);
-	}
-
 	public Player(GLModel model, String name, int age, float[] color) {
 		super(model, name);
 		this.age = age;

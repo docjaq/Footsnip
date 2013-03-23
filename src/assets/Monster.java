@@ -21,11 +21,6 @@ public class Monster extends Character {
 	private Vector3f scaleAddResolution = new Vector3f(scaleDelta, scaleDelta, scaleDelta);
 	private Vector3f scaleMinusResolution = new Vector3f(-scaleDelta, -scaleDelta, -scaleDelta);
 
-	public Monster(String name, int level) {
-		super(name);
-		this.level = level;
-	}
-
 	public Monster(GLModel model, String name, int level) {
 		super(model, name);
 		this.level = level;

@@ -13,14 +13,16 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glprimitives.GLVertex;
+import renderer.glshaders.GLShader;
 
 public class GLTexturedCube extends GLTexturedModel {
 
 	public GLVertex[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
 
-	public GLTexturedCube(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, float[] color, String textureLocation) {
-		super(modelPos, modelAngle, modelScale, color);
+	public GLTexturedCube(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color,
+			String textureLocation) {
+		super(modelPos, modelAngle, modelScale, shader, color);
 
 		float[] rgba = { 1, 0, 0, 1 };
 

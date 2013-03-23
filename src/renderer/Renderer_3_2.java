@@ -20,6 +20,7 @@ import renderer.glshaders.GLGeneralShader;
 import renderer.glshaders.GLShader;
 import renderer.glshaders.GLTexturedShader;
 import thread.GameThread;
+import assets.AssetContainer;
 import assets.Monster;
 import assets.Player;
 import exception.RendererException;
@@ -39,13 +40,14 @@ public class Renderer_3_2 extends GameThread {
 	private final int WIDTH = 1024;
 	private final int HEIGHT = 768;
 
-	private List<Monster> monsters;
+	// private List<Monster> monsters;
 
 	private GLWorld glWorld;
 
-	public Renderer_3_2(Player player, int threadDelay, Main mainApplication) {
-		super(player, threadDelay, mainApplication);
-		this.monsters = new ArrayList<Monster>();
+	public Renderer_3_2(AssetContainer assContainer, int threadDelay, Main mainApplication) {
+		super(assContainer, threadDelay, mainApplication);
+
+		// this.monsters = ;
 	}
 
 	protected void beforeLoop() throws RendererException {
@@ -55,21 +57,21 @@ public class Renderer_3_2 extends GameThread {
 		// Camera is actually static at this stage
 		glWorld = new GLWorld(WIDTH, HEIGHT, new Vector3f(0, 0, 0));
 
-		monsters = new ArrayList<Monster>();
+		// monsters = new ArrayList<Monster>();
 
 		createEntities();
 	}
 
 	protected void afterLoop() {
 		// TODO: Modify this to accept the whole entity data-structure
-		destroyOpenGL(glWorld, player);
+		destroyOpenGL(glWorld, assContainer.getPlayer());
 	}
 
 	// TODO: Sort this method out so we can apply transforms and shit to our
 	// 'data structure' of models. Currently it's pretty hard-coded to our
 	// texturedQuad model
 	private void logicCycle() {
-		for (Monster m : monsters) {
+		for (Monster m : assContainer.getMonsters()) {
 			m.rotate();
 		}
 
@@ -82,8 +84,8 @@ public class Renderer_3_2 extends GameThread {
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 
-		renderPlayer(player);
-		renderMonsters(monsters);
+		renderPlayer(assContainer.getPlayer());
+		renderMonsters(assContainer.getMonsters());
 
 		exitOnGLError("logicCycle");
 	}
@@ -102,11 +104,11 @@ public class Renderer_3_2 extends GameThread {
 		Vector3f modelAngle = new Vector3f(0, 0, 0);
 		Vector3f modelScale = new Vector3f(0.05f, 0.05f, 0.05f);
 		float[] modelColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-		GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale, modelColor, PLAYER_TEXTURE);
-		model.setShader(texturedShader);
+		GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale, texturedShader, modelColor, PLAYER_TEXTURE);
 
-		player.setModel(model);
+		assContainer.setPlayer(new Player(model, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 
+		assContainer.setMonsters(new ArrayList<Monster>());
 		// ATTENTION: Takes some time to load as it's re-loading the texture for
 		// EVERY model :)
 		for (int i = 0; i < 30; i++) {
@@ -115,11 +117,10 @@ public class Renderer_3_2 extends GameThread {
 			Vector3f monsterScale = new Vector3f(0.05f, 0.05f, 0.05f);
 			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) Math.random() };
 			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 4)];
-			GLModel monsterModel = new GLTexturedCube(monsterPos, monsterAngle, monsterScale, monsterColor, texture);
-			monsterModel.setShader(generalShader);
+			GLModel monsterModel = new GLTexturedCube(monsterPos, monsterAngle, monsterScale, generalShader, monsterColor, texture);
 			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
 			monster.setRotationDelta((float) Math.random() * 2f - 1f);
-			monsters.add(monster);
+			assContainer.getMonsters().add(monster);
 		}
 	}
 
