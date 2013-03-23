@@ -3,9 +3,8 @@ package renderer.glshaders;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniform4f;
 
-import java.nio.FloatBuffer;
-
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.util.vector.Matrix4f;
 
 public class GLPhongShader extends GLShader {
 
@@ -54,9 +53,18 @@ public class GLPhongShader extends GLShader {
 	}
 
 	@Override
-	public void copyUniformsToShader(FloatBuffer matrix44Buffer, float[] color) {
+	public void copyUniformsToShader(Matrix4f modelMatrix, float[] color) {
+
+		modelMatrix.store(matrix44Buffer);
+		matrix44Buffer.flip();
 
 		GL20.glUniformMatrix4(getModelMatrixLocation(), false, matrix44Buffer);
+
+		// Mat3 normMatrix = new Mat3(modelMatrix.top());
+		// normMatrix = Glm.transpose(Glm.inverse(normMatrix));
+		// glUniformMatrix3(pProg.normalModelToCameraMatrixUnif, false,
+		// normMatrix.fillAndFlipBuffer(mat3Buffer));
+
 		GL20.glUniform4f(getFragColorLocation(), color[0], color[1], color[2], color[3]);
 
 		glUniform4f(lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);

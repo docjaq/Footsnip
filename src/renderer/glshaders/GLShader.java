@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.text.MessageFormat;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.util.vector.Matrix4f;
 
 import exception.RendererException;
 
@@ -23,6 +25,8 @@ public abstract class GLShader {
 	protected int projectionMatrixLocation;
 	protected int viewMatrixLocation;
 
+	protected FloatBuffer matrix44Buffer = null;
+
 	/**
 	 * I *think* this needs to be here... Maybe a better way to set up all the
 	 * matrix stuff than sending the glWorld object...
@@ -30,7 +34,7 @@ public abstract class GLShader {
 	// protected GLWorld glWorld;
 
 	public GLShader() {
-		// this.glWorld = glWorld;
+		matrix44Buffer = BufferUtils.createFloatBuffer(16);
 	}
 
 	public void create(String[] shaderName) throws RendererException {
@@ -54,7 +58,7 @@ public abstract class GLShader {
 
 	public abstract void setupShaderVariables();
 
-	public abstract void copyUniformsToShader(FloatBuffer modelMatrixBuffer, float[] color);
+	public abstract void copyUniformsToShader(Matrix4f modelMatrix, float[] color);
 
 	public void destroy() {
 		GL20.glDetachShader(programID, vertID);

@@ -4,9 +4,6 @@ import static maths.LinearAlgebra.degreesToRadians;
 import static renderer.GLUtilityMethods.exitOnGLError;
 import geometry.BoundingBox;
 
-import java.nio.FloatBuffer;
-
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -37,7 +34,7 @@ public abstract class GLModel {
 
 	protected GLShader shader;
 
-	protected FloatBuffer matrix44Buffer = null;
+	// protected FloatBuffer matrix44Buffer = null;
 
 	public GLShader getShader() {
 		return shader;
@@ -56,8 +53,6 @@ public abstract class GLModel {
 		this.color = color;
 
 		modelMatrix = new Matrix4f();
-
-		matrix44Buffer = BufferUtils.createFloatBuffer(16);
 	}
 
 	public void draw() {
@@ -66,9 +61,7 @@ public abstract class GLModel {
 		getShader().bindShader();
 		// copyModelMatrixToShader();
 
-		modelMatrix.store(matrix44Buffer);
-		matrix44Buffer.flip();
-		shader.copyUniformsToShader(matrix44Buffer, color);
+		shader.copyUniformsToShader(modelMatrix, color);
 
 		// Bind to the VAO that has all the information about the vertices
 		GL30.glBindVertexArray(vaoId);

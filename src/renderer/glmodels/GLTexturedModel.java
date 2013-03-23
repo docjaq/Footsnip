@@ -31,9 +31,7 @@ public class GLTexturedModel extends GLModel {
 		transform();
 		getShader().bindShader();
 
-		modelMatrix.store(matrix44Buffer);
-		matrix44Buffer.flip();
-		shader.copyUniformsToShader(matrix44Buffer, color);
+		shader.copyUniformsToShader(modelMatrix, color);
 
 		// Bind the texture
 		// This is the texture unit
