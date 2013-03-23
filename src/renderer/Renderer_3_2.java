@@ -14,9 +14,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
-import renderer.glmodels.GLTexturedCube;
+import renderer.glmodels.GLCube;
 import renderer.glmodels.GLTexturedQuad;
-import renderer.glshaders.GLGeneralShader;
+import renderer.glshaders.GLPhongShader;
 import renderer.glshaders.GLShader;
 import renderer.glshaders.GLTexturedShader;
 import thread.GameThread;
@@ -29,6 +29,8 @@ public class Renderer_3_2 extends GameThread {
 
 	private final String[] GEN_SHADER_NAME = { "resources/shaders/general/vertex.glsl", "resources/shaders/general/fragment.glsl" };
 	private final String[] TEX_SHADER_NAME = { "resources/shaders/textured/vertex.glsl", "resources/shaders/textured/fragment.glsl" };
+	private final String[] PHONG_SHADER_NAME = { "resources/shaders/phonglighting/vertex.glsl",
+			"resources/shaders/phonglighting/fragment.glsl" };
 
 	// ATTENTION: Just for now
 	private final String PLAYER_TEXTURE = "resources/images/ship.png";
@@ -92,9 +94,9 @@ public class Renderer_3_2 extends GameThread {
 
 	// Debug method for creating some test stuff
 	private void createEntities() throws RendererException {
-		GLShader generalShader = new GLGeneralShader();
-		generalShader.create(GEN_SHADER_NAME);
-		System.out.println("General shader ID " + generalShader.getProgramID());
+		GLShader phongShader = new GLPhongShader();
+		phongShader.create(PHONG_SHADER_NAME);
+		System.out.println("Phong shader ID " + phongShader.getProgramID());
 
 		GLShader texturedShader = new GLTexturedShader();
 		texturedShader.create(TEX_SHADER_NAME);
@@ -115,9 +117,9 @@ public class Renderer_3_2 extends GameThread {
 			Vector3f monsterPos = new Vector3f((float) Math.random() * 20f - 10f, (float) Math.random() * 14f - 7f, 0);
 			Vector3f monsterAngle = new Vector3f(0, 0, 0);
 			Vector3f monsterScale = new Vector3f(0.05f, 0.05f, 0.05f);
-			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) Math.random() };
+			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1/*Math.random()*/ };
 			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 4)];
-			GLModel monsterModel = new GLTexturedCube(monsterPos, monsterAngle, monsterScale, generalShader, monsterColor, texture);
+			GLModel monsterModel = new GLCube(monsterPos, monsterAngle, monsterScale, phongShader, monsterColor, texture);
 			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
 			monster.setRotationDelta((float) Math.random() * 2f - 1f);
 			assContainer.getMonsters().add(monster);

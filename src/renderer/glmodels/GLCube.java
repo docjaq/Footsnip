@@ -15,15 +15,15 @@ import org.lwjgl.util.vector.Vector3f;
 import renderer.glprimitives.GLVertex;
 import renderer.glshaders.GLShader;
 
-public class GLPhongCube extends GLModel {
+public class GLCube extends GLModel {
 
 	public GLVertex[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
 
-	public GLPhongCube(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color, String textureLocation) {
+	public GLCube(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color, String textureLocation) {
 		super(modelPos, modelAngle, modelScale, shader, color);
 
-		float[] rgba = { 1, 0, 0, 1 };
+		float[] rgba = { (float) Math.random(), (float) Math.random(), (float) Math.random(), 1 };
 
 		GLVertex v0 = new GLVertex(-0.5f, 0.5f, 0f, rgba, 0f, 0f);
 		GLVertex v1 = new GLVertex(-0.5f, -0.5f, 0f, rgba, 0f, 1f);
