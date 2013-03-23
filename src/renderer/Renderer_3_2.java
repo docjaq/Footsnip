@@ -6,9 +6,11 @@ import static renderer.GLUtilityMethods.setupOpenGL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import main.Main;
 
+import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
@@ -19,13 +21,13 @@ import renderer.glmodels.GLTexturedQuad;
 import renderer.glshaders.GLGeneralShader;
 import renderer.glshaders.GLShader;
 import renderer.glshaders.GLTexturedShader;
-import thread.GameThread;
+import thread.RendererThread;
 import assets.AssetContainer;
 import assets.Monster;
 import assets.Player;
 import exception.RendererException;
 
-public class Renderer_3_2 extends GameThread {
+public class Renderer_3_2 extends RendererThread {
 
 	private final String[] GEN_SHADER_NAME = { "resources/shaders/general/vertex.glsl", "resources/shaders/general/fragment.glsl" };
 	private final String[] TEX_SHADER_NAME = { "resources/shaders/textured/vertex.glsl", "resources/shaders/textured/fragment.glsl" };
@@ -40,14 +42,26 @@ public class Renderer_3_2 extends GameThread {
 	private final int WIDTH = 1024;
 	private final int HEIGHT = 768;
 
-	// private List<Monster> monsters;
+	private int maximumFrameRate = 60;
 
 	private GLWorld glWorld;
 
-	public Renderer_3_2(AssetContainer assContainer, int threadDelay, Main mainApplication) {
-		super(assContainer, threadDelay, mainApplication);
+	/** The time of the last frame, to calculate the delta. */
+	private long lastFrameTime;
 
-		// this.monsters = ;
+	/** The time we started counting frames. */
+	private long lastFPSUpdate;
+
+	/** The number of frames rendered since lastFPSUpdate. */
+	private int framesThisSecond;
+
+	public Renderer_3_2(AssetContainer assContainer, Main mainApplication) {
+		super(assContainer, mainApplication);
+
+		// Initialise FPS calculation fields.
+		framesThisSecond = 0;
+		lastFrameTime = getTime();
+		lastFPSUpdate = getTime();
 	}
 
 	protected void beforeLoop() throws RendererException {
@@ -56,8 +70,6 @@ public class Renderer_3_2 extends GameThread {
 
 		// Camera is actually static at this stage
 		glWorld = new GLWorld(WIDTH, HEIGHT, new Vector3f(0, 0, 0));
-
-		// monsters = new ArrayList<Monster>();
 
 		createEntities();
 	}
@@ -72,7 +84,7 @@ public class Renderer_3_2 extends GameThread {
 	// texturedQuad model
 	private void logicCycle() {
 		for (Monster m : assContainer.getMonsters()) {
-			m.rotate();
+			m.rotate(assContainer.getFrameDelta());
 		}
 
 		// -- Update matrices
@@ -119,7 +131,7 @@ public class Renderer_3_2 extends GameThread {
 			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 4)];
 			GLModel monsterModel = new GLTexturedCube(monsterPos, monsterAngle, monsterScale, generalShader, monsterColor, texture);
 			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
-			monster.setRotationDelta((float) Math.random() * 2f - 1f);
+			monster.setRotationDelta((float) Math.random() * 0.2f - 0.1f);
 			assContainer.getMonsters().add(monster);
 		}
 	}
@@ -148,14 +160,64 @@ public class Renderer_3_2 extends GameThread {
 
 		exitOnGLError("loopCycle");
 
-		// update entity stuff
-		// Force a maximum FPS of about 60
-		Display.sync(60);
+		// TODO: Just for debugging, randomly vary the frame rate with a 1/100
+		// chance per frame.
+		if (Math.random() > 0.99) {
+			maximumFrameRate = new Random().nextInt(60) + 20;
+		}
+
+		// Force a maximum FPS.
+		Display.sync(maximumFrameRate);
+
 		// Let the CPU synchronize with the GPU if GPU is tagging behind
 		Display.update();
 
+		updateFPS();
+		assContainer.setFrameDelta(getDelta());
+
+		// TODO: Should this really be in the renderer?
 		if (Display.isCloseRequested()) {
 			mainApplication.quitGame();
 		}
 	}
+
+	/**
+	 * Calculate the time delta between now and the previous frame.
+	 * 
+	 * @return Milliseconds since the last frame.
+	 */
+	private int getDelta() {
+		long time = getTime();
+		int delta = (int) (time - lastFrameTime);
+		lastFrameTime = time;
+
+		return delta;
+	}
+
+	/**
+	 * Gets the current time in milliseconds, using LWJGLs high resolution
+	 * timer.
+	 * 
+	 * @return The current time in milliseconds.
+	 */
+	private long getTime() {
+		return Sys.getTime() * 1000 / Sys.getTimerResolution();
+	}
+
+	/**
+	 * Calculate the frames per second, by counting the number of frames every
+	 * second, and resetting that count at the end of each second.
+	 * 
+	 * TODO: Just displaying it in the title bar for now.
+	 */
+	private void updateFPS() {
+		if (getTime() - lastFPSUpdate > 1000) {
+			Display.setTitle("FPS: " + framesThisSecond);
+			framesThisSecond = 0;
+			lastFPSUpdate += 1000;
+		}
+
+		framesThisSecond++;
+	}
+
 }

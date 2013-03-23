@@ -54,9 +54,9 @@ public class Monster extends Character {
 		Vector3f.add(model.modelScale, scaleMinusResolution, model.modelScale);
 	}
 
-	public void rotate() {
-		model.modelAngle.z += rotationDelta;
-		model.modelAngle.y += rotationDelta;
-		model.modelAngle.x += rotationDelta;
+	public void rotate(int frameDelta) {
+		model.modelAngle.z += rotationDelta * frameDelta;
+		model.modelAngle.y += rotationDelta * frameDelta;
+		model.modelAngle.x += rotationDelta * frameDelta;
 	}
 }

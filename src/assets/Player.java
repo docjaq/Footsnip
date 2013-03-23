@@ -8,10 +8,10 @@ import renderer.glmodels.GLModel;
 
 public class Player extends Character {
 
-	private static final float DEFAULT_ROTATION_SPEED = 1.0f;
-	private static final float ROTATION_ACCELERATION = 0.01f;
+	private static final float DEFAULT_ROTATION_SPEED = 0.1f;
+	private static final float ROTATION_ACCELERATION = 0.001f;
 
-	private static final float DEFAULT_MOVEMENT_SPEED = 0.001f;
+	private static final float DEFAULT_MOVEMENT_SPEED = 0.0001f;
 
 	private static final float MAX_MOVEMENT_SPEED = 100f;
 
@@ -52,13 +52,13 @@ public class Player extends Character {
 		return color;
 	}
 
-	public void move() {
-		model.modelPos.x += movementVector.x * DEFAULT_MOVEMENT_SPEED;
-		model.modelPos.y += movementVector.y * DEFAULT_MOVEMENT_SPEED;
+	public void move(int frameDelta) {
+		model.modelPos.x += movementVector.x * DEFAULT_MOVEMENT_SPEED * frameDelta;
+		model.modelPos.y += movementVector.y * DEFAULT_MOVEMENT_SPEED * frameDelta;
 	}
 
-	public void rotateCCW() {
-		model.modelAngle.z += rotationDelta;
+	public void rotateCCW(int frameDelta) {
+		model.modelAngle.z += rotationDelta * frameDelta;
 		/** Currently looks a bit crap */
 		/*
 		 * yawDiff -= rotationDelta; capMinYaw(); model.modelAngle.x =
@@ -66,8 +66,8 @@ public class Player extends Character {
 		 */
 	}
 
-	public void rotateCW() {
-		model.modelAngle.z -= rotationDelta;
+	public void rotateCW(int frameDelta) {
+		model.modelAngle.z -= rotationDelta * frameDelta;
 		/** Currently looks a bit crap */
 		/*
 		 * yawDiff += rotationDelta; capMaxYaw(); model.modelAngle.x =
@@ -93,7 +93,7 @@ public class Player extends Character {
 		capMaxMovementSpeed();
 	}
 
-	public void delerateMovement() {
+	public void decelerateMovement() {
 		currentDirectionVector.x = (float) Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z));
 		currentDirectionVector.y = (float) Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z));
 

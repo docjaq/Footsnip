@@ -41,22 +41,22 @@ public class ControlThread extends GameThread {
 
 		// All the time that either left or right are pressed, increase the
 		// rotation speed.
-		// TODO: This really doesn't make any sense, but, meh.
 		if (leftPressed || rightPressed) {
 			assContainer.getPlayer().accelerateRotation();
 			if (leftPressed) {
-				assContainer.getPlayer().rotateCCW();
+				assContainer.getPlayer().rotateCCW(assContainer.getFrameDelta());
 			} else {
-				assContainer.getPlayer().rotateCW();
+				assContainer.getPlayer().rotateCW(assContainer.getFrameDelta());
 			}
 		} else {
 			assContainer.getPlayer().resetRotationSpeed();
 		}
 
-		assContainer.getPlayer().move();
+		assContainer.getPlayer().move(assContainer.getFrameDelta());
+
 		if (downPressed || upPressed) {
 			if (downPressed) {
-				assContainer.getPlayer().delerateMovement();
+				assContainer.getPlayer().decelerateMovement();
 			} else {
 				assContainer.getPlayer().accelerateMovement();
 			}

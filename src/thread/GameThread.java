@@ -17,13 +17,12 @@ public abstract class GameThread extends Thread implements ObservableThread {
 	private List<ThreadObserver> setupObservers = new ArrayList<ThreadObserver>();
 
 	/** Flag to determine when to stop the loop. */
-	private boolean timeToStop = false;
+	protected boolean timeToStop = false;
 
 	/** Pause between iterations. */
 	private int threadDelay;
 
 	public GameThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
-		// this.player = player;
 		this.assContainer = assContainer;
 		this.threadDelay = threadDelay;
 		this.mainApplication = mainApplication;
@@ -59,7 +58,7 @@ public abstract class GameThread extends Thread implements ObservableThread {
 
 	protected abstract void gameLoop();
 
-	private void setup() {
+	protected void setup() {
 		beforeLoop();
 
 		// Notify observers that setup is complete.

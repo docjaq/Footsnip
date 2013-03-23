@@ -36,7 +36,7 @@ public class Main {
 	public Main() throws RendererException {
 		final AssetContainer assContainer = new AssetContainer();
 
-		GameThread rendererThread = new Renderer_3_2(assContainer, 0, this);
+		GameThread rendererThread = new Renderer_3_2(assContainer, this);
 		rendererThread.setPriority(Thread.MAX_PRIORITY);
 		rendererThread.start();
 		childThreads.add(rendererThread);
