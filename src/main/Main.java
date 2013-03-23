@@ -34,12 +34,9 @@ public class Main {
 	}
 
 	public Main() throws RendererException {
-		// player = new Player("Dave the Cunt", 0, new float[] { 1.0f, 0.0f,
-		// 0.0f });
-
 		final AssetContainer assContainer = new AssetContainer();
 
-		GameThread rendererThread = new Renderer_3_2(assContainer, 10, this);
+		GameThread rendererThread = new Renderer_3_2(assContainer, 0, this);
 		rendererThread.setPriority(Thread.MAX_PRIORITY);
 		rendererThread.start();
 		childThreads.add(rendererThread);
