@@ -10,7 +10,6 @@ import java.util.Random;
 
 import main.Main;
 
-import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
@@ -22,6 +21,7 @@ import renderer.glshaders.GLGeneralShader;
 import renderer.glshaders.GLShader;
 import renderer.glshaders.GLTexturedShader;
 import thread.RendererThread;
+import util.Utils;
 import assets.AssetContainer;
 import assets.Monster;
 import assets.Player;
@@ -46,9 +46,6 @@ public class Renderer_3_2 extends RendererThread {
 
 	private GLWorld glWorld;
 
-	/** The time of the last frame, to calculate the delta. */
-	private long lastFrameTime;
-
 	/** The time we started counting frames. */
 	private long lastFPSUpdate;
 
@@ -60,8 +57,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		// Initialise FPS calculation fields.
 		framesThisSecond = 0;
-		lastFrameTime = getTime();
-		lastFPSUpdate = getTime();
+		lastFPSUpdate = Utils.getTime();
 	}
 
 	protected void beforeLoop() throws RendererException {
@@ -84,7 +80,7 @@ public class Renderer_3_2 extends RendererThread {
 	// texturedQuad model
 	private void logicCycle() {
 		for (Monster m : assContainer.getMonsters()) {
-			m.rotate(assContainer.getFrameDelta());
+			m.rotate();
 		}
 
 		// -- Update matrices
@@ -131,7 +127,7 @@ public class Renderer_3_2 extends RendererThread {
 			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 4)];
 			GLModel monsterModel = new GLTexturedCube(monsterPos, monsterAngle, monsterScale, generalShader, monsterColor, texture);
 			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
-			monster.setRotationDelta((float) Math.random() * 0.2f - 0.1f);
+			monster.setRotationDelta((float) Math.random() * 2f - 1f);
 			assContainer.getMonsters().add(monster);
 		}
 	}
@@ -173,35 +169,11 @@ public class Renderer_3_2 extends RendererThread {
 		Display.update();
 
 		updateFPS();
-		assContainer.setFrameDelta(getDelta());
 
 		// TODO: Should this really be in the renderer?
 		if (Display.isCloseRequested()) {
 			mainApplication.quitGame();
 		}
-	}
-
-	/**
-	 * Calculate the time delta between now and the previous frame.
-	 * 
-	 * @return Milliseconds since the last frame.
-	 */
-	private int getDelta() {
-		long time = getTime();
-		int delta = (int) (time - lastFrameTime);
-		lastFrameTime = time;
-
-		return delta;
-	}
-
-	/**
-	 * Gets the current time in milliseconds, using LWJGLs high resolution
-	 * timer.
-	 * 
-	 * @return The current time in milliseconds.
-	 */
-	private long getTime() {
-		return Sys.getTime() * 1000 / Sys.getTimerResolution();
 	}
 
 	/**
@@ -211,7 +183,7 @@ public class Renderer_3_2 extends RendererThread {
 	 * TODO: Just displaying it in the title bar for now.
 	 */
 	private void updateFPS() {
-		if (getTime() - lastFPSUpdate > 1000) {
+		if (Utils.getTime() - lastFPSUpdate > 1000) {
 			Display.setTitle("FPS: " + framesThisSecond);
 			framesThisSecond = 0;
 			lastFPSUpdate += 1000;

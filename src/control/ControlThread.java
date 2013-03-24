@@ -44,15 +44,15 @@ public class ControlThread extends GameThread {
 		if (leftPressed || rightPressed) {
 			assContainer.getPlayer().accelerateRotation();
 			if (leftPressed) {
-				assContainer.getPlayer().rotateCCW(assContainer.getFrameDelta());
+				assContainer.getPlayer().rotateCCW();
 			} else {
-				assContainer.getPlayer().rotateCW(assContainer.getFrameDelta());
+				assContainer.getPlayer().rotateCW();
 			}
 		} else {
 			assContainer.getPlayer().resetRotationSpeed();
 		}
 
-		assContainer.getPlayer().move(assContainer.getFrameDelta());
+		assContainer.getPlayer().move();
 
 		if (downPressed || upPressed) {
 			if (downPressed) {
