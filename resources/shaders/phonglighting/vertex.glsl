@@ -2,7 +2,7 @@
 
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 inDiffuseColor;
-layout(location = 2) in vec3 normal;
+layout(location = 2) in vec4 normal;
 
 out vec4 diffuseColor;
 out vec3 vertexNormal;
@@ -12,10 +12,10 @@ out vec4 pass_Color;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
-in vec4 in_Color;
+//in vec4 in_Color;
 
 uniform mat4 modelMatrix;
-uniform mat3 normalMatrix;
+uniform mat4 normalMatrix;
 
 void main()
 {
@@ -25,10 +25,16 @@ void main()
 	//cameraSpacePosition = vec3(gl_Position.x, gl_Position.y, gl_Position.z);
 	
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;
-	vertexNormal = normalMatrix * normal;
+	
+	vec4 tempNormal = projectionMatrix * viewMatrix * normalMatrix * normal;
+	vertexNormal = vec3(tempNormal.x, tempNormal.y, tempNormal.z);
+	
+	//vec3 tempNormal = vec3(normal.x, normal.y, normal.z);
+	//vertexNormal = normalMatrix * tempNormal;
+	
 	diffuseColor = inDiffuseColor;
 	
-	pass_Color = in_Color;
+	//pass_Color = in_Color;
 }
 
 //From original

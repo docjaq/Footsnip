@@ -4,7 +4,6 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 
@@ -26,7 +25,7 @@ public class GLPhongShader extends GLShader {
 	int shininessFactorUnif;
 	int baseDiffuseColorUnif;
 
-	FloatBuffer matrix33Buffer = null;
+	// FloatBuffer normal44Buffer = null;
 	FloatBuffer vector4Buffer = null;
 
 	// This is used at the start of the program...
@@ -35,7 +34,7 @@ public class GLPhongShader extends GLShader {
 	public GLPhongShader() {
 		super();
 
-		matrix33Buffer = BufferUtils.createFloatBuffer(9);
+		// normal44Buffer = BufferUtils.createFloatBuffer(16);
 		vector4Buffer = BufferUtils.createFloatBuffer(4);
 	}
 
@@ -72,22 +71,22 @@ public class GLPhongShader extends GLShader {
 
 		GL20.glUniformMatrix4(getModelMatrixLocation(), false, matrix44Buffer);
 
-		Matrix3f normMatrix = new Matrix3f();
-		normMatrix.m00 = modelMatrix.m00;
-		normMatrix.m01 = modelMatrix.m01;
-		normMatrix.m02 = modelMatrix.m02;
-		normMatrix.m10 = modelMatrix.m10;
-		normMatrix.m11 = modelMatrix.m11;
-		normMatrix.m12 = modelMatrix.m12;
-		normMatrix.m20 = modelMatrix.m20;
-		normMatrix.m21 = modelMatrix.m21;
-		normMatrix.m22 = modelMatrix.m22;
+		Matrix4f normMatrix = new Matrix4f();
+		normMatrix.load(modelMatrix);
+		/*
+		 * normMatrix.m00 = modelMatrix.m00; normMatrix.m01 = modelMatrix.m01;
+		 * normMatrix.m02 = modelMatrix.m02; normMatrix.m03 = modelMatrix.m03;
+		 * normMatrix.m10 = modelMatrix.m10; normMatrix.m11 = modelMatrix.m11;
+		 * normMatrix.m12 = modelMatrix.m12; normMatrix.m13 = modelMatrix.m13;
+		 * normMatrix.m20 = modelMatrix.m20; normMatrix.m21 = modelMatrix.m21;
+		 * normMatrix.m22 = modelMatrix.m22; normMatrix.m23 = modelMatrix.m23;
+		 */
 
 		normMatrix.invert();
 		normMatrix.transpose();
-		normMatrix.store(matrix33Buffer);
-		matrix33Buffer.flip();
-		GL20.glUniformMatrix3(normalMatrixLocation, false, matrix33Buffer);
+		normMatrix.store(matrix44Buffer);
+		matrix44Buffer.flip();
+		GL20.glUniformMatrix4(normalMatrixLocation, false, matrix44Buffer);
 
 		GL20.glUniform4f(getFragColorLocation(), color[0], color[1], color[2], color[3]);
 

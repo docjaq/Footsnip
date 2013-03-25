@@ -15,8 +15,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
-import renderer.glmodels.GLModel;
 import renderer.glmodels.GLCube;
+import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTexturedQuad;
 import renderer.glshaders.GLPhongShader;
 import renderer.glshaders.GLShader;
@@ -129,7 +129,13 @@ public class Renderer_3_2 extends RendererThread {
 			Vector3f monsterPos = new Vector3f((float) Math.random() * 20f - 10f, (float) Math.random() * 14f - 7f, 0);
 			Vector3f monsterAngle = new Vector3f(0, 0, 0);
 			Vector3f monsterScale = new Vector3f(0.05f, 0.05f, 0.05f);
-			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1/*Math.random()*/ };
+			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1 /*
+																													 * Math
+																													 * .
+																													 * random
+																													 * (
+																													 * )
+																													 */};
 			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 4)];
 			GLModel monsterModel = new GLCube(monsterPos, monsterAngle, monsterScale, phongShader, monsterColor, texture);
 			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
