@@ -4,9 +4,6 @@ import static maths.LinearAlgebra.degreesToRadians;
 import static renderer.GLUtilityMethods.exitOnGLError;
 import geometry.BoundingBox;
 
-import java.nio.FloatBuffer;
-
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -17,7 +14,7 @@ import org.lwjgl.util.vector.Vector3f;
 import renderer.GLWorld;
 import renderer.glshaders.GLShader;
 
-public class GLModel {
+public abstract class GLModel {
 
 	// Quad Position variables
 	public Vector3f modelPos;
@@ -30,14 +27,14 @@ public class GLModel {
 	protected int vboiId = 0;
 	protected int indicesCount = 0;
 
-	private float[] color;
+	protected float[] color;
 
 	// Model Matrix
-	private Matrix4f modelMatrix;
+	protected Matrix4f modelMatrix;
 
-	private GLShader shader;
+	protected GLShader shader;
 
-	private FloatBuffer matrix44Buffer = null;
+	// protected FloatBuffer matrix44Buffer = null;
 
 	public GLShader getShader() {
 		return shader;
@@ -56,15 +53,15 @@ public class GLModel {
 		this.color = color;
 
 		modelMatrix = new Matrix4f();
-
-		matrix44Buffer = BufferUtils.createFloatBuffer(16);
 	}
 
 	public void draw() {
 
 		transform();
 		getShader().bindShader();
-		copyModelMatrixToShader();
+		// copyModelMatrixToShader();
+
+		shader.copyUniformsToShader(modelMatrix, color);
 
 		// Bind to the VAO that has all the information about the vertices
 		GL30.glBindVertexArray(vaoId);
@@ -146,13 +143,9 @@ public class GLModel {
 	// ATTENTION: Before, had a local Floatbuffer in the class, but as it's just
 	// used to copy stuff to the shader, seems a waste. Maybe a better way than
 	// sending the reference around though?
-	public void copyModelMatrixToShader() {
-		modelMatrix.store(matrix44Buffer);
-		matrix44Buffer.flip();
-		GL20.glUniformMatrix4(shader.getModelMatrixLocation(), false, matrix44Buffer);
-		// This copies the colour to the (fragment) shader
-		GL20.glUniform4f(shader.getFragColorLocation(), color[0], color[1], color[2], color[3]);
-	}
+	// public void copyModelMatrixToShader() {
+
+	// }
 
 	// public void matrixCleanup() {
 	// modelMatrix.store(matrix44Buffer);

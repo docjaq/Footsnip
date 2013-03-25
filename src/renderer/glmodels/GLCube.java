@@ -15,26 +15,30 @@ import org.lwjgl.util.vector.Vector3f;
 import renderer.glprimitives.GLVertexTexure;
 import renderer.glshaders.GLShader;
 
-public class GLTexturedCube extends GLTexturedModel {
+public class GLCube extends GLModel {
 
 	public GLVertexTexure[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
 
-	public GLTexturedCube(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color,
-			String textureLocation) {
+	public GLCube(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color, String textureLocation) {
 		super(modelPos, modelAngle, modelScale, shader, color);
 
-		float[] rgba = { 1, 0, 0, 1 };
+		float[] blue = { 0.0f, 0.0f, 1.0f, 1 };
+		float[] red = { 1.0f, 0.0f, 0.0f, 1 };
+		float[] rgba = { (float) Math.random(), (float) Math.random(), (float) Math.random(), 1 };
 
-		GLVertexTexure v0 = new GLVertexTexure(-0.5f, 0.5f, 0f, rgba, 0f, 0f);
-		GLVertexTexure v1 = new GLVertexTexure(-0.5f, -0.5f, 0f, rgba, 0f, 1f);
-		GLVertexTexure v2 = new GLVertexTexure(0.5f, -0.5f, 0f, rgba, 1f, 1f);
-		GLVertexTexure v3 = new GLVertexTexure(0.5f, 0.5f, 0f, rgba, 1f, 0f);
+		// Change this to using the GLVertexNormal class
+		// Compute the vertex normals...
 
-		GLVertexTexure v4 = new GLVertexTexure(-0.5f, 0.5f, 1f, rgba, 0f, 0f);
-		GLVertexTexure v5 = new GLVertexTexure(-0.5f, -0.5f, 1f, rgba, 0f, 1f);
-		GLVertexTexure v6 = new GLVertexTexure(0.5f, -0.5f, 1f, rgba, 0f, 1f);
-		GLVertexTexure v7 = new GLVertexTexure(0.5f, 0.5f, 1f, rgba, 0f, 0f);
+		GLVertexTexure v0 = new GLVertexTexure(-0.5f, 0.5f, 0f, blue, 0f, 0f);
+		GLVertexTexure v1 = new GLVertexTexure(-0.5f, -0.5f, 0f, blue, 0f, 1f);
+		GLVertexTexure v2 = new GLVertexTexure(0.5f, -0.5f, 0f, blue, 1f, 1f);
+		GLVertexTexure v3 = new GLVertexTexure(0.5f, 0.5f, 0f, blue, 1f, 0f);
+
+		GLVertexTexure v4 = new GLVertexTexure(-0.5f, 0.5f, 1f, red, 0f, 0f);
+		GLVertexTexure v5 = new GLVertexTexure(-0.5f, -0.5f, 1f, red, 0f, 1f);
+		GLVertexTexure v6 = new GLVertexTexure(0.5f, -0.5f, 1f, red, 0f, 1f);
+		GLVertexTexure v7 = new GLVertexTexure(0.5f, 0.5f, 1f, red, 0f, 0f);
 
 		vertices = new GLVertexTexure[] { v0, v1, v2, v3, v4, v5, v6, v7 };
 
@@ -53,7 +57,7 @@ public class GLTexturedCube extends GLTexturedModel {
 		1, 2, 5, 5, 6, 2, /* */
 		3, 0, 7, 7, 4, 0, /* */
 		6, 2, 7, 7, 2, 3, /* */
-		6, 7, 4, 4, 5, 6 };
+		6, 7, 4, 4, 5, 6 };/* 1, 1 */
 		indicesCount = indices.length;
 		ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(indicesCount);
 		indicesBuffer.put(indices);
@@ -74,11 +78,14 @@ public class GLTexturedCube extends GLTexturedModel {
 		// and then call these commands to then separate it out in the VAO
 
 		// Put the position coordinates in attribute list 0
-		GL20.glVertexAttribPointer(0, GLVertexTexure.positionElementCount, GL11.GL_FLOAT, false, GLVertexTexure.stride, GLVertexTexure.positionByteOffset);
+		GL20.glVertexAttribPointer(0, GLVertexTexure.positionElementCount, GL11.GL_FLOAT, false, GLVertexTexure.stride,
+				GLVertexTexure.positionByteOffset);
 		// Put the color components in attribute list 1
-		GL20.glVertexAttribPointer(1, GLVertexTexure.colorElementCount, GL11.GL_FLOAT, false, GLVertexTexure.stride, GLVertexTexure.colorByteOffset);
+		GL20.glVertexAttribPointer(1, GLVertexTexure.colorElementCount, GL11.GL_FLOAT, false, GLVertexTexure.stride,
+				GLVertexTexure.colorByteOffset);
 		// Put the texture coordinates in attribute list 2
-		GL20.glVertexAttribPointer(2, GLVertexTexure.textureElementCount, GL11.GL_FLOAT, false, GLVertexTexure.stride, GLVertexTexure.textureByteOffset);
+		GL20.glVertexAttribPointer(2, GLVertexTexure.textureElementCount, GL11.GL_FLOAT, false, GLVertexTexure.stride,
+				GLVertexTexure.textureByteOffset);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
@@ -90,11 +97,6 @@ public class GLTexturedCube extends GLTexturedModel {
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId);
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		// TODO: Weird that this is being called from the child class. ALSO,
-		// need to store shared textures, as this being loaded EVERY time for
-		// each quad
-		setupTextures(textureLocation);
 
 		exitOnGLError("setupQuad");
 	}

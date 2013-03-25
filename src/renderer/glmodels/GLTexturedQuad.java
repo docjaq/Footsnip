@@ -12,12 +12,12 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
-import renderer.glprimitives.GLVertex;
+import renderer.glprimitives.GLVertexTexure;
 import renderer.glshaders.GLShader;
 
 public class GLTexturedQuad extends GLTexturedModel {
 
-	public GLVertex[] vertices = null;
+	public GLVertexTexure[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
 
 	public GLTexturedQuad(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color,
@@ -25,27 +25,27 @@ public class GLTexturedQuad extends GLTexturedModel {
 		super(modelPos, modelAngle, modelScale, shader, color);
 		// We'll define our quad using 4 vertices of the custom 'TexturedVertex'
 		// class
-		GLVertex v0 = new GLVertex();
+		GLVertexTexure v0 = new GLVertexTexure();
 		v0.setXYZ(-0.5f, 0.5f, 0);
 		v0.setRGB(1, 0, 0);
 		v0.setST(0, 0);
-		GLVertex v1 = new GLVertex();
+		GLVertexTexure v1 = new GLVertexTexure();
 		v1.setXYZ(-0.5f, -0.5f, 0);
 		v1.setRGB(0, 1, 0);
 		v1.setST(0, 1);
-		GLVertex v2 = new GLVertex();
+		GLVertexTexure v2 = new GLVertexTexure();
 		v2.setXYZ(0.5f, -0.5f, 0);
 		v2.setRGB(0, 0, 1);
 		v2.setST(1, 1);
-		GLVertex v3 = new GLVertex();
+		GLVertexTexure v3 = new GLVertexTexure();
 		v3.setXYZ(0.5f, 0.5f, 0);
 		v3.setRGB(1, 1, 1);
 		v3.setST(1, 0);
 
-		vertices = new GLVertex[] { v0, v1, v2, v3 };
+		vertices = new GLVertexTexure[] { v0, v1, v2, v3 };
 
 		// Put each 'Vertex' in one FloatBuffer
-		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertex.stride);
+		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertexTexure.stride);
 		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
 		for (int i = 0; i < vertices.length; i++) {
 			// Add position, color and texture floats to the buffer
@@ -75,11 +75,11 @@ public class GLTexturedQuad extends GLTexturedModel {
 		// and then call these commands to then separate it out in the VAO
 
 		// Put the position coordinates in attribute list 0
-		GL20.glVertexAttribPointer(0, GLVertex.positionElementCount, GL11.GL_FLOAT, false, GLVertex.stride, GLVertex.positionByteOffset);
+		GL20.glVertexAttribPointer(0, GLVertexTexure.positionElementCount, GL11.GL_FLOAT, false, GLVertexTexure.stride, GLVertexTexure.positionByteOffset);
 		// Put the color components in attribute list 1
-		GL20.glVertexAttribPointer(1, GLVertex.colorElementCount, GL11.GL_FLOAT, false, GLVertex.stride, GLVertex.colorByteOffset);
+		GL20.glVertexAttribPointer(1, GLVertexTexure.colorElementCount, GL11.GL_FLOAT, false, GLVertexTexure.stride, GLVertexTexure.colorByteOffset);
 		// Put the texture coordinates in attribute list 2
-		GL20.glVertexAttribPointer(2, GLVertex.textureElementCount, GL11.GL_FLOAT, false, GLVertex.stride, GLVertex.textureByteOffset);
+		GL20.glVertexAttribPointer(2, GLVertexTexure.textureElementCount, GL11.GL_FLOAT, false, GLVertexTexure.stride, GLVertexTexure.textureByteOffset);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
