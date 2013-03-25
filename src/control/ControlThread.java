@@ -5,6 +5,7 @@ import main.Main;
 import org.lwjgl.input.Keyboard;
 
 import thread.GameThread;
+import util.Utils;
 import assets.AssetContainer;
 
 /**
@@ -17,8 +18,14 @@ public class ControlThread extends GameThread {
 	private boolean upPressed = false;
 	private boolean downPressed = false;
 
+	/** The time of the last iteration, to calculate the time delta. */
+	private long lastIterationTime;
+
 	public ControlThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
 		super(assContainer, threadDelay, mainApplication);
+
+		// Initialise the delta.
+		getIterationDelta();
 	}
 
 	public void gameLoop() {
@@ -39,20 +46,22 @@ public class ControlThread extends GameThread {
 			}
 		}
 
+		int timeDelta = getIterationDelta();
+
 		// All the time that either left or right are pressed, increase the
 		// rotation speed.
 		if (leftPressed || rightPressed) {
 			assContainer.getPlayer().accelerateRotation();
 			if (leftPressed) {
-				assContainer.getPlayer().rotateCCW();
+				assContainer.getPlayer().rotateCCW(timeDelta);
 			} else {
-				assContainer.getPlayer().rotateCW();
+				assContainer.getPlayer().rotateCW(timeDelta);
 			}
 		} else {
 			assContainer.getPlayer().resetRotationSpeed();
 		}
 
-		assContainer.getPlayer().move();
+		assContainer.getPlayer().move(timeDelta);
 
 		if (downPressed || upPressed) {
 			if (downPressed) {
@@ -61,6 +70,18 @@ public class ControlThread extends GameThread {
 				assContainer.getPlayer().accelerateMovement();
 			}
 		}
+	}
 
+	/**
+	 * Calculate the time delta between now and the previous iteration.
+	 * 
+	 * @return Milliseconds since the last iteration.
+	 */
+	private int getIterationDelta() {
+		long time = Utils.getTime();
+		int delta = (int) (time - lastIterationTime);
+		lastIterationTime = time;
+
+		return delta;
 	}
 }

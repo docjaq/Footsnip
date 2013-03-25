@@ -3,7 +3,6 @@ package assets;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
-import util.Utils;
 
 //This should probably be a class NPC, which Monster then extends, but decided
 //to simplify it
@@ -12,9 +11,6 @@ public class Monster extends Character {
 	private int level;
 
 	private float rotationDelta = 0.5f;
-
-	/** The time of the last rotation, to calculate the time delta. */
-	private long lastRotateTime;
 
 	public void setRotationDelta(float rotationDelta) {
 		// TODO: Dividing this by 30 seems a bit arbitrary, but we're going to
@@ -30,9 +26,6 @@ public class Monster extends Character {
 	public Monster(GLModel model, String name, int level) {
 		super(model, name);
 		this.level = level;
-
-		// Get the delta time once to initialise it.
-		getRotateTimeDelta();
 	}
 
 	public int getLevel() {
@@ -63,23 +56,9 @@ public class Monster extends Character {
 		Vector3f.add(model.modelScale, scaleMinusResolution, model.modelScale);
 	}
 
-	public void rotate() {
-		long timeDelta = getRotateTimeDelta();
+	public void rotate(int timeDelta) {
 		model.modelAngle.z += rotationDelta * timeDelta;
 		model.modelAngle.y += rotationDelta * timeDelta;
 		model.modelAngle.x += rotationDelta * timeDelta;
-	}
-
-	/**
-	 * Calculate the time delta between now and the previous frame.
-	 * 
-	 * @return Milliseconds since the last frame.
-	 */
-	protected int getRotateTimeDelta() {
-		long time = Utils.getTime();
-		int delta = (int) (time - lastRotateTime);
-		lastRotateTime = time;
-
-		return delta;
 	}
 }

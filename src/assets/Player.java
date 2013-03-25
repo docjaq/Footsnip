@@ -5,11 +5,10 @@ import maths.LinearAlgebra;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
-import util.Utils;
 
 public class Player extends Character {
 
-	private static final float DEFAULT_ROTATION_SPEED = 0.003f;
+	private static final float DEFAULT_ROTATION_SPEED = 0.1f;
 	private static final float ROTATION_ACCELERATION = 0.001f;
 
 	private static final float DEFAULT_MOVEMENT_SPEED = 0.0001f;
@@ -28,12 +27,6 @@ public class Player extends Character {
 	private Vector3f movementVector;
 	private Vector3f currentDirectionVector;
 
-	/** The time of the last movement, to calculate the time delta. */
-	private long lastMoveTime;
-
-	/** The time of the last rotation, to calculate the time delta. */
-	private long lastRotateTime;
-
 	public Player(GLModel model, String name, int age, float[] color) {
 		super(model, name);
 		this.age = age;
@@ -44,10 +37,6 @@ public class Player extends Character {
 		this.currentDirectionVector = new Vector3f(0f, 0f, 0f);
 
 		this.defaultYaw = model.modelAngle.x;
-
-		// Initialise the time deltas.
-		getRotateTimeDelta();
-		getMoveTimeDelta();
 	}
 
 	public void setModel(GLModel model) {
@@ -63,14 +52,13 @@ public class Player extends Character {
 		return color;
 	}
 
-	public void move() {
-		int timeDelta = getMoveTimeDelta();
+	public void move(int timeDelta) {
 		model.modelPos.x += movementVector.x * DEFAULT_MOVEMENT_SPEED * timeDelta;
 		model.modelPos.y += movementVector.y * DEFAULT_MOVEMENT_SPEED * timeDelta;
 	}
 
-	public void rotateCCW() {
-		model.modelAngle.z += rotationDelta * getRotateTimeDelta();
+	public void rotateCCW(int timeDelta) {
+		model.modelAngle.z += rotationDelta * timeDelta;
 		/** Currently looks a bit crap */
 		/*
 		 * yawDiff -= rotationDelta; capMinYaw(); model.modelAngle.x =
@@ -78,8 +66,8 @@ public class Player extends Character {
 		 */
 	}
 
-	public void rotateCW() {
-		model.modelAngle.z -= rotationDelta * getRotateTimeDelta();
+	public void rotateCW(int timeDelta) {
+		model.modelAngle.z -= rotationDelta * timeDelta;
 		/** Currently looks a bit crap */
 		/*
 		 * yawDiff += rotationDelta; capMaxYaw(); model.modelAngle.x =
@@ -128,32 +116,5 @@ public class Player extends Character {
 
 	private void capMinYaw() {
 		yawDiff = Math.max(yawDiff, -MAX_YAW_DIFF);
-	}
-
-	/**
-	 * Calculate the time delta between now and the previous rotation.
-	 * 
-	 * @return Milliseconds since the last rotation.
-	 */
-	protected int getRotateTimeDelta() {
-		long time = Utils.getTime();
-		int delta = (int) (time - lastRotateTime);
-		lastRotateTime = time;
-
-		return delta;
-	}
-
-	/**
-	 * Calculate the time delta between now and the previous longitudinal
-	 * movement.
-	 * 
-	 * @return Milliseconds since the last movement.
-	 */
-	protected int getMoveTimeDelta() {
-		long time = Utils.getTime();
-		int delta = (int) (time - lastMoveTime);
-		lastMoveTime = time;
-
-		return delta;
 	}
 }

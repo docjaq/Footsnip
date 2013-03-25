@@ -46,6 +46,12 @@ public class Renderer_3_2 extends RendererThread {
 
 	private int maximumFrameRate = 60;
 
+	/**
+	 * The time of the last frame, to calculate the time delta for rotating
+	 * monsters.
+	 */
+	private long lastFrameTime;
+
 	private GLWorld glWorld;
 
 	/** The time we started counting frames. */
@@ -60,6 +66,7 @@ public class Renderer_3_2 extends RendererThread {
 		// Initialise FPS calculation fields.
 		framesThisSecond = 0;
 		lastFPSUpdate = Utils.getTime();
+		getFrameTimeDelta();
 	}
 
 	protected void beforeLoop() throws RendererException {
@@ -81,8 +88,9 @@ public class Renderer_3_2 extends RendererThread {
 	// 'data structure' of models. Currently it's pretty hard-coded to our
 	// texturedQuad model
 	private void logicCycle() {
+		int frameDelta = getFrameTimeDelta();
 		for (Monster m : assContainer.getMonsters()) {
-			m.rotate();
+			m.rotate(frameDelta);
 		}
 
 		// -- Update matrices
@@ -200,4 +208,16 @@ public class Renderer_3_2 extends RendererThread {
 		framesThisSecond++;
 	}
 
+	/**
+	 * Calculate the time delta between now and the previous frame.
+	 * 
+	 * @return Milliseconds since the last frame.
+	 */
+	protected int getFrameTimeDelta() {
+		long time = Utils.getTime();
+		int delta = (int) (time - lastFrameTime);
+		lastFrameTime = time;
+
+		return delta;
+	}
 }
