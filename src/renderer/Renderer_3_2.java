@@ -6,7 +6,6 @@ import static renderer.GLUtilityMethods.setupOpenGL;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import main.Main;
 
@@ -174,12 +173,12 @@ public class Renderer_3_2 extends RendererThread {
 
 		// TODO: Just for debugging, randomly vary the frame rate with a 1/100
 		// chance per frame.
-		if (Math.random() > 0.99) {
-			maximumFrameRate = new Random().nextInt(60) + 20;
-		}
+		// if (Math.random() > 0.99) {
+		// maximumFrameRate = new Random().nextInt(60) + 20;
+		// }
 
 		// Force a maximum FPS.
-		Display.sync(maximumFrameRate);
+		Display.sync(60);
 
 		// Let the CPU synchronize with the GPU if GPU is tagging behind
 		Display.update();

@@ -1,5 +1,6 @@
 package renderer.glprimitives;
 
+//TODO: Convert the stored format to Vector4fs etc, and implement a GLVertex class
 public class GLVertexNormal {
 
 	// The amount of bytes an element has
@@ -46,16 +47,21 @@ public class GLVertexNormal {
 		this.nxnynznw = new float[] { nx, ny, nz, nw };
 	}
 
-	public GLVertexNormal(float x, float y, float z, float w, float[] rgba, float s, float t, float nx, float ny, float nz, float nw) {
+	public GLVertexNormal(float x, float y, float z, float w, float[] rgba, float nx, float ny, float nz, float nw) {
 		this.xyzw = new float[] { x, y, z, w };
 		this.rgba = rgba;
 		this.nxnynznw = new float[] { nx, ny, nz, nw };
 	}
 
-	public GLVertexNormal(float x, float y, float z, float[] rgba, float s, float t, float nx, float ny, float nz) {
+	public GLVertexNormal(float x, float y, float z, float[] rgba, float nx, float ny, float nz) {
 		this.xyzw = new float[] { x, y, z, 1f };
 		this.rgba = rgba;
 		this.nxnynznw = new float[] { nx, ny, nz, 1f };
+	}
+
+	public GLVertexNormal(float x, float y, float z, float[] rgba) {
+		this.xyzw = new float[] { x, y, z, 1f };
+		this.rgba = rgba;
 	}
 
 	// Setters
@@ -69,6 +75,10 @@ public class GLVertexNormal {
 
 	public void setNXNYNZ(float nx, float ny, float nz) {
 		this.setNXNYNZNW(nx, ny, nz, 1f);
+	}
+
+	public void setNXNYNZ(float[] n) {
+		this.setNXNYNZNW(n[0], n[1], n[2], 1f);
 	}
 
 	public void setXYZW(float x, float y, float z, float w) {
@@ -130,4 +140,5 @@ public class GLVertexNormal {
 	public float[] getNXNYNZ() {
 		return new float[] { this.nxnynznw[0], this.nxnynznw[1], this.nxnynznw[1] };
 	}
+
 }

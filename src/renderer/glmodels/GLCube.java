@@ -5,6 +5,8 @@ import static renderer.GLUtilityMethods.exitOnGLError;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
+import maths.LinearAlgebra;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -12,12 +14,12 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
-import renderer.glprimitives.GLVertexTexure;
+import renderer.glprimitives.GLVertexNormal;
 import renderer.glshaders.GLShader;
 
 public class GLCube extends GLModel {
 
-	public GLVertexTexure[] vertices = null;
+	public GLVertexNormal[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
 
 	public GLCube(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color, String textureLocation) {
@@ -27,23 +29,37 @@ public class GLCube extends GLModel {
 		float[] red = { 1.0f, 0.0f, 0.0f, 1 };
 		float[] rgba = { (float) Math.random(), (float) Math.random(), (float) Math.random(), 1 };
 
-		// Change this to using the GLVertexNormal class
-		// Compute the vertex normals...
+		// TODO: Normals are all broken; because it's per-vertex, not-per
+		// face, it's very difficult to compute the vertices right for a cube
+		// when faces share vertices. Well, you basically can't. I'll rewrite
+		// this soon so that each triangle has it's own 3 vertices. Less
+		// efficient, obv, but for now will allow me to actually make sure it's
+		// all working...
 
-		GLVertexTexure v0 = new GLVertexTexure(-0.5f, 0.5f, 0f, blue, 0f, 0f);
-		GLVertexTexure v1 = new GLVertexTexure(-0.5f, -0.5f, 0f, blue, 0f, 1f);
-		GLVertexTexure v2 = new GLVertexTexure(0.5f, -0.5f, 0f, blue, 1f, 1f);
-		GLVertexTexure v3 = new GLVertexTexure(0.5f, 0.5f, 0f, blue, 1f, 0f);
+		GLVertexNormal v0 = new GLVertexNormal(-0.5f, 0.5f, 0f, red);
+		GLVertexNormal v1 = new GLVertexNormal(-0.5f, -0.5f, 0f, red);
+		GLVertexNormal v2 = new GLVertexNormal(0.5f, -0.5f, 0f, red);
+		GLVertexNormal v3 = new GLVertexNormal(0.5f, 0.5f, 0f, red);
 
-		GLVertexTexure v4 = new GLVertexTexure(-0.5f, 0.5f, 1f, red, 0f, 0f);
-		GLVertexTexure v5 = new GLVertexTexure(-0.5f, -0.5f, 1f, red, 0f, 1f);
-		GLVertexTexure v6 = new GLVertexTexure(0.5f, -0.5f, 1f, red, 0f, 1f);
-		GLVertexTexure v7 = new GLVertexTexure(0.5f, 0.5f, 1f, red, 0f, 0f);
+		GLVertexNormal v4 = new GLVertexNormal(-0.5f, 0.5f, 1f, red);
+		GLVertexNormal v5 = new GLVertexNormal(-0.5f, -0.5f, 1f, red);
+		GLVertexNormal v6 = new GLVertexNormal(0.5f, -0.5f, 1f, red);
+		GLVertexNormal v7 = new GLVertexNormal(0.5f, 0.5f, 1f, red);
 
-		vertices = new GLVertexTexure[] { v0, v1, v2, v3, v4, v5, v6, v7 };
+		LinearAlgebra.addNormalToGLVertex(v0, v1, v2);
+		LinearAlgebra.addNormalToGLVertex(v1, v2, v0);
+		LinearAlgebra.addNormalToGLVertex(v2, v0, v1);
+		LinearAlgebra.addNormalToGLVertex(v3, v2, v0);
+
+		LinearAlgebra.addNormalToGLVertex(v4, v5, v6);
+		LinearAlgebra.addNormalToGLVertex(v5, v4, v6);
+		LinearAlgebra.addNormalToGLVertex(v6, v2, v7);
+		LinearAlgebra.addNormalToGLVertex(v7, v6, v4);
+
+		vertices = new GLVertexNormal[] { v0, v1, v2, v3, v4, v5, v6, v7 };
 
 		// Put each 'Vertex' in one FloatBuffer
-		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertexTexure.stride);
+		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertexNormal.stride);
 		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
 		for (int i = 0; i < vertices.length; i++) {
 			// Add position, color and texture floats to the buffer
@@ -78,14 +94,14 @@ public class GLCube extends GLModel {
 		// and then call these commands to then separate it out in the VAO
 
 		// Put the position coordinates in attribute list 0
-		GL20.glVertexAttribPointer(0, GLVertexTexure.positionElementCount, GL11.GL_FLOAT, false, GLVertexTexure.stride,
-				GLVertexTexure.positionByteOffset);
+		GL20.glVertexAttribPointer(0, GLVertexNormal.positionElementCount, GL11.GL_FLOAT, false, GLVertexNormal.stride,
+				GLVertexNormal.positionByteOffset);
 		// Put the color components in attribute list 1
-		GL20.glVertexAttribPointer(1, GLVertexTexure.colorElementCount, GL11.GL_FLOAT, false, GLVertexTexure.stride,
-				GLVertexTexure.colorByteOffset);
+		GL20.glVertexAttribPointer(1, GLVertexNormal.colorElementCount, GL11.GL_FLOAT, false, GLVertexNormal.stride,
+				GLVertexNormal.colorByteOffset);
 		// Put the texture coordinates in attribute list 2
-		GL20.glVertexAttribPointer(2, GLVertexTexure.textureElementCount, GL11.GL_FLOAT, false, GLVertexTexure.stride,
-				GLVertexTexure.textureByteOffset);
+		GL20.glVertexAttribPointer(2, GLVertexNormal.normalElementCount, GL11.GL_FLOAT, false, GLVertexNormal.stride,
+				GLVertexNormal.normalByteOffset);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 

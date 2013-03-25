@@ -1,5 +1,6 @@
 package renderer.glprimitives;
 
+//TODO: Convert the stored format to Vector4fs etc, and implement a GLVertex class
 public class GLVertexTexure {
 
 	// The amount of bytes an element has
