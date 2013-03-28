@@ -63,6 +63,13 @@ public class GLUtilityMethods {
 		// Map the internal OpenGL coordinate system to the entire screen
 		GL11.glViewport(0, 0, width, height);
 
+		// UNSURE: Not having thse was causing all the transparency! Oops,
+		// forgot. This seems like the right way to do it in 3.2, but NOT
+		// ENTIRELY SURE
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDepthMask(true);
+
 		exitOnGLError("setupOpenGL");
 	}
 

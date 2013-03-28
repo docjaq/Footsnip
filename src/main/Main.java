@@ -37,7 +37,7 @@ public class Main {
 		final AssetContainer assContainer = new AssetContainer();
 
 		GameThread rendererThread = new Renderer_3_2(assContainer, this);
- 
+
 		rendererThread.setPriority(Thread.MAX_PRIORITY);
 		rendererThread.start();
 		childThreads.add(rendererThread);
@@ -68,4 +68,11 @@ public class Main {
  * 
  * TODO: J: LIGHTING: Add lighting to the game. I'm currently looking into this
  * in OGL3.3
+ * 
+ * TODO: J: Bounding boxes
+ * 
+ * TODO: J: An easier way to define geometry. Soooo messy atm.
+ * 
+ * TODO: J: Some persistence. For defining model geometry, defining a monster,
+ * etc
  */

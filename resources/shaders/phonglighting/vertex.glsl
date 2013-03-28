@@ -19,29 +19,15 @@ uniform mat4 normalMatrix;
 
 void main()
 {
-	//gl_Position = projectionMatrix * viewMatrix * modelMatrix * in_Position;
-	//vertexNormal = projectionMatrix * viewMatrix * modelMatrix * normal;
-	//diffuseColor = inDiffuseColor;
-	//cameraSpacePosition = vec3(gl_Position.x, gl_Position.y, gl_Position.z);
-	
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;
 	
 	vec4 tempNormal = projectionMatrix * viewMatrix * normalMatrix * normal;
-	vertexNormal = vec3(tempNormal.x, tempNormal.y, tempNormal.z);
 	
-	//vec3 tempNormal = vec3(normal.x, normal.y, normal.z);
-	//vertexNormal = normalMatrix * tempNormal;
+	//TODO: Flipping the normal here to compensate for incorrectly computed normal earlier
+	vertexNormal = vec3(-tempNormal.x, -tempNormal.y, -tempNormal.z);
 	
 	diffuseColor = inDiffuseColor;
 	
-	//pass_Color = in_Color;
+	cameraSpacePosition = vec3(gl_Position.x, gl_Position.y, gl_Position.z);
 }
-
-//From original
-//vec4 tempCamPosition = (modelToCameraMatrix * vec4(position, 1.0));
-//gl_Position = cameraToClipMatrix * tempCamPosition;
-
-//vertexNormal = normalModelToCameraMatrix * normal;
-//diffuseColor = inDiffuseColor;
-//cameraSpacePosition = vec3(tempCamPosition);
 

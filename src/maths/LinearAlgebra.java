@@ -34,6 +34,23 @@ public class LinearAlgebra {
 		v0.setNXNYNZ(normal);
 	}
 
+	// 0 -> TA2, 1 -> TA0, 2 -> TA1
+
+	public static void addNormalToTriangle(GLVertexNormal v0, GLVertexNormal v1, GLVertexNormal v2) {
+		float[] va0 = v0.getXYZ();
+		float[] va1 = v1.getXYZ();
+		float[] va2 = v2.getXYZ();
+
+		float[] normal = normaliseVec(crossProduct(subVec3D(va1, va0), subVec3D(va2, va0)));
+		v0.setNXNYNZ(normal);
+
+		float[] normal2 = normaliseVec(crossProduct(subVec3D(va2, va1), subVec3D(va0, va1)));
+		v1.setNXNYNZ(normal2);
+
+		float[] normal3 = normaliseVec(crossProduct(subVec3D(va0, va2), subVec3D(va1, va2)));
+		v2.setNXNYNZ(normal3);
+	}
+
 	// TODO: This is a horrible method. Replace this.
 	public static float[] normaliseVec(float[] v) {
 		float sum = 0;

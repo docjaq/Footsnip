@@ -13,8 +13,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
-import renderer.glmodels.GLCube;
 import renderer.glmodels.GLModel;
+import renderer.glmodels.GLNormalTest;
 import renderer.glmodels.GLTexturedQuad;
 import renderer.glshaders.GLPhongShader;
 import renderer.glshaders.GLShader;
@@ -43,7 +43,7 @@ public class Renderer_3_2 extends RendererThread {
 	private final int WIDTH = 1024;
 	private final int HEIGHT = 768;
 
-	private int maximumFrameRate = 60;
+	private final int MAX_FPS = 60;
 
 	/**
 	 * The time of the last frame, to calculate the time delta for rotating
@@ -128,19 +128,13 @@ public class Renderer_3_2 extends RendererThread {
 		assContainer.setMonsters(new ArrayList<Monster>());
 		// ATTENTION: Takes some time to load as it's re-loading the texture for
 		// EVERY model :)
-		for (int i = 0; i < 30; i++) {
-			Vector3f monsterPos = new Vector3f((float) Math.random() * 20f - 10f, (float) Math.random() * 14f - 7f, 0);
+		for (int i = 0; i < 100; i++) {
+			Vector3f monsterPos = new Vector3f((float) Math.random() * 120f - 60f, (float) Math.random() * 80f - 40f, 0);
 			Vector3f monsterAngle = new Vector3f(0, 0, 0);
-			Vector3f monsterScale = new Vector3f(0.05f, 0.05f, 0.05f);
-			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1 /*
-																													 * Math
-																													 * .
-																													 * random
-																													 * (
-																													 * )
-																													 */};
+			Vector3f monsterScale = new Vector3f(0.01f, 0.01f, 0.01f);
+			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1 };
 			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 4)];
-			GLModel monsterModel = new GLCube(monsterPos, monsterAngle, monsterScale, phongShader, monsterColor, texture);
+			GLModel monsterModel = new GLNormalTest(monsterPos, monsterAngle, monsterScale, phongShader, monsterColor, texture);
 			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
 			monster.setRotationDelta((float) Math.random() * 2f - 1f);
 			assContainer.getMonsters().add(monster);
@@ -178,7 +172,7 @@ public class Renderer_3_2 extends RendererThread {
 		// }
 
 		// Force a maximum FPS.
-		Display.sync(60);
+		Display.sync(MAX_FPS);
 
 		// Let the CPU synchronize with the GPU if GPU is tagging behind
 		Display.update();
