@@ -69,7 +69,7 @@ public class Renderer_3_2 extends RendererThread {
 	}
 
 	protected void beforeLoop() throws RendererException {
-		float[] backgroundColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+		float[] backgroundColor = { 0.2f, 0.1f, 0.1f, 1.0f };
 		setupOpenGL(WIDTH, HEIGHT, WINDOW_TITLE, backgroundColor);
 
 		// Camera is actually static at this stage
@@ -128,15 +128,15 @@ public class Renderer_3_2 extends RendererThread {
 		assContainer.setMonsters(new ArrayList<Monster>());
 		// ATTENTION: Takes some time to load as it's re-loading the texture for
 		// EVERY model :)
-		for (int i = 0; i < 100; i++) {
-			Vector3f monsterPos = new Vector3f((float) Math.random() * 120f - 60f, (float) Math.random() * 80f - 40f, 0);
+		for (int i = 0; i < 50; i++) {
+			Vector3f monsterPos = new Vector3f((float) Math.random() * 80f - 40f, (float) Math.random() * 60f - 30f, 0);
 			Vector3f monsterAngle = new Vector3f(0, 0, 0);
-			Vector3f monsterScale = new Vector3f(0.01f, 0.01f, 0.01f);
+			Vector3f monsterScale = new Vector3f(0.02f, 0.02f, 0.02f);
 			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1 };
 			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 4)];
 			GLModel monsterModel = new GLNormalTest(monsterPos, monsterAngle, monsterScale, phongShader, monsterColor, texture);
 			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
-			monster.setRotationDelta((float) Math.random() * 2f - 1f);
+			monster.setRotationDelta((float) Math.random() * 5f - 2.5f);
 			assContainer.getMonsters().add(monster);
 		}
 	}

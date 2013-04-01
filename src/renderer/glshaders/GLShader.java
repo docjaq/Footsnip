@@ -27,12 +27,6 @@ public abstract class GLShader {
 
 	protected FloatBuffer matrix44Buffer = null;
 
-	/**
-	 * I *think* this needs to be here... Maybe a better way to set up all the
-	 * matrix stuff than sending the glWorld object...
-	 */
-	// protected GLWorld glWorld;
-
 	public GLShader() {
 		matrix44Buffer = BufferUtils.createFloatBuffer(16);
 	}

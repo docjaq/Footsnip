@@ -2,7 +2,6 @@ package renderer.glmodels;
 
 import static maths.LinearAlgebra.degreesToRadians;
 import static renderer.GLUtilityMethods.exitOnGLError;
-import geometry.BoundingBox;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -13,6 +12,12 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderer.GLWorld;
 import renderer.glshaders.GLShader;
+
+/*
+ * TODO: Need to set the model centres better, as currently they're on the
+ * plane I think. Not too important for now, as our cubes centres are now 0,0,0,
+ * but need to make sure they're initialised to the centre of the object in future.
+ */
 
 public abstract class GLModel {
 
@@ -126,9 +131,9 @@ public abstract class GLModel {
 	}
 
 	// TODO: Implement this method
-	public BoundingBox getBoundingBox() {
-		return new BoundingBox();
-	}
+	// public BoundingBox getBoundingBox() {
+	// return new BoundingBox();
+	// }
 
 	public void transform() {
 		// This order is important for building the matrix

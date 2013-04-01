@@ -25,7 +25,6 @@ public class GLPhongShader extends GLShader {
 	int shininessFactorUnif;
 	int baseDiffuseColorUnif;
 
-	// FloatBuffer normal44Buffer = null;
 	FloatBuffer vector4Buffer = null;
 
 	// This is used at the start of the program...
@@ -33,8 +32,6 @@ public class GLPhongShader extends GLShader {
 
 	public GLPhongShader() {
 		super();
-
-		// normal44Buffer = BufferUtils.createFloatBuffer(16);
 		vector4Buffer = BufferUtils.createFloatBuffer(4);
 	}
 

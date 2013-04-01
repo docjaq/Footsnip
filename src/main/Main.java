@@ -63,16 +63,51 @@ public class Main {
 }
 
 /**
- * TODO: J: Need to set the model centres better, as currently they're on the
- * plane
  * 
- * TODO: J: LIGHTING: Add lighting to the game. I'm currently looking into this
- * in OGL3.3
+ * TODO: RENDERING:
  * 
- * TODO: J: Bounding boxes
+ * - Seems sort of acceptable for now I think. Other more important things.
  * 
- * TODO: J: An easier way to define geometry. Soooo messy atm.
+ * - Figure out how to do more passes on a single object. I.e. multiple lights,
+ * procedural textures, etc. Think you can either call multiple shader programs,
+ * or attach multiple shaders to a program. Going to need to read-up on this.
  * 
- * TODO: J: Some persistence. For defining model geometry, defining a monster,
- * etc
+ * TODO: COLLISION:
+ * 
+ * - This is now a next step I guess. The one problem is it A) relies on a mesh
+ * data-structure (see below), and B) on a scenegraph (see below)
+ * 
+ * TODO: SCENE-GRAPH:
+ * 
+ * - This is again a fair bit of work, but is pretty important for A)
+ * hierarchies of stuff for lots of things (rendering, physics, collision, etc)
+ * 
+ * TODO: MESH STUFF:
+ * 
+ * - An easier way to define geometry. Soooo messy atm. Need to decide how we're
+ * going to do this. I.e. just procedural algorithms, some loading/saving, etc.
+ * 
+ * - Some classes to create some basic Parametric (possibly?) mesh geometry
+ * 
+ * - A mesh data-structure. I'm for a half-edge one. It's overkill for gaming,
+ * but will allow us to more easily do some cool stuff like: subdivision, CSG
+ * (and other boolean-type operations). Judging by what I've found online, we
+ * may need to write this ourselves...
+ * 
+ * - These are all really linked. 1) Define data-structure (DS) for meshes, 2)
+ * Algorithms to create mesh. Put into DS, 3) Algorithms to put DS mesh into
+ * opengl VBOs/VAOs, 4) Algorithms to correctly handle updating VBOs/VAOs when
+ * mesh changes
+ * 
+ * TODO: PERSISTENCE:
+ * 
+ * - For defining a monster, game parameters. Perhaps JSON?
+ * 
+ * - Probably quite important so that we can get rid of some complexity in the
+ * rendering/main methods?
+ * 
+ * TODO: PHYSICS:
+ * 
+ * - Our ship physics work, but are pretty basic. Not sure how to integrate more
+ * into the rest of the game. More reading required.
  */
