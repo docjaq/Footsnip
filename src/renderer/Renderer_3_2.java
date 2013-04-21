@@ -150,8 +150,8 @@ public class Renderer_3_2 extends RendererThread {
 		/**
 		 * All the getShader() method calls for the monsters points to the same
 		 * shader, so just grab it from the first monster and set up the
-		 * matricies once. A better solution would be to grab it from some
-		 * parent container I guess
+		 * matrices once. A better solution would be to grab it from some parent
+		 * container I guess
 		 */
 		glWorld.copyCameraMatricesToShader(monsters.get(0).getModel().getShader());
 		for (Monster m : monsters) {

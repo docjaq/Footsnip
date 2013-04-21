@@ -42,6 +42,14 @@ public class GLPhongShader extends GLShader {
 		viewMatrixLocation = GL20.glGetUniformLocation(programID, "viewMatrix");
 		modelMatrixLocation = GL20.glGetUniformLocation(programID, "modelMatrix");
 
+		// TODO: I've just taken this from the GLTexturedShader; without it I
+		// get an 'invalid operation' error, on the line
+		// GL20.glUniform4f(getFragColorLocation(), color[0], color[1],
+		// color[2], color[3]); in copyUniformsToShader(). I don't know if it's
+		// right, but it makes it work for me :)
+		// Allows for a colour in the fragment shader
+		fragColorLocation = GL20.glGetUniformLocation(programID, "fragColor");
+
 		normalMatrixLocation = GL20.glGetUniformLocation(programID, "normalMatrix");
 		lightIntensityUnif = GL20.glGetUniformLocation(programID, "lightIntensity");
 		ambientIntensityUnif = GL20.glGetUniformLocation(programID, "ambientIntensity");
