@@ -12,12 +12,12 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
-import renderer.glprimitives.GLVertex_texCoords;
+import renderer.glprimitives.GLVertex_texCoords_old;
 import renderer.glshaders.GLShader;
 
 public class GLTexturedQuad extends GLTexturedModel {
 
-	public GLVertex_texCoords[] vertices = null;
+	public GLVertex_texCoords_old[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
 
 	public GLTexturedQuad(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color,
@@ -25,27 +25,27 @@ public class GLTexturedQuad extends GLTexturedModel {
 		super(modelPos, modelAngle, modelScale, shader, color);
 		// We'll define our quad using 4 vertices of the custom 'TexturedVertex'
 		// class
-		GLVertex_texCoords v0 = new GLVertex_texCoords();
+		GLVertex_texCoords_old v0 = new GLVertex_texCoords_old();
 		v0.setXYZ(-0.5f, 0.5f, 0);
 		v0.setRGB(1, 0, 0);
 		v0.setST(0, 0);
-		GLVertex_texCoords v1 = new GLVertex_texCoords();
+		GLVertex_texCoords_old v1 = new GLVertex_texCoords_old();
 		v1.setXYZ(-0.5f, -0.5f, 0);
 		v1.setRGB(0, 1, 0);
 		v1.setST(0, 1);
-		GLVertex_texCoords v2 = new GLVertex_texCoords();
+		GLVertex_texCoords_old v2 = new GLVertex_texCoords_old();
 		v2.setXYZ(0.5f, -0.5f, 0);
 		v2.setRGB(0, 0, 1);
 		v2.setST(1, 1);
-		GLVertex_texCoords v3 = new GLVertex_texCoords();
+		GLVertex_texCoords_old v3 = new GLVertex_texCoords_old();
 		v3.setXYZ(0.5f, 0.5f, 0);
 		v3.setRGB(1, 1, 1);
 		v3.setST(1, 0);
 
-		vertices = new GLVertex_texCoords[] { v0, v1, v2, v3 };
+		vertices = new GLVertex_texCoords_old[] { v0, v1, v2, v3 };
 
 		// Put each 'Vertex' in one FloatBuffer
-		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertex_texCoords.stride);
+		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertex_texCoords_old.stride);
 		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
 		for (int i = 0; i < vertices.length; i++) {
 			// Add position, color and texture floats to the buffer
@@ -75,11 +75,11 @@ public class GLTexturedQuad extends GLTexturedModel {
 		// and then call these commands to then separate it out in the VAO
 
 		// Put the position coordinates in attribute list 0
-		GL20.glVertexAttribPointer(0, GLVertex_texCoords.positionElementCount, GL11.GL_FLOAT, false, GLVertex_texCoords.stride, GLVertex_texCoords.positionByteOffset);
+		GL20.glVertexAttribPointer(0, GLVertex_texCoords_old.positionElementCount, GL11.GL_FLOAT, false, GLVertex_texCoords_old.stride, GLVertex_texCoords_old.positionByteOffset);
 		// Put the color components in attribute list 1
-		GL20.glVertexAttribPointer(1, GLVertex_texCoords.colorElementCount, GL11.GL_FLOAT, false, GLVertex_texCoords.stride, GLVertex_texCoords.colorByteOffset);
+		GL20.glVertexAttribPointer(1, GLVertex_texCoords_old.colorElementCount, GL11.GL_FLOAT, false, GLVertex_texCoords_old.stride, GLVertex_texCoords_old.colorByteOffset);
 		// Put the texture coordinates in attribute list 2
-		GL20.glVertexAttribPointer(2, GLVertex_texCoords.textureElementCount, GL11.GL_FLOAT, false, GLVertex_texCoords.stride, GLVertex_texCoords.textureByteOffset);
+		GL20.glVertexAttribPointer(2, GLVertex_texCoords_old.textureElementCount, GL11.GL_FLOAT, false, GLVertex_texCoords_old.stride, GLVertex_texCoords_old.textureByteOffset);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 

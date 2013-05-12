@@ -12,12 +12,12 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
-import renderer.glprimitives.GLVertex_texCoords;
+import renderer.glprimitives.GLVertex_texCoords_old;
 import renderer.glshaders.GLShader;
 
 public class GLTexturedCube extends GLTexturedModel {
 
-	public GLVertex_texCoords[] vertices = null;
+	public GLVertex_texCoords_old[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
 
 	public GLTexturedCube(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color,
@@ -26,20 +26,20 @@ public class GLTexturedCube extends GLTexturedModel {
 
 		float[] rgba = { 1, 0, 0, 1 };
 
-		GLVertex_texCoords v0 = new GLVertex_texCoords(-0.5f, 0.5f, 0f, rgba, 0f, 0f);
-		GLVertex_texCoords v1 = new GLVertex_texCoords(-0.5f, -0.5f, 0f, rgba, 0f, 1f);
-		GLVertex_texCoords v2 = new GLVertex_texCoords(0.5f, -0.5f, 0f, rgba, 1f, 1f);
-		GLVertex_texCoords v3 = new GLVertex_texCoords(0.5f, 0.5f, 0f, rgba, 1f, 0f);
+		GLVertex_texCoords_old v0 = new GLVertex_texCoords_old(-0.5f, 0.5f, 0f, rgba, 0f, 0f);
+		GLVertex_texCoords_old v1 = new GLVertex_texCoords_old(-0.5f, -0.5f, 0f, rgba, 0f, 1f);
+		GLVertex_texCoords_old v2 = new GLVertex_texCoords_old(0.5f, -0.5f, 0f, rgba, 1f, 1f);
+		GLVertex_texCoords_old v3 = new GLVertex_texCoords_old(0.5f, 0.5f, 0f, rgba, 1f, 0f);
 
-		GLVertex_texCoords v4 = new GLVertex_texCoords(-0.5f, 0.5f, 1f, rgba, 0f, 0f);
-		GLVertex_texCoords v5 = new GLVertex_texCoords(-0.5f, -0.5f, 1f, rgba, 0f, 1f);
-		GLVertex_texCoords v6 = new GLVertex_texCoords(0.5f, -0.5f, 1f, rgba, 0f, 1f);
-		GLVertex_texCoords v7 = new GLVertex_texCoords(0.5f, 0.5f, 1f, rgba, 0f, 0f);
+		GLVertex_texCoords_old v4 = new GLVertex_texCoords_old(-0.5f, 0.5f, 1f, rgba, 0f, 0f);
+		GLVertex_texCoords_old v5 = new GLVertex_texCoords_old(-0.5f, -0.5f, 1f, rgba, 0f, 1f);
+		GLVertex_texCoords_old v6 = new GLVertex_texCoords_old(0.5f, -0.5f, 1f, rgba, 0f, 1f);
+		GLVertex_texCoords_old v7 = new GLVertex_texCoords_old(0.5f, 0.5f, 1f, rgba, 0f, 0f);
 
-		vertices = new GLVertex_texCoords[] { v0, v1, v2, v3, v4, v5, v6, v7 };
+		vertices = new GLVertex_texCoords_old[] { v0, v1, v2, v3, v4, v5, v6, v7 };
 
 		// Put each 'Vertex' in one FloatBuffer
-		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertex_texCoords.stride);
+		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertex_texCoords_old.stride);
 		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
 		for (int i = 0; i < vertices.length; i++) {
 			// Add position, color and texture floats to the buffer
@@ -74,11 +74,11 @@ public class GLTexturedCube extends GLTexturedModel {
 		// and then call these commands to then separate it out in the VAO
 
 		// Put the position coordinates in attribute list 0
-		GL20.glVertexAttribPointer(0, GLVertex_texCoords.positionElementCount, GL11.GL_FLOAT, false, GLVertex_texCoords.stride, GLVertex_texCoords.positionByteOffset);
+		GL20.glVertexAttribPointer(0, GLVertex_texCoords_old.positionElementCount, GL11.GL_FLOAT, false, GLVertex_texCoords_old.stride, GLVertex_texCoords_old.positionByteOffset);
 		// Put the color components in attribute list 1
-		GL20.glVertexAttribPointer(1, GLVertex_texCoords.colorElementCount, GL11.GL_FLOAT, false, GLVertex_texCoords.stride, GLVertex_texCoords.colorByteOffset);
+		GL20.glVertexAttribPointer(1, GLVertex_texCoords_old.colorElementCount, GL11.GL_FLOAT, false, GLVertex_texCoords_old.stride, GLVertex_texCoords_old.colorByteOffset);
 		// Put the texture coordinates in attribute list 2
-		GL20.glVertexAttribPointer(2, GLVertex_texCoords.textureElementCount, GL11.GL_FLOAT, false, GLVertex_texCoords.stride, GLVertex_texCoords.textureByteOffset);
+		GL20.glVertexAttribPointer(2, GLVertex_texCoords_old.textureElementCount, GL11.GL_FLOAT, false, GLVertex_texCoords_old.stride, GLVertex_texCoords_old.textureByteOffset);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 

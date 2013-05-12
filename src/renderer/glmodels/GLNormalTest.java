@@ -7,24 +7,23 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import maths.LinearAlgebra;
-
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
-import renderer.glprimitives.GLVertex_normal;
+import renderer.glprimitives.GLVertex;
 import renderer.glshaders.GLShader;
 
 public class GLNormalTest extends GLModel {
 
-	public GLVertex_normal[] vertices = null;
+	public GLVertex[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
-	private float[] rgba;
-	private List<GLVertex_normal> vertexList;
+	private Vector4f rgba;
+	private List<GLVertex> vertexList;
 
 	public GLNormalTest(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color, String textureLocation) {
 		super(modelPos, modelAngle, modelScale, shader, color);
@@ -33,62 +32,62 @@ public class GLNormalTest extends GLModel {
 
 		// TODO: Messy as fuck, but good to see it seems like it's working, for
 		// debugging purposes
-		vertexList = new ArrayList<GLVertex_normal>();
+		vertexList = new ArrayList<GLVertex>();
 
-		GLVertex_normal tA_0 = new GLVertex_normal(0f, 0f, -1f, rgba);
-		GLVertex_normal tA_1 = new GLVertex_normal(1f, 0f, 0f, rgba);
-		GLVertex_normal tA_2 = new GLVertex_normal(0f, 1f, 0f, rgba);
-		LinearAlgebra.addNormalToTriangle(tA_0, tA_1, tA_2);
+		GLVertex tA_0 = new GLVertex(0f, 0f, -1f, rgba);
+		GLVertex tA_1 = new GLVertex(1f, 0f, 0f, rgba);
+		GLVertex tA_2 = new GLVertex(0f, 1f, 0f, rgba);
+		addNormalToTriangle(tA_0, tA_1, tA_2);
 		addTriangleToList(tA_0, tA_1, tA_2);
 
-		GLVertex_normal tB_0 = new GLVertex_normal(0f, 0f, -1f, rgba);
-		GLVertex_normal tB_1 = new GLVertex_normal(0f, 1f, 0f, rgba);
-		GLVertex_normal tB_2 = new GLVertex_normal(-1f, 0f, 0f, rgba);
-		LinearAlgebra.addNormalToTriangle(tB_0, tB_1, tB_2);
+		GLVertex tB_0 = new GLVertex(0f, 0f, -1f, rgba);
+		GLVertex tB_1 = new GLVertex(0f, 1f, 0f, rgba);
+		GLVertex tB_2 = new GLVertex(-1f, 0f, 0f, rgba);
+		addNormalToTriangle(tB_0, tB_1, tB_2);
 		addTriangleToList(tB_0, tB_1, tB_2);
 
-		GLVertex_normal tC_0 = new GLVertex_normal(0f, 0f, -1f, rgba);
-		GLVertex_normal tC_1 = new GLVertex_normal(-1f, 0f, 0f, rgba);
-		GLVertex_normal tC_2 = new GLVertex_normal(0f, -1f, 0f, rgba);
-		LinearAlgebra.addNormalToTriangle(tC_0, tC_1, tC_2);
+		GLVertex tC_0 = new GLVertex(0f, 0f, -1f, rgba);
+		GLVertex tC_1 = new GLVertex(-1f, 0f, 0f, rgba);
+		GLVertex tC_2 = new GLVertex(0f, -1f, 0f, rgba);
+		addNormalToTriangle(tC_0, tC_1, tC_2);
 		addTriangleToList(tC_0, tC_1, tC_2);
 
-		GLVertex_normal tD_0 = new GLVertex_normal(0f, 0f, -1f, rgba);
-		GLVertex_normal tD_1 = new GLVertex_normal(0f, -1f, 0f, rgba);
-		GLVertex_normal tD_2 = new GLVertex_normal(1f, 0f, 0f, rgba);
-		LinearAlgebra.addNormalToTriangle(tD_0, tD_1, tD_2);
+		GLVertex tD_0 = new GLVertex(0f, 0f, -1f, rgba);
+		GLVertex tD_1 = new GLVertex(0f, -1f, 0f, rgba);
+		GLVertex tD_2 = new GLVertex(1f, 0f, 0f, rgba);
+		addNormalToTriangle(tD_0, tD_1, tD_2);
 		addTriangleToList(tD_0, tD_1, tD_2);
 
 		//
 
-		GLVertex_normal tE_0 = new GLVertex_normal(0f, 0f, 1f, rgba);
-		GLVertex_normal tE_1 = new GLVertex_normal(1f, 0f, 0f, rgba);
-		GLVertex_normal tE_2 = new GLVertex_normal(0f, 1f, 0f, rgba);
-		LinearAlgebra.addNormalToTriangle(tE_0, tE_2, tE_1);
+		GLVertex tE_0 = new GLVertex(0f, 0f, 1f, rgba);
+		GLVertex tE_1 = new GLVertex(1f, 0f, 0f, rgba);
+		GLVertex tE_2 = new GLVertex(0f, 1f, 0f, rgba);
+		addNormalToTriangle(tE_0, tE_2, tE_1);
 		addTriangleToList(tE_0, tE_2, tE_1);
 
-		GLVertex_normal tF_0 = new GLVertex_normal(0f, 0f, 1f, rgba);
-		GLVertex_normal tF_1 = new GLVertex_normal(0f, 1f, 0f, rgba);
-		GLVertex_normal tF_2 = new GLVertex_normal(-1f, 0f, 0f, rgba);
-		LinearAlgebra.addNormalToTriangle(tF_0, tF_2, tF_1);
+		GLVertex tF_0 = new GLVertex(0f, 0f, 1f, rgba);
+		GLVertex tF_1 = new GLVertex(0f, 1f, 0f, rgba);
+		GLVertex tF_2 = new GLVertex(-1f, 0f, 0f, rgba);
+		addNormalToTriangle(tF_0, tF_2, tF_1);
 		addTriangleToList(tF_0, tF_2, tF_1);
 
-		GLVertex_normal tG_0 = new GLVertex_normal(0f, 0f, 1f, rgba);
-		GLVertex_normal tG_1 = new GLVertex_normal(-1f, 0f, 0f, rgba);
-		GLVertex_normal tG_2 = new GLVertex_normal(0f, -1f, 0f, rgba);
-		LinearAlgebra.addNormalToTriangle(tG_0, tG_2, tG_1);
+		GLVertex tG_0 = new GLVertex(0f, 0f, 1f, rgba);
+		GLVertex tG_1 = new GLVertex(-1f, 0f, 0f, rgba);
+		GLVertex tG_2 = new GLVertex(0f, -1f, 0f, rgba);
+		addNormalToTriangle(tG_0, tG_2, tG_1);
 		addTriangleToList(tG_0, tG_2, tG_1);
 
-		GLVertex_normal tH_0 = new GLVertex_normal(0f, 0f, 1f, rgba);
-		GLVertex_normal tH_1 = new GLVertex_normal(0f, -1f, 0f, rgba);
-		GLVertex_normal tH_2 = new GLVertex_normal(1f, 0f, 0f, rgba);
-		LinearAlgebra.addNormalToTriangle(tH_0, tH_2, tH_1);
+		GLVertex tH_0 = new GLVertex(0f, 0f, 1f, rgba);
+		GLVertex tH_1 = new GLVertex(0f, -1f, 0f, rgba);
+		GLVertex tH_2 = new GLVertex(1f, 0f, 0f, rgba);
+		addNormalToTriangle(tH_0, tH_2, tH_1);
 		addTriangleToList(tH_0, tH_2, tH_1);
 
-		GLVertex_normal[] vertices = vertexList.toArray(new GLVertex_normal[vertexList.size()]);
+		GLVertex[] vertices = vertexList.toArray(new GLVertex[vertexList.size()]);
 
 		// Put each 'Vertex' in one FloatBuffer
-		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertex_normal.stride);
+		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertex.stride);
 		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
 		for (int i = 0; i < vertices.length; i++) {
 			// Add position, color and texture floats to the buffer
@@ -123,14 +122,14 @@ public class GLNormalTest extends GLModel {
 		// and then call these commands to then separate it out in the VAO
 
 		// Put the position coordinates in attribute list 0
-		GL20.glVertexAttribPointer(0, GLVertex_normal.positionElementCount, GL11.GL_FLOAT, false, GLVertex_normal.stride,
-				GLVertex_normal.positionByteOffset);
+		GL20.glVertexAttribPointer(0, GLVertex.positionElementCount, GL11.GL_FLOAT, false, GLVertex.stride,
+				GLVertex.positionByteOffset);
 		// Put the color components in attribute list 1
-		GL20.glVertexAttribPointer(1, GLVertex_normal.colorElementCount, GL11.GL_FLOAT, false, GLVertex_normal.stride,
-				GLVertex_normal.colorByteOffset);
+		GL20.glVertexAttribPointer(1, GLVertex.colorElementCount, GL11.GL_FLOAT, false, GLVertex.stride,
+				GLVertex.colorByteOffset);
 		// Put the texture coordinates in attribute list 2
-		GL20.glVertexAttribPointer(2, GLVertex_normal.normalElementCount, GL11.GL_FLOAT, false, GLVertex_normal.stride,
-				GLVertex_normal.normalByteOffset);
+		GL20.glVertexAttribPointer(2, GLVertex.normalElementCount, GL11.GL_FLOAT, false, GLVertex.stride,
+				GLVertex.normalByteOffset);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
@@ -147,12 +146,26 @@ public class GLNormalTest extends GLModel {
 	}
 
 	private void randomiseRGB() {
-		rgba = new float[] { (float) Math.random(), (float) Math.random(), (float) Math.random(), 1 };
+		rgba = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
 	}
 
-	private void addTriangleToList(GLVertex_normal v0, GLVertex_normal v1, GLVertex_normal v2) {
+	private void addTriangleToList(GLVertex v0, GLVertex v1, GLVertex v2) {
 		vertexList.add(v0);
 		vertexList.add(v1);
 		vertexList.add(v2);
+	}
+
+	public static void addNormalToTriangle(GLVertex v0, GLVertex v1, GLVertex v2) {
+		Vector3f vn0 = Vector3f.cross(Vector3f.sub(v1.getXYZ(), v0.getXYZ(), null), Vector3f.sub(v2.getXYZ(), v0.getXYZ(), null), null);
+		vn0.normalise();
+		v0.setNXNYNZ(vn0);
+
+		Vector3f vn1 = Vector3f.cross(Vector3f.sub(v2.getXYZ(), v1.getXYZ(), null), Vector3f.sub(v0.getXYZ(), v1.getXYZ(), null), null);
+		vn1.normalise();
+		v1.setNXNYNZ(vn1);
+
+		Vector3f vn2 = Vector3f.cross(Vector3f.sub(v0.getXYZ(), v2.getXYZ(), null), Vector3f.sub(v1.getXYZ(), v2.getXYZ(), null), null);
+		vn2.normalise();
+		v2.setNXNYNZ(vn2);
 	}
 }

@@ -1,7 +1,7 @@
 package renderer.glprimitives;
 
 //TODO: Convert the stored format to Vector4fs etc, and implement a GLVertex class
-public class GLVertex_texCoords {
+public class GLVertex_normal_old {
 
 	// The amount of bytes an element has
 	public static final int elementBytes = 4;
@@ -9,47 +9,59 @@ public class GLVertex_texCoords {
 	// Elements per parameter
 	public static final int positionElementCount = 4;
 	public static final int colorElementCount = 4;
-	public static final int textureElementCount = 2;
+	public static final int normalElementCount = 4;
+	// public static final int textureElementCount = 2;
 
 	// Bytes per parameter
 	public static final int positionBytesCount = positionElementCount * elementBytes;
 	public static final int colorByteCount = colorElementCount * elementBytes;
-	public static final int textureByteCount = textureElementCount * elementBytes;
+	public static final int normalByteCount = normalElementCount * elementBytes;
+	// public static final int textureByteCount = textureElementCount *
+	// elementBytes;
 
 	// Byte offsets per parameter
 	public static final int positionByteOffset = 0;
 	public static final int colorByteOffset = positionByteOffset + positionBytesCount;
-	public static final int textureByteOffset = colorByteOffset + colorByteCount;
+	public static final int normalByteOffset = colorByteOffset + colorByteCount;
+	// public static final int textureByteOffset = colorByteOffset +
+	// colorByteCount;
 
 	// The amount of elements that a vertex has
-	public static final int elementCount = positionElementCount + colorElementCount + textureElementCount;
+	public static final int elementCount = positionElementCount + colorElementCount + normalElementCount;
 	// The size of a vertex in bytes, like in C/C++: sizeof(Vertex)
-	public static final int stride = positionBytesCount + colorByteCount + textureByteCount;
+	public static final int stride = positionBytesCount + colorByteCount + normalByteCount;
 
 	// Vertex data
 	private float[] xyzw;// = new float[] { 0f, 0f, 0f, 1f };
 	private float[] rgba;// = new float[] { 1f, 1f, 1f, 1f };
-	private float[] st;// = new float[] { 0f, 0f };
+	private float[] nxnynznw;
 
-	public GLVertex_texCoords() {
+	// private float[] st;// = new float[] { 0f, 0f };
+
+	public GLVertex_normal_old() {
 	}
 
-	public GLVertex_texCoords(float x, float y, float z, float w, float r, float g, float b, float a, float s, float t) {
+	public GLVertex_normal_old(float x, float y, float z, float w, float r, float g, float b, float a, float nx, float ny, float nz, float nw) {
 		this.xyzw = new float[] { x, y, z, w };
 		this.rgba = new float[] { r, g, b, a };
-		this.st = new float[] { s, t };
+		this.nxnynznw = new float[] { nx, ny, nz, nw };
 	}
 
-	public GLVertex_texCoords(float x, float y, float z, float w, float[] rgba, float s, float t) {
+	public GLVertex_normal_old(float x, float y, float z, float w, float[] rgba, float nx, float ny, float nz, float nw) {
 		this.xyzw = new float[] { x, y, z, w };
 		this.rgba = rgba;
-		this.st = new float[] { s, t };
+		this.nxnynznw = new float[] { nx, ny, nz, nw };
 	}
 
-	public GLVertex_texCoords(float x, float y, float z, float[] rgba, float s, float t) {
+	public GLVertex_normal_old(float x, float y, float z, float[] rgba, float nx, float ny, float nz) {
 		this.xyzw = new float[] { x, y, z, 1f };
 		this.rgba = rgba;
-		this.st = new float[] { s, t };
+		this.nxnynznw = new float[] { nx, ny, nz, 1f };
+	}
+
+	public GLVertex_normal_old(float x, float y, float z, float[] rgba) {
+		this.xyzw = new float[] { x, y, z, 1f };
+		this.rgba = rgba;
 	}
 
 	// Setters
@@ -61,8 +73,12 @@ public class GLVertex_texCoords {
 		this.setRGBA(r, g, b, 1f);
 	}
 
-	public void setST(float s, float t) {
-		this.st = new float[] { s, t };
+	public void setNXNYNZ(float nx, float ny, float nz) {
+		this.setNXNYNZNW(nx, ny, nz, 1f);
+	}
+
+	public void setNXNYNZ(float[] n) {
+		this.setNXNYNZNW(n[0], n[1], n[2], 1f);
 	}
 
 	public void setXYZW(float x, float y, float z, float w) {
@@ -73,9 +89,13 @@ public class GLVertex_texCoords {
 		this.rgba = new float[] { r, g, b, 1f };
 	}
 
+	public void setNXNYNZNW(float nx, float ny, float nz, float nw) {
+		this.nxnynznw = new float[] { nx, ny, nz, nw };
+	}
+
 	// Getters
 	public float[] getElements() {
-		float[] out = new float[GLVertex_texCoords.elementCount];
+		float[] out = new float[GLVertex_normal_old.elementCount];
 		int i = 0;
 
 		// Insert XYZW elements
@@ -89,8 +109,10 @@ public class GLVertex_texCoords {
 		out[i++] = this.rgba[2];
 		out[i++] = this.rgba[3];
 		// Insert ST elements
-		out[i++] = this.st[0];
-		out[i++] = this.st[1];
+		out[i++] = this.nxnynznw[0];
+		out[i++] = this.nxnynznw[1];
+		out[i++] = this.nxnynznw[2];
+		out[i++] = this.nxnynznw[3];
 
 		return out;
 	}
@@ -111,7 +133,12 @@ public class GLVertex_texCoords {
 		return new float[] { this.rgba[0], this.rgba[1], this.rgba[2] };
 	}
 
-	public float[] getST() {
-		return new float[] { this.st[0], this.st[1] };
+	public float[] getNXNYNZNW() {
+		return new float[] { this.nxnynznw[0], this.nxnynznw[1], this.nxnynznw[1], this.nxnynznw[2] };
 	}
+
+	public float[] getNXNYNZ() {
+		return new float[] { this.nxnynznw[0], this.nxnynznw[1], this.nxnynznw[1] };
+	}
+
 }
