@@ -1,7 +1,7 @@
 package renderer.glprimitives;
 
 //TODO: Convert the stored format to Vector4fs etc, and implement a GLVertex class
-public class GLVertexNormal {
+public class GLVertex_normal {
 
 	// The amount of bytes an element has
 	public static final int elementBytes = 4;
@@ -38,28 +38,28 @@ public class GLVertexNormal {
 
 	// private float[] st;// = new float[] { 0f, 0f };
 
-	public GLVertexNormal() {
+	public GLVertex_normal() {
 	}
 
-	public GLVertexNormal(float x, float y, float z, float w, float r, float g, float b, float a, float nx, float ny, float nz, float nw) {
+	public GLVertex_normal(float x, float y, float z, float w, float r, float g, float b, float a, float nx, float ny, float nz, float nw) {
 		this.xyzw = new float[] { x, y, z, w };
 		this.rgba = new float[] { r, g, b, a };
 		this.nxnynznw = new float[] { nx, ny, nz, nw };
 	}
 
-	public GLVertexNormal(float x, float y, float z, float w, float[] rgba, float nx, float ny, float nz, float nw) {
+	public GLVertex_normal(float x, float y, float z, float w, float[] rgba, float nx, float ny, float nz, float nw) {
 		this.xyzw = new float[] { x, y, z, w };
 		this.rgba = rgba;
 		this.nxnynznw = new float[] { nx, ny, nz, nw };
 	}
 
-	public GLVertexNormal(float x, float y, float z, float[] rgba, float nx, float ny, float nz) {
+	public GLVertex_normal(float x, float y, float z, float[] rgba, float nx, float ny, float nz) {
 		this.xyzw = new float[] { x, y, z, 1f };
 		this.rgba = rgba;
 		this.nxnynznw = new float[] { nx, ny, nz, 1f };
 	}
 
-	public GLVertexNormal(float x, float y, float z, float[] rgba) {
+	public GLVertex_normal(float x, float y, float z, float[] rgba) {
 		this.xyzw = new float[] { x, y, z, 1f };
 		this.rgba = rgba;
 	}
@@ -95,7 +95,7 @@ public class GLVertexNormal {
 
 	// Getters
 	public float[] getElements() {
-		float[] out = new float[GLVertexNormal.elementCount];
+		float[] out = new float[GLVertex_normal.elementCount];
 		int i = 0;
 
 		// Insert XYZW elements

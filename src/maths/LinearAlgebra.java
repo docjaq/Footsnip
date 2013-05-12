@@ -1,6 +1,6 @@
 package maths;
 
-import renderer.glprimitives.GLVertexNormal;
+import renderer.glprimitives.GLVertex_normal;
 
 public class LinearAlgebra {
 
@@ -24,7 +24,7 @@ public class LinearAlgebra {
 
 	// TODO: Convert this method to working on the Vector4fs that will
 	// eventually be a part of the GLVertex classes
-	public static void addNormalToGLVertex(GLVertexNormal v0, GLVertexNormal v1, GLVertexNormal v2) {
+	public static void addNormalToGLVertex(GLVertex_normal v0, GLVertex_normal v1, GLVertex_normal v2) {
 		float[] va0 = v0.getXYZ();
 		float[] va1 = v1.getXYZ();
 		float[] va2 = v2.getXYZ();
@@ -36,7 +36,7 @@ public class LinearAlgebra {
 
 	// 0 -> TA2, 1 -> TA0, 2 -> TA1
 
-	public static void addNormalToTriangle(GLVertexNormal v0, GLVertexNormal v1, GLVertexNormal v2) {
+	public static void addNormalToTriangle(GLVertex_normal v0, GLVertex_normal v1, GLVertex_normal v2) {
 		float[] va0 = v0.getXYZ();
 		float[] va1 = v1.getXYZ();
 		float[] va2 = v2.getXYZ();

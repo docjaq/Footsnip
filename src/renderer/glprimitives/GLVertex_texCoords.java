@@ -1,7 +1,7 @@
 package renderer.glprimitives;
 
 //TODO: Convert the stored format to Vector4fs etc, and implement a GLVertex class
-public class GLVertexTexure {
+public class GLVertex_texCoords {
 
 	// The amount of bytes an element has
 	public static final int elementBytes = 4;
@@ -31,22 +31,22 @@ public class GLVertexTexure {
 	private float[] rgba;// = new float[] { 1f, 1f, 1f, 1f };
 	private float[] st;// = new float[] { 0f, 0f };
 
-	public GLVertexTexure() {
+	public GLVertex_texCoords() {
 	}
 
-	public GLVertexTexure(float x, float y, float z, float w, float r, float g, float b, float a, float s, float t) {
+	public GLVertex_texCoords(float x, float y, float z, float w, float r, float g, float b, float a, float s, float t) {
 		this.xyzw = new float[] { x, y, z, w };
 		this.rgba = new float[] { r, g, b, a };
 		this.st = new float[] { s, t };
 	}
 
-	public GLVertexTexure(float x, float y, float z, float w, float[] rgba, float s, float t) {
+	public GLVertex_texCoords(float x, float y, float z, float w, float[] rgba, float s, float t) {
 		this.xyzw = new float[] { x, y, z, w };
 		this.rgba = rgba;
 		this.st = new float[] { s, t };
 	}
 
-	public GLVertexTexure(float x, float y, float z, float[] rgba, float s, float t) {
+	public GLVertex_texCoords(float x, float y, float z, float[] rgba, float s, float t) {
 		this.xyzw = new float[] { x, y, z, 1f };
 		this.rgba = rgba;
 		this.st = new float[] { s, t };
@@ -75,7 +75,7 @@ public class GLVertexTexure {
 
 	// Getters
 	public float[] getElements() {
-		float[] out = new float[GLVertexTexure.elementCount];
+		float[] out = new float[GLVertex_texCoords.elementCount];
 		int i = 0;
 
 		// Insert XYZW elements

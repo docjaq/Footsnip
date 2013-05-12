@@ -14,12 +14,12 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
-import renderer.glprimitives.GLVertexNormal;
+import renderer.glprimitives.GLVertex_normal;
 import renderer.glshaders.GLShader;
 
 public class GLCube extends GLModel {
 
-	public GLVertexNormal[] vertices = null;
+	public GLVertex_normal[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
 
 	public GLCube(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color, String textureLocation) {
@@ -36,15 +36,15 @@ public class GLCube extends GLModel {
 		// efficient, obv, but for now will allow me to actually make sure it's
 		// all working...
 
-		GLVertexNormal v0 = new GLVertexNormal(-0.5f, 0.5f, 0f, red);
-		GLVertexNormal v1 = new GLVertexNormal(-0.5f, -0.5f, 0f, red);
-		GLVertexNormal v2 = new GLVertexNormal(0.5f, -0.5f, 0f, red);
-		GLVertexNormal v3 = new GLVertexNormal(0.5f, 0.5f, 0f, red);
+		GLVertex_normal v0 = new GLVertex_normal(-0.5f, 0.5f, 0f, red);
+		GLVertex_normal v1 = new GLVertex_normal(-0.5f, -0.5f, 0f, red);
+		GLVertex_normal v2 = new GLVertex_normal(0.5f, -0.5f, 0f, red);
+		GLVertex_normal v3 = new GLVertex_normal(0.5f, 0.5f, 0f, red);
 
-		GLVertexNormal v4 = new GLVertexNormal(-0.5f, 0.5f, 1f, red);
-		GLVertexNormal v5 = new GLVertexNormal(-0.5f, -0.5f, 1f, red);
-		GLVertexNormal v6 = new GLVertexNormal(0.5f, -0.5f, 1f, red);
-		GLVertexNormal v7 = new GLVertexNormal(0.5f, 0.5f, 1f, red);
+		GLVertex_normal v4 = new GLVertex_normal(-0.5f, 0.5f, 1f, red);
+		GLVertex_normal v5 = new GLVertex_normal(-0.5f, -0.5f, 1f, red);
+		GLVertex_normal v6 = new GLVertex_normal(0.5f, -0.5f, 1f, red);
+		GLVertex_normal v7 = new GLVertex_normal(0.5f, 0.5f, 1f, red);
 
 		LinearAlgebra.addNormalToGLVertex(v0, v1, v2);
 		LinearAlgebra.addNormalToGLVertex(v1, v2, v0);
@@ -56,10 +56,10 @@ public class GLCube extends GLModel {
 		LinearAlgebra.addNormalToGLVertex(v6, v2, v7);
 		LinearAlgebra.addNormalToGLVertex(v7, v6, v4);
 
-		vertices = new GLVertexNormal[] { v0, v1, v2, v3, v4, v5, v6, v7 };
+		vertices = new GLVertex_normal[] { v0, v1, v2, v3, v4, v5, v6, v7 };
 
 		// Put each 'Vertex' in one FloatBuffer
-		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertexNormal.stride);
+		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertex_normal.stride);
 		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
 		for (int i = 0; i < vertices.length; i++) {
 			// Add position, color and texture floats to the buffer
@@ -94,14 +94,14 @@ public class GLCube extends GLModel {
 		// and then call these commands to then separate it out in the VAO
 
 		// Put the position coordinates in attribute list 0
-		GL20.glVertexAttribPointer(0, GLVertexNormal.positionElementCount, GL11.GL_FLOAT, false, GLVertexNormal.stride,
-				GLVertexNormal.positionByteOffset);
+		GL20.glVertexAttribPointer(0, GLVertex_normal.positionElementCount, GL11.GL_FLOAT, false, GLVertex_normal.stride,
+				GLVertex_normal.positionByteOffset);
 		// Put the color components in attribute list 1
-		GL20.glVertexAttribPointer(1, GLVertexNormal.colorElementCount, GL11.GL_FLOAT, false, GLVertexNormal.stride,
-				GLVertexNormal.colorByteOffset);
+		GL20.glVertexAttribPointer(1, GLVertex_normal.colorElementCount, GL11.GL_FLOAT, false, GLVertex_normal.stride,
+				GLVertex_normal.colorByteOffset);
 		// Put the texture coordinates in attribute list 2
-		GL20.glVertexAttribPointer(2, GLVertexNormal.normalElementCount, GL11.GL_FLOAT, false, GLVertexNormal.stride,
-				GLVertexNormal.normalByteOffset);
+		GL20.glVertexAttribPointer(2, GLVertex_normal.normalElementCount, GL11.GL_FLOAT, false, GLVertex_normal.stride,
+				GLVertex_normal.normalByteOffset);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
