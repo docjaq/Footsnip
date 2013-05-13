@@ -90,7 +90,10 @@ public class GLNormalTest extends GLModel {
 		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertex.stride);
 		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
 		for (int i = 0; i < vertices.length; i++) {
-			// Add position, color and texture floats to the buffer
+
+			System.out.println(vertices[i].getElements()[0] + " " + vertices[i].getElements()[1] + " " + vertices[i].getElements()[2] + " "
+					+ vertices[i].getElements()[8] + " " + vertices[i].getElements()[9] + " " + vertices[i].getElements()[10]);
+
 			verticesFloatBuffer.put(vertices[i].getElements());
 		}
 		verticesFloatBuffer.flip();
@@ -101,6 +104,9 @@ public class GLNormalTest extends GLModel {
 													// */
 		for (byte i = 0; i < vertices.length; i++) {
 			indices[i] = i;
+		}
+		for (int i = 2; i < indices.length; i = i + 3) {
+			System.out.println("3 " + indices[i - 2] + " " + indices[i - 1] + " " + indices[i]);
 		}
 		indicesCount = indices.length;
 		ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(indicesCount);
@@ -122,14 +128,11 @@ public class GLNormalTest extends GLModel {
 		// and then call these commands to then separate it out in the VAO
 
 		// Put the position coordinates in attribute list 0
-		GL20.glVertexAttribPointer(0, GLVertex.positionElementCount, GL11.GL_FLOAT, false, GLVertex.stride,
-				GLVertex.positionByteOffset);
+		GL20.glVertexAttribPointer(0, GLVertex.positionElementCount, GL11.GL_FLOAT, false, GLVertex.stride, GLVertex.positionByteOffset);
 		// Put the color components in attribute list 1
-		GL20.glVertexAttribPointer(1, GLVertex.colorElementCount, GL11.GL_FLOAT, false, GLVertex.stride,
-				GLVertex.colorByteOffset);
+		GL20.glVertexAttribPointer(1, GLVertex.colorElementCount, GL11.GL_FLOAT, false, GLVertex.stride, GLVertex.colorByteOffset);
 		// Put the texture coordinates in attribute list 2
-		GL20.glVertexAttribPointer(2, GLVertex.normalElementCount, GL11.GL_FLOAT, false, GLVertex.stride,
-				GLVertex.normalByteOffset);
+		GL20.glVertexAttribPointer(2, GLVertex.normalElementCount, GL11.GL_FLOAT, false, GLVertex.stride, GLVertex.normalByteOffset);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 

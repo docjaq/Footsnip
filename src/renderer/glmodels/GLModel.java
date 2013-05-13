@@ -84,7 +84,9 @@ public abstract class GLModel {
 
 		// Draw the vertices
 		// Currently, our GLModel, therefore, can only consist of triangles
-		GL11.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_BYTE, 0);
+		// GL11.glDrawElements(GL11.GL_TRIANGLES, indicesCount,
+		// GL11.GL_UNSIGNED_BYTE, 0);
+		GL11.glDrawElements(GL11.GL_LINE_LOOP, indicesCount, GL11.GL_UNSIGNED_BYTE, 0);
 
 		// Put everything back to default (deselect)
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);

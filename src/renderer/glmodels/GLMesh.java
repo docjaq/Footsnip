@@ -14,7 +14,6 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
@@ -24,19 +23,17 @@ public class GLMesh extends GLModel {
 
 	// public GLVertex[] vertices = null;
 	public ByteBuffer verticesByteBuffer = null;
-	private Vector4f rgba;
+	// private Vector4f rgba;
 	private ArrayList<GLVertex> vertexList;
 	private ArrayList<GLTriangle> triangleList;
 
 	public GLMesh(File meshName, Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color) {
 		super(modelPos, modelAngle, modelScale, shader, color);
 
-		randomiseRGB();
-
 		Ply mesh = new Ply();
 		mesh.read(meshName);
 		vertexList = mesh.getVertices();
-		mesh.normaliseAndCentre(vertexList);// This is the shittest way ever
+		// mesh.normaliseAndCentre(vertexList);// This is the shittest way ever
 		// of coding this
 		triangleList = mesh.getTriangles();
 
@@ -48,12 +45,15 @@ public class GLMesh extends GLModel {
 		/**
 		 * NOTE: Well, the contents of the vertexList and the triangleList
 		 * appear correct, so I'm just putting them into the buffer incorrectly.
-		 * Needs debuging. Or me not being drunk
+		 * Needs debugging. Or me not being drunk
 		 **/
 
 		verticesByteBuffer = BufferUtils.createByteBuffer(vertexList.size() * GLVertex.stride);
 		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
 		for (GLVertex v : vertexList) {
+
+			System.out.println(v.getElements()[0] + " " + v.getElements()[1] + " " + v.getElements()[2] + " " + v.getElements()[8] + " "
+					+ v.getElements()[9] + " " + v.getElements()[10]);
 			verticesFloatBuffer.put(v.getElements());
 		}
 		verticesFloatBuffer.flip();
@@ -62,14 +62,23 @@ public class GLMesh extends GLModel {
 		byte[] indices = new byte[triangleList.size() * 3];
 		int index = 0;
 		for (GLTriangle t : triangleList) {
+			System.out.println("3 " + t.v0.index + " " + t.v1.index + " " + t.v2.index);
 			indices[index++] = (byte) t.v0.index;
 			indices[index++] = (byte) t.v1.index;
 			indices[index++] = (byte) t.v2.index;
 		}
+
+		System.out.println("PLAYER MESH DONE\n\n\n");
+
 		indicesCount = indices.length;
 		ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(indicesCount);
 		indicesBuffer.put(indices);
 		indicesBuffer.flip();
+
+		/**
+		 * DEBUG: Now print out the whole of both buffers here, and do the same
+		 * in the GLNormalTest class. Should then be able to find the bug.
+		 **/
 
 		// Create a new Vertex Array Object in memory and select it (bind)
 		vaoId = GL30.glGenVertexArrays();
@@ -104,16 +113,6 @@ public class GLMesh extends GLModel {
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		exitOnGLError("setupQuad");
-	}
-
-	private void randomiseRGB() {
-		rgba = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
-	}
-
-	private void addTriangleToList(GLVertex v0, GLVertex v1, GLVertex v2) {
-		vertexList.add(v0);
-		vertexList.add(v1);
-		vertexList.add(v2);
 	}
 
 	public static void addNormalToTriangle(GLVertex v0, GLVertex v1, GLVertex v2) {

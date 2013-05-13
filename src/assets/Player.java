@@ -117,4 +117,11 @@ public class Player extends Character {
 	private void capMinYaw() {
 		yawDiff = Math.max(yawDiff, -MAX_YAW_DIFF);
 	}
+
+	// DEBUG: Just to debug the model geometry
+	public void rotate(int timeDelta) {
+		model.modelAngle.z += rotationDelta * timeDelta;
+		model.modelAngle.y += rotationDelta * timeDelta;
+		model.modelAngle.x += rotationDelta * timeDelta;
+	}
 }

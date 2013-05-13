@@ -91,6 +91,7 @@ public class Renderer_3_2 extends RendererThread {
 		for (Monster m : assContainer.getMonsters()) {
 			m.rotate(frameDelta);
 		}
+		assContainer.getPlayer().rotate(frameDelta);
 
 		// -- Update matrices
 		// Reset view and model matrices
@@ -119,12 +120,12 @@ public class Renderer_3_2 extends RendererThread {
 		// texturedShader.getProgramID());
 
 		Vector3f modelPos = new Vector3f(0, 0, 0);
-		Vector3f modelAngle = new Vector3f(90, 90, 90);
-		Vector3f modelScale = new Vector3f(0.5f, 0.5f, 0.5f);
+		Vector3f modelAngle = new Vector3f(0, 0, 00);
+		Vector3f modelScale = new Vector3f(0.2f, 0.2f, 0.2f);
 		float[] modelColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		// GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale,
 		// texturedShader, modelColor, PLAYER_TEXTURE);
-		GLMesh playerModel = new GLMesh(new File("resources/meshes/hand.ply"), modelPos, modelAngle, modelScale, phongShader, modelColor);
+		GLMesh playerModel = new GLMesh(new File("resources/meshes/debug.ply"), modelPos, modelAngle, modelScale, phongShader, modelColor);
 
 		assContainer.setPlayer(new Player(playerModel, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 
