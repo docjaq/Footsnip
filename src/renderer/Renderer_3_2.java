@@ -4,6 +4,7 @@ import static renderer.GLUtilityMethods.destroyOpenGL;
 import static renderer.GLUtilityMethods.exitOnGLError;
 import static renderer.GLUtilityMethods.setupOpenGL;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,12 +14,11 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
+import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLNormalTest;
-import renderer.glmodels.GLTexturedQuad;
 import renderer.glshaders.GLPhongShader;
 import renderer.glshaders.GLShader;
-import renderer.glshaders.GLTexturedShader;
 import thread.RendererThread;
 import util.Utils;
 import assets.AssetContainer;
@@ -113,21 +113,23 @@ public class Renderer_3_2 extends RendererThread {
 		phongShader.create(PHONG_SHADER_NAME);
 		System.out.println("Phong shader ID " + phongShader.getProgramID());
 
-		GLShader texturedShader = new GLTexturedShader();
-		texturedShader.create(TEX_SHADER_NAME);
-		System.out.println("Textured shader ID " + texturedShader.getProgramID());
+		// GLShader texturedShader = new GLTexturedShader();
+		// texturedShader.create(TEX_SHADER_NAME);
+		// System.out.println("Textured shader ID " +
+		// texturedShader.getProgramID());
 
 		Vector3f modelPos = new Vector3f(0, 0, 0);
-		Vector3f modelAngle = new Vector3f(0, 0, 0);
-		Vector3f modelScale = new Vector3f(0.05f, 0.05f, 0.05f);
+		Vector3f modelAngle = new Vector3f(90, 90, 90);
+		Vector3f modelScale = new Vector3f(0.5f, 0.5f, 0.5f);
 		float[] modelColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-		GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale, texturedShader, modelColor, PLAYER_TEXTURE);
+		// GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale,
+		// texturedShader, modelColor, PLAYER_TEXTURE);
+		GLMesh playerModel = new GLMesh(new File("resources/meshes/hand.ply"), modelPos, modelAngle, modelScale, phongShader, modelColor);
 
-		assContainer.setPlayer(new Player(model, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f }));
+		assContainer.setPlayer(new Player(playerModel, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 
 		assContainer.setMonsters(new ArrayList<Monster>());
-		// ATTENTION: Takes some time to load as it's re-loading the texture for
-		// EVERY model :)
+
 		for (int i = 0; i < 50; i++) {
 			Vector3f monsterPos = new Vector3f((float) Math.random() * 80f - 40f, (float) Math.random() * 60f - 30f, 0);
 			Vector3f monsterAngle = new Vector3f(0, 0, 0);

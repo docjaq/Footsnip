@@ -41,6 +41,7 @@ public class GLVertex {
 	public Vector4f rgba;
 	public Vector4f nxnynznw;
 	public Vector4f xyzw;
+	public int index;
 
 	/**
 	 * TODO: A lot of different constructors here. Probably need to decide
@@ -52,8 +53,7 @@ public class GLVertex {
 	public GLVertex() {
 	}
 
-	public GLVertex(float x, float y, float z, float w, float r, float g, float b, float a, float nx, float ny, float nz,
-			float nw) {
+	public GLVertex(float x, float y, float z, float w, float r, float g, float b, float a, float nx, float ny, float nz, float nw) {
 		this.xyzw = new Vector4f(x, y, z, w);
 		this.rgba = new Vector4f(r, g, b, a);
 		this.nxnynznw = new Vector4f(nx, ny, nz, nw);
@@ -76,9 +76,10 @@ public class GLVertex {
 		this.rgba = rgba;
 	}
 
-	public GLVertex(float x, float y, float z) {
+	public GLVertex(int index, float x, float y, float z) {
+		this.index = index;
 		this.xyzw = new Vector4f(x, y, z, 1f);
-		this.rgba = new Vector4f(0, 0, 0, 1);
+		this.rgba = new Vector4f(1, 0, 0, 1);
 	}
 
 	// Setters
@@ -135,7 +136,7 @@ public class GLVertex {
 	}
 
 	/**
-	 * JAQ I'm not entirely sure why all of these need to be compies. I guess as
+	 * JAQ I'm not entirely sure why all of these need to be copies. I guess as
 	 * some of them are different sizes, to be consistent, it makes sense. Ho
 	 * hum.
 	 **/

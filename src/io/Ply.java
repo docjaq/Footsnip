@@ -15,7 +15,7 @@ import renderer.glprimitives.GLVertex;
  * file
  **/
 
-public class ply extends AbstractGeometryFile {
+public class Ply extends AbstractGeometryFile {
 
 	private ArrayList<GLVertex> vertices;
 	private ArrayList<GLTriangle> triangles;
@@ -76,7 +76,8 @@ public class ply extends AbstractGeometryFile {
 			for (int i = 0; i < numVertices; i++) {
 				wholeLine = br.readLine();
 				String[] elements = wholeLine.split(" ");
-				GLVertex vertex = new GLVertex(Float.parseFloat(elements[0]), Float.parseFloat(elements[1]), Float.parseFloat(elements[2]));
+				GLVertex vertex = new GLVertex(i, Float.parseFloat(elements[0]), Float.parseFloat(elements[1]),
+						Float.parseFloat(elements[2]));
 				if (elements.length >= 6) {
 					vertex.setNXNYNZ(Float.parseFloat(elements[3]), Float.parseFloat(elements[4]), Float.parseFloat(elements[5]));
 				}
@@ -86,8 +87,8 @@ public class ply extends AbstractGeometryFile {
 			for (int i = 0; i < numFaces; i++) {
 				wholeLine = br.readLine();
 				String[] elements = wholeLine.split(" ");
-				GLTriangle triangle = new GLTriangle(vertices.get(Integer.parseInt(elements[0])), vertices.get(Integer
-						.parseInt(elements[1])), vertices.get(Integer.parseInt(elements[2])));
+				GLTriangle triangle = new GLTriangle(vertices.get(Integer.parseInt(elements[1])), vertices.get(Integer
+						.parseInt(elements[2])), vertices.get(Integer.parseInt(elements[3])));
 				triangles.add(triangle);
 			}
 
