@@ -22,7 +22,7 @@ import renderer.glshaders.GLShader;
 public class GLMesh extends GLModel {
 
 	// public GLVertex[] vertices = null;
-	public ByteBuffer verticesByteBuffer = null;
+	private ByteBuffer verticesByteBuffer = null;
 	// private Vector4f rgba;
 	private ArrayList<GLVertex> vertexList;
 	private ArrayList<GLTriangle> triangleList;
@@ -50,10 +50,12 @@ public class GLMesh extends GLModel {
 
 		verticesByteBuffer = BufferUtils.createByteBuffer(vertexList.size() * GLVertex.stride);
 		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
+		System.out.println("Vertex list size = " + vertexList.size());
 		for (GLVertex v : vertexList) {
 
-			System.out.println(v.getElements()[0] + " " + v.getElements()[1] + " " + v.getElements()[2] + " " + v.getElements()[8] + " "
-					+ v.getElements()[9] + " " + v.getElements()[10]);
+			// System.out.println(v.getElements()[0] + " " + v.getElements()[1]
+			// + " " + v.getElements()[2] + " " + v.getElements()[8] + " "
+			// + v.getElements()[9] + " " + v.getElements()[10]);
 			verticesFloatBuffer.put(v.getElements());
 		}
 		verticesFloatBuffer.flip();
@@ -62,13 +64,12 @@ public class GLMesh extends GLModel {
 		byte[] indices = new byte[triangleList.size() * 3];
 		int index = 0;
 		for (GLTriangle t : triangleList) {
-			System.out.println("3 " + t.v0.index + " " + t.v1.index + " " + t.v2.index);
+			// System.out.println("3 " + t.v0.index + " " + t.v1.index + " " +
+			// t.v2.index);
 			indices[index++] = (byte) t.v0.index;
 			indices[index++] = (byte) t.v1.index;
 			indices[index++] = (byte) t.v2.index;
 		}
-
-		System.out.println("PLAYER MESH DONE\n\n\n");
 
 		indicesCount = indices.length;
 		ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(indicesCount);
@@ -79,6 +80,23 @@ public class GLMesh extends GLModel {
 		 * DEBUG: Now print out the whole of both buffers here, and do the same
 		 * in the GLNormalTest class. Should then be able to find the bug.
 		 **/
+
+		float[] vertBufferArray = new float[verticesFloatBuffer.limit()];
+		verticesFloatBuffer.asReadOnlyBuffer().get(vertBufferArray);
+
+		byte[] indicesBufferArray = new byte[indicesBuffer.limit()];
+		indicesBuffer.asReadOnlyBuffer().get(indicesBufferArray);
+
+		for (int i = 0; i < vertBufferArray.length; i++) {
+			System.out.print(vertBufferArray[i] + " ");
+		}
+		System.out.println();
+
+		for (int i = 0; i < indicesBufferArray.length; i++) {
+			System.out.print(indicesBufferArray[i] + " ");
+		}
+
+		System.out.println("PLAYER MESH DONE\n\n\n");
 
 		// Create a new Vertex Array Object in memory and select it (bind)
 		vaoId = GL30.glGenVertexArrays();

@@ -25,10 +25,11 @@ public class GLNormalTest extends GLModel {
 	private Vector4f rgba;
 	private List<GLVertex> vertexList;
 
-	public GLNormalTest(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color, String textureLocation) {
+	public GLNormalTest(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color) {
 		super(modelPos, modelAngle, modelScale, shader, color);
 
 		randomiseRGB();
+		rgba = new Vector4f(0, 0, 0, 1);
 
 		// TODO: Messy as fuck, but good to see it seems like it's working, for
 		// debugging purposes
@@ -89,10 +90,16 @@ public class GLNormalTest extends GLModel {
 		// Put each 'Vertex' in one FloatBuffer
 		verticesByteBuffer = BufferUtils.createByteBuffer(vertices.length * GLVertex.stride);
 		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
+
+		System.out.println("Vertex array size = " + vertices.length);
 		for (int i = 0; i < vertices.length; i++) {
 
-			System.out.println(vertices[i].getElements()[0] + " " + vertices[i].getElements()[1] + " " + vertices[i].getElements()[2] + " "
-					+ vertices[i].getElements()[8] + " " + vertices[i].getElements()[9] + " " + vertices[i].getElements()[10]);
+			// System.out.println(vertices[i].getElements()[0] + " " +
+			// vertices[i].getElements()[1] + " " + vertices[i].getElements()[2]
+			// + " "
+			// + vertices[i].getElements()[8] + " " +
+			// vertices[i].getElements()[9] + " " +
+			// vertices[i].getElements()[10]);
 
 			verticesFloatBuffer.put(vertices[i].getElements());
 		}
@@ -105,13 +112,30 @@ public class GLNormalTest extends GLModel {
 		for (byte i = 0; i < vertices.length; i++) {
 			indices[i] = i;
 		}
-		for (int i = 2; i < indices.length; i = i + 3) {
-			System.out.println("3 " + indices[i - 2] + " " + indices[i - 1] + " " + indices[i]);
-		}
+		// for (int i = 2; i < indices.length; i = i + 3) {
+		// System.out.println("3 " + indices[i - 2] + " " + indices[i - 1] + " "
+		// + indices[i]);
+		// }
 		indicesCount = indices.length;
 		ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(indicesCount);
 		indicesBuffer.put(indices);
 		indicesBuffer.flip();
+
+		float[] vertBufferArray = new float[verticesFloatBuffer.limit()];
+		verticesFloatBuffer.asReadOnlyBuffer().get(vertBufferArray);
+
+		byte[] indicesBufferArray = new byte[indicesBuffer.limit()];
+		indicesBuffer.asReadOnlyBuffer().get(indicesBufferArray);
+
+		for (int i = 0; i < vertBufferArray.length; i++) {
+			System.out.print(vertBufferArray[i] + " ");
+		}
+		System.out.println();
+
+		for (int i = 0; i < indicesBufferArray.length; i++) {
+			System.out.print(indicesBufferArray[i] + " ");
+		}
+		System.out.println();
 
 		// Create a new Vertex Array Object in memory and select it (bind)
 		vaoId = GL30.glGenVertexArrays();
