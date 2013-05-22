@@ -96,7 +96,7 @@ public class GLMesh extends GLModel {
 			System.out.print(indicesBufferArray[i] + " ");
 		}
 
-		System.out.println("PLAYER MESH DONE\n\n\n");
+		// System.out.println("PLAYER MESH DONE\n\n\n");
 
 		// Create a new Vertex Array Object in memory and select it (bind)
 		vaoId = GL30.glGenVertexArrays();
@@ -105,18 +105,12 @@ public class GLMesh extends GLModel {
 		// Create a new Vertex Buffer Object in memory and select it (bind)
 		vboId = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesFloatBuffer, GL15.GL_STREAM_DRAW);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesFloatBuffer, GL15.GL_STATIC_DRAW);
 
-		// This is a bit of jiggery pokery; I think this essentially could be
-		// done by having a separate VBO for position, for colour and for
-		// texture, but the way it's done here is to load it all into ONE vbo,
-		// and then call these commands to then separate it out in the VAO
-
-		// Put the position coordinates in attribute list 0
+		// Loads all vertex data into a single VBO to save memory on overheads,
+		// and to reduce the number of GL calls made
 		GL20.glVertexAttribPointer(0, GLVertex.positionElementCount, GL11.GL_FLOAT, false, GLVertex.stride, GLVertex.positionByteOffset);
-		// Put the color components in attribute list 1
 		GL20.glVertexAttribPointer(1, GLVertex.colorElementCount, GL11.GL_FLOAT, false, GLVertex.stride, GLVertex.colorByteOffset);
-		// Put the texture coordinates in attribute list 2
 		GL20.glVertexAttribPointer(2, GLVertex.normalElementCount, GL11.GL_FLOAT, false, GLVertex.stride, GLVertex.normalByteOffset);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);

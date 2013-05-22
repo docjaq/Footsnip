@@ -4,6 +4,7 @@ import static renderer.GLUtilityMethods.destroyOpenGL;
 import static renderer.GLUtilityMethods.exitOnGLError;
 import static renderer.GLUtilityMethods.setupOpenGL;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +14,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
+import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
-import renderer.glmodels.GLNormalTest;
 import renderer.glshaders.GLPhongShader;
 import renderer.glshaders.GLShader;
 import thread.RendererThread;
@@ -120,9 +121,9 @@ public class Renderer_3_2 extends RendererThread {
 		/**
 		 * BUG: Something is really wrong here. If I create a GLNormalTest model
 		 * for the monsters, it renders correctly. For the player, it does not.
-		 * Any more complex geometry and it's broken for both. Something is wrong
-		 * with the way that the VBOs are being generated. And perhaps some other
-		 * bug in the player class.
+		 * Any more complex geometry and it's broken for both. Something is
+		 * wrong with the way that the VBOs are being generated. And perhaps
+		 * some other bug in the player class.
 		 **/
 
 		Vector3f playerPos = new Vector3f(0, 0, 0);
@@ -131,7 +132,8 @@ public class Renderer_3_2 extends RendererThread {
 		float[] playerColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		// GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale,
 		// texturedShader, modelColor, PLAYER_TEXTURE);
-		GLModel playerModel = new GLNormalTest(playerPos, playerAngle, playerScale, phongShader, playerColor);
+		GLModel playerModel = new GLMesh(new File("resources/meshes/debug.ply"), playerPos, playerAngle, playerScale, phongShader,
+				playerColor);
 
 		assContainer.setPlayer(new Player(playerModel, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 
@@ -142,8 +144,10 @@ public class Renderer_3_2 extends RendererThread {
 			Vector3f monsterAngle = new Vector3f(0, 0, 0);
 			Vector3f monsterScale = new Vector3f(0.05f, 0.05f, 0.05f);
 			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1 };
-			String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random() * 4)];
-			GLModel monsterModel = new GLNormalTest(monsterPos, monsterAngle, monsterScale, phongShader, monsterColor);
+			// String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random()
+			// * 4)];
+			GLModel monsterModel = new GLMesh(new File("resources/meshes/debug.ply"), monsterPos, monsterAngle, monsterScale, phongShader,
+					monsterColor);
 			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
 			monster.setRotationDelta((float) Math.random() * 5f - 2.5f);
 			assContainer.getMonsters().add(monster);

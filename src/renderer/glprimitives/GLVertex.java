@@ -28,7 +28,7 @@ public class GLVertex {
 	// public static final int textureByteOffset = colorByteOffset +
 	// colorByteCount;
 
-	// The amount of elements that a vertex has
+	// The number of elements that a vertex has
 	public static final int elementCount = positionElementCount + colorElementCount + normalElementCount;
 	// The size of a vertex in bytes, like in C/C++: sizeof(Vertex)
 	public static final int stride = positionBytesCount + colorByteCount + normalByteCount;
