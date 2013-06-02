@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.lwjgl.util.vector.Vector4f;
+
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
 
@@ -56,9 +58,11 @@ public class Ply extends AbstractGeometryFile {
 				if (wholeLine.startsWith("element")) {
 					if (wholeLine.contains("vertex")) {
 						numVertices = Integer.parseInt(wholeLine.split(" ")[2]);
+						System.out.println("Num vertices = " + numVertices);
 					}
 					if (wholeLine.contains("face")) {
 						numFaces = Integer.parseInt(wholeLine.split(" ")[2]);
+						System.out.println("Num faces = " + numFaces);
 					}
 				}
 
@@ -71,13 +75,15 @@ public class Ply extends AbstractGeometryFile {
 
 	private void readGeometry(BufferedReader br) {
 
+		Vector4f rgba = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 1.0f);
+
 		try {
 			String wholeLine;
 			for (int i = 0; i < numVertices; i++) {
 				wholeLine = br.readLine();
 				String[] elements = wholeLine.split(" ");
 				GLVertex vertex = new GLVertex(i, Float.parseFloat(elements[0]), Float.parseFloat(elements[1]),
-						Float.parseFloat(elements[2]));
+						Float.parseFloat(elements[2]), rgba);
 				if (elements.length >= 6) {
 					vertex.setNXNYNZ(Float.parseFloat(elements[3]), Float.parseFloat(elements[4]), Float.parseFloat(elements[5]));
 				}

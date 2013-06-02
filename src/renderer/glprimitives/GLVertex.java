@@ -76,10 +76,10 @@ public class GLVertex {
 		this.rgba = rgba;
 	}
 
-	public GLVertex(int index, float x, float y, float z) {
+	public GLVertex(int index, float x, float y, float z, Vector4f rgba) {
 		this.index = index;
 		this.xyzw = new Vector4f(x, y, z, 1f);
-		this.rgba = new Vector4f(0, 0, 0, 1);
+		this.rgba = rgba;// new Vector4f(0, 0, 0, 1);
 	}
 
 	// Setters

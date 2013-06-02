@@ -6,6 +6,7 @@ import io.Ply;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import org.lwjgl.BufferUtils;
@@ -37,42 +38,53 @@ public class GLMesh extends GLModel {
 		// of coding this
 		triangleList = mesh.getTriangles();
 
-		for (GLTriangle t : triangleList) {
-			// IMPLEMENT:
-			// Assign normals if they don't exist
-		}
+		/*
+		 * for (GLTriangle t : triangleList) { System.out.print(t.v0.index + "("
+		 * + t.v0.xyzw.x + " " + t.v0.xyzw.y + " " + t.v0.xyzw.z + ")");
+		 * System.out.print(", " + t.v1.index + "(" + t.v1.xyzw.x + " " +
+		 * t.v1.xyzw.y + " " + t.v1.xyzw.z + ")"); System.out.println(", " +
+		 * t.v2.index + "(" + t.v2.xyzw.x + " " + t.v2.xyzw.y + " " +
+		 * t.v2.xyzw.z + ")"); }
+		 */
 
 		/**
 		 * NOTE: Well, the contents of the vertexList and the triangleList
 		 * appear correct, so I'm just putting them into the buffer incorrectly.
 		 * Needs debugging. Or me not being drunk
 		 **/
+		// System.out.println("Number of vertices: " + vertexList.size());
+		// verticesByteBuffer = BufferUtils.createByteBuffer(vertexList.size() *
+		// GLVertex.stride);
+		// FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
+		// System.out.println("Float buffer limit: " +
+		// verticesFloatBuffer.limit());
 
-		verticesByteBuffer = BufferUtils.createByteBuffer(vertexList.size() * GLVertex.stride);
-		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
+		FloatBuffer verticesFloatBuffer = BufferUtils.createFloatBuffer(vertexList.size() * GLVertex.stride);
+		System.out.println("Suggested size: " + vertexList.size() * GLVertex.stride);
+		System.out.println("Capacity:" + verticesFloatBuffer.capacity());
+		System.out.println("Limit: " + verticesFloatBuffer.limit());
+		// System.out.println("Capacity "+ verticesFloatBuffer.);
+		// verticesFloatBuffer.allocate(capacity)
 		System.out.println("Vertex list size = " + vertexList.size());
 		for (GLVertex v : vertexList) {
-
-			// System.out.println(v.getElements()[0] + " " + v.getElements()[1]
-			// + " " + v.getElements()[2] + " " + v.getElements()[8] + " "
-			// + v.getElements()[9] + " " + v.getElements()[10]);
 			verticesFloatBuffer.put(v.getElements());
 		}
+		// verticesFloatBuffer.or
 		verticesFloatBuffer.flip();
 
 		// OpenGL expects to draw vertices in counter clockwise order by default
-		byte[] indices = new byte[triangleList.size() * 3];
+		int[] indices = new int[triangleList.size() * 3];
 		int index = 0;
 		for (GLTriangle t : triangleList) {
 			// System.out.println("3 " + t.v0.index + " " + t.v1.index + " " +
 			// t.v2.index);
-			indices[index++] = (byte) t.v0.index;
-			indices[index++] = (byte) t.v1.index;
-			indices[index++] = (byte) t.v2.index;
+			indices[index++] = t.v0.index;
+			indices[index++] = t.v1.index;
+			indices[index++] = t.v2.index;
 		}
 
 		indicesCount = indices.length;
-		ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(indicesCount);
+		IntBuffer indicesBuffer = BufferUtils.createIntBuffer(indicesCount);
 		indicesBuffer.put(indices);
 		indicesBuffer.flip();
 
@@ -81,20 +93,19 @@ public class GLMesh extends GLModel {
 		 * in the GLNormalTest class. Should then be able to find the bug.
 		 **/
 
-		float[] vertBufferArray = new float[verticesFloatBuffer.limit()];
-		verticesFloatBuffer.asReadOnlyBuffer().get(vertBufferArray);
-
-		byte[] indicesBufferArray = new byte[indicesBuffer.limit()];
-		indicesBuffer.asReadOnlyBuffer().get(indicesBufferArray);
-
-		for (int i = 0; i < vertBufferArray.length; i++) {
-			System.out.print(vertBufferArray[i] + " ");
-		}
-		System.out.println();
-
-		for (int i = 0; i < indicesBufferArray.length; i++) {
-			System.out.print(indicesBufferArray[i] + " ");
-		}
+		/*
+		 * float[] vertBufferArray = new float[verticesFloatBuffer.limit()];
+		 * verticesFloatBuffer.asReadOnlyBuffer().get(vertBufferArray);
+		 * 
+		 * byte[] indicesBufferArray = new byte[indicesBuffer.limit()];
+		 * indicesBuffer.asReadOnlyBuffer().get(indicesBufferArray);
+		 * 
+		 * for (int i = 0; i < vertBufferArray.length; i++) {
+		 * System.out.print(vertBufferArray[i] + " "); } System.out.println();
+		 * 
+		 * for (int i = 0; i < indicesBufferArray.length; i++) {
+		 * System.out.print(indicesBufferArray[i] + " "); }
+		 */
 
 		// System.out.println("PLAYER MESH DONE\n\n\n");
 
