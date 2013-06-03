@@ -90,7 +90,7 @@ public class Renderer_3_2 extends RendererThread {
 		for (Monster m : assContainer.getMonsters()) {
 			m.rotate(frameDelta);
 		}
-		assContainer.getPlayer().rotate(frameDelta);
+		// assContainer.getPlayer().rotate(frameDelta);
 
 		// -- Update matrices
 		// Reset view and model matrices
