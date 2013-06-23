@@ -11,7 +11,7 @@ public class Player extends Entity {
 	private static final float DEFAULT_ROTATION_SPEED = 0.1f;
 	private static final float ROTATION_ACCELERATION = 0.001f;
 
-	private static final float DEFAULT_MOVEMENT_SPEED = 0.0001f;
+	private static final float DEFAULT_MOVEMENT_SPEED = 0.00001f;
 
 	private static final float MAX_MOVEMENT_SPEED = 100f;
 

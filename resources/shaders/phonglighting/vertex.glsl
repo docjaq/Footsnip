@@ -23,8 +23,7 @@ void main()
 	
 	vec4 tempNormal = projectionMatrix * viewMatrix * normalMatrix * normal;
 	
-	//TODO: Flipping the normal here to compensate for incorrectly computed normal earlier
-	vertexNormal = vec3(-tempNormal.x, -tempNormal.y, -tempNormal.z);
+	vertexNormal = vec3(tempNormal.x, tempNormal.y, tempNormal.z);
 	
 	diffuseColor = inDiffuseColor;
 	

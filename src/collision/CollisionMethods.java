@@ -20,7 +20,12 @@ public class CollisionMethods {
 		for (int i = 0; i < entities.size(); i++) {
 			for (int j = i + 1; j < entities.size(); j++) {
 				if (CollisionMethods.intersects(entities.get(i), entities.get(j))) {
-					System.out.printf("Entity %d has intersected with entity %d", i, j);
+					if (i == 0) {
+						System.out.printf("Entity %d has intersected with entity %d\n", i, j);
+					}
+					// System.out.println(".");
+				} else {
+					// System.out.println("No intersection");
 				}
 			}
 		}
