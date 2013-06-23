@@ -20,7 +20,7 @@ public class GLTexturedModel extends GLModel {
 	// Textures
 	private List<Integer> texIds;
 
-	public GLTexturedModel(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color) {
+	public GLTexturedModel(Vector3f modelPos, Vector3f modelAngle, float modelScale, GLShader shader, float[] color) {
 		super(modelPos, modelAngle, modelScale, shader, color);
 
 		texIds = new ArrayList<Integer>();
@@ -93,6 +93,10 @@ public class GLTexturedModel extends GLModel {
 	public void cleanUp() {
 		cleanUpTextures();
 		cleanUpGeometry();
+	}
+
+	public void setRadius() {
+		radius = 1;
 	}
 
 	public void cleanUpTextures() {

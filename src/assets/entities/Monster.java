@@ -1,12 +1,10 @@
 package assets.entities;
 
-import org.lwjgl.util.vector.Vector3f;
-
 import renderer.glmodels.GLModel;
 
 //This should probably be a class NPC, which Monster then extends, but decided
 //to simplify it
-public class Monster extends Character {
+public class Monster extends Entity {
 
 	private int level;
 
@@ -18,10 +16,13 @@ public class Monster extends Character {
 		this.rotationDelta = rotationDelta / 30.0f;
 	}
 
-	private float scaleDelta = 0.001f;
+	// private float scaleDelta = 0.001f;
 	private float posDelta = 0.1f;
-	private Vector3f scaleAddResolution = new Vector3f(scaleDelta, scaleDelta, scaleDelta);
-	private Vector3f scaleMinusResolution = new Vector3f(-scaleDelta, -scaleDelta, -scaleDelta);
+
+	// private Vector3f scaleAddResolution = new Vector3f(scaleDelta,
+	// scaleDelta, scaleDelta);
+	// private Vector3f scaleMinusResolution = new Vector3f(-scaleDelta,
+	// -scaleDelta, -scaleDelta);
 
 	public Monster(GLModel model, String name, int level) {
 		super(model, name);
@@ -48,13 +49,17 @@ public class Monster extends Character {
 		model.modelPos.y -= posDelta;
 	}
 
-	public void increaseScale() {
-		Vector3f.add(model.modelScale, scaleAddResolution, model.modelScale);
-	}
-
-	public void decreaseScale() {
-		Vector3f.add(model.modelScale, scaleMinusResolution, model.modelScale);
-	}
+	/**
+	 * If re-enabling, modelScale is now private and should be set with a single
+	 * float
+	 **/
+	/*
+	 * public void increaseScale() { Vector3f.add(model.modelScale,
+	 * scaleAddResolution, model.modelScale); }
+	 * 
+	 * public void decreaseScale() { Vector3f.add(model.modelScale,
+	 * scaleMinusResolution, model.modelScale); }
+	 */
 
 	public void rotate(int timeDelta) {
 		model.modelAngle.z += rotationDelta * timeDelta;

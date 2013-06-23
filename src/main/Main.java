@@ -8,6 +8,7 @@ import thread.GameThread;
 import thread.ObservableThread;
 import thread.ThreadObserver;
 import assets.AssetContainer;
+import collision.CollisionThread;
 import control.ControlThread;
 import exception.RendererException;
 
@@ -50,6 +51,11 @@ public class Main {
 				controlThread.setPriority(Thread.MIN_PRIORITY);
 				controlThread.start();
 				childThreads.add(controlThread);
+
+				GameThread collisionThread = new CollisionThread(assContainer, 10, Main.this);
+				collisionThread.setPriority(Thread.NORM_PRIORITY);
+				collisionThread.start();
+				childThreads.add(collisionThread);
 			}
 		});
 	}

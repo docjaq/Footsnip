@@ -27,7 +27,7 @@ public class GLMesh extends GLModel {
 	private ArrayList<GLVertex> vertexList;
 	private ArrayList<GLTriangle> triangleList;
 
-	public GLMesh(File meshName, Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color) {
+	public GLMesh(File meshName, Vector3f modelPos, Vector3f modelAngle, float modelScale, GLShader shader, float[] color) {
 		super(modelPos, modelAngle, modelScale, shader, color);
 
 		Ply mesh = new Ply();
@@ -83,6 +83,21 @@ public class GLMesh extends GLModel {
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		exitOnGLError("setupQuad");
+
+		setRadius();
+	}
+
+	public void setRadius() {
+		float maxDist = 0;
+		float currentDist = 0;
+		for (GLVertex v : vertexList) {
+			currentDist = v.getXYZ().length();
+			if (currentDist > maxDist) {
+				maxDist = currentDist;
+			}
+		}
+		this.radius = maxDist;
+		this.radius *= getModelScale();
 	}
 
 	public static void addNormalToTriangle(GLVertex v0, GLVertex v1, GLVertex v2) {

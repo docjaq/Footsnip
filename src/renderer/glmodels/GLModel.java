@@ -24,13 +24,16 @@ public abstract class GLModel {
 	// Quad Position variables
 	public Vector3f modelPos;
 	public Vector3f modelAngle;
-	public Vector3f modelScale;
+	private Vector3f modelScale;
 
 	// Quad variables
 	protected int vaoId = 0;
 	protected int vboId = 0;
 	protected int vboiId = 0;
 	protected int indicesCount = 0;
+
+	// Collision variables
+	protected float radius;
 
 	protected float[] color;
 
@@ -49,11 +52,12 @@ public abstract class GLModel {
 		this.shader = shader;
 	}
 
-	public GLModel(Vector3f modelPos, Vector3f modelAngle, Vector3f modelScale, GLShader shader, float[] color) {
+	public GLModel(Vector3f modelPos, Vector3f modelAngle, float modelScale, GLShader shader, float[] color) {
 		// Set the default quad rotation, scale and position values
 		this.modelPos = modelPos;
 		this.modelAngle = modelAngle;
-		this.modelScale = modelScale;
+		this.modelScale = new Vector3f(1.0f, 1.0f, 1.0f);
+		setModelScale(modelScale);
 		this.shader = shader;
 		this.color = color;
 
@@ -134,19 +138,18 @@ public abstract class GLModel {
 		exitOnGLError("destroyOpenGL");
 	}
 
-	// TODO: Implement this method
-	// public BoundingBox getBoundingBox() {
-	// return new BoundingBox();
-	// }
-
 	public void transform() {
 		// This order is important for building the matrix
 		clearModelMatrix();
-		Matrix4f.scale(modelScale, modelMatrix, modelMatrix);
-		Matrix4f.translate(modelPos, modelMatrix, modelMatrix);
-		Matrix4f.rotate(degreesToRadians(modelAngle.z), GLWorld.BASIS_Z, modelMatrix, modelMatrix);
-		Matrix4f.rotate(degreesToRadians(modelAngle.y), GLWorld.BASIS_Y, modelMatrix, modelMatrix);
-		Matrix4f.rotate(degreesToRadians(modelAngle.x), GLWorld.BASIS_X, modelMatrix, modelMatrix);
+		// Matrix4f.scale(modelScale, modelMatrix, modelMatrix);
+
+		modelMatrix.scale(modelScale);
+		modelMatrix.translate(modelPos);
+
+		modelMatrix.rotate(degreesToRadians(modelAngle.z), GLWorld.BASIS_Z);
+		modelMatrix.rotate(degreesToRadians(modelAngle.y), GLWorld.BASIS_Y);
+		modelMatrix.rotate(degreesToRadians(modelAngle.x), GLWorld.BASIS_X);
+
 	}
 
 	// ATTENTION: Before, had a local Floatbuffer in the class, but as it's just
@@ -168,4 +171,27 @@ public abstract class GLModel {
 		// modelMatrix = new Matrix4f();
 		modelMatrix.setIdentity();
 	}
+
+	public void setModelScale(float modelScale) {
+		/**
+		 * This has been changed to only allow uniform scaling of the model.
+		 * This means that we can compute the bounding sphere more easily at
+		 * runtime
+		 **/
+		this.modelScale.x = modelScale;
+		this.modelScale.y = modelScale;
+		this.modelScale.z = modelScale;
+
+		radius *= getModelScale();
+	}
+
+	public float getModelScale() {
+		return modelScale.x;
+	}
+
+	public float getRadius() {
+		return radius;
+	}
+
+	protected abstract void setRadius();
 }

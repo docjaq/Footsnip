@@ -133,7 +133,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		Vector3f playerPos = new Vector3f(0, 0, 0);
 		Vector3f playerAngle = new Vector3f(0, 0, 00);
-		Vector3f playerScale = new Vector3f(0.07f, 0.07f, 0.07f);
+		float playerScale = 0.07f;
 		float[] playerColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		// GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale,
 		// texturedShader, modelColor, PLAYER_TEXTURE);
@@ -144,10 +144,10 @@ public class Renderer_3_2 extends RendererThread {
 
 		assContainer.setMonsters(new ArrayList<Monster>());
 
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 100; i++) {
 			Vector3f monsterPos = new Vector3f((float) Math.random() * 40f - 25f, (float) Math.random() * 30f - 15f, 0);
 			Vector3f monsterAngle = new Vector3f(0, 0, 0);
-			Vector3f monsterScale = new Vector3f(0.03f, 0.03f, 0.03f);
+			float monsterScale = (float) Math.random() * 0.05f;
 			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1 };
 			// String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random()
 			// * 4)];
@@ -155,13 +155,19 @@ public class Renderer_3_2 extends RendererThread {
 					phongShader, monsterColor);
 			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
 			monster.setRotationDelta((float) Math.random() * 5f - 2.5f);
-			assContainer.getMonsters().add(monster);
+			assContainer.addMonster(monster);
 		}
+
+		System.out.println("Player radius = " + assContainer.getPlayer().getModel().getRadius());
+		System.out.println("Monster radius = " + assContainer.getMonsters().get(0).getModel().getRadius());
 	}
 
 	private void renderPlayer(Player player) {
 		glWorld.copyCameraMatricesToShader(player.getModel().getShader());
 		player.getModel().draw();
+		System.out.println("Player: (" + player.getModel().modelPos.x + ", " + player.getModel().modelPos.y + ")");
+		System.out.println("Monster: (" + assContainer.getMonsters().get(0).getModel().modelPos.x + ", "
+				+ assContainer.getMonsters().get(0).getModel().modelPos.y + ")");
 	}
 
 	private void renderMonsters(List<Monster> monsters) {

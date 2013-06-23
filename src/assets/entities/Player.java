@@ -6,7 +6,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
 
-public class Player extends Character {
+public class Player extends Entity {
 
 	private static final float DEFAULT_ROTATION_SPEED = 0.1f;
 	private static final float ROTATION_ACCELERATION = 0.001f;
