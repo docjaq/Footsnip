@@ -128,25 +128,25 @@ public class Renderer_3_2 extends RendererThread {
 
 		Vector3f playerPos = new Vector3f(0, 0, 0);
 		Vector3f playerAngle = new Vector3f(0, 0, 00);
-		Vector3f playerScale = new Vector3f(0.5f, 0.5f, 0.5f);
+		Vector3f playerScale = new Vector3f(0.07f, 0.07f, 0.07f);
 		float[] playerColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		// GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale,
 		// texturedShader, modelColor, PLAYER_TEXTURE);
-		GLModel playerModel = new GLMesh(new File("resources/meshes/hand.ply"), playerPos, playerAngle, playerScale, phongShader,
+		GLModel playerModel = new GLMesh(new File("resources/meshes/SpaceFighter.ply"), playerPos, playerAngle, playerScale, phongShader,
 				playerColor);
 
 		assContainer.setPlayer(new Player(playerModel, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 
 		assContainer.setMonsters(new ArrayList<Monster>());
 
-		for (int i = 0; i < 30; i++) {
-			Vector3f monsterPos = new Vector3f((float) Math.random() * 30f - 15f, (float) Math.random() * 20f - 10f, 0);
+		for (int i = 0; i < 20; i++) {
+			Vector3f monsterPos = new Vector3f((float) Math.random() * 40f - 25f, (float) Math.random() * 30f - 15f, 0);
 			Vector3f monsterAngle = new Vector3f(0, 0, 0);
-			Vector3f monsterScale = new Vector3f(0.08f, 0.08f, 0.08f);
+			Vector3f monsterScale = new Vector3f(0.03f, 0.03f, 0.03f);
 			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1 };
 			// String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random()
 			// * 4)];
-			GLModel monsterModel = new GLMesh(new File("resources/meshes/Fertility600.ply"), monsterPos, monsterAngle, monsterScale,
+			GLModel monsterModel = new GLMesh(new File("resources/meshes/dodecahedron.ply"), monsterPos, monsterAngle, monsterScale,
 					phongShader, monsterColor);
 			Monster monster = new Monster(monsterModel, "Monster_" + i, 0);
 			monster.setRotationDelta((float) Math.random() * 5f - 2.5f);
