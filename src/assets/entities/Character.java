@@ -1,4 +1,4 @@
-package assets;
+package assets.entities;
 
 import renderer.glmodels.GLModel;
 

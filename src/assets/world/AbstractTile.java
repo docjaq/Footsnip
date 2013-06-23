@@ -1,4 +1,6 @@
-package assets;
+package assets.world;
+
+import assets.Asset;
 
 /************************
  * @author docjaq

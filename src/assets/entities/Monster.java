@@ -1,4 +1,4 @@
-package assets;
+package assets.entities;
 
 import org.lwjgl.util.vector.Vector3f;
 

@@ -21,21 +21,26 @@ import renderer.glshaders.GLShader;
 import thread.RendererThread;
 import util.Utils;
 import assets.AssetContainer;
-import assets.Monster;
-import assets.Player;
+import assets.entities.Monster;
+import assets.entities.Player;
 import exception.RendererException;
 
 public class Renderer_3_2 extends RendererThread {
 
-	private final String[] GEN_SHADER_NAME = { "resources/shaders/general/vertex.glsl", "resources/shaders/general/fragment.glsl" };
-	private final String[] TEX_SHADER_NAME = { "resources/shaders/textured/vertex.glsl", "resources/shaders/textured/fragment.glsl" };
+	// private final String[] GEN_SHADER_NAME = {
+	// "resources/shaders/general/vertex.glsl",
+	// "resources/shaders/general/fragment.glsl" };
+	// private final String[] TEX_SHADER_NAME = {
+	// "resources/shaders/textured/vertex.glsl",
+	// "resources/shaders/textured/fragment.glsl" };
 	private final String[] PHONG_SHADER_NAME = { "resources/shaders/phonglighting/vertex.glsl",
 			"resources/shaders/phonglighting/fragment.glsl" };
 
 	// ATTENTION: Just for now
-	private final String PLAYER_TEXTURE = "resources/images/ship.png";
-	private final String[] MONSTER_TEXTURES = { "resources/images/virus1.png", "resources/images/virus2.png",
-			"resources/images/virus3.png", "resources/images/Bacteria.png" };
+	// private final String PLAYER_TEXTURE = "resources/images/ship.png";
+	// private final String[] MONSTER_TEXTURES = {
+	// "resources/images/virus1.png", "resources/images/virus2.png",
+	// "resources/images/virus3.png", "resources/images/Bacteria.png" };
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";

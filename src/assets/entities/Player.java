@@ -1,4 +1,4 @@
-package assets;
+package assets.entities;
 
 import maths.LinearAlgebra;
 
@@ -16,8 +16,9 @@ public class Player extends Character {
 	private static final float MAX_MOVEMENT_SPEED = 100f;
 
 	private float defaultYaw;
-	private float yawDiff;
-	private static final float MAX_YAW_DIFF = 45f;
+	/*
+	 * private float yawDiff; private static final float MAX_YAW_DIFF = 45f;
+	 */
 
 	private int age;
 	private float[] color;
@@ -82,7 +83,7 @@ public class Player extends Character {
 	public void resetRotationSpeed() {
 		rotationDelta = DEFAULT_ROTATION_SPEED;
 		model.modelAngle.x = defaultYaw;
-		yawDiff = 0;
+		// yawDiff = 0;
 	}
 
 	public void accelerateMovement() {
@@ -110,13 +111,11 @@ public class Player extends Character {
 		}
 	}
 
-	private void capMaxYaw() {
-		yawDiff = Math.min(yawDiff, MAX_YAW_DIFF);
-	}
-
-	private void capMinYaw() {
-		yawDiff = Math.max(yawDiff, -MAX_YAW_DIFF);
-	}
+	/*
+	 * (private void capMaxYaw() { yawDiff = Math.min(yawDiff, MAX_YAW_DIFF); }
+	 * 
+	 * private void capMinYaw() { yawDiff = Math.max(yawDiff, -MAX_YAW_DIFF); }
+	 */
 
 	// DEBUG: Just to debug the model geometry
 	public void rotate(int timeDelta) {

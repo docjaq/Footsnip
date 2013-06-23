@@ -1,5 +1,6 @@
-package assets;
+package assets.entities;
 
+import assets.Asset;
 import renderer.glmodels.GLModel;
 
 /************************
@@ -9,17 +10,17 @@ import renderer.glmodels.GLModel;
 
 public abstract class AbstractEntity implements Asset {
 
-	// This was moved into the geometry.
-	// public Position position;
-
 	// May or may refer to animation, whether the object can be destroyed, or
 	// whether it 'physically' moves
-	private boolean dynamic;
+	// private boolean dynamic;
 
 	// Physical properties
-	private float speed;
-	private float acceleration;
-	private float size;
+	// private float speed;
+	// private float acceleration;
+
+	// TODO: If this is fast enough, it works nicely. If not, just make model
+	// public. Same with some of the variables in GLModel Etc
+	protected GLModel model;
 
 	public AbstractEntity() {
 		// Default constructor.
@@ -28,10 +29,6 @@ public abstract class AbstractEntity implements Asset {
 	public AbstractEntity(GLModel model) {
 		this.model = model;
 	}
-
-	// TODO: If this is fast enough, it works nicely. If not, just make model
-	// public. Same with some of the variables in GLModel Etc
-	protected GLModel model;
 
 	public GLModel getModel() {
 		return model;
@@ -44,10 +41,6 @@ public abstract class AbstractEntity implements Asset {
 
 		this.model = model;
 	}
-
-	// public void draw() {
-	// model.draw();
-	// }
 
 	public void destroy() {
 		model.cleanUp();

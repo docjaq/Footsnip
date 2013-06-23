@@ -15,13 +15,14 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
-import assets.Player;
+import assets.entities.Player;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
 public class GLUtilityMethods {
 
-	private static final int NUM_MIPMAPS = 3;
+	/** OpenGL 4.2 */
+	// private static final int NUM_MIPMAPS = 3;
 	private static final boolean ENABLE_MIPMAPPING = true;
 
 	private GLUtilityMethods() {
