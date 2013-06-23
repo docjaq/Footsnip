@@ -1,6 +1,5 @@
 package maths;
 
-import renderer.glprimitives.GLVertex_normal_old;
 
 public class LinearAlgebra {
 
@@ -20,18 +19,6 @@ public class LinearAlgebra {
 
 	public static float radiansToDegrees(float radians) {
 		return radians * (float) (180d / PI);
-	}
-
-	// TODO: Convert this method to working on the Vector4fs that will
-	// eventually be a part of the GLVertex classes
-	public static void addNormalToGLVertex(GLVertex_normal_old v0, GLVertex_normal_old v1, GLVertex_normal_old v2) {
-		float[] va0 = v0.getXYZ();
-		float[] va1 = v1.getXYZ();
-		float[] va2 = v2.getXYZ();
-
-		float[] normal = normaliseVec(crossProduct(subVec3D(va1, va0), subVec3D(va2, va0)));
-
-		v0.setNXNYNZ(normal);
 	}
 
 	// 0 -> TA2, 1 -> TA0, 2 -> TA1
