@@ -100,6 +100,7 @@ public class Renderer_3_2 extends RendererThread {
 		// -- Update matrices
 		// Reset view and model matrices
 		glWorld.clearViewMatrix();
+		glWorld.setCameraPos(assContainer.getPlayer().getModel().modelPos);
 
 		// Translate camera
 		glWorld.transformCamera();

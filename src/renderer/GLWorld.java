@@ -26,15 +26,16 @@ public class GLWorld {
 	private int width;
 	private int height;
 
-	// public int projectionMatrixLocation;
-	// public int viewMatrixLocation;
-	// public int modelMatrixLocation;
-	// public int fragColorLocation;
-
 	// I *think* this should be here.
-	public Vector3f cameraPos;
+	private Vector3f cameraPos;
 
 	// private GLShader worldShader;
+
+	public void setCameraPos(Vector3f cameraPos) {
+		this.cameraPos.x = -cameraPos.x;
+		this.cameraPos.y = -cameraPos.y;
+		this.cameraPos.z = -cameraPos.z;
+	}
 
 	public GLWorld(int width, int height, Vector3f cameraPos) throws RendererException {
 		this.width = width;

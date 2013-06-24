@@ -9,6 +9,8 @@ out vec3 vertexNormal;
 out vec3 cameraSpacePosition;
 out vec4 pass_Color;
 
+//Test
+
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
@@ -17,16 +19,16 @@ uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 normalMatrix;
 
-void main()
-{
-	gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;
+void main() {
+
+	gl_Position = projectionMatrix * viewMatrix *  modelMatrix * position;
+	cameraSpacePosition = (vec3(gl_Position.x, gl_Position.y, gl_Position.z));
 	
 	vec4 tempNormal = projectionMatrix * viewMatrix * normalMatrix * normal;
-	
-	vertexNormal = vec3(tempNormal.x, tempNormal.y, tempNormal.z);
+	vertexNormal = (vec3(tempNormal.x, tempNormal.y, tempNormal.z));
 	
 	diffuseColor = inDiffuseColor;
 	
-	cameraSpacePosition = vec3(gl_Position.x, gl_Position.y, gl_Position.z);
+	
 }
 
