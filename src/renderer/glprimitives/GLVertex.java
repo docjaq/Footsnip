@@ -53,6 +53,12 @@ public class GLVertex {
 	public GLVertex() {
 	}
 
+	public GLVertex(Vector4f xyzw, Vector4f rgba, Vector4f nxnynznw) {
+		this.xyzw = xyzw;
+		this.rgba = rgba;
+		this.nxnynznw = nxnynznw;
+	}
+
 	public GLVertex(float x, float y, float z, float w, float r, float g, float b, float a, float nx, float ny, float nz, float nw) {
 		this.xyzw = new Vector4f(x, y, z, w);
 		this.rgba = new Vector4f(r, g, b, a);

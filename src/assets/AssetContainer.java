@@ -6,17 +6,22 @@ import java.util.List;
 import assets.entities.Entity;
 import assets.entities.Monster;
 import assets.entities.Player;
+import assets.world.Tile;
 
 public class AssetContainer {
 
 	private Player player;
 	private List<Monster> monsters;
+	private List<Tile> tiles;
 
 	private List<Entity> entities;
 
 	public AssetContainer() {
 		monsters = new ArrayList<Monster>(0);
+		tiles = new ArrayList<Tile>(9);
 	}
+
+	/** Entities **/
 
 	public List<Entity> getEntities() {
 		return entities;
@@ -28,10 +33,28 @@ public class AssetContainer {
 		entities.addAll(monsters);
 	}
 
+	/** Tiles **/
+
+	public List<Tile> getTiles() {
+		return tiles;
+	}
+
+	public void addTile(Tile tile) {
+		this.tiles.add(tile);
+	}
+
+	/** Player **/
+
 	public void setPlayer(Player player) {
 		this.player = player;
 		updateEntities();
 	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	/** Monsters **/
 
 	public void addMonster(Monster monster) {
 		this.monsters.add(monster);
@@ -41,10 +64,6 @@ public class AssetContainer {
 	public void setMonsters(List<Monster> monsters) {
 		this.monsters = monsters;
 		updateEntities();
-	}
-
-	public Player getPlayer() {
-		return player;
 	}
 
 	public List<Monster> getMonsters() {

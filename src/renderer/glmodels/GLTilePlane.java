@@ -1,12 +1,11 @@
 package renderer.glmodels;
 
 import static renderer.GLUtilityMethods.exitOnGLError;
-import io.Ply;
 
-import java.io.File;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -14,24 +13,27 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
-import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
 import renderer.glshaders.GLShader;
 
-public class GLMesh extends GLModel {
+public class GLTilePlane extends GLModel {
 
-	private ArrayList<GLVertex> vertexList;
-	private ArrayList<GLTriangle> triangleList;
+	final static float length = 1f;
+	final static float zOffset = -0.01f;
 
-	public GLMesh(File meshName, Vector3f modelPos, Vector3f modelAngle, float modelScale, GLShader shader, float[] color) {
+	public GLTilePlane(Vector3f modelPos, Vector3f modelAngle, float modelScale, GLShader shader, float[] color) {
 		super(modelPos, modelAngle, modelScale, shader, color);
 
-		Ply mesh = new Ply();
-		mesh.read(meshName);
-		vertexList = mesh.getVertices();
-		// mesh.normaliseAndCentre(vertexList); //Shit
-		triangleList = mesh.getTriangles();
+		Vector4f rgba = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
+		float halfLength = length / 2.0f;
+
+		List<GLVertex> vertexList = new ArrayList<GLVertex>(4);
+		vertexList.add(new GLVertex(new Vector4f(-halfLength, -halfLength, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(new Vector4f(-halfLength, halfLength, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(new Vector4f(halfLength, halfLength, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(new Vector4f(halfLength, -halfLength, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
 
 		FloatBuffer verticesFloatBuffer = BufferUtils.createFloatBuffer(vertexList.size() * GLVertex.stride);
 		for (GLVertex v : vertexList) {
@@ -40,14 +42,7 @@ public class GLMesh extends GLModel {
 		verticesFloatBuffer.flip();
 
 		// OpenGL expects to draw vertices in counter clockwise order by default
-		int[] indices = new int[triangleList.size() * 3];
-		int index = 0;
-		for (GLTriangle t : triangleList) {
-			indices[index++] = t.v0.index;
-			indices[index++] = t.v1.index;
-			indices[index++] = t.v2.index;
-		}
-
+		int[] indices = { 0, 2, 1, 0, 3, 2 };
 		indicesCount = indices.length;
 		IntBuffer indicesBuffer = BufferUtils.createIntBuffer(indicesCount);
 		indicesBuffer.put(indices);
@@ -84,30 +79,12 @@ public class GLMesh extends GLModel {
 		setRadius();
 	}
 
+	/**
+	 * Actual tile has no radius, though the things that belong to the tile will
+	 **/
 	protected void setRadius() {
-		float maxDist = 0;
-		float currentDist = 0;
-		for (GLVertex v : vertexList) {
-			currentDist = v.getXYZ().length();
-			if (currentDist > maxDist) {
-				maxDist = currentDist;
-			}
-		}
-		this.radius = maxDist;
-		this.radius *= getModelScale();
+		radius = 0;
+
 	}
 
-	public static void addNormalToTriangle(GLVertex v0, GLVertex v1, GLVertex v2) {
-		Vector3f vn0 = Vector3f.cross(Vector3f.sub(v1.getXYZ(), v0.getXYZ(), null), Vector3f.sub(v2.getXYZ(), v0.getXYZ(), null), null);
-		vn0.normalise();
-		v0.setNXNYNZ(vn0);
-
-		Vector3f vn1 = Vector3f.cross(Vector3f.sub(v2.getXYZ(), v1.getXYZ(), null), Vector3f.sub(v0.getXYZ(), v1.getXYZ(), null), null);
-		vn1.normalise();
-		v1.setNXNYNZ(vn1);
-
-		Vector3f vn2 = Vector3f.cross(Vector3f.sub(v0.getXYZ(), v2.getXYZ(), null), Vector3f.sub(v1.getXYZ(), v2.getXYZ(), null), null);
-		vn2.normalise();
-		v2.setNXNYNZ(vn2);
-	}
 }

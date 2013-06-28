@@ -16,6 +16,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
+import renderer.glmodels.GLTilePlane;
 import renderer.glshaders.GLPhongShader;
 import renderer.glshaders.GLShader;
 import thread.RendererThread;
@@ -23,6 +24,8 @@ import util.Utils;
 import assets.AssetContainer;
 import assets.entities.Monster;
 import assets.entities.Player;
+import assets.world.BasicTile;
+import assets.world.Tile;
 import exception.RendererException;
 
 public class Renderer_3_2 extends RendererThread {
@@ -79,7 +82,17 @@ public class Renderer_3_2 extends RendererThread {
 		// Camera is actually static at this stage
 		glWorld = new GLWorld(WIDTH, HEIGHT, new Vector3f(0, 0, 0));
 
-		createEntities();
+		// GLShader texturedShader = new GLTexturedShader();
+		// texturedShader.create(TEX_SHADER_NAME);
+		// System.out.println("Textured shader ID " +
+		// texturedShader.getProgramID());
+
+		GLShader phongShader = new GLPhongShader();
+		phongShader.create(PHONG_SHADER_NAME);
+		System.out.println("Phong shader ID " + phongShader.getProgramID());
+
+		createEntities(phongShader);
+		createWorld(phongShader);
 	}
 
 	protected void afterLoop() {
@@ -89,7 +102,6 @@ public class Renderer_3_2 extends RendererThread {
 
 	// TODO: Sort this method out so we can apply transforms and shit to our
 	// 'data structure' of models. Currently it's pretty hard-coded to our
-	// texturedQuad model
 	private void logicCycle() {
 		int frameDelta = getFrameTimeDelta();
 		for (Monster m : assContainer.getMonsters()) {
@@ -109,37 +121,31 @@ public class Renderer_3_2 extends RendererThread {
 
 		renderPlayer(assContainer.getPlayer());
 		renderMonsters(assContainer.getMonsters());
+		renderTiles(assContainer.getTiles());
 
 		exitOnGLError("logicCycle");
 	}
 
+	private void createWorld(GLShader shader) throws RendererException {
+		Vector3f tilePos = new Vector3f(0, 0, 0);
+		Vector3f tileAngle = new Vector3f(0, 0, 0);
+		float tileScale = 1f;
+		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+		GLModel tileModel = new GLTilePlane(tilePos, tileAngle, tileScale, shader, tileColor);
+		assContainer.addTile(new BasicTile(tileModel));
+	}
+
 	// Debug method for creating some test stuff
-	private void createEntities() throws RendererException {
-		GLShader phongShader = new GLPhongShader();
-		phongShader.create(PHONG_SHADER_NAME);
-		System.out.println("Phong shader ID " + phongShader.getProgramID());
-
-		// GLShader texturedShader = new GLTexturedShader();
-		// texturedShader.create(TEX_SHADER_NAME);
-		// System.out.println("Textured shader ID " +
-		// texturedShader.getProgramID());
-
-		/**
-		 * BUG: Something is really wrong here. If I create a GLNormalTest model
-		 * for the monsters, it renders correctly. For the player, it does not.
-		 * Any more complex geometry and it's broken for both. Something is
-		 * wrong with the way that the VBOs are being generated. And perhaps
-		 * some other bug in the player class.
-		 **/
+	private void createEntities(GLShader shader) throws RendererException {
 
 		Vector3f playerPos = new Vector3f(0, 0, 0);
-		Vector3f playerAngle = new Vector3f(0, 0, 00);
+		Vector3f playerAngle = new Vector3f(0, 0, 0);
 		float playerScale = 1f;
 		float[] playerColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		// GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale,
 		// texturedShader, modelColor, PLAYER_TEXTURE);
-		GLModel playerModel = new GLMesh(new File("resources/meshes/SpaceFighter_small.ply"), playerPos, playerAngle, playerScale,
-				phongShader, playerColor);
+		GLModel playerModel = new GLMesh(new File("resources/meshes/SpaceFighter_small.ply"), playerPos, playerAngle, playerScale, shader,
+				playerColor);
 
 		assContainer.setPlayer(new Player(playerModel, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 
@@ -155,7 +161,7 @@ public class Renderer_3_2 extends RendererThread {
 			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1 };
 
 			GLModel monsterModel = new GLMesh(new File("resources/meshes/dodecahedron_small.ply"), monsterPos, monsterAngle, monsterScale,
-					phongShader, monsterColor);
+					shader, monsterColor);
 			Monster monster = new Monster(monsterModel, "Monster_", 0);
 			monster.setRotationDelta((float) Math.random() * 5f - 2.5f);
 			assContainer.addMonster(monster);
@@ -167,14 +173,16 @@ public class Renderer_3_2 extends RendererThread {
 		// assContainer.getMonsters().get(0).getModel().getRadius());
 	}
 
+	private void renderTiles(List<Tile> tiles) {
+		glWorld.copyCameraMatricesToShader(tiles.get(0).getModel().getShader());
+		for (Tile t : tiles) {
+			t.getModel().draw();
+		}
+	}
+
 	private void renderPlayer(Player player) {
 		glWorld.copyCameraMatricesToShader(player.getModel().getShader());
 		player.getModel().draw();
-		// System.out.print("Player: (" + player.getModel().modelPos.x + ", " +
-		// player.getModel().modelPos.y + ")");
-		// System.out.println(" Monster: (" +
-		// assContainer.getMonsters().get(0).getModel().modelPos.x + ", "
-		// + assContainer.getMonsters().get(0).getModel().modelPos.y + ")");
 	}
 
 	private void renderMonsters(List<Monster> monsters) {
