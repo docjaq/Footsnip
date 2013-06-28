@@ -1,7 +1,7 @@
 package assets.entities;
 
-import assets.Asset;
 import renderer.glmodels.GLModel;
+import assets.Asset;
 
 /************************
  * @author docjaq This is the abstract class that all entities should subclass.
@@ -23,7 +23,6 @@ public abstract class AbstractEntity implements Asset {
 	protected GLModel model;
 
 	public AbstractEntity() {
-		// Default constructor.
 	}
 
 	public AbstractEntity(GLModel model) {
