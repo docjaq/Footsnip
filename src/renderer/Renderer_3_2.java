@@ -160,7 +160,7 @@ public class Renderer_3_2 extends RendererThread {
 			float monsterScale = 1f;
 			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1 };
 
-			GLModel monsterModel = new GLMesh(new File("resources/meshes/dodecahedron_small.ply"), monsterPos, monsterAngle, monsterScale,
+			GLModel monsterModel = new GLMesh(new File("resources/meshes/SmoothBlob_small.ply"), monsterPos, monsterAngle, monsterScale,
 					shader, monsterColor);
 			Monster monster = new Monster(monsterModel, "Monster_", 0);
 			monster.setRotationDelta((float) Math.random() * 5f - 2.5f);
