@@ -2,8 +2,9 @@ package assets.entities;
 
 import maths.LinearAlgebra;
 import renderer.glmodels.GLModel;
+import collision.Collidable;
 
-public class Entity extends AbstractEntity {
+public class Entity extends AbstractEntity implements Collidable {
 
 	private String name;
 
@@ -22,5 +23,10 @@ public class Entity extends AbstractEntity {
 
 	public float getEuclideanDistance(Entity other) {
 		return LinearAlgebra.euclideanDistance(this.model.modelPos, other.model.modelPos);
+	}
+
+	@Override
+	public void collidedWith(Collidable subject) {
+		System.out.println(this.toString() + " collided with " + subject.toString());
 	}
 }

@@ -1,6 +1,7 @@
 package assets.entities;
 
 import renderer.glmodels.GLModel;
+import collision.Collidable;
 
 //This should probably be a class NPC, which Monster then extends, but decided
 //to simplify it
@@ -65,5 +66,12 @@ public class Monster extends Entity {
 		model.modelAngle.z += rotationDelta * timeDelta;
 		model.modelAngle.y += rotationDelta * timeDelta;
 		model.modelAngle.x += rotationDelta * timeDelta;
+	}
+
+	@Override
+	public void collidedWith(Collidable subject) {
+		if (Player.class.isAssignableFrom(subject.getClass())) {
+			rotationDelta *= 1.01;
+		}
 	}
 }

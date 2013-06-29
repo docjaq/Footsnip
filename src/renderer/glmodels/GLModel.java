@@ -192,4 +192,12 @@ public abstract class GLModel {
 	}
 
 	protected abstract void setRadius();
+
+	public void setColor(float[] color) {
+		this.color = color;
+	}
+
+	public float[] getColor() {
+		return color;
+	}
 }

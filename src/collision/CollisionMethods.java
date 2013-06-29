@@ -7,9 +7,6 @@ import assets.entities.Entity;
 public class CollisionMethods {
 	private static boolean intersects(Entity a, Entity b) {
 		float distance = a.getEuclideanDistance(b);
-		// System.out.print("Dist: " + distance + " - ");
-		// System.out.println("r1 = " + a.getModel().getRadius() + ", r2 = " +
-		// b.getModel().getRadius());
 		if (distance < a.getModel().getRadius() + b.getModel().getRadius()) {
 			return true;
 		}
@@ -20,12 +17,8 @@ public class CollisionMethods {
 		for (int i = 0; i < entities.size(); i++) {
 			for (int j = i + 1; j < entities.size(); j++) {
 				if (CollisionMethods.intersects(entities.get(i), entities.get(j))) {
-					if (i == 0) {
-						System.out.printf("Entity %d has intersected with entity %d\n", i, j);
-					}
-					// System.out.println(".");
-				} else {
-					// System.out.println("No intersection");
+					entities.get(i).collidedWith(entities.get(j));
+					entities.get(j).collidedWith(entities.get(i));
 				}
 			}
 		}
