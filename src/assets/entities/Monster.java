@@ -70,7 +70,7 @@ public class Monster extends Entity {
 
 	@Override
 	public void collidedWith(Collidable subject) {
-		if (subject.getClass() == Player.class) {
+		if (Player.class.isAssignableFrom(subject.getClass())) {
 			rotationDelta *= 1.01;
 		}
 	}
