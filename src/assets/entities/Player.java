@@ -5,6 +5,7 @@ import maths.LinearAlgebra;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
+import collision.Collidable;
 
 public class Player extends Entity {
 
@@ -23,6 +24,8 @@ public class Player extends Entity {
 
 	private int age;
 	private float[] color;
+
+	private int health = 100;
 
 	private float rotationDelta;
 
@@ -125,5 +128,13 @@ public class Player extends Entity {
 		model.modelAngle.z += rotationDelta * timeDelta;
 		model.modelAngle.y += rotationDelta * timeDelta;
 		model.modelAngle.x += rotationDelta * timeDelta;
+	}
+
+	@Override
+	public void collidedWith(Collidable subject) {
+		if (subject instanceof Monster) {
+			health--;
+			System.out.println("Health: " + health);
+		}
 	}
 }
