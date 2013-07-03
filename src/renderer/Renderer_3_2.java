@@ -131,8 +131,15 @@ public class Renderer_3_2 extends RendererThread {
 		Vector3f tileAngle = new Vector3f(0, 0, 0);
 		float tileScale = 1f;
 		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-		GLModel tileModel = new GLTilePlane(tilePos, tileAngle, tileScale, shader, tileColor);
-		assContainer.addTile(new BasicTile(tileModel));
+		float size = 0.5f;
+		GLModel tileModel = new GLTilePlane(tilePos, tileAngle, tileScale, shader, tileColor, size);
+		assContainer.addTile(new BasicTile(assContainer.getTiles(), tileModel, size));
+
+		/**
+		 * Testing code to add more tiles. Move from here as soon as we can
+		 * determine where the player is.
+		 **/
+		assContainer.getTiles().get(0).populateNeighbours();
 	}
 
 	// Debug method for creating some test stuff

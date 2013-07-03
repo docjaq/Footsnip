@@ -20,20 +20,20 @@ import renderer.glshaders.GLShader;
 
 public class GLTilePlane extends GLModel {
 
-	final static float length = 1f;
+	// final static float length = 1f;
 	final static float zOffset = -0.01f;
 
-	public GLTilePlane(Vector3f modelPos, Vector3f modelAngle, float modelScale, GLShader shader, float[] color) {
+	public GLTilePlane(Vector3f modelPos, Vector3f modelAngle, float modelScale, GLShader shader, float[] color, float size) {
 		super(modelPos, modelAngle, modelScale, shader, color);
 
 		Vector4f rgba = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
-		float halfLength = length / 2.0f;
+		float halfSize = size / 2.0f;
 
 		List<GLVertex> vertexList = new ArrayList<GLVertex>(4);
-		vertexList.add(new GLVertex(new Vector4f(-halfLength, -halfLength, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
-		vertexList.add(new GLVertex(new Vector4f(-halfLength, halfLength, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
-		vertexList.add(new GLVertex(new Vector4f(halfLength, halfLength, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
-		vertexList.add(new GLVertex(new Vector4f(halfLength, -halfLength, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(new Vector4f(-halfSize, -halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(new Vector4f(-halfSize, halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(new Vector4f(halfSize, halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(new Vector4f(halfSize, -halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
 
 		FloatBuffer verticesFloatBuffer = BufferUtils.createFloatBuffer(vertexList.size() * GLVertex.stride);
 		for (GLVertex v : vertexList) {

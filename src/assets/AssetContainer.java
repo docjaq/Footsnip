@@ -12,6 +12,7 @@ public class AssetContainer {
 
 	private Player player;
 	private List<Monster> monsters;
+
 	private List<Tile> tiles;
 
 	private List<Entity> entities;
