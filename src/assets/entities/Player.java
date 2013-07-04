@@ -1,5 +1,6 @@
 package assets.entities;
 
+import main.GameControl;
 import maths.LinearAlgebra;
 
 import org.lwjgl.util.vector.Vector3f;
@@ -135,6 +136,10 @@ public class Player extends Entity {
 		if (Monster.class.isAssignableFrom(subject.getClass())) {
 			health--;
 			System.out.printf("Health: %d\n", health);
+
+			if (health < 1) {
+				GameControl.playerDead();
+			}
 		}
 	}
 }

@@ -12,9 +12,11 @@ import collision.CollisionThread;
 import control.ControlThread;
 import exception.RendererException;
 
-public class Main {
+public class Main implements GameListener {
 
-	private List<GameThread> childThreads = new ArrayList<GameThread>(2);
+	private List<GameThread> childThreads = new ArrayList<GameThread>(3);
+
+	private long startMillis = System.currentTimeMillis();
 
 	/*********************************
 	 * JAQ Levels should maybe be entities, as it would seemingly make
@@ -35,6 +37,10 @@ public class Main {
 	}
 
 	public Main() throws RendererException {
+		// Tell GameControl that this class wants to know when big stuff
+		// happens.
+		GameControl.registerGameListener(this);
+
 		final AssetContainer assContainer = new AssetContainer();
 
 		GameThread rendererThread = new Renderer_3_2(assContainer, this);
@@ -65,6 +71,25 @@ public class Main {
 		for (GameThread thread : childThreads) {
 			thread.stopThread();
 		}
+	}
+
+	@Override
+	public void gameOver(boolean playerWon) {
+		if (playerWon) {
+			System.out.println("You win.");
+		} else {
+			System.out.println("You lose.");
+		}
+
+		long score = System.currentTimeMillis() - startMillis;
+		System.out.println("Score: " + score);
+
+		quitGame();
+	}
+
+	@Override
+	public void levelUp() {
+		// TODO Is this a thing?
 	}
 }
 
