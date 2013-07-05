@@ -139,7 +139,12 @@ public class Renderer_3_2 extends RendererThread {
 		 * Testing code to add more tiles. Move from here as soon as we can
 		 * determine where the player is.
 		 **/
+		/** TODO: Replace with proper data-structure **/
+		System.out.println("Container size = " + assContainer.getTiles().size());
 		assContainer.getTiles().get(0).populateNeighbours();
+		System.out.println("Container size = " + assContainer.getTiles().size());
+		assContainer.getTiles().get(5).populateNeighbours();
+		System.out.println("Container size = " + assContainer.getTiles().size());
 	}
 
 	// Debug method for creating some test stuff
