@@ -6,20 +6,20 @@ import java.util.List;
 import assets.entities.Entity;
 import assets.entities.Monster;
 import assets.entities.Player;
-import assets.world.Tile;
+import assets.world.AbstractTile;
 
 public class AssetContainer {
 
 	private Player player;
 	private List<Monster> monsters;
 
-	private List<Tile> tiles;
+	private List<AbstractTile> tiles;
 
 	private List<Entity> entities;
 
 	public AssetContainer() {
 		monsters = new ArrayList<Monster>(0);
-		tiles = new ArrayList<Tile>(9);
+		tiles = new ArrayList<AbstractTile>(9);
 	}
 
 	/** Entities **/
@@ -34,13 +34,13 @@ public class AssetContainer {
 		entities.addAll(monsters);
 	}
 
-	/** Tiles **/
+	/** AbstractTiles **/
 
-	public List<Tile> getTiles() {
+	public List<AbstractTile> getTiles() {
 		return tiles;
 	}
 
-	public void addTile(Tile tile) {
+	public void addTile(AbstractTile tile) {
 		this.tiles.add(tile);
 	}
 

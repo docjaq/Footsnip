@@ -24,8 +24,8 @@ import util.Utils;
 import assets.AssetContainer;
 import assets.entities.Monster;
 import assets.entities.Player;
+import assets.world.AbstractTile;
 import assets.world.BasicTile;
-import assets.world.Tile;
 import exception.RendererException;
 
 public class Renderer_3_2 extends RendererThread {
@@ -141,9 +141,9 @@ public class Renderer_3_2 extends RendererThread {
 		 **/
 		/** TODO: Replace with proper data-structure **/
 		System.out.println("Container size = " + assContainer.getTiles().size());
-		assContainer.getTiles().get(0).populateNeighbours();
+		((BasicTile) assContainer.getTiles().get(0)).populateNeighbours();
 		System.out.println("Container size = " + assContainer.getTiles().size());
-		assContainer.getTiles().get(5).populateNeighbours();
+		((BasicTile) assContainer.getTiles().get(5)).populateNeighbours();
 		System.out.println("Container size = " + assContainer.getTiles().size());
 	}
 
@@ -185,9 +185,9 @@ public class Renderer_3_2 extends RendererThread {
 		// assContainer.getMonsters().get(0).getModel().getRadius());
 	}
 
-	private void renderTiles(List<Tile> tiles) {
+	private void renderTiles(List<AbstractTile> tiles) {
 		glWorld.copyCameraMatricesToShader(tiles.get(0).getModel().getShader());
-		for (Tile t : tiles) {
+		for (AbstractTile t : tiles) {
 			t.getModel().draw();
 		}
 	}
