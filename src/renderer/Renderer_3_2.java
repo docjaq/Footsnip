@@ -24,8 +24,8 @@ import util.Utils;
 import assets.AssetContainer;
 import assets.entities.Monster;
 import assets.entities.Player;
-import assets.world.AbstractTile;
 import assets.world.BasicTile;
+import assets.world.datastructures.TileDataStructure;
 import exception.RendererException;
 
 public class Renderer_3_2 extends RendererThread {
@@ -121,7 +121,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		renderPlayer(assContainer.getPlayer());
 		renderMonsters(assContainer.getMonsters());
-		renderTiles(assContainer.getTileDataStructure().getAllTiles());
+		renderTiles(assContainer.getTileDataStructure());
 
 		exitOnGLError("logicCycle");
 	}
@@ -131,7 +131,7 @@ public class Renderer_3_2 extends RendererThread {
 		Vector3f tileAngle = new Vector3f(0, 0, 0);
 		float tileScale = 1f;
 		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-		float size = 0.5f;
+		float size = 0.2f;
 		GLModel tileModel = new GLTilePlane(tilePos, tileAngle, tileScale, shader, tileColor, size);
 		BasicTile initialTile = new BasicTile(tileModel, size);
 		assContainer.getTileDataStructure().init(initialTile);
@@ -141,14 +141,13 @@ public class Renderer_3_2 extends RendererThread {
 		 * determine where the player is.
 		 **/
 		/** TODO: Replace with proper data-structure **/
-		// System.out.println("Container size = " +
-		// assContainer.getTiles().size());
-		// ((BasicTile) assContainer.getTiles().get(0)).populateNeighbours();
-		// System.out.println("Container size = " +
-		// assContainer.getTiles().size());
-		// ((BasicTile) assContainer.getTiles().get(5)).populateNeighbours();
-		// System.out.println("Container size = " +
-		// assContainer.getTiles().size());
+		System.out.println("Map size = " + assContainer.getTileDataStructure().getTilesAsHashMap().size());
+		assContainer.getTileDataStructure().populateNeighbouringTiles(initialTile);
+		assContainer.getTileDataStructure().populateNeighbouringTiles(assContainer.getTileDataStructure().getTileTop(initialTile));
+		assContainer.getTileDataStructure().populateNeighbouringTiles(assContainer.getTileDataStructure().getTileTopRight(initialTile));
+		assContainer.getTileDataStructure().populateNeighbouringTiles(assContainer.getTileDataStructure().getTileRight(initialTile));
+		System.out.println("Map size = " + assContainer.getTileDataStructure().getTilesAsHashMap().size());
+
 	}
 
 	// Debug method for creating some test stuff
@@ -189,11 +188,8 @@ public class Renderer_3_2 extends RendererThread {
 		// assContainer.getMonsters().get(0).getModel().getRadius());
 	}
 
-	private void renderTiles(List<AbstractTile> tiles) {
-		glWorld.copyCameraMatricesToShader(tiles.get(0).getModel().getShader());
-		for (AbstractTile t : tiles) {
-			t.getModel().draw();
-		}
+	private void renderTiles(TileDataStructure dataStructure) {
+		dataStructure.draw(glWorld);
 	}
 
 	private void renderPlayer(Player player) {

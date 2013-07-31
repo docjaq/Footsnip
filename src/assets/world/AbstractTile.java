@@ -19,7 +19,7 @@ import assets.world.datastructures.HashmapKey;
 public abstract class AbstractTile implements Asset {
 
 	protected GLModel model;
-	private HashmapKey key;
+	protected HashmapKey key;
 
 	public AbstractTile() {
 	}
