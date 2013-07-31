@@ -121,7 +121,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		renderPlayer(assContainer.getPlayer());
 		renderMonsters(assContainer.getMonsters());
-		renderTiles(assContainer.getTiles());
+		renderTiles(assContainer.getTileDataStructure().getAllTiles());
 
 		exitOnGLError("logicCycle");
 	}
@@ -133,18 +133,22 @@ public class Renderer_3_2 extends RendererThread {
 		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		float size = 0.5f;
 		GLModel tileModel = new GLTilePlane(tilePos, tileAngle, tileScale, shader, tileColor, size);
-		assContainer.addTile(new BasicTile(assContainer.getTiles(), tileModel, size));
+		BasicTile initialTile = new BasicTile(tileModel, size);
+		assContainer.getTileDataStructure().init(initialTile);
 
 		/**
 		 * Testing code to add more tiles. Move from here as soon as we can
 		 * determine where the player is.
 		 **/
 		/** TODO: Replace with proper data-structure **/
-		System.out.println("Container size = " + assContainer.getTiles().size());
-		((BasicTile) assContainer.getTiles().get(0)).populateNeighbours();
-		System.out.println("Container size = " + assContainer.getTiles().size());
-		((BasicTile) assContainer.getTiles().get(5)).populateNeighbours();
-		System.out.println("Container size = " + assContainer.getTiles().size());
+		// System.out.println("Container size = " +
+		// assContainer.getTiles().size());
+		// ((BasicTile) assContainer.getTiles().get(0)).populateNeighbours();
+		// System.out.println("Container size = " +
+		// assContainer.getTiles().size());
+		// ((BasicTile) assContainer.getTiles().get(5)).populateNeighbours();
+		// System.out.println("Container size = " +
+		// assContainer.getTiles().size());
 	}
 
 	// Debug method for creating some test stuff

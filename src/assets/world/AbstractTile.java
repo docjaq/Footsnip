@@ -2,6 +2,7 @@ package assets.world;
 
 import renderer.glmodels.GLModel;
 import assets.Asset;
+import assets.world.datastructures.HashmapKey;
 
 /************************
  * @author docjaq This is the interesting addition. I came up with the idea that
@@ -15,9 +16,10 @@ import assets.Asset;
  *         'city tile', etc. That sort of thing.
  */
 
-public class AbstractTile implements Asset {
+public abstract class AbstractTile implements Asset {
 
 	protected GLModel model;
+	private HashmapKey key;
 
 	public AbstractTile() {
 	}
@@ -30,6 +32,8 @@ public class AbstractTile implements Asset {
 		return model;
 	}
 
+	public abstract float getSize();
+
 	public void setModel(GLModel model) {
 		if (this.model != null) {
 			throw new RuntimeException("You can only set the model once.");
@@ -39,5 +43,13 @@ public class AbstractTile implements Asset {
 
 	public void destroy() {
 		model.cleanUp();
+	}
+
+	public HashmapKey getKey() {
+		return key;
+	}
+
+	public void setKey(HashmapKey key) {
+		this.key = key;
 	}
 }

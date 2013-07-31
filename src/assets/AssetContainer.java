@@ -6,20 +6,22 @@ import java.util.List;
 import assets.entities.Entity;
 import assets.entities.Monster;
 import assets.entities.Player;
-import assets.world.AbstractTile;
+import assets.world.datastructures.HashmapDataStructure;
+import assets.world.datastructures.TileDataStructure;
 
 public class AssetContainer {
 
 	private Player player;
 	private List<Monster> monsters;
 
-	private List<AbstractTile> tiles;
+	// private List<AbstractTile> tiles;
+	private TileDataStructure tiles;
 
 	private List<Entity> entities;
 
 	public AssetContainer() {
 		monsters = new ArrayList<Monster>(0);
-		tiles = new ArrayList<AbstractTile>(9);
+		tiles = new HashmapDataStructure();
 	}
 
 	/** Entities **/
@@ -36,12 +38,8 @@ public class AssetContainer {
 
 	/** AbstractTiles **/
 
-	public List<AbstractTile> getTiles() {
+	public TileDataStructure getTileDataStructure() {
 		return tiles;
-	}
-
-	public void addTile(AbstractTile tile) {
-		this.tiles.add(tile);
 	}
 
 	/** Player **/
