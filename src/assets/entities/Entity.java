@@ -1,10 +1,12 @@
 package assets.entities;
 
+import location.Locatable;
 import maths.LinearAlgebra;
 import renderer.glmodels.GLModel;
+import assets.world.AbstractTile;
 import collision.Collidable;
 
-public class Entity extends AbstractEntity implements Collidable {
+public class Entity extends AbstractEntity implements Collidable, Locatable {
 
 	private String name;
 
@@ -28,5 +30,10 @@ public class Entity extends AbstractEntity implements Collidable {
 	@Override
 	public void collidedWith(Collidable subject) {
 		System.out.println(this.toString() + " collided with " + subject.toString());
+	}
+
+	@Override
+	public void locatedWithin(AbstractTile tile) {
+		System.out.println("Located within tile: " + tile.getKey().x + "," + tile.getKey().y);
 	}
 }

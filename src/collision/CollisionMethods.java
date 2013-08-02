@@ -13,6 +13,8 @@ public class CollisionMethods {
 		return false;
 	}
 
+	// TODO: This is a bit limited at the moment, as it assumes that we're
+	// always testing against all entities
 	public static void checkEntityCollisions(List<Entity> entities) {
 		for (int i = 0; i < entities.size(); i++) {
 			for (int j = i + 1; j < entities.size(); j++) {

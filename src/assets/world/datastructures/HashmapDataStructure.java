@@ -93,4 +93,8 @@ public class HashmapDataStructure implements TileDataStructure {
 		return map.get(new HashmapKey(tile.getKey().x + 1, tile.getKey().y));
 	}
 
+	@Override
+	public AbstractTile getInitialTile() {
+		return initialTile;
+	}
 }

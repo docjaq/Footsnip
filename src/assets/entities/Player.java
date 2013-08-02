@@ -1,6 +1,5 @@
 package assets.entities;
 
-import location.Locatable;
 import main.GameControl;
 import maths.LinearAlgebra;
 
@@ -9,7 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
 import renderer.glmodels.GLModel;
 import collision.Collidable;
 
-public class Player extends Entity implements Locatable {
+public class Player extends Entity {
 
 	private static final float DEFAULT_ROTATION_SPEED = 0.1f;
 	private static final float ROTATION_ACCELERATION = 0.001f;
@@ -144,11 +143,5 @@ public class Player extends Entity implements Locatable {
 				GameControl.playerDead();
 			}
 		}
-	}
-
-	@Override
-	public void locate() {
-		// TODO Auto-generated method stub
-
 	}
 }

@@ -13,7 +13,7 @@ public class LocationThread extends GameThread {
 
 	@Override
 	protected void gameLoop() {
-		// LocationMethods.locateEntities();
-		System.out.println("Locating");
+		/** Doing it as a single entity now to keep it simple **/
+		LocationMethods.locateEntity(assContainer.getPlayer(), assContainer.getTileDataStructure());
 	}
 }

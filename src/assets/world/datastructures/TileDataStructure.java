@@ -18,6 +18,8 @@ public interface TileDataStructure {
 
 	public void draw(GLWorld glWorld);
 
+	public AbstractTile getInitialTile();
+
 	// TODO: Decide if this is necessary. I can't really remember
 	// public ArrayList<AbstractTile> getNeighbouringTiles(AbstractTile tile);
 
