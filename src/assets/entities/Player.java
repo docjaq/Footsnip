@@ -1,5 +1,6 @@
 package assets.entities;
 
+import location.Locatable;
 import main.GameControl;
 import maths.LinearAlgebra;
 
@@ -8,7 +9,7 @@ import org.lwjgl.util.vector.Vector3f;
 import renderer.glmodels.GLModel;
 import collision.Collidable;
 
-public class Player extends Entity {
+public class Player extends Entity implements Locatable {
 
 	private static final float DEFAULT_ROTATION_SPEED = 0.1f;
 	private static final float ROTATION_ACCELERATION = 0.001f;
@@ -133,7 +134,9 @@ public class Player extends Entity {
 
 	@Override
 	public void collidedWith(Collidable subject) {
-		if (Monster.class.isAssignableFrom(subject.getClass())) {
+		// DAVE: Isn't this just a neater way of saying
+		// isAssignableFrom(subject.getClass())?
+		if (Monster.class.isInstance(subject)) {
 			health--;
 			System.out.printf("Health: %d\n", health);
 
@@ -141,5 +144,11 @@ public class Player extends Entity {
 				GameControl.playerDead();
 			}
 		}
+	}
+
+	@Override
+	public void locate() {
+		// TODO Auto-generated method stub
+
 	}
 }

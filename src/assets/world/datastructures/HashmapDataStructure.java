@@ -17,11 +17,6 @@ public class HashmapDataStructure implements TileDataStructure {
 	private static final HashmapKey INITIAL_KEY = new HashmapKey(0, 0);
 	private AbstractTile initialTile;
 
-	/*
-	 * public HashmapDataStructure(AbstractTile tile) { map = new
-	 * HashMap<HashmapKey, AbstractTile>(); map.put(INITIAL_KEY, tile); }
-	 */
-
 	public HashmapDataStructure() {
 		map = new HashMap<HashmapKey, AbstractTile>();
 	}

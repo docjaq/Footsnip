@@ -3,6 +3,7 @@ package main;
 import java.util.ArrayList;
 import java.util.List;
 
+import location.LocationThread;
 import renderer.Renderer_3_2;
 import thread.GameThread;
 import thread.ObservableThread;
@@ -62,6 +63,11 @@ public class Main implements GameListener {
 				collisionThread.setPriority(Thread.NORM_PRIORITY);
 				collisionThread.start();
 				childThreads.add(collisionThread);
+
+				GameThread locationThread = new LocationThread(assContainer, 10, Main.this);
+				locationThread.setPriority(Thread.NORM_PRIORITY);
+				locationThread.start();
+				childThreads.add(locationThread);
 			}
 		});
 	}

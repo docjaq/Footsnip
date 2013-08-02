@@ -10,7 +10,7 @@ import assets.world.datastructures.HashmapKey;
 public class BasicTile extends AbstractTile {
 
 	/** This may not be necessary **/
-	private int uniqueID;
+	// private int uniqueID;
 
 	private float size;
 	private GLShader shader;
