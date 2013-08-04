@@ -6,6 +6,8 @@ import maths.LinearAlgebra;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
+import assets.world.AbstractTile;
+import assets.world.datastructures.TileDataStructure;
 import collision.Collidable;
 
 public class Player extends Entity {
@@ -134,7 +136,7 @@ public class Player extends Entity {
 	@Override
 	public void collidedWith(Collidable subject) {
 		// DAVE: Isn't this just a neater way of saying
-		// isAssignableFrom(subject.getClass())?
+		// Monster.class.isAssignableFrom(subject.getClass())?
 		if (Monster.class.isInstance(subject)) {
 			health--;
 			System.out.printf("Health: %d\n", health);
@@ -144,4 +146,14 @@ public class Player extends Entity {
 			}
 		}
 	}
+
+	@Override
+	public void locatedWithin(AbstractTile tile, TileDataStructure data) {
+		if (tile != currentTile) {
+			currentTile = tile;
+			System.out.println(tile.getKey().x + "," + tile.getKey().y);
+			data.populateNeighbouringTiles(currentTile);
+		}
+	}
+
 }

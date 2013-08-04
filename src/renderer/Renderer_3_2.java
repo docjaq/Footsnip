@@ -16,7 +16,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
-import renderer.glmodels.GLTilePlane;
 import renderer.glshaders.GLPhongShader;
 import renderer.glshaders.GLShader;
 import thread.RendererThread;
@@ -25,6 +24,7 @@ import assets.AssetContainer;
 import assets.entities.Monster;
 import assets.entities.Player;
 import assets.world.BasicTile;
+import assets.world.TileFactory;
 import assets.world.datastructures.TileDataStructure;
 import exception.RendererException;
 
@@ -128,25 +128,19 @@ public class Renderer_3_2 extends RendererThread {
 
 	private void createWorld(GLShader shader) throws RendererException {
 		Vector3f tilePos = new Vector3f(0, 0, 0);
-		Vector3f tileAngle = new Vector3f(0, 0, 0);
-		float tileScale = 1f;
-		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-		float size = 0.2f;
-		GLModel tileModel = new GLTilePlane(tilePos, tileAngle, tileScale, shader, tileColor, size);
-		BasicTile initialTile = new BasicTile(tileModel, size);
+
+		BasicTile initialTile = TileFactory.createTile(null, BasicTile.class, tilePos, shader);
 		assContainer.getTileDataStructure().init(initialTile);
 
-		/**
-		 * Testing code to add more tiles. Move from here as soon as we can
-		 * determine where the player is.
-		 **/
 		/** TODO: Replace with proper data-structure **/
-		System.out.println("Map size = " + assContainer.getTileDataStructure().getTilesAsHashMap().size());
+		// System.out.println("Map size = " +
+		// assContainer.getTileDataStructure().getTilesAsHashMap().size());
 		assContainer.getTileDataStructure().populateNeighbouringTiles(initialTile);
-		assContainer.getTileDataStructure().populateNeighbouringTiles(assContainer.getTileDataStructure().getTileTop(initialTile));
-		assContainer.getTileDataStructure().populateNeighbouringTiles(assContainer.getTileDataStructure().getTileTopRight(initialTile));
-		assContainer.getTileDataStructure().populateNeighbouringTiles(assContainer.getTileDataStructure().getTileRight(initialTile));
-		System.out.println("Map size = " + assContainer.getTileDataStructure().getTilesAsHashMap().size());
+		// assContainer.getTileDataStructure().populateNeighbouringTiles(assContainer.getTileDataStructure().getTileTop(initialTile));
+		// assContainer.getTileDataStructure().populateNeighbouringTiles(assContainer.getTileDataStructure().getTileTopRight(initialTile));
+		// assContainer.getTileDataStructure().populateNeighbouringTiles(assContainer.getTileDataStructure().getTileRight(initialTile));
+		// System.out.println("Map size = " +
+		// assContainer.getTileDataStructure().getTilesAsHashMap().size());
 
 	}
 

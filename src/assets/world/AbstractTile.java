@@ -1,38 +1,37 @@
 package assets.world;
 
-import renderer.glmodels.GLModel;
-import assets.Asset;
-import assets.world.datastructures.HashmapKey;
+import org.lwjgl.util.vector.Vector3f;
 
-/************************
- * @author docjaq This is the interesting addition. I came up with the idea that
- *         instead of 'rooms', 'maps', 'worlds' etc, we just have one world
- *         container (which doesn't subclass anything, as far as I can tell yet,
- *         but contains a collection of Tiles. All tiles are the same size, etc,
- *         and then tesselate together (indefinitely). I was thinking
- *         essentially like a Minecraft block, but bigger, and more like a bit
- *         of flat ground. Then we can, subclass this, to create, e.g.
- *         'ClosedBoxTile' as our debug case, then things like 'forest tile',
- *         'city tile', etc. That sort of thing.
- */
+import renderer.glmodels.GLModel;
+import renderer.glshaders.GLShader;
+import assets.Asset;
+import assets.world.datastructures.DataStructureKey2D;
 
 public abstract class AbstractTile implements Asset {
 
 	protected GLModel model;
-	protected HashmapKey key;
+	protected Vector3f tilePos; // I don't like this, it should be temporary
+	protected DataStructureKey2D key;
+	public static final float SIZE = 1.0f;
 
 	public AbstractTile() {
 	}
 
-	public AbstractTile(GLModel model) {
+	public AbstractTile(DataStructureKey2D key, GLModel model, Vector3f tilePos) {
+		this.key = key;
 		this.model = model;
+		this.tilePos = tilePos;
 	}
 
 	public GLModel getModel() {
 		return model;
 	}
 
-	public abstract float getSize();
+	public float getSize() {
+		return SIZE;
+	}
+
+	public abstract void createModel(GLShader shader);
 
 	public void setModel(GLModel model) {
 		if (this.model != null) {
@@ -45,11 +44,11 @@ public abstract class AbstractTile implements Asset {
 		model.cleanUp();
 	}
 
-	public HashmapKey getKey() {
+	public DataStructureKey2D getKey() {
 		return key;
 	}
 
-	public void setKey(HashmapKey key) {
+	public void setKey(DataStructureKey2D key) {
 		this.key = key;
 	}
 }

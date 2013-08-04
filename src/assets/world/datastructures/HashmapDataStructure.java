@@ -12,13 +12,13 @@ import assets.world.TileFactory;
 
 public class HashmapDataStructure implements TileDataStructure {
 
-	private HashMap<HashmapKey, AbstractTile> map;
+	private HashMap<DataStructureKey2D, AbstractTile> map;
 	private List<AbstractTile> list; // Backed by map
-	private static final HashmapKey INITIAL_KEY = new HashmapKey(0, 0);
+	private static final DataStructureKey2D INITIAL_KEY = new DataStructureKey2D(0, 0);
 	private AbstractTile initialTile;
 
 	public HashmapDataStructure() {
-		map = new HashMap<HashmapKey, AbstractTile>();
+		map = new HashMap<DataStructureKey2D, AbstractTile>();
 	}
 
 	public void init(AbstractTile initialTile) {
@@ -32,14 +32,12 @@ public class HashmapDataStructure implements TileDataStructure {
 	}
 
 	@Override
-	public HashMap<HashmapKey, AbstractTile> getTilesAsHashMap() {
-		return map;
-	}
-
-	@Override
 	public void draw(GLWorld glWorld) {
 		glWorld.copyCameraMatricesToShader(initialTile.getModel().getShader());
 		for (AbstractTile t : map.values()) {
+			if (t.getModel() == null) {
+				t.createModel(initialTile.getModel().getShader());
+			}
 			t.getModel().draw();
 		}
 
@@ -48,7 +46,7 @@ public class HashmapDataStructure implements TileDataStructure {
 	@Override
 	public void populateNeighbouringTiles(AbstractTile tile) {
 
-		HashmapKey parentKey = tile.getKey();
+		DataStructureKey2D parentKey = tile.getKey();
 		addTile(parentKey, 0, 1, tile);
 		addTile(parentKey, 1, 1, tile);
 		addTile(parentKey, 1, 0, tile);
@@ -59,17 +57,17 @@ public class HashmapDataStructure implements TileDataStructure {
 		addTile(parentKey, -1, +1, tile);
 	}
 
-	private void addTile(HashmapKey parentKey, int xAdjust, int yAdjust, AbstractTile tile) {
+	private void addTile(DataStructureKey2D parentKey, int xAdjust, int yAdjust, AbstractTile tile) {
 
 		int adjustedX = parentKey.x + xAdjust;
 		int adjustedY = parentKey.y + yAdjust;
 		Vector3f position = new Vector3f(adjustedX * tile.getSize(), adjustedY * tile.getSize(), 0);
-		HashmapKey key = new HashmapKey(adjustedX, adjustedY);
+		DataStructureKey2D key = new DataStructureKey2D(adjustedX, adjustedY);
 
 		if (map.containsKey(key)) {
 			System.out.println("Key (" + key.x + "," + key.y + ") already exists!");
 		} else {
-			map.put(key, TileFactory.createTile(key, tile, tile.getClass(), position));
+			map.put(key, TileFactory.createTileNoGLModel(key, tile.getClass(), position, tile.getModel().getShader()));
 		}
 	}
 
@@ -80,21 +78,32 @@ public class HashmapDataStructure implements TileDataStructure {
 	// }
 	// @Override
 	public AbstractTile getTileTop(AbstractTile tile) {
-		return map.get(new HashmapKey(tile.getKey().x, tile.getKey().y + 1));
+		return map.get(new DataStructureKey2D(tile.getKey().x, tile.getKey().y + 1));
 	}
 
 	@Override
 	public AbstractTile getTileTopRight(AbstractTile tile) {
-		return map.get(new HashmapKey(tile.getKey().x + 1, tile.getKey().y + 1));
+		return map.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y + 1));
 	}
 
 	@Override
 	public AbstractTile getTileRight(AbstractTile tile) {
-		return map.get(new HashmapKey(tile.getKey().x + 1, tile.getKey().y));
+		return map.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y));
 	}
 
 	@Override
 	public AbstractTile getInitialTile() {
 		return initialTile;
+	}
+
+	// TODO: Need to handle returning the null type properly
+	@Override
+	public AbstractTile getTileUsingKey(DataStructureKey2D key) {
+		AbstractTile tile = map.get(key);
+		if (tile != null) {
+			return tile;
+		} else {
+			return null;
+		}
 	}
 }

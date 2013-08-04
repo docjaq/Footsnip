@@ -1,10 +1,10 @@
 package assets.world.datastructures;
 
-public class HashmapKey {
+public class DataStructureKey2D {
 	public int x;
 	public int y;
 
-	public HashmapKey(int x, int y) {
+	public DataStructureKey2D(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -26,7 +26,7 @@ public class HashmapKey {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		HashmapKey other = (HashmapKey) obj;
+		DataStructureKey2D other = (DataStructureKey2D) obj;
 		if (x != other.x)
 			return false;
 		if (y != other.y)
