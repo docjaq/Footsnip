@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import main.Main;
+import mesh.Ply;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -22,6 +23,7 @@ import thread.RendererThread;
 import util.Utils;
 import assets.AssetContainer;
 import assets.entities.Monster;
+import assets.entities.MonsterFactory;
 import assets.entities.Player;
 import assets.world.BasicTile;
 import assets.world.TileFactory;
@@ -144,7 +146,6 @@ public class Renderer_3_2 extends RendererThread {
 
 	}
 
-	// Debug method for creating some test stuff
 	private void createEntities(GLShader shader) throws RendererException {
 
 		Vector3f playerPos = new Vector3f(0, 0, 0);
@@ -153,8 +154,11 @@ public class Renderer_3_2 extends RendererThread {
 		float[] playerColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		// GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale,
 		// texturedShader, modelColor, PLAYER_TEXTURE);
-		GLModel playerModel = new GLMesh(new File("resources/meshes/SpaceFighter_small.ply"), playerPos, playerAngle, playerScale, shader,
-				playerColor);
+
+		Ply playerMesh = new Ply();
+		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"));
+
+		GLModel playerModel = new GLMesh(playerMesh, playerPos, playerAngle, playerScale, shader, playerColor);
 
 		assContainer.setPlayer(new Player(playerModel, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 
@@ -163,23 +167,15 @@ public class Renderer_3_2 extends RendererThread {
 		// String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random()
 		// * 4)];
 
-		for (int i = 0; i < 30; i++) {
-			Vector3f monsterPos = new Vector3f((float) Math.random() - 0.5f, (float) Math.random() - 0.5f, 0);
-			Vector3f monsterAngle = new Vector3f(0, 0, 0);
-			float monsterScale = 1f;
-			float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1 };
+		Ply monsterMesh = new Ply();
+		monsterMesh.read(new File("resources/meshes/SmoothBlob_small.ply"));
 
-			GLModel monsterModel = new GLMesh(new File("resources/meshes/SmoothBlob_small.ply"), monsterPos, monsterAngle, monsterScale,
-					shader, monsterColor);
-			Monster monster = new Monster(monsterModel, "Monster_", 0);
-			monster.setRotationDelta((float) Math.random() * 5f - 2.5f);
-			assContainer.addMonster(monster);
+		float spread = 5;
+		for (int i = 0; i < 300; i++) {
+			Vector3f monsterPos = new Vector3f((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
+			assContainer.addMonster(MonsterFactory.createMesh(monsterMesh, shader, monsterPos));
 		}
 
-		// System.out.println("Player radius = " +
-		// assContainer.getPlayer().getModel().getRadius());
-		// System.out.println("Monster radius = " +
-		// assContainer.getMonsters().get(0).getModel().getRadius());
 	}
 
 	private void renderTiles(TileDataStructure dataStructure) {

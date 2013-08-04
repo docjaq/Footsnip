@@ -1,12 +1,12 @@
 package renderer.glmodels;
 
 import static renderer.GLUtilityMethods.exitOnGLError;
-import io.Ply;
 
-import java.io.File;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+
+import mesh.GeometryFile;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -24,11 +24,9 @@ public class GLMesh extends GLModel {
 	private ArrayList<GLVertex> vertexList;
 	private ArrayList<GLTriangle> triangleList;
 
-	public GLMesh(File meshName, Vector3f modelPos, Vector3f modelAngle, float modelScale, GLShader shader, float[] color) {
+	public GLMesh(GeometryFile mesh, Vector3f modelPos, Vector3f modelAngle, float modelScale, GLShader shader, float[] color) {
 		super(modelPos, modelAngle, modelScale, shader, color);
 
-		Ply mesh = new Ply();
-		mesh.read(meshName);
 		vertexList = mesh.getVertices();
 		// mesh.normaliseAndCentre(vertexList); //Shit
 		triangleList = mesh.getTriangles();
