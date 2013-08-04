@@ -14,6 +14,7 @@ import mesh.Ply;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
@@ -151,14 +152,20 @@ public class Renderer_3_2 extends RendererThread {
 		Vector3f playerPos = new Vector3f(0, 0, 0);
 		Vector3f playerAngle = new Vector3f(0, 0, 0);
 		float playerScale = 1f;
-		float[] playerColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+		Vector4f playerColor = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+		float[] playerColorArray = { playerColor.x, playerColor.y, playerColor.z, playerColor.w };
 		// GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale,
 		// texturedShader, modelColor, PLAYER_TEXTURE);
 
 		Ply playerMesh = new Ply();
-		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"));
+		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"), playerColor);
 
-		GLModel playerModel = new GLMesh(playerMesh, playerPos, playerAngle, playerScale, shader, playerColor);
+		/**
+		 * TODO: This playerColorArray is sent to the shader, but it's bollocks
+		 * and does nothing. Need to either use it in the shader (worked
+		 * pre-phong), or remove it from the engine
+		 **/
+		GLModel playerModel = new GLMesh(playerMesh, playerPos, playerAngle, playerScale, shader, playerColorArray);
 
 		assContainer.setPlayer(new Player(playerModel, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 
@@ -167,8 +174,9 @@ public class Renderer_3_2 extends RendererThread {
 		// String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random()
 		// * 4)];
 
+		Vector4f monsterColor = new Vector4f(0.3f, 0.3f, 0.05f, 1.0f);
 		Ply monsterMesh = new Ply();
-		monsterMesh.read(new File("resources/meshes/SmoothBlob_small.ply"));
+		monsterMesh.read(new File("resources/meshes/SmoothBlob_small.ply"), monsterColor);
 
 		float spread = 5;
 		for (int i = 0; i < 300; i++) {

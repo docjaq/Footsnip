@@ -35,12 +35,12 @@ public class Ply extends AbstractGeometryFile {
 		return vertices;
 	}
 
-	public void read(File file) {
+	public void read(File file, Vector4f color) {
 
 		try {
 			Scanner scanner = new Scanner(new BufferedReader(new FileReader(file)));
 			readHeader(scanner);
-			readGeometry(scanner);
+			readGeometry(scanner, color);
 		} catch (IOException e) {
 			throw new GameException(MessageFormat.format("Error reading file {0}; error message is: {1}", file.getPath(),
 					e.getMessage() == null ? e.toString() : e.getMessage()), e);
@@ -71,15 +71,13 @@ public class Ply extends AbstractGeometryFile {
 		triangles = new ArrayList<GLTriangle>(numFaces);
 	}
 
-	private void readGeometry(Scanner scanner) {
-
-		Vector4f rgba = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 1.0f);
+	private void readGeometry(Scanner scanner, Vector4f color) {
 
 		for (int i = 0; i < numVertices; i++) {
 			String line = scanner.nextLine();
 			String[] elements = line.split(" ");
 			GLVertex vertex = new GLVertex(i, Float.parseFloat(elements[0]), Float.parseFloat(elements[1]), Float.parseFloat(elements[2]),
-					rgba);
+					color);
 			if (elements.length >= 6) {
 				vertex.setNXNYNZ(Float.parseFloat(elements[3]), Float.parseFloat(elements[4]), Float.parseFloat(elements[5]));
 			}
