@@ -3,11 +3,12 @@ package assets.world.datastructures;
 import java.util.List;
 
 import renderer.GLWorld;
+import renderer.glmodels.GLTileFactory;
 import assets.world.AbstractTile;
 
 public interface TileDataStructure {
 
-	public void init(AbstractTile tile);
+	public void init(GLTileFactory glTileFactory, AbstractTile tile);
 
 	/** TODO: Consider removing this **/
 	public List<AbstractTile> getTilesAsList();

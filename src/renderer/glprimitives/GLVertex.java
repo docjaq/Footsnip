@@ -113,6 +113,10 @@ public class GLVertex {
 		this.rgba = new Vector4f(r, g, b, 1f);
 	}
 
+	public void setRGBA(Vector4f rgba) {
+		this.rgba = rgba;
+	}
+
 	public void setNXNYNZNW(float nx, float ny, float nz, float nw) {
 		this.nxnynznw = new Vector4f(nx, ny, nz, nw);
 	}
@@ -170,4 +174,12 @@ public class GLVertex {
 		return new Vector3f(this.nxnynznw.x, this.nxnynznw.y, this.nxnynznw.z);
 	}
 
+	@Override
+	public Object clone() {
+		GLVertex cloned = new GLVertex();
+		cloned.setXYZW(this.xyzw.x, this.xyzw.y, this.xyzw.z, this.xyzw.w);
+		cloned.setRGBA(this.rgba.x, this.rgba.y, this.rgba.z, this.rgba.w);
+		cloned.setNXNYNZNW(this.nxnynznw.x, this.nxnynznw.y, this.nxnynznw.z, this.nxnynznw.w);
+		return cloned;
+	}
 }

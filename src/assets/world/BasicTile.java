@@ -3,6 +3,7 @@ package assets.world;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
+import renderer.glmodels.GLTileFactory;
 import renderer.glshaders.GLShader;
 import assets.world.datastructures.DataStructureKey2D;
 
@@ -13,10 +14,17 @@ public class BasicTile extends AbstractTile {
 	}
 
 	@Override
-	public void createModel(GLShader shader) {
+	public void createModel(GLTileFactory glTileFactory, GLShader shader) {
 		if (this.model != null) {
 			throw new RuntimeException("You can only set the model once.");
 		}
-		this.model = TileFactory.createTileGLModel(BasicTile.class, tilePos, shader);
+		Vector3f tileAngle = new Vector3f(0, 0, 0);
+		float tileScale = 1f;
+		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+		this.model = glTileFactory.create(tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
+
+		// new GLTilePlane(tilePos, tileAngle, tileScale, shader, tileColor,
+		// AbstractTile.SIZE);
 	}
 }

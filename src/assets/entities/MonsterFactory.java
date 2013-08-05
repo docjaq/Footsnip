@@ -24,7 +24,8 @@ public class MonsterFactory {
 		 **/
 		float[] monsterColor = { (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 1 };
 
-		GLModel monsterModel = new GLMesh(mesh, monsterPos, monsterAngle, monsterScale, shader, monsterColor);
+		GLModel monsterModel = new GLMesh(mesh.getTriangles(), mesh.getVertices(), monsterPos, monsterAngle, monsterScale, shader,
+				monsterColor);
 		Monster monster = new Monster(monsterModel, "Monster_", 0);
 		monster.setRotationDelta((float) Math.random() * 5f - 2.5f);
 

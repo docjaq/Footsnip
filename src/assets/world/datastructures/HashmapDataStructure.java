@@ -7,8 +7,9 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.GLWorld;
+import renderer.glmodels.GLTileFactory;
 import assets.world.AbstractTile;
-import assets.world.TileFactory;
+import assets.world.BasicTile;
 
 public class HashmapDataStructure implements TileDataStructure {
 
@@ -16,12 +17,14 @@ public class HashmapDataStructure implements TileDataStructure {
 	private List<AbstractTile> list; // Backed by map
 	private static final DataStructureKey2D INITIAL_KEY = new DataStructureKey2D(0, 0);
 	private AbstractTile initialTile;
+	private GLTileFactory glTileFactory;
 
 	public HashmapDataStructure() {
 		map = new HashMap<DataStructureKey2D, AbstractTile>();
 	}
 
-	public void init(AbstractTile initialTile) {
+	public void init(GLTileFactory glTileFactory, AbstractTile initialTile) {
+		this.glTileFactory = glTileFactory;
 		this.initialTile = initialTile;
 		initialTile.setKey(INITIAL_KEY);
 		map.put(INITIAL_KEY, initialTile);
@@ -36,7 +39,7 @@ public class HashmapDataStructure implements TileDataStructure {
 		glWorld.copyCameraMatricesToShader(initialTile.getModel().getShader());
 		for (AbstractTile t : map.values()) {
 			if (t.getModel() == null) {
-				t.createModel(initialTile.getModel().getShader());
+				t.createModel(glTileFactory, initialTile.getModel().getShader());
 			}
 			t.getModel().draw();
 		}
@@ -67,7 +70,7 @@ public class HashmapDataStructure implements TileDataStructure {
 		if (map.containsKey(key)) {
 			System.out.println("Key (" + key.x + "," + key.y + ") already exists!");
 		} else {
-			map.put(key, TileFactory.createTileNoGLModel(key, tile.getClass(), position, tile.getModel().getShader()));
+			map.put(key, new BasicTile(key, null, position));
 		}
 	}
 

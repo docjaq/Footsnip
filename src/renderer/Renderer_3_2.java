@@ -18,6 +18,9 @@ import org.lwjgl.util.vector.Vector4f;
 
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
+import renderer.glmodels.GLTileFactory;
+import renderer.glmodels.GLTilePlanarFactory;
+import renderer.glmodels.GLTilePlane;
 import renderer.glshaders.GLPhongShader;
 import renderer.glshaders.GLShader;
 import thread.RendererThread;
@@ -26,8 +29,8 @@ import assets.AssetContainer;
 import assets.entities.Monster;
 import assets.entities.MonsterFactory;
 import assets.entities.Player;
+import assets.world.AbstractTile;
 import assets.world.BasicTile;
-import assets.world.TileFactory;
 import assets.world.datastructures.TileDataStructure;
 import exception.RendererException;
 
@@ -131,20 +134,15 @@ public class Renderer_3_2 extends RendererThread {
 
 	private void createWorld(GLShader shader) throws RendererException {
 		Vector3f tilePos = new Vector3f(0, 0, 0);
+		Vector3f tileAngle = new Vector3f(0, 0, 0);
+		float tileScale = 1f;
+		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-		BasicTile initialTile = TileFactory.createTile(null, BasicTile.class, tilePos, shader);
-		assContainer.getTileDataStructure().init(initialTile);
+		GLModel model = new GLTilePlane(tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
 
-		/** TODO: Replace with proper data-structure **/
-		// System.out.println("Map size = " +
-		// assContainer.getTileDataStructure().getTilesAsHashMap().size());
-		assContainer.getTileDataStructure().populateNeighbouringTiles(initialTile);
-		// assContainer.getTileDataStructure().populateNeighbouringTiles(assContainer.getTileDataStructure().getTileTop(initialTile));
-		// assContainer.getTileDataStructure().populateNeighbouringTiles(assContainer.getTileDataStructure().getTileTopRight(initialTile));
-		// assContainer.getTileDataStructure().populateNeighbouringTiles(assContainer.getTileDataStructure().getTileRight(initialTile));
-		// System.out.println("Map size = " +
-		// assContainer.getTileDataStructure().getTilesAsHashMap().size());
-
+		GLTileFactory glTileFactory = new GLTilePlanarFactory();
+		BasicTile initialTile = new BasicTile(null, model, tilePos);
+		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
 	}
 
 	private void createEntities(GLShader shader) throws RendererException {
@@ -165,7 +163,8 @@ public class Renderer_3_2 extends RendererThread {
 		 * and does nothing. Need to either use it in the shader (worked
 		 * pre-phong), or remove it from the engine
 		 **/
-		GLModel playerModel = new GLMesh(playerMesh, playerPos, playerAngle, playerScale, shader, playerColorArray);
+		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices(), playerPos, playerAngle, playerScale, shader,
+				playerColorArray);
 
 		assContainer.setPlayer(new Player(playerModel, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 
@@ -196,7 +195,7 @@ public class Renderer_3_2 extends RendererThread {
 	}
 
 	private void renderMonsters(List<Monster> monsters) {
-		/**
+		/*
 		 * All the getShader() method calls for the monsters points to the same
 		 * shader, so just grab it from the first monster and set up the
 		 * matrices once. A better solution would be to grab it from some parent
