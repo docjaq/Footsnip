@@ -1,8 +1,8 @@
 package assets.world.datastructures;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -13,14 +13,19 @@ import assets.world.BasicTile;
 
 public class HashmapDataStructure implements TileDataStructure {
 
-	private HashMap<DataStructureKey2D, AbstractTile> map;
+	/*
+	 * Needs to be Concurrent to allow the draw() and
+	 * populateNeighbouringTiles() to play nicely. Ultimately, rendering should
+	 * probably take precedence, but this seemed like a decent solution for now
+	 */
+	private ConcurrentHashMap<DataStructureKey2D, AbstractTile> map;
 	private List<AbstractTile> list; // Backed by map
 	private static final DataStructureKey2D INITIAL_KEY = new DataStructureKey2D(0, 0);
 	private AbstractTile initialTile;
 	private GLTileFactory glTileFactory;
 
 	public HashmapDataStructure() {
-		map = new HashMap<DataStructureKey2D, AbstractTile>();
+		map = new ConcurrentHashMap<DataStructureKey2D, AbstractTile>();
 	}
 
 	public void init(GLTileFactory glTileFactory, AbstractTile initialTile) {
@@ -68,7 +73,8 @@ public class HashmapDataStructure implements TileDataStructure {
 		DataStructureKey2D key = new DataStructureKey2D(adjustedX, adjustedY);
 
 		if (map.containsKey(key)) {
-			System.out.println("Key (" + key.x + "," + key.y + ") already exists!");
+			// System.out.println("Key (" + key.x + "," + key.y +
+			// ") already exists!");
 		} else {
 			map.put(key, new BasicTile(key, null, position));
 		}

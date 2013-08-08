@@ -35,6 +35,8 @@ public class GLTilePlane extends GLModel {
 		vertexList.add(new GLVertex(new Vector4f(halfSize, halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
 		vertexList.add(new GLVertex(new Vector4f(halfSize, -halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
 
+		System.out.println("Lists: " + "null" + "," + vertexList.size());
+
 		FloatBuffer verticesFloatBuffer = BufferUtils.createFloatBuffer(vertexList.size() * GLVertex.stride);
 		for (GLVertex v : vertexList) {
 			verticesFloatBuffer.put(v.getElements());

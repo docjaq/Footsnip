@@ -53,6 +53,10 @@ public class GLVertex {
 	public GLVertex() {
 	}
 
+	public GLVertex(int index) {
+		this.index = index;
+	}
+
 	public GLVertex(Vector4f xyzw, Vector4f rgba, Vector4f nxnynznw) {
 		this.xyzw = xyzw;
 		this.rgba = rgba;

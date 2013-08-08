@@ -23,6 +23,8 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	private List<GLTriangle> factoryTriangles;
 	private int tileComplexity;
 	private Vector4f tileColor;
+	final static float zOffset = -0.1f;
+	final static float zAdjust = 0.005f;
 
 	public GLTileMidpointDisplacementFactory(int tileComplexity) {
 		this.tileComplexity = tileComplexity;
@@ -49,6 +51,8 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		// }
 
 		// Create heightmap
+		// resetHeights(this.factoryVertices);
+		computeHeightmap(this.factoryVertices);
 
 		// Compute normals for new vertexList
 		computeNormalsForAllTriangles(this.factoryTriangles, this.factoryVertices);
@@ -63,31 +67,34 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		 * we pass the size parameter in the create method above, and it does
 		 * nothing
 		 */
-		float xInc = 1f / (float) tileComplexity;
-		float yInc = 1f / (float) tileComplexity;
+		float xInc = 1f / (float) (tileComplexity - 1);
+		float yInc = 1f / (float) (tileComplexity - 1);
 
 		int index = 0;
 
 		for (int i = 0; i < tileComplexity * tileComplexity; i++) {
-			factoryVertices.add(new GLVertex());
+			factoryVertices.add(new GLVertex(i));
 		}
 
 		for (int i = 0; i < tileComplexity; i++) {
 			// GLVertex point1 = new GLVertex();
-			factoryVertices.get(index).setXYZ((float) i * xInc, 0, 0);
+			factoryVertices.get(index).setXYZ((float) (i * xInc - 0.5f), -0.5f, zOffset);
+			factoryVertices.get(index).setRGBA(tileColor);
 			// factoryVertices.add(point1);
 			index++;
 		}
 
-		int numItems = factoryVertices.size();
+		int numItems = index;
+		System.out.println("NumItems: " + numItems);
 
 		for (int i = 1; i < tileComplexity; i++) {
 			int count = 0;
 			for (int j = 0; j < tileComplexity; j++) {
 				// GLVertex point = new GLVertex();
-				factoryVertices.get(index).setXYZ((float) j * xInc, (float) i * yInc, 0);
+				factoryVertices.get(index).setXYZ((float) (j * xInc - 0.5f), (float) (i * yInc - 0.5f), zOffset);
 				factoryVertices.get(index).setRGBA(tileColor);
 				// factoryVertices.add(point);
+				// System.out.println(index + "," + count + "," + numItems);
 				addTriangles(index, count, numItems);
 				index++;
 				count++;
@@ -95,15 +102,30 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		}
 	}
 
+	private void computeHeightmap(List<GLVertex> vertices) {
+		for (GLVertex v : vertices) {
+			// if (v.xyzw.x < -0.45f || v.xyzw.x > 0.45f || v.xyzw.y < -0.45f ||
+			// v.xyzw.y > 0.45f) {
+			// } else {
+			v.xyzw.z = (float) (Math.random() * (zAdjust * 2) - zAdjust + zOffset);
+			// }
+		}
+	}
+
+	/* TODO: remove this when a copy of the mesh is made each time */
+	private void resetHeights(List<GLVertex> vertices) {
+		for (GLVertex v : vertices) {
+			v.xyzw.z = zOffset;
+		}
+	}
+
 	private void addTriangles(int index, int count, int numItems) {
-		System.out.println("Count " + count);
-		System.out.println("Number of vertices" + factoryVertices.size());
 		if (count == 0) {
 		} else {
-			factoryTriangles.add(new GLTriangle(factoryVertices.get(index + 1), factoryVertices.get(index), factoryVertices.get(index
-					- numItems)));
-			factoryTriangles.add(new GLTriangle(factoryVertices.get(index + 1), factoryVertices.get(index - numItems), factoryVertices
-					.get(index - numItems + 1)));
+			factoryTriangles.add(new GLTriangle(factoryVertices.get(index), factoryVertices.get(index - 1), factoryVertices.get(index
+					- numItems - 1)));
+			factoryTriangles.add(new GLTriangle(factoryVertices.get(index), factoryVertices.get(index - numItems - 1), factoryVertices
+					.get(index - numItems)));
 		}
 	}
 

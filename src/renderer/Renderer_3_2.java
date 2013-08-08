@@ -19,8 +19,7 @@ import org.lwjgl.util.vector.Vector4f;
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTileFactory;
-import renderer.glmodels.GLTilePlanarFactory;
-import renderer.glmodels.GLTilePlane;
+import renderer.glmodels.GLTileMidpointDisplacementFactory;
 import renderer.glshaders.GLPhongShader;
 import renderer.glshaders.GLShader;
 import thread.RendererThread;
@@ -138,9 +137,13 @@ public class Renderer_3_2 extends RendererThread {
 		float tileScale = 1f;
 		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-		GLModel model = new GLTilePlane(tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
+		// GLTileFactory glTileFactory = new GLTilePlanarFactory();
+		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(64);
+		GLModel model = glTileFactory.create(tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
 
-		GLTileFactory glTileFactory = new GLTilePlanarFactory();
+		// GLTileFactory glTileFactory = new
+		// GLTileMidpointDisplacementFactory(4);
+
 		BasicTile initialTile = new BasicTile(null, model, tilePos);
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
 	}
@@ -196,10 +199,11 @@ public class Renderer_3_2 extends RendererThread {
 
 	private void renderMonsters(List<Monster> monsters) {
 		/*
-		 * All the getShader() method calls for the monsters points to the same
-		 * shader, so just grab it from the first monster and set up the
+		 * TODO: All the getShader() method calls for the monsters points to the
+		 * same shader, so just grab it from the first monster and set up the
 		 * matrices once. A better solution would be to grab it from some parent
-		 * container I guess
+		 * container I guess. Yes, because this throws an exception if all the
+		 * monsters are dead!
 		 */
 		glWorld.copyCameraMatricesToShader(monsters.get(0).getModel().getShader());
 		for (Monster m : monsters) {
