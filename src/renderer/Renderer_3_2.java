@@ -52,8 +52,8 @@ public class Renderer_3_2 extends RendererThread {
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
-	private final int WIDTH = 1024;
-	private final int HEIGHT = 768;
+	private final int WIDTH = 1680;
+	private final int HEIGHT = 900;
 
 	private final int MAX_FPS = 60;
 
@@ -138,7 +138,7 @@ public class Renderer_3_2 extends RendererThread {
 		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		// GLTileFactory glTileFactory = new GLTilePlanarFactory();
-		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(64);
+		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129);
 		GLModel model = glTileFactory.create(tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
 
 		// GLTileFactory glTileFactory = new

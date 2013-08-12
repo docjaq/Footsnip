@@ -96,9 +96,9 @@ public class GLPhongShader extends GLShader {
 		GL20.glUniform4f(getFragColorLocation(), color[0], color[1], color[2], color[3]);
 
 		GL20.glUniform4f(lightIntensityUnif, 1.8f, 1.8f, 1.8f, 1.0f);
-		GL20.glUniform4f(ambientIntensityUnif, 0.1f, 0.1f, 0.1f, 1.0f);
+		GL20.glUniform4f(ambientIntensityUnif, 0.4f, 0.4f, 0.4f, 1.0f);
 
-		Vector4f lightPos = new Vector4f(0.0f, 0.0f, 0.5f, 1.0f);
+		Vector4f lightPos = new Vector4f(0.0f, 0.0f, 2.5f, 1.0f);
 		lightPos.store(vector4Buffer);
 		vector4Buffer.flip();
 

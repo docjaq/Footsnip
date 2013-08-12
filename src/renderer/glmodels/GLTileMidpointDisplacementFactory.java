@@ -9,6 +9,7 @@ import org.lwjgl.util.vector.Vector4f;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
 import renderer.glshaders.GLShader;
+import TerrainGeneration.PlasmaFractalFactory;
 
 public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	/*
@@ -79,7 +80,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		for (int i = 0; i < tileComplexity; i++) {
 			// GLVertex point1 = new GLVertex();
 			factoryVertices.get(index).setXYZ((float) (i * xInc - 0.5f), -0.5f, zOffset);
-			factoryVertices.get(index).setRGBA(tileColor);
+			// factoryVertices.get(index).setRGBA(new Vector4f(0, 0, 0, 0));
 			// factoryVertices.add(point1);
 			index++;
 		}
@@ -92,7 +93,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 			for (int j = 0; j < tileComplexity; j++) {
 				// GLVertex point = new GLVertex();
 				factoryVertices.get(index).setXYZ((float) (j * xInc - 0.5f), (float) (i * yInc - 0.5f), zOffset);
-				factoryVertices.get(index).setRGBA(tileColor);
+				// factoryVertices.get(index).setRGBA(new Vector4f(, 0, 0, 0));
 				// factoryVertices.add(point);
 				// System.out.println(index + "," + count + "," + numItems);
 				addTriangles(index, count, numItems);
@@ -103,12 +104,18 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	}
 
 	private void computeHeightmap(List<GLVertex> vertices) {
+		PlasmaFractalFactory.create(heightMap);
+		int x = 0, y = 0;
 		for (GLVertex v : vertices) {
-			// if (v.xyzw.x < -0.45f || v.xyzw.x > 0.45f || v.xyzw.y < -0.45f ||
-			// v.xyzw.y > 0.45f) {
-			// } else {
-			v.xyzw.z = (float) (Math.random() * (zAdjust * 2) - zAdjust + zOffset);
-			// }
+			// System.out.println("(" + x + "," + y + ") - " + v.xyzw.x +
+			// v.xyzw.y);
+			v.xyzw.z = heightMap[x][y] - 0.2f;
+			v.rgba = new Vector4f(Math.abs(v.xyzw.z * 5) + 0.2f, 0.2f, 0, 1f);
+			x++;
+			if (x == tileComplexity) {
+				x = 0;
+				y++;
+			}
 		}
 	}
 
