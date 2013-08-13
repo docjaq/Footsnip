@@ -29,7 +29,7 @@ import assets.entities.Monster;
 import assets.entities.MonsterFactory;
 import assets.entities.Player;
 import assets.world.AbstractTile;
-import assets.world.BasicTile;
+import assets.world.PolygonHeightmapTile;
 import assets.world.datastructures.TileDataStructure;
 import exception.RendererException;
 
@@ -138,13 +138,14 @@ public class Renderer_3_2 extends RendererThread {
 		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		// GLTileFactory glTileFactory = new GLTilePlanarFactory();
+		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, tilePos);
 		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129);
-		GLModel model = glTileFactory.create(tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
-
+		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
+		initialTile.setModel(model);
 		// GLTileFactory glTileFactory = new
 		// GLTileMidpointDisplacementFactory(4);
 
-		BasicTile initialTile = new BasicTile(null, model, tilePos);
+		// initialTile = new PolygonHeightmapTile(null, model, tilePos);
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
 	}
 

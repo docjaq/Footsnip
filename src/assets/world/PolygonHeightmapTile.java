@@ -7,9 +7,19 @@ import renderer.glmodels.GLTileFactory;
 import renderer.glshaders.GLShader;
 import assets.world.datastructures.DataStructureKey2D;
 
-public class BasicTile extends AbstractTile {
+public class PolygonHeightmapTile extends AbstractTile {
 
-	public BasicTile(DataStructureKey2D key, GLModel model, Vector3f tilePos) {
+	private float[][] heightmap;
+
+	public float[][] getHeightmap() {
+		return heightmap;
+	}
+
+	public void setHeightmap(float[][] heightmap) {
+		this.heightmap = heightmap;
+	}
+
+	public PolygonHeightmapTile(DataStructureKey2D key, GLModel model, Vector3f tilePos) {
 		super(key, model, tilePos);
 	}
 
@@ -22,7 +32,7 @@ public class BasicTile extends AbstractTile {
 		float tileScale = 1f;
 		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-		this.model = glTileFactory.create(tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
+		this.model = glTileFactory.create(this, tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
 
 		// new GLTilePlane(tilePos, tileAngle, tileScale, shader, tileColor,
 		// AbstractTile.SIZE);

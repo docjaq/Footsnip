@@ -10,6 +10,8 @@ import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
 import renderer.glshaders.GLShader;
 import TerrainGeneration.PlasmaFractalFactory;
+import assets.world.AbstractTile;
+import assets.world.PolygonHeightmapTile;
 
 public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	/*
@@ -19,26 +21,24 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	 * the default grid according to the heightmap
 	 */
 
-	private float[][] heightMap;
+	// private float[][] heightMap;
 	private List<GLVertex> factoryVertices;
 	private List<GLTriangle> factoryTriangles;
 	private int tileComplexity;
-	private Vector4f tileColor;
+
 	final static float zOffset = -0.1f;
 	final static float zAdjust = 0.005f;
 
 	public GLTileMidpointDisplacementFactory(int tileComplexity) {
 		this.tileComplexity = tileComplexity;
-		this.heightMap = new float[tileComplexity][tileComplexity];
+		// this.heightMap = new float[tileComplexity][tileComplexity];
 		this.factoryVertices = new ArrayList<GLVertex>(tileComplexity * tileComplexity);
 		this.factoryTriangles = new ArrayList<GLTriangle>((tileComplexity - 1) * (tileComplexity - 1) * 2);
-
-		this.tileColor = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
 
 		generatePlanarMesh();
 	}
 
-	public GLMesh create(Vector3f position, Vector3f rotation, float scale, GLShader shader, float[] color, float size) {
+	public GLMesh create(AbstractTile tile, Vector3f position, Vector3f rotation, float scale, GLShader shader, float[] color, float size) {
 		/*
 		 * TODO: Create copy of factoryVertices, and a copy of factoryTriangles.
 		 * Currently not doing this, as it will screw up the references between
@@ -53,7 +53,26 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 
 		// Create heightmap
 		// resetHeights(this.factoryVertices);
-		computeHeightmap(this.factoryVertices);
+		float[][] heightmap = new float[tileComplexity][tileComplexity];
+		PlasmaFractalFactory.create(heightmap);
+		adjustMeshAccordingToHeightmap(heightmap, this.factoryVertices);
+
+		/*
+		 * TODO: This is some weird error checking here: this whole class must
+		 * be operating on a PolygonHeightmapTile, otherwise it makes no sense,
+		 * but as the factory is an instance of GLTileFactory, I don't know here
+		 * that it is.... Better solution?
+		 */
+		// Adjust boundary elements of heightmap to match neighbours
+		if (PolygonHeightmapTile.class.isInstance(tile)) {
+			// Save the heightmap to the tile for persistence
+			System.out.println("Correct class");
+			PolygonHeightmapTile polyTile = (PolygonHeightmapTile) tile;
+			polyTile.setHeightmap(heightmap);
+
+			// TODO: get access to the data-structure, then modify the local
+			// boundaries to that of existing neighbouring heightmap boundaries
+		}
 
 		// Compute normals for new vertexList
 		computeNormalsForAllTriangles(this.factoryTriangles, this.factoryVertices);
@@ -78,10 +97,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		}
 
 		for (int i = 0; i < tileComplexity; i++) {
-			// GLVertex point1 = new GLVertex();
 			factoryVertices.get(index).setXYZ((float) (i * xInc - 0.5f), -0.5f, zOffset);
-			// factoryVertices.get(index).setRGBA(new Vector4f(0, 0, 0, 0));
-			// factoryVertices.add(point1);
 			index++;
 		}
 
@@ -91,11 +107,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		for (int i = 1; i < tileComplexity; i++) {
 			int count = 0;
 			for (int j = 0; j < tileComplexity; j++) {
-				// GLVertex point = new GLVertex();
 				factoryVertices.get(index).setXYZ((float) (j * xInc - 0.5f), (float) (i * yInc - 0.5f), zOffset);
-				// factoryVertices.get(index).setRGBA(new Vector4f(, 0, 0, 0));
-				// factoryVertices.add(point);
-				// System.out.println(index + "," + count + "," + numItems);
 				addTriangles(index, count, numItems);
 				index++;
 				count++;
@@ -103,26 +115,16 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		}
 	}
 
-	private void computeHeightmap(List<GLVertex> vertices) {
-		PlasmaFractalFactory.create(heightMap);
+	private void adjustMeshAccordingToHeightmap(float[][] heightmap, List<GLVertex> vertices) {
 		int x = 0, y = 0;
 		for (GLVertex v : vertices) {
-			// System.out.println("(" + x + "," + y + ") - " + v.xyzw.x +
-			// v.xyzw.y);
-			v.xyzw.z = heightMap[x][y] - 0.2f;
-			v.rgba = new Vector4f(Math.abs(v.xyzw.z * 5) + 0.2f, 0.2f, 0, 1f);
+			v.xyzw.z = heightmap[x][y] - 0.3f;
+			v.rgba = new Vector4f(Math.abs(v.xyzw.z * 4) + 0.2f, 0.1f, 0.05f, 1f);
 			x++;
 			if (x == tileComplexity) {
 				x = 0;
 				y++;
 			}
-		}
-	}
-
-	/* TODO: remove this when a copy of the mesh is made each time */
-	private void resetHeights(List<GLVertex> vertices) {
-		for (GLVertex v : vertices) {
-			v.xyzw.z = zOffset;
 		}
 	}
 

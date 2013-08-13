@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.Vector3f;
 import renderer.GLWorld;
 import renderer.glmodels.GLTileFactory;
 import assets.world.AbstractTile;
-import assets.world.BasicTile;
+import assets.world.PolygonHeightmapTile;
 
 public class HashmapDataStructure implements TileDataStructure {
 
@@ -76,7 +76,7 @@ public class HashmapDataStructure implements TileDataStructure {
 			// System.out.println("Key (" + key.x + "," + key.y +
 			// ") already exists!");
 		} else {
-			map.put(key, new BasicTile(key, null, position));
+			map.put(key, new PolygonHeightmapTile(key, null, position));
 		}
 	}
 
