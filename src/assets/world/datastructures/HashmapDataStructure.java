@@ -19,7 +19,7 @@ public class HashmapDataStructure implements TileDataStructure {
 	 * probably take precedence, but this seemed like a decent solution for now
 	 */
 	private ConcurrentHashMap<DataStructureKey2D, AbstractTile> map;
-	private List<AbstractTile> list; // Backed by map
+	// private List<AbstractTile> list; // Backed by map
 	private static final DataStructureKey2D INITIAL_KEY = new DataStructureKey2D(0, 0);
 	private AbstractTile initialTile;
 	private GLTileFactory glTileFactory;
