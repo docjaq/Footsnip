@@ -17,8 +17,17 @@ public class PlasmaFractalFactory {
 		 * inputMatrix.length; j++) { inputMatrix[i][j] = 0; } }
 		 */
 		recursiveGeneration(inputMatrix, 0, 0, size, size, 0, 0, 0, 0);
-		smooth(inputMatrix, size);
+		scale(inputMatrix, size);
+		// smooth(inputMatrix, size);
 		// debug(inputMatrix, size);
+	}
+
+	private static void scale(float[][] matrix, int size) {
+		for (int y = 0; y < size; y++) {
+			for (int x = 0; x < size; x++) {
+				matrix[x][y] *= variance;
+			}
+		}
 	}
 
 	private static void smooth(float[][] matrix, int size) {
@@ -51,7 +60,7 @@ public class PlasmaFractalFactory {
 		float newHeight = height / 2f;
 
 		if (width > 2 || height > 2) {
-			Middle = (c1 + c2 + c3 + c4) / 4 + Displace(matrix.length, matrix.length, newWidth + newHeight); // Randomly
+			Middle = (c1 + c2 + c3 + c4) / 4f + Displace(matrix.length, matrix.length, newWidth + newHeight); // Randomly
 			// displace
 			// the
 			// midpoint!
@@ -63,8 +72,8 @@ public class PlasmaFractalFactory {
 
 			// Make sure that the midpoint doesn't accidentally
 			// "randomly displaced" past the boundaries!
-			if (Middle < 0) {
-				Middle = 0;
+			if (Middle < -1.0f) {
+				Middle = -1.0f;
 			} else if (Middle > 1.0f) {
 				Middle = 1.0f;
 			}
