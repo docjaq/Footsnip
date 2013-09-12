@@ -2,6 +2,8 @@ package thread;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import main.Main;
 import assets.AssetContainer;
@@ -9,8 +11,7 @@ import assets.AssetContainer;
 public abstract class GameThread extends Thread implements ObservableThread {
 	protected Main mainApplication;
 
-	/** Everything must need a player. */
-	// protected Player player;
+	/** Everything must need to know about the assets. */
 	protected AssetContainer assContainer;
 
 	/** List of listeners that care about when the initial setup is complete. */
@@ -19,13 +20,16 @@ public abstract class GameThread extends Thread implements ObservableThread {
 	/** Flag to determine when to stop the loop. */
 	protected boolean timeToStop = false;
 
-	/** Pause between iterations. */
-	private int threadDelay;
+	/**
+	 * A CyclicBarrier which pauses each thread at the end of an iteration,
+	 * until the other threads are ready for the next iteration.
+	 */
+	private CyclicBarrier barrier;
 
-	public GameThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
+	public GameThread(AssetContainer assContainer, Main mainApplication, CyclicBarrier barrier) {
 		this.assContainer = assContainer;
-		this.threadDelay = threadDelay;
 		this.mainApplication = mainApplication;
+		this.barrier = barrier;
 	}
 
 	public void stopThread() {
@@ -39,9 +43,10 @@ public abstract class GameThread extends Thread implements ObservableThread {
 			gameLoop();
 
 			try {
-				Thread.sleep(threadDelay);
-			} catch (InterruptedException e) {
+				barrier.await();
+			} catch (InterruptedException | BrokenBarrierException e) {
 				e.printStackTrace();
+				afterLoop();
 			}
 		}
 

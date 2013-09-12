@@ -1,5 +1,7 @@
 package control;
 
+import java.util.concurrent.CyclicBarrier;
+
 import main.Main;
 
 import org.lwjgl.input.Keyboard;
@@ -21,8 +23,8 @@ public class ControlThread extends GameThread {
 	/** The time of the last iteration, to calculate the time delta. */
 	private long lastIterationTime;
 
-	public ControlThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
-		super(assContainer, threadDelay, mainApplication);
+	public ControlThread(AssetContainer assContainer, Main mainApplication, CyclicBarrier barrier) {
+		super(assContainer, mainApplication, barrier);
 
 		// Initialise the delta.
 		getIterationDelta();

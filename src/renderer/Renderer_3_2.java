@@ -7,6 +7,7 @@ import static renderer.GLUtilityMethods.setupOpenGL;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CyclicBarrier;
 
 import main.Main;
 import mesh.Ply;
@@ -52,8 +53,8 @@ public class Renderer_3_2 extends RendererThread {
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
-	private final int WIDTH = 1680;
-	private final int HEIGHT = 900;
+	private final int WIDTH = 840; // 1680;
+	private final int HEIGHT = 450; // 900;
 
 	private final int MAX_FPS = 60;
 
@@ -71,8 +72,8 @@ public class Renderer_3_2 extends RendererThread {
 	/** The number of frames rendered since lastFPSUpdate. */
 	private int framesThisSecond;
 
-	public Renderer_3_2(AssetContainer assContainer, Main mainApplication) {
-		super(assContainer, mainApplication);
+	public Renderer_3_2(AssetContainer assContainer, Main mainApplication, CyclicBarrier barrier) {
+		super(assContainer, mainApplication, barrier);
 
 		// Initialise FPS calculation fields.
 		framesThisSecond = 0;

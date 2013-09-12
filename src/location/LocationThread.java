@@ -1,5 +1,7 @@
 package location;
 
+import java.util.concurrent.CyclicBarrier;
+
 import main.Main;
 import thread.GameThread;
 import assets.AssetContainer;
@@ -7,8 +9,8 @@ import assets.AssetContainer;
 //TODO: Write this class
 public class LocationThread extends GameThread {
 
-	public LocationThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
-		super(assContainer, threadDelay, mainApplication);
+	public LocationThread(AssetContainer assContainer, Main mainApplication, CyclicBarrier barrier) {
+		super(assContainer, mainApplication, barrier);
 	}
 
 	@Override

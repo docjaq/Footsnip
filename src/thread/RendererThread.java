@@ -1,5 +1,7 @@
 package thread;
 
+import java.util.concurrent.CyclicBarrier;
+
 import main.Main;
 import assets.AssetContainer;
 
@@ -12,8 +14,8 @@ import assets.AssetContainer;
  */
 public abstract class RendererThread extends GameThread {
 
-	public RendererThread(AssetContainer assContainer, Main mainApplication) {
-		super(assContainer, -1, mainApplication);
+	public RendererThread(AssetContainer assContainer, Main mainApplication, CyclicBarrier barrier) {
+		super(assContainer, mainApplication, barrier);
 	}
 
 	@Override

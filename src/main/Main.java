@@ -2,6 +2,7 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CyclicBarrier;
 
 import location.LocationThread;
 import renderer.Renderer_3_2;
@@ -18,6 +19,8 @@ public class Main implements GameListener {
 	private List<GameThread> childThreads = new ArrayList<GameThread>(3);
 
 	private long startMillis = System.currentTimeMillis();
+
+	private final CyclicBarrier barrier;
 
 	/*********************************
 	 * JAQ Levels should maybe be entities, as it would seemingly make
@@ -44,8 +47,11 @@ public class Main implements GameListener {
 
 		final AssetContainer assContainer = new AssetContainer();
 
-		GameThread rendererThread = new Renderer_3_2(assContainer, this);
+		// Set up the cyclic barrier; this makes all the threads pause at the
+		// end of an iteration until they're all ready for the next iteration.
+		barrier = new CyclicBarrier(4);
 
+		GameThread rendererThread = new Renderer_3_2(assContainer, this, barrier);
 		rendererThread.setPriority(Thread.MAX_PRIORITY);
 		rendererThread.start();
 		childThreads.add(rendererThread);
@@ -54,17 +60,17 @@ public class Main implements GameListener {
 			@Override
 			public void setupDone(ObservableThread subject) {
 				// Renderer is set up, so start the control thread.
-				GameThread controlThread = new ControlThread(assContainer, 10, Main.this);
+				GameThread controlThread = new ControlThread(assContainer, Main.this, barrier);
 				controlThread.setPriority(Thread.MIN_PRIORITY);
 				controlThread.start();
 				childThreads.add(controlThread);
 
-				GameThread collisionThread = new CollisionThread(assContainer, 10, Main.this);
+				GameThread collisionThread = new CollisionThread(assContainer, Main.this, barrier);
 				collisionThread.setPriority(Thread.NORM_PRIORITY);
 				collisionThread.start();
 				childThreads.add(collisionThread);
 
-				GameThread locationThread = new LocationThread(assContainer, 10, Main.this);
+				GameThread locationThread = new LocationThread(assContainer, Main.this, barrier);
 				locationThread.setPriority(Thread.NORM_PRIORITY);
 				locationThread.start();
 				childThreads.add(locationThread);
