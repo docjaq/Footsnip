@@ -12,6 +12,7 @@ import renderer.glshaders.GLShader;
 import TerrainGeneration.PlasmaFractalFactory;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
+import assets.world.datastructures.TileDataStructure;
 
 public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	/*
@@ -25,12 +26,14 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	private List<GLVertex> factoryVertices;
 	private List<GLTriangle> factoryTriangles;
 	private int tileComplexity;
+	private TileDataStructure tileDataStructure;
 
 	final static float zOffset = -0.1f;
 	final static float zAdjust = 0.005f;
 
-	public GLTileMidpointDisplacementFactory(int tileComplexity) {
+	public GLTileMidpointDisplacementFactory(int tileComplexity, TileDataStructure tileDataStructure) {
 		this.tileComplexity = tileComplexity;
+		this.tileDataStructure = tileDataStructure;
 		// this.heightMap = new float[tileComplexity][tileComplexity];
 		this.factoryVertices = new ArrayList<GLVertex>(tileComplexity * tileComplexity);
 		this.factoryTriangles = new ArrayList<GLTriangle>((tileComplexity - 1) * (tileComplexity - 1) * 2);
@@ -63,15 +66,20 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		 * but as the factory is an instance of GLTileFactory, I don't know here
 		 * that it is.... Better solution?
 		 */
-		// Adjust boundary elements of heightmap to match neighbours
+		// TODO: get access to the data-structure, then modify the local
+		// boundaries to that of existing neighbouring height-map boundaries
+
+		// For each neighbour
+		// 1. Check if it's not null
+		// 2. loop through all the elements on the adjacent side, and set the
+		// current
+		// tile to have those heights
+
 		if (PolygonHeightmapTile.class.isInstance(tile)) {
-			// Save the heightmap to the tile for persistence
+			// Save the height-map to the tile for persistence
 			System.out.println("Correct class");
 			PolygonHeightmapTile polyTile = (PolygonHeightmapTile) tile;
 			polyTile.setHeightmap(heightmap);
-
-			// TODO: get access to the data-structure, then modify the local
-			// boundaries to that of existing neighbouring heightmap boundaries
 		}
 
 		// Compute normals for new vertexList
