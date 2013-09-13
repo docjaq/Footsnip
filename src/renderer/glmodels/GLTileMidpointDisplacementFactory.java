@@ -58,7 +58,13 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		// resetHeights(this.factoryVertices);
 		float[][] heightmap = new float[tileComplexity][tileComplexity];
 		PlasmaFractalFactory.create(heightmap);
-		adjustMeshAccordingToHeightmap(heightmap, this.factoryVertices);
+
+		if (PolygonHeightmapTile.class.isInstance(tile)) {
+			// Save the height-map to the tile for persistence
+			// System.out.println("Correct class");
+			PolygonHeightmapTile polyTile = (PolygonHeightmapTile) tile;
+			polyTile.setHeightmap(heightmap);
+		}
 
 		/*
 		 * TODO: This is some weird error checking here: this whole class must
@@ -74,14 +80,18 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		// 2. loop through all the elements on the adjacent side, and set the
 		// current
 		// tile to have those heights
-
-		if (PolygonHeightmapTile.class.isInstance(tile)) {
-			// Save the height-map to the tile for persistence
-			System.out.println("Correct class");
-			PolygonHeightmapTile polyTile = (PolygonHeightmapTile) tile;
-			polyTile.setHeightmap(heightmap);
+		PolygonHeightmapTile neighRight = (PolygonHeightmapTile) tileDataStructure.getTileRight(tile);
+		if (neighRight != null) {
+			float[][] neighHeightmap = neighRight.getHeightmap();
+			if (neighHeightmap != null) {
+				for (int i = 0; i < tileComplexity; i++) {
+					heightmap[tileComplexity - 1][i] = neighHeightmap[0][i];
+				}
+			}
 		}
 
+		// Adjust mesh according to heightmap
+		adjustMeshAccordingToHeightmap(heightmap, this.factoryVertices);
 		// Compute normals for new vertexList
 		computeNormalsForAllTriangles(this.factoryTriangles, this.factoryVertices);
 

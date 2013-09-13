@@ -97,7 +97,12 @@ public class HashmapDataStructure implements TileDataStructure {
 
 	@Override
 	public AbstractTile getTileRight(AbstractTile tile) {
-		return map.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y));
+		AbstractTile neighbourTile = null;
+		try {
+			neighbourTile = map.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y));
+		} catch (NullPointerException e) {
+		}
+		return neighbourTile;
 	}
 
 	@Override
