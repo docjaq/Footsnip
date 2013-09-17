@@ -52,8 +52,8 @@ public class Renderer_3_2 extends RendererThread {
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
-	private final int WIDTH = 1680;
-	private final int HEIGHT = 900;
+	private final int WIDTH = 1024;
+	private final int HEIGHT = 768;
 
 	private final int MAX_FPS = 60;
 

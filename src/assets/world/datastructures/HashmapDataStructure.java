@@ -85,14 +85,31 @@ public class HashmapDataStructure implements TileDataStructure {
 	// // TODO Auto-generated method stub
 	// return null;
 	// }
+
 	// @Override
+	// public AbstractTile getTileTopRight(AbstractTile tile) {
+	// return map.get(new DataStructureKey2D(tile.getKey().x + 1,
+	// tile.getKey().y + 1));
+	// }
+
+	@Override
 	public AbstractTile getTileTop(AbstractTile tile) {
-		return map.get(new DataStructureKey2D(tile.getKey().x, tile.getKey().y + 1));
+		AbstractTile neighbourTile = null;
+		try {
+			neighbourTile = map.get(new DataStructureKey2D(tile.getKey().x, tile.getKey().y + 1));
+		} catch (NullPointerException e) {
+		}
+		return neighbourTile;
 	}
 
 	@Override
-	public AbstractTile getTileTopRight(AbstractTile tile) {
-		return map.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y + 1));
+	public AbstractTile getTileBottom(AbstractTile tile) {
+		AbstractTile neighbourTile = null;
+		try {
+			neighbourTile = map.get(new DataStructureKey2D(tile.getKey().x, tile.getKey().y - 1));
+		} catch (NullPointerException e) {
+		}
+		return neighbourTile;
 	}
 
 	@Override
@@ -100,6 +117,16 @@ public class HashmapDataStructure implements TileDataStructure {
 		AbstractTile neighbourTile = null;
 		try {
 			neighbourTile = map.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y));
+		} catch (NullPointerException e) {
+		}
+		return neighbourTile;
+	}
+
+	@Override
+	public AbstractTile getTileLeft(AbstractTile tile) {
+		AbstractTile neighbourTile = null;
+		try {
+			neighbourTile = map.get(new DataStructureKey2D(tile.getKey().x - 1, tile.getKey().y));
 		} catch (NullPointerException e) {
 		}
 		return neighbourTile;

@@ -66,6 +66,8 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 			polyTile.setHeightmap(heightmap);
 		}
 
+		adjustHeightmapToNeighbours(tile, heightmap);
+
 		/*
 		 * TODO: This is some weird error checking here: this whole class must
 		 * be operating on a PolygonHeightmapTile, otherwise it makes no sense,
@@ -74,21 +76,6 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		 */
 		// TODO: get access to the data-structure, then modify the local
 		// boundaries to that of existing neighbouring height-map boundaries
-
-		// For each neighbour
-		// 1. Check if it's not null
-		// 2. loop through all the elements on the adjacent side, and set the
-		// current
-		// tile to have those heights
-		PolygonHeightmapTile neighRight = (PolygonHeightmapTile) tileDataStructure.getTileRight(tile);
-		if (neighRight != null) {
-			float[][] neighHeightmap = neighRight.getHeightmap();
-			if (neighHeightmap != null) {
-				for (int i = 0; i < tileComplexity; i++) {
-					heightmap[tileComplexity - 1][i] = neighHeightmap[0][i];
-				}
-			}
-		}
 
 		// Adjust mesh according to heightmap
 		adjustMeshAccordingToHeightmap(heightmap, this.factoryVertices);
@@ -105,8 +92,11 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		 * we pass the size parameter in the create method above, and it does
 		 * nothing
 		 */
-		float xInc = 1f / (float) (tileComplexity - 1);
-		float yInc = 1f / (float) (tileComplexity - 1);
+		float xInc = AbstractTile.SIZE / (float) (tileComplexity - 1);
+		float yInc = AbstractTile.SIZE / (float) (tileComplexity - 1);
+
+		float xyOffset = AbstractTile.SIZE / 2f;
+		System.out.println(xyOffset);
 
 		int index = 0;
 
@@ -115,7 +105,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		}
 
 		for (int i = 0; i < tileComplexity; i++) {
-			factoryVertices.get(index).setXYZ((float) (i * xInc - 0.5f), -0.5f, zOffset);
+			factoryVertices.get(index).setXYZ((float) (i * xInc - xyOffset), -xyOffset, zOffset);
 			index++;
 		}
 
@@ -125,7 +115,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		for (int i = 1; i < tileComplexity; i++) {
 			int count = 0;
 			for (int j = 0; j < tileComplexity; j++) {
-				factoryVertices.get(index).setXYZ((float) (j * xInc - 0.5f), (float) (i * yInc - 0.5f), zOffset);
+				factoryVertices.get(index).setXYZ((float) (j * xInc - xyOffset), (float) (i * yInc - xyOffset), zOffset);
 				addTriangles(index, count, numItems);
 				index++;
 				count++;
@@ -142,6 +132,56 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 			if (x == tileComplexity) {
 				x = 0;
 				y++;
+			}
+		}
+	}
+
+	private void adjustHeightmapToNeighbours(AbstractTile tile, float[][] heightmap) {
+		// For each neighbour
+		// 1. Check if it's not null
+		// 2. loop through all the elements on the adjacent side, and set the
+		// current
+		// tile to have those heights
+
+		// TODO: So much messy code here, I hate it. Quick implementation to
+		// test it. Rework later.
+		PolygonHeightmapTile neighRight = (PolygonHeightmapTile) tileDataStructure.getTileRight(tile);
+		if (neighRight != null) {
+			float[][] neighHeightmap = neighRight.getHeightmap();
+			if (neighHeightmap != null) {
+				for (int i = 0; i < tileComplexity; i++) {
+					heightmap[tileComplexity - 1][i] = neighHeightmap[0][i];
+				}
+			}
+		}
+
+		PolygonHeightmapTile neighLeft = (PolygonHeightmapTile) tileDataStructure.getTileLeft(tile);
+		if (neighLeft != null) {
+			float[][] neighHeightmap = neighLeft.getHeightmap();
+			if (neighHeightmap != null) {
+				for (int i = 0; i < tileComplexity; i++) {
+					heightmap[0][i] = neighHeightmap[tileComplexity - 1][i];
+				}
+			}
+		}
+
+		PolygonHeightmapTile neighTop = (PolygonHeightmapTile) tileDataStructure.getTileTop(tile);
+		if (neighTop != null) {
+			float[][] neighHeightmap = neighTop.getHeightmap();
+			if (neighHeightmap != null) {
+				for (int i = 0; i < tileComplexity; i++) {
+					heightmap[i][tileComplexity - 1] = neighHeightmap[i][0];
+				}
+			}
+		}
+
+		PolygonHeightmapTile neighBot = (PolygonHeightmapTile) tileDataStructure.getTileBottom(tile);
+		if (neighBot != null) {
+			float[][] neighHeightmap = neighBot.getHeightmap();
+			if (neighHeightmap != null) {
+				for (int i = 0; i < tileComplexity; i++) {
+					heightmap[i][0] = neighHeightmap[i][tileComplexity - 1];
+				}
 			}
 		}
 	}

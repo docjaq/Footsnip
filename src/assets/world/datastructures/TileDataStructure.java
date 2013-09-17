@@ -38,8 +38,12 @@ public interface TileDataStructure {
 
 	public AbstractTile getTileTop(AbstractTile tile);
 
-	public AbstractTile getTileTopRight(AbstractTile tile);
+	// public AbstractTile getTileTopRight(AbstractTile tile);
 
 	public AbstractTile getTileRight(AbstractTile tile);
+
+	public AbstractTile getTileLeft(AbstractTile tile);
+
+	public AbstractTile getTileBottom(AbstractTile tile);
 
 }

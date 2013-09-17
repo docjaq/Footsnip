@@ -11,6 +11,8 @@ import assets.world.datastructures.TileDataStructure;
 
 public class LocationMethods {
 
+	private static final float HALF_TILE_WIDTH = AbstractTile.SIZE / 2f;
+
 	private static AbstractTile locateEntity(Entity entity, TileDataStructure data) {
 
 		/**
@@ -21,16 +23,17 @@ public class LocationMethods {
 		float xPos = modelPos.x;
 		float yPos = modelPos.y;
 		if (xPos > 0) {
-			xPos += 0.5;
+			xPos += HALF_TILE_WIDTH;
 		} else {
-			xPos -= 0.5;
+			xPos -= HALF_TILE_WIDTH;
 		}
 		if (yPos > 0) {
-			yPos += 0.5;
+			yPos += HALF_TILE_WIDTH;
 		} else {
-			yPos -= 0.5;
+			yPos -= HALF_TILE_WIDTH;
 		}
-		DataStructureKey2D key = new DataStructureKey2D((int) xPos, (int) yPos);
+		// System.out.println((int) (xPos / HALF_TILE_WIDTH));
+		DataStructureKey2D key = new DataStructureKey2D((int) (xPos / AbstractTile.SIZE), (int) (yPos / AbstractTile.SIZE));
 
 		return data.getTileUsingKey(key);
 	}
