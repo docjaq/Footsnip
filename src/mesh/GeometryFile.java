@@ -12,7 +12,13 @@ public interface GeometryFile {
 
 	public void read(File file, Vector4f color);
 
+	public void write(File file);
+
 	public ArrayList<GLTriangle> getTriangles();
 
 	public ArrayList<GLVertex> getVertices();
+
+	public void setTriangles(ArrayList<GLTriangle> triangles);
+
+	public void setVertices(ArrayList<GLVertex> vertices);
 }

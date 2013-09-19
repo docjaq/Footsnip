@@ -28,7 +28,7 @@ public class GLMesh extends GLModel {
 
 		this.triangleList = triangleList;
 		this.vertexList = vertexList;
-		// vertexList = mesh.getVertices();§
+		// vertexList = mesh.getVertices();
 		// mesh.normaliseAndCentre(vertexList); //Shit
 		// triangleList = mesh.getTriangles();
 
