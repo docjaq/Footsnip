@@ -23,7 +23,7 @@ import renderer.glmodels.GLTileFactory;
 import renderer.glmodels.GLTileMidpointDisplacementFactory;
 import renderer.glshaders.GLPhongShader;
 import renderer.glshaders.GLShader;
-import thread.RendererThread;
+import thread.GameThread;
 import util.Utils;
 import assets.AssetContainer;
 import assets.entities.Monster;
@@ -34,7 +34,7 @@ import assets.world.PolygonHeightmapTile;
 import assets.world.datastructures.TileDataStructure;
 import exception.RendererException;
 
-public class Renderer_3_2 extends RendererThread {
+public class Renderer_3_2 extends GameThread {
 
 	// private final String[] GEN_SHADER_NAME = {
 	// "resources/shaders/general/vertex.glsl",
