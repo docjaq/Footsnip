@@ -24,6 +24,15 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 
 	// private float[][] heightMap;
 	private List<GLVertex> factoryVertices;
+
+	public List<GLVertex> getFactoryVertices() {
+		return factoryVertices;
+	}
+
+	public List<GLTriangle> getFactoryTriangles() {
+		return factoryTriangles;
+	}
+
 	private List<GLTriangle> factoryTriangles;
 	private int tileComplexity;
 	private TileDataStructure tileDataStructure;

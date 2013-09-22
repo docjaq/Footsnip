@@ -142,6 +142,11 @@ public class Renderer_3_2 extends RendererThread {
 		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(257, assContainer.getTileDataStructure());
 		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
 		initialTile.setModel(model);
+
+		// Debug
+		// (GLTileMidpointDisplacementFactory)glTileFactory
+		// TODO: Grab the terrain geometry and write it to file for debugging
+
 		// GLTileFactory glTileFactory = new
 		// GLTileMidpointDisplacementFactory(4);
 
