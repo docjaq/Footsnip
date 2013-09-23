@@ -24,10 +24,16 @@ import exception.GameException;
 
 public class Ply extends AbstractGeometryFile {
 
-	private ArrayList<GLVertex> vertices;
-	private ArrayList<GLTriangle> triangles;
 	private int numVertices;
 	private int numFaces;
+
+	public Ply(ArrayList<GLTriangle> triangles, ArrayList<GLVertex> vertices) {
+		super(triangles, vertices);
+	}
+
+	public Ply() {
+
+	}
 
 	public ArrayList<GLTriangle> getTriangles() {
 		return triangles;
@@ -107,17 +113,16 @@ public class Ply extends AbstractGeometryFile {
 			out.newLine();
 
 			for (GLVertex v : vertices) {
-				out.write(v.xyzw.toString());
+				out.write(Float.toString(v.xyzw.x) + " " + Float.toString(v.xyzw.y) + " " + Float.toString(v.xyzw.z) + " "
+						+ Float.toString(v.nxnynznw.x) + " " + Float.toString(v.nxnynznw.y) + " " + Float.toString(v.nxnynznw.z));
 				out.newLine();
 			}
 
 			for (GLTriangle t : triangles) {
-				/*
-				 * out.write(Integer.toString(3) + " ");
-				 * out.write(Integer.toString(triangles[i].a) + " " +
-				 * Integer.toString(triangles[i].b) + " " +
-				 * Integer.toString(triangles[i].c)); out.newLine();
-				 */
+
+				out.write(Integer.toString(3) + " " + Integer.toString(t.v0.index) + " " + Integer.toString(t.v1.index) + " "
+						+ Integer.toString(t.v2.index));
+				out.newLine();
 			}
 
 			out.close();
