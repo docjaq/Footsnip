@@ -85,7 +85,7 @@ public class AssetContainer {
 		updateEntities();
 	}
 
-	public List<Projectile> getProjectile() {
+	public List<Projectile> getProjectiles() {
 		return projectiles;
 	}
 }

@@ -7,6 +7,7 @@ import org.lwjgl.input.Keyboard;
 import thread.GameThread;
 import util.Utils;
 import assets.AssetContainer;
+import assets.entities.Projectile;
 
 /**
  * First stab at a thread for handling input for player.
@@ -71,8 +72,6 @@ public class ControlThread extends GameThread {
 			assContainer.getPlayer().resetRotationSpeed();
 		}
 
-		assContainer.getPlayer().move(timeDelta);
-
 		if (downPressed || upPressed) {
 			if (downPressed) {
 				assContainer.getPlayer().decelerateMovement();
@@ -84,6 +83,16 @@ public class ControlThread extends GameThread {
 		if (firePressed) {
 			System.out.println("Fire");
 			// assContainer.addProjectile(new Projectile());
+		}
+
+		moveEntities(timeDelta);
+	}
+
+	private void moveEntities(int timeDelta) {
+		assContainer.getPlayer().move(timeDelta);
+
+		for (Projectile projectile : assContainer.getProjectiles()) {
+			projectile.move(timeDelta);
 		}
 	}
 
