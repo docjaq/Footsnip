@@ -17,7 +17,6 @@ public class ControlThread extends GameThread {
 	private boolean rightPressed = false;
 	private boolean upPressed = false;
 	private boolean downPressed = false;
-	private boolean firePressed = false;
 
 	/** The time of the last iteration, to calculate the time delta. */
 	private long lastIterationTime;
@@ -51,8 +50,8 @@ public class ControlThread extends GameThread {
 				downPressed = Keyboard.getEventKeyState();
 			}
 
-			if (Keyboard.getEventKey() == Keyboard.KEY_SPACE) {
-				firePressed = Keyboard.getEventKeyState();
+			if (Keyboard.getEventKey() == Keyboard.KEY_SPACE && Keyboard.getEventKeyState()) {
+				fireProjectile();
 			}
 		}
 
@@ -80,11 +79,11 @@ public class ControlThread extends GameThread {
 				assContainer.getPlayer().accelerateMovement();
 			}
 		}
+	}
 
-		if (firePressed) {
-			System.out.println("Fire");
-			// assContainer.addProjectile(new Projectile());
-		}
+	private void fireProjectile() {
+		System.out.println("Fire");
+		// assContainer.addProjectile(new Projectile());
 	}
 
 	/**
