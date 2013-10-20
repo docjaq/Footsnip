@@ -3,6 +3,7 @@ package control;
 import main.Main;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.vector.Vector3f;
 
 import thread.GameThread;
 import util.Utils;
@@ -85,7 +86,10 @@ public class ControlThread extends GameThread {
 
 	private void fireProjectile() {
 		System.out.println("Fire");
-		// assContainer.addProjectile(new Projectile());
+		Vector3f position = new Vector3f(assContainer.getPlayer().getModel().modelPos);
+		Vector3f angle = new Vector3f(assContainer.getPlayer().getModel().modelAngle);
+		float scale = 1.0f;
+		assContainer.addProjectile(new Projectile(position, angle, scale, assContainer.getPlayer().getMovementVector()));
 	}
 
 	private void moveEntities(int timeDelta) {

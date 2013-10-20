@@ -2,9 +2,8 @@ package assets.entities;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import renderer.glmodels.GLModel;
-import assets.world.AbstractTile;
-import assets.world.datastructures.TileDataStructure;
+import renderer.glmodels.GLProjectileFactory;
+import renderer.glshaders.GLShader;
 import collision.Collidable;
 
 public class Projectile extends Entity {
@@ -15,11 +14,17 @@ public class Projectile extends Entity {
 	private float[] color;
 
 	private Vector3f movementVector;
+	private Vector3f startPosition;
+	private Vector3f angle;
+	private float scale;
 
-	public Projectile(GLModel model, float[] color, Vector3f movementVector) {
-		super(model, "Projectile " + System.currentTimeMillis());
+	public Projectile(Vector3f startPosition, Vector3f angle, float scale, Vector3f movementVector) {
+		super(null, "Projectile " + System.currentTimeMillis());
 		this.age = 0;
-		this.color = color;
+
+		this.startPosition = startPosition;
+		this.angle = angle;
+		this.scale = scale;
 
 		this.movementVector = movementVector;
 	}
@@ -33,15 +38,26 @@ public class Projectile extends Entity {
 	}
 
 	public void move(int timeDelta) {
-		model.modelPos.x += movementVector.x * DEFAULT_MOVEMENT_SPEED * timeDelta;
-		model.modelPos.y += movementVector.y * DEFAULT_MOVEMENT_SPEED * timeDelta;
+		if (model != null) {
+			model.modelPos.x += movementVector.x * DEFAULT_MOVEMENT_SPEED * timeDelta;
+			model.modelPos.y += movementVector.y * DEFAULT_MOVEMENT_SPEED * timeDelta;
+		}
+	}
+
+	public void createModel(GLProjectileFactory projectileFactory, GLShader shader) {
+		if (this.model != null) {
+			throw new RuntimeException("You can only set the model once.");
+		}
+		float[] color = { 0.0f, 0.0f, 1.0f, 1.0f };
+
+		this.model = projectileFactory.create(startPosition, angle, scale, shader, color);
+
 	}
 
 	@Override
 	public void collidedWith(Collidable subject) {
-		// DAVE: Isn't this just a neater way of saying
-		// Monster.class.isAssignableFrom(subject.getClass())?
-		if (Monster.class.isInstance(subject)) {
+		// Means that this works for instances of Monster
+		if (Monster.class.isAssignableFrom(subject.getClass())) {
 			// health--;
 			// System.out.printf("Health: %d\n", health);
 
@@ -52,14 +68,4 @@ public class Projectile extends Entity {
 			System.out.println("Hit");
 		}
 	}
-
-	@Override
-	public void locatedWithin(AbstractTile tile, TileDataStructure data) {
-		if (tile != currentTile) {
-			currentTile = tile;
-			System.out.println(tile.getKey().x + "," + tile.getKey().y);
-			data.populateNeighbouringTiles(currentTile);
-		}
-	}
-
 }

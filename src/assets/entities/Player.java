@@ -33,6 +33,11 @@ public class Player extends Entity {
 	private float rotationDelta;
 
 	private Vector3f movementVector;
+
+	public Vector3f getMovementVector() {
+		return movementVector;
+	}
+
 	private Vector3f currentDirectionVector;
 
 	public Player(GLModel model, String name, int age, float[] color) {

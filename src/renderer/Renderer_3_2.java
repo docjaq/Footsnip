@@ -16,6 +16,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import renderer.glmodels.GLDefaultProjectileFactory;
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTileFactory;
@@ -28,6 +29,7 @@ import assets.AssetContainer;
 import assets.entities.Monster;
 import assets.entities.MonsterFactory;
 import assets.entities.Player;
+import assets.entities.Projectile;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
 import assets.world.datastructures.TileDataStructure;
@@ -126,6 +128,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		renderPlayer(assContainer.getPlayer());
 		renderMonsters(assContainer.getMonsters());
+		renderProjectiles(assContainer.getProjectiles());
 		renderTiles(assContainer.getTileDataStructure());
 
 		exitOnGLError("logicCycle");
@@ -199,6 +202,10 @@ public class Renderer_3_2 extends RendererThread {
 			assContainer.addMonster(MonsterFactory.createMesh(monsterMesh, shader, monsterPos));
 		}
 
+		// Initialise projectile factory
+		assContainer.setProjectileFactory(new GLDefaultProjectileFactory());
+		assContainer.setProjectiles(new ArrayList<Projectile>());
+
 	}
 
 	private void renderTiles(TileDataStructure dataStructure) {
@@ -221,6 +228,29 @@ public class Renderer_3_2 extends RendererThread {
 		glWorld.copyCameraMatricesToShader(monsters.get(0).getModel().getShader());
 		for (Monster m : monsters) {
 			m.getModel().draw();
+		}
+	}
+
+	private void renderProjectiles(List<Projectile> projectiles) {
+		if (projectiles.size() > 0) {
+			GLShader shader = new GLPhongShader();
+			shader.create(PHONG_SHADER_NAME);
+			for (Projectile p : projectiles) {
+				if (p.getModel() == null) {
+
+					p.createModel(assContainer.getProjectileFactory(), shader);
+				}
+			}
+
+			glWorld.copyCameraMatricesToShader(shader);
+			for (Projectile p : projectiles) {
+				try {
+					p.getModel().draw();
+				} catch (NullPointerException e) {
+					System.out.println("Exception: GLModel does not exist");
+				}
+
+			}
 		}
 	}
 

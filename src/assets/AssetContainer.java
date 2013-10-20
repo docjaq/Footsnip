@@ -3,6 +3,7 @@ package assets;
 import java.util.ArrayList;
 import java.util.List;
 
+import renderer.glmodels.GLProjectileFactory;
 import assets.entities.Entity;
 import assets.entities.Monster;
 import assets.entities.Player;
@@ -13,10 +14,26 @@ import assets.world.datastructures.TileDataStructure;
 public class AssetContainer {
 
 	private Player player;
+
 	private List<Monster> monsters;
+	// TODO: Put monster factory here
+
 	private List<Projectile> projectiles;
 
-	// private List<AbstractTile> tiles;
+	public void setProjectiles(List<Projectile> projectiles) {
+		this.projectiles = projectiles;
+	}
+
+	private GLProjectileFactory projectileFactory;
+
+	public void setProjectileFactory(GLProjectileFactory projectileFactory) {
+		this.projectileFactory = projectileFactory;
+	}
+
+	public GLProjectileFactory getProjectileFactory() {
+		return projectileFactory;
+	}
+
 	private TileDataStructure tiles;
 
 	private List<Entity> entities;
