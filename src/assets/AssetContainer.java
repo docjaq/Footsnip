@@ -6,6 +6,7 @@ import java.util.List;
 import assets.entities.Entity;
 import assets.entities.Monster;
 import assets.entities.Player;
+import assets.entities.Projectile;
 import assets.world.datastructures.HashmapDataStructure;
 import assets.world.datastructures.TileDataStructure;
 
@@ -13,6 +14,7 @@ public class AssetContainer {
 
 	private Player player;
 	private List<Monster> monsters;
+	private List<Projectile> projectiles;
 
 	// private List<AbstractTile> tiles;
 	private TileDataStructure tiles;
@@ -21,6 +23,7 @@ public class AssetContainer {
 
 	public AssetContainer() {
 		monsters = new ArrayList<Monster>(0);
+		projectiles = new ArrayList<Projectile>(0);
 		tiles = new HashmapDataStructure();
 	}
 
@@ -31,9 +34,10 @@ public class AssetContainer {
 	}
 
 	private void updateEntities() {
-		entities = new ArrayList<Entity>(monsters.size() + 1);
+		entities = new ArrayList<Entity>(monsters.size() + projectiles.size() + 1);
 		entities.add(player);
 		entities.addAll(monsters);
+		entities.addAll(projectiles);
 	}
 
 	/** AbstractTiles **/
@@ -67,5 +71,21 @@ public class AssetContainer {
 
 	public List<Monster> getMonsters() {
 		return monsters;
+	}
+
+	/** Projectiles **/
+
+	public void addProjectile(Projectile projectile) {
+		this.projectiles.add(projectile);
+		entities.add(projectile);
+	}
+
+	public void setProjectile(List<Projectile> projectiles) {
+		this.projectiles = projectiles;
+		updateEntities();
+	}
+
+	public List<Projectile> getProjectile() {
+		return projectiles;
 	}
 }
