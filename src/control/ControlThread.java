@@ -58,7 +58,6 @@ public class ControlThread extends GameThread {
 		}
 
 		int timeDelta = getIterationDelta();
-		System.out.println(timeDelta);
 
 		// All the time that either left or right are pressed, increase the
 		// rotation speed.
