@@ -13,7 +13,7 @@ public abstract class AbstractTile implements Asset {
 	protected GLModel model;
 	protected Vector3f tilePos; // I don't like this, it should be temporary
 	protected DataStructureKey2D key;
-	public static final float SIZE = 0.5f;
+	public static final float SIZE = 1.0f;
 
 	public AbstractTile() {
 	}

@@ -44,9 +44,14 @@ public class HashmapDataStructure implements TileDataStructure {
 		glWorld.copyCameraMatricesToShader(initialTile.getModel().getShader());
 		for (AbstractTile t : map.values()) {
 			if (t.getModel() == null) {
+
 				t.createModel(glTileFactory, initialTile.getModel().getShader());
 			}
-			t.getModel().draw();
+			try {
+				t.getModel().draw();
+			} catch (NullPointerException e) {
+				System.out.println("Exception: GLModel does not exist");
+			}
 		}
 
 	}

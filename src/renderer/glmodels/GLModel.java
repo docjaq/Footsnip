@@ -33,6 +33,7 @@ public abstract class GLModel {
 	protected int indicesCount = 0;
 
 	// Collision variables
+	/* MAKE SURE THAT THIS RADIUS HAS BEEN SET BY THE IMPLEMENTING CLASS */
 	protected float radius;
 
 	protected float[] color;
@@ -191,7 +192,7 @@ public abstract class GLModel {
 		return radius;
 	}
 
-	protected abstract void setRadius();
+	// abstract void setRadius();
 
 	public void setColor(float[] color) {
 		this.color = color;

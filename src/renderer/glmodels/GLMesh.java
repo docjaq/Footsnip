@@ -19,15 +19,15 @@ import renderer.glshaders.GLShader;
 
 public class GLMesh extends GLModel {
 
-	private List<GLVertex> vertexList;
-	private List<GLTriangle> triangleList;
+	// private List<GLVertex> vertexList;
+	// private List<GLTriangle> triangleList;
 
 	public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList, Vector3f modelPos, Vector3f modelAngle, float modelScale,
 			GLShader shader, float[] color) {
 		super(modelPos, modelAngle, modelScale, shader, color);
 
-		this.triangleList = triangleList;
-		this.vertexList = vertexList;
+		// this.triangleList = triangleList;
+		// this.vertexList = vertexList;
 		// vertexList = mesh.getVertices();
 		// mesh.normaliseAndCentre(vertexList); //Shit
 		// triangleList = mesh.getTriangles();
@@ -80,10 +80,10 @@ public class GLMesh extends GLModel {
 
 		exitOnGLError("setupQuad");
 
-		setRadius();
+		setRadius(vertexList);
 	}
 
-	protected void setRadius() {
+	private void setRadius(List<GLVertex> vertexList) {
 		float maxDist = 0;
 		float currentDist = 0;
 		for (GLVertex v : vertexList) {

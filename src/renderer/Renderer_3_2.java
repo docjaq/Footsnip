@@ -139,7 +139,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		// GLTileFactory glTileFactory = new GLTilePlanarFactory();
 		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, tilePos);
-		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(257, assContainer.getTileDataStructure());
+		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129, assContainer.getTileDataStructure());
 		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
 		initialTile.setModel(model);
 
