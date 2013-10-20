@@ -8,8 +8,6 @@ import renderer.glprimitives.GLVertex;
 
 public abstract class AbstractGeometryFile implements GeometryFile {
 
-	// private ArrayList<GLVertex> vertices;
-
 	public void normaliseAndCentre(ArrayList<GLVertex> vertices) {
 		Vector3f ma = new Vector3f(-Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE);
 		Vector3f mi = new Vector3f(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);

@@ -55,7 +55,6 @@ public class Renderer_3_2 extends GameThread {
 	private final String WINDOW_TITLE = "Footsnip";
 	private final int WIDTH = 840; // 1680;
 	private final int HEIGHT = 450; // 900;
-
 	private final int MAX_FPS = 60;
 
 	/**
@@ -140,9 +139,14 @@ public class Renderer_3_2 extends GameThread {
 
 		// GLTileFactory glTileFactory = new GLTilePlanarFactory();
 		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, tilePos);
-		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129);
+		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(257, assContainer.getTileDataStructure());
 		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
 		initialTile.setModel(model);
+
+		// Debug
+		// (GLTileMidpointDisplacementFactory)glTileFactory
+		// TODO: Grab the terrain geometry and write it to file for debugging
+
 		// GLTileFactory glTileFactory = new
 		// GLTileMidpointDisplacementFactory(4);
 

@@ -1,8 +1,10 @@
 package mesh;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -91,5 +93,48 @@ public class Ply extends AbstractGeometryFile {
 					vertices.get(Integer.parseInt(elements[3])));
 			triangles.add(triangle);
 		}
+	}
+
+	@Override
+	public void write(File file) {
+
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
+			out.write("ply\nformat ascii 1.0\ncomment VCGLIB generated\nelement vertex " + vertices.size() + "\nproperty float x\n"
+					+ "property float y\nproperty float z\nproperty float nx\nproperty float ny\nproperty float nz\n" + "element face "
+					+ triangles.size() + "\nproperty list uchar int vertex_indices\nend_header\n");
+
+			out.newLine();
+
+			for (GLVertex v : vertices) {
+				out.write(v.xyzw.toString());
+				out.newLine();
+			}
+
+			for (GLTriangle t : triangles) {
+				/*
+				 * out.write(Integer.toString(3) + " ");
+				 * out.write(Integer.toString(triangles[i].a) + " " +
+				 * Integer.toString(triangles[i].b) + " " +
+				 * Integer.toString(triangles[i].c)); out.newLine();
+				 */
+			}
+
+			out.close();
+		} catch (IOException e) {
+		}
+
+	}
+
+	@Override
+	public void setTriangles(ArrayList<GLTriangle> triangles) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setVertices(ArrayList<GLVertex> vertices) {
+		// TODO Auto-generated method stub
+
 	}
 }
