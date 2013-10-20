@@ -16,7 +16,7 @@ public class Player extends Entity {
 	private static final float ROTATION_ACCELERATION = 0.001f;
 
 	private static final float DEFAULT_MOVEMENT_SPEED = 0.00001f;
-	// private static final float MOVEMENT_ACCELERATION = 0.5f;
+	private static final float MOVEMENT_ACCELERATION = 0.5f;
 
 	private static final float MAX_MOVEMENT_SPEED = 100f;
 
@@ -93,19 +93,19 @@ public class Player extends Entity {
 		// yawDiff = 0;
 	}
 
-	public void accelerateMovement(float movementAcceleration) {
+	public void accelerateMovement() {
 		currentDirectionVector.x = (float) Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z));
 		currentDirectionVector.y = (float) Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z));
-		currentDirectionVector.scale(movementAcceleration);
+		currentDirectionVector.scale(MOVEMENT_ACCELERATION);
 
 		Vector3f.add(movementVector, currentDirectionVector, movementVector);
 		capMaxMovementSpeed();
 	}
 
-	public void decelerateMovement(float movementAcceleration) {
+	public void decelerateMovement() {
 		currentDirectionVector.x = (float) Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z));
 		currentDirectionVector.y = (float) Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z));
-		currentDirectionVector.scale(movementAcceleration);
+		currentDirectionVector.scale(MOVEMENT_ACCELERATION);
 
 		Vector3f.sub(movementVector, currentDirectionVector, movementVector);
 		capMaxMovementSpeed();

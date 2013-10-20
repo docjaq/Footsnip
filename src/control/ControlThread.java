@@ -13,12 +13,11 @@ import assets.AssetContainer;
  */
 public class ControlThread extends GameThread {
 
-	private static final float MOVEMENT_ACCELERATION_CONSTANT = 0.05f;
-
 	private boolean leftPressed = false;
 	private boolean rightPressed = false;
 	private boolean upPressed = false;
 	private boolean downPressed = false;
+	private boolean firePressed = false;
 
 	/** The time of the last iteration, to calculate the time delta. */
 	private long lastIterationTime;
@@ -52,13 +51,12 @@ public class ControlThread extends GameThread {
 				downPressed = Keyboard.getEventKeyState();
 			}
 
-			if (Keyboard.getEventKey() == Keyboard.KEY_SPACE && Keyboard.getEventKeyState()) {
-				fireProjectile();
+			if (Keyboard.getEventKey() == Keyboard.KEY_SPACE) {
+				firePressed = Keyboard.getEventKeyState();
 			}
 		}
 
 		int timeDelta = getIterationDelta();
-		System.out.println(timeDelta);
 
 		// All the time that either left or right are pressed, increase the
 		// rotation speed.
@@ -75,20 +73,18 @@ public class ControlThread extends GameThread {
 
 		assContainer.getPlayer().move(timeDelta);
 
-		float movementAcceleration = (float) timeDelta * MOVEMENT_ACCELERATION_CONSTANT;
-
 		if (downPressed || upPressed) {
 			if (downPressed) {
-				assContainer.getPlayer().decelerateMovement(movementAcceleration);
+				assContainer.getPlayer().decelerateMovement();
 			} else {
-				assContainer.getPlayer().accelerateMovement(movementAcceleration);
+				assContainer.getPlayer().accelerateMovement();
 			}
 		}
-	}
 
-	private void fireProjectile() {
-		System.out.println("Fire");
-		// assContainer.addProjectile(new Projectile());
+		if (firePressed) {
+			System.out.println("Fire");
+			// assContainer.addProjectile(new Projectile());
+		}
 	}
 
 	/**
