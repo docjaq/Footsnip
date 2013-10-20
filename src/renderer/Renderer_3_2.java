@@ -143,9 +143,16 @@ public class Renderer_3_2 extends RendererThread {
 		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
 		initialTile.setModel(model);
 
-		// Debug
-		// (GLTileMidpointDisplacementFactory)glTileFactory
-		// TODO: Grab the terrain geometry and write it to file for debugging
+		// Terrain Mesh Debugging
+		/*
+		 * ArrayList<GLTriangle> triangles = (ArrayList<GLTriangle>)
+		 * ((GLTileMidpointDisplacementFactory)
+		 * glTileFactory).getFactoryTriangles(); ArrayList<GLVertex> vertices =
+		 * (ArrayList<GLVertex>) ((GLTileMidpointDisplacementFactory)
+		 * glTileFactory).getFactoryVertices(); Ply ply = new Ply(triangles,
+		 * vertices); ply.write(new File("TerrainTest.ply"));
+		 */
+		//
 
 		// GLTileFactory glTileFactory = new
 		// GLTileMidpointDisplacementFactory(4);

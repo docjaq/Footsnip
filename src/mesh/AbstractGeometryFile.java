@@ -4,9 +4,21 @@ import java.util.ArrayList;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
 
 public abstract class AbstractGeometryFile implements GeometryFile {
+
+	protected ArrayList<GLVertex> vertices;
+	protected ArrayList<GLTriangle> triangles;
+
+	public AbstractGeometryFile(ArrayList<GLTriangle> triangles, ArrayList<GLVertex> vertices) {
+		this.triangles = triangles;
+		this.vertices = vertices;
+	}
+
+	public AbstractGeometryFile() {
+	}
 
 	public void normaliseAndCentre(ArrayList<GLVertex> vertices) {
 		Vector3f ma = new Vector3f(-Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE);
