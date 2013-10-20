@@ -52,8 +52,8 @@ public class ControlThread extends GameThread {
 				downPressed = Keyboard.getEventKeyState();
 			}
 
-			if (Keyboard.getEventKey() == Keyboard.KEY_SPACE) {
-				firePressed = Keyboard.getEventKeyState();
+			if (Keyboard.getEventKey() == Keyboard.KEY_SPACE && Keyboard.getEventKeyState()) {
+				fireProjectile();
 			}
 		}
 
@@ -80,12 +80,12 @@ public class ControlThread extends GameThread {
 			}
 		}
 
-		if (firePressed) {
-			System.out.println("Fire");
-			// assContainer.addProjectile(new Projectile());
-		}
-
 		moveEntities(timeDelta);
+	}
+
+	private void fireProjectile() {
+		System.out.println("Fire");
+		// assContainer.addProjectile(new Projectile());
 	}
 
 	private void moveEntities(int timeDelta) {
