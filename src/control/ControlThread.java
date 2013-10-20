@@ -17,6 +17,7 @@ public class ControlThread extends GameThread {
 	private boolean rightPressed = false;
 	private boolean upPressed = false;
 	private boolean downPressed = false;
+	private boolean firePressed = false;
 
 	/** The time of the last iteration, to calculate the time delta. */
 	private long lastIterationTime;
@@ -28,6 +29,11 @@ public class ControlThread extends GameThread {
 		getIterationDelta();
 	}
 
+	// TODO: Should we be doing something with the getEventNanoseconds method?
+	// I'm confused about how this works given that we're taking events off a
+	// buffer - what if, since the last iteration, I've pressed left for 1
+	// millisecond and right for 5 milliseconds? I should end up turning
+	// slightly right, but I think I'll actually just continue forwards.
 	public void gameLoop() {
 		// Iterate over the key events buffer.
 		while (Keyboard.next()) {
@@ -43,6 +49,10 @@ public class ControlThread extends GameThread {
 			}
 			if (Keyboard.getEventKey() == Keyboard.KEY_DOWN) {
 				downPressed = Keyboard.getEventKeyState();
+			}
+
+			if (Keyboard.getEventKey() == Keyboard.KEY_SPACE) {
+				firePressed = Keyboard.getEventKeyState();
 			}
 		}
 
@@ -69,6 +79,11 @@ public class ControlThread extends GameThread {
 			} else {
 				assContainer.getPlayer().accelerateMovement();
 			}
+		}
+
+		if (firePressed) {
+			System.out.println("Fire");
+			// assContainer.addProjectile(new Projectile());
 		}
 	}
 
