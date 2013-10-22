@@ -8,14 +8,14 @@ import collision.Collidable;
 public class Monster extends Entity {
 
 	private int level;
-	private final int MOVEMENT_DIRECTION = (int) (Math.random() * 4f);
+	private final int MOVEMENT_DELTA = (int) (Math.random() * 4f);
 
-	private float rotationDelta = 0.5f;
+	private float ROTATION_DELTA = (float) Math.random() * 1.0f;
 
 	public void setRotationDelta(float rotationDelta) {
 		// TODO: Dividing this by 30 seems a bit arbitrary, but we're going to
 		// multiply by the time delta later, which is typically about 30.
-		this.rotationDelta = rotationDelta / 30.0f;
+		this.ROTATION_DELTA = rotationDelta / 20.0f;
 	}
 
 	// private float scaleDelta = 0.001f;
@@ -52,7 +52,7 @@ public class Monster extends Entity {
 	}
 
 	public void moveRandom() {
-		switch (MOVEMENT_DIRECTION) {
+		switch (MOVEMENT_DELTA) {
 		case 0:
 			moveLeft();
 			break;
@@ -81,15 +81,15 @@ public class Monster extends Entity {
 	 */
 
 	public void rotate(int timeDelta) {
-		model.modelAngle.z += rotationDelta * timeDelta;
-		model.modelAngle.y += rotationDelta * timeDelta;
-		model.modelAngle.x += rotationDelta * timeDelta;
+		model.modelAngle.z += ROTATION_DELTA * timeDelta;
+		model.modelAngle.y += ROTATION_DELTA * timeDelta;
+		model.modelAngle.x += ROTATION_DELTA * timeDelta;
 	}
 
 	@Override
 	public void collidedWith(Collidable subject) {
 		if (Player.class.isAssignableFrom(subject.getClass())) {
-			rotationDelta *= 1.01;
+			ROTATION_DELTA *= 1.01;
 		}
 	}
 }
