@@ -110,10 +110,6 @@ public class Renderer_3_2 extends RendererThread {
 	// TODO: Sort this method out so we can apply transforms and shit to our
 	// 'data structure' of models. Currently it's pretty hard-coded to our
 	private void logicCycle() {
-		int frameDelta = getFrameTimeDelta();
-		for (Monster m : assContainer.getMonsters()) {
-			m.rotate(frameDelta);
-		}
 		// assContainer.getPlayer().rotate(frameDelta);
 
 		// -- Update matrices

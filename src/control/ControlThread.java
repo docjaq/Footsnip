@@ -8,6 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
 import thread.GameThread;
 import util.Utils;
 import assets.AssetContainer;
+import assets.entities.Monster;
 import assets.entities.Projectile;
 
 /**
@@ -86,14 +87,29 @@ public class ControlThread extends GameThread {
 
 	private void fireProjectile() {
 		System.out.println("Fire");
-		Vector3f position = new Vector3f(assContainer.getPlayer().getModel().modelPos);
-		Vector3f angle = new Vector3f(assContainer.getPlayer().getModel().modelAngle);
+
+		Vector3f position = new Vector3f(assContainer.getPlayer().getModel().modelPos.x, assContainer.getPlayer().getModel().modelPos.y,
+				assContainer.getPlayer().getModel().modelPos.z);
+		Vector3f angle = new Vector3f(assContainer.getPlayer().getModel().modelAngle.x, assContainer.getPlayer().getModel().modelAngle.y,
+				assContainer.getPlayer().getModel().modelAngle.z);
+		Vector3f movementVector = new Vector3f(assContainer.getPlayer().getMovementVector().x,
+				assContainer.getPlayer().getMovementVector().y, assContainer.getPlayer().getMovementVector().z);
+
+		// Vector3f position = new Vector3f(0f, 0f, 0f);
+		// Vector3f angle = new Vector3f(0f, 0f, 0f);
+		// Vector3f movementVector = new Vector3f(0f, 1f, 0f);
 		float scale = 1.0f;
-		assContainer.addProjectile(new Projectile(position, angle, scale, assContainer.getPlayer().getMovementVector()));
+		assContainer.addProjectile(new Projectile(position, angle, scale, movementVector));
 	}
 
 	private void moveEntities(int timeDelta) {
 		assContainer.getPlayer().move(timeDelta);
+
+		// int frameDelta = getFrameTimeDelta();
+		for (Monster m : assContainer.getMonsters()) {
+			m.rotate(timeDelta);
+			m.moveRandom();
+		}
 
 		for (Projectile projectile : assContainer.getProjectiles()) {
 			projectile.move(timeDelta);

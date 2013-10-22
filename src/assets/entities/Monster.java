@@ -8,6 +8,7 @@ import collision.Collidable;
 public class Monster extends Entity {
 
 	private int level;
+	private final int MOVEMENT_DIRECTION = (int) (Math.random() * 4f);
 
 	private float rotationDelta = 0.5f;
 
@@ -18,7 +19,7 @@ public class Monster extends Entity {
 	}
 
 	// private float scaleDelta = 0.001f;
-	private float posDelta = 0.1f;
+	private float posDelta = (float) Math.random() * 0.0001f;
 
 	// private Vector3f scaleAddResolution = new Vector3f(scaleDelta,
 	// scaleDelta, scaleDelta);
@@ -48,6 +49,23 @@ public class Monster extends Entity {
 
 	public void moveDown() {
 		model.modelPos.y -= posDelta;
+	}
+
+	public void moveRandom() {
+		switch (MOVEMENT_DIRECTION) {
+		case 0:
+			moveLeft();
+			break;
+		case 1:
+			moveRight();
+			break;
+		case 2:
+			moveUp();
+			break;
+		case 3:
+			moveDown();
+			break;
+		}
 	}
 
 	/**

@@ -50,7 +50,7 @@ public class Projectile extends Entity {
 		}
 		float[] color = { 0.0f, 0.0f, 1.0f, 1.0f };
 
-		this.model = projectileFactory.create(startPosition, angle, scale, shader, color);
+		this.model = projectileFactory.create(this.startPosition, this.angle, this.scale, shader, color);
 
 	}
 
