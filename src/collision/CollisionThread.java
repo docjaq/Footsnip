@@ -1,8 +1,13 @@
 package collision;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import main.Main;
 import thread.GameThread;
 import assets.AssetContainer;
+import assets.entities.Entity;
+import assets.entities.Projectile;
 
 public class CollisionThread extends GameThread {
 
@@ -12,6 +17,16 @@ public class CollisionThread extends GameThread {
 
 	@Override
 	protected void gameLoop() {
-		CollisionMethods.checkEntityCollisions(assContainer.getEntities());
+		List<Entity> entities = new ArrayList<Entity>(assContainer.getMonsters().size() + assContainer.getProjectiles().size() + 1);
+		entities.add(assContainer.getPlayer());
+		entities.addAll(assContainer.getMonsters());
+
+		for (Projectile projectile : assContainer.getProjectiles()) {
+			if (projectile.readyForCollisionDetection()) {
+				entities.add(projectile);
+			}
+		}
+
+		CollisionMethods.checkEntityCollisions(entities);
 	}
 }

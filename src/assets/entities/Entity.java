@@ -35,6 +35,11 @@ public class Entity extends AbstractEntity implements Collidable, Locatable {
 	}
 
 	@Override
+	public boolean readyForCollisionDetection() {
+		return model != null;
+	}
+
+	@Override
 	public void locatedWithin(AbstractTile tile, TileDataStructure data) {
 		System.out.println("Located within tile: " + tile.getKey().x + "," + tile.getKey().y);
 	}

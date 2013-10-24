@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import renderer.glmodels.GLProjectileFactory;
-import assets.entities.Entity;
 import assets.entities.Monster;
 import assets.entities.Player;
 import assets.entities.Projectile;
@@ -36,25 +35,10 @@ public class AssetContainer {
 
 	private TileDataStructure tiles;
 
-	private List<Entity> entities;
-
 	public AssetContainer() {
 		monsters = new ArrayList<Monster>(0);
 		projectiles = new ArrayList<Projectile>(0);
 		tiles = new HashmapDataStructure();
-	}
-
-	/** Entities **/
-
-	public List<Entity> getEntities() {
-		return entities;
-	}
-
-	private void updateEntities() {
-		entities = new ArrayList<Entity>(monsters.size() + projectiles.size() + 1);
-		entities.add(player);
-		entities.addAll(monsters);
-		entities.addAll(projectiles);
 	}
 
 	/** AbstractTiles **/
@@ -67,7 +51,6 @@ public class AssetContainer {
 
 	public void setPlayer(Player player) {
 		this.player = player;
-		updateEntities();
 	}
 
 	public Player getPlayer() {
@@ -78,12 +61,10 @@ public class AssetContainer {
 
 	public void addMonster(Monster monster) {
 		this.monsters.add(monster);
-		entities.add(monster);
 	}
 
 	public void setMonsters(List<Monster> monsters) {
 		this.monsters = monsters;
-		updateEntities();
 	}
 
 	public List<Monster> getMonsters() {
@@ -94,12 +75,10 @@ public class AssetContainer {
 
 	public void addProjectile(Projectile projectile) {
 		this.projectiles.add(projectile);
-		entities.add(projectile);
 	}
 
 	public void setProjectile(List<Projectile> projectiles) {
 		this.projectiles = projectiles;
-		updateEntities();
 	}
 
 	public List<Projectile> getProjectiles() {

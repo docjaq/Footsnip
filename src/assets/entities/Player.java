@@ -140,9 +140,7 @@ public class Player extends Entity {
 
 	@Override
 	public void collidedWith(Collidable subject) {
-		// DAVE: Isn't this just a neater way of saying
-		// Monster.class.isAssignableFrom(subject.getClass())?
-		if (Monster.class.isInstance(subject)) {
+		if (Monster.class.isAssignableFrom(subject.getClass())) {
 			health--;
 			System.out.printf("Health: %d\n", health);
 
