@@ -12,7 +12,7 @@ import assets.entities.Projectile;
 public class CollisionThread extends GameThread {
 
 	public CollisionThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
-		super(assContainer, threadDelay, mainApplication);
+		super(assContainer, threadDelay, mainApplication, "Collision Thread");
 	}
 
 	@Override

@@ -22,7 +22,8 @@ public abstract class GameThread extends Thread implements ObservableThread {
 	/** Pause between iterations. */
 	private int threadDelay;
 
-	public GameThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
+	public GameThread(AssetContainer assContainer, int threadDelay, Main mainApplication, String name) {
+		super(name);
 		this.assContainer = assContainer;
 		this.threadDelay = threadDelay;
 		this.mainApplication = mainApplication;
