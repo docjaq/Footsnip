@@ -88,16 +88,9 @@ public class ControlThread extends GameThread {
 	private void fireProjectile() {
 		System.out.println("Fire");
 
-		Vector3f position = new Vector3f(assContainer.getPlayer().getModel().modelPos.x, assContainer.getPlayer().getModel().modelPos.y,
-				assContainer.getPlayer().getModel().modelPos.z);
-		Vector3f angle = new Vector3f(assContainer.getPlayer().getModel().modelAngle.x, assContainer.getPlayer().getModel().modelAngle.y,
-				assContainer.getPlayer().getModel().modelAngle.z);
-		Vector3f movementVector = new Vector3f(assContainer.getPlayer().getMovementVector().x,
-				assContainer.getPlayer().getMovementVector().y, assContainer.getPlayer().getMovementVector().z);
-
-		// Vector3f position = new Vector3f(0f, 0f, 0f);
-		// Vector3f angle = new Vector3f(0f, 0f, 0f);
-		// Vector3f movementVector = new Vector3f(0f, 1f, 0f);
+		Vector3f position = new Vector3f(assContainer.getPlayer().getModel().modelPos);
+		Vector3f angle = new Vector3f(assContainer.getPlayer().getModel().modelAngle);
+		Vector3f movementVector = new Vector3f(assContainer.getPlayer().getMovementVector());
 		float scale = 1.0f;
 		assContainer.addProjectile(new Projectile(position, angle, scale, movementVector));
 	}

@@ -14,7 +14,7 @@ public class GLDefaultProjectileFactory implements GLProjectileFactory {
 	private Ply mesh;
 
 	public GLDefaultProjectileFactory() {
-		Vector4f projectileColor = new Vector4f(0.3f, 0.3f, 0.05f, 1.0f);
+		Vector4f projectileColor = new Vector4f(0.8f, 0.8f, 1.0f, 1.0f);
 		mesh = new Ply();
 		mesh.read(new File("resources/meshes/projectile_small.ply"), projectileColor);
 	}

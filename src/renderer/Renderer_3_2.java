@@ -59,6 +59,8 @@ public class Renderer_3_2 extends RendererThread {
 
 	private final int MAX_FPS = 60;
 
+	private GLShader phongShader; // debug
+
 	/**
 	 * The time of the last frame, to calculate the time delta for rotating
 	 * monsters.
@@ -94,7 +96,7 @@ public class Renderer_3_2 extends RendererThread {
 		// System.out.println("Textured shader ID " +
 		// texturedShader.getProgramID());
 
-		GLShader phongShader = new GLPhongShader();
+		phongShader = new GLPhongShader();
 		phongShader.create(PHONG_SHADER_NAME);
 		System.out.println("Phong shader ID " + phongShader.getProgramID());
 
@@ -229,16 +231,16 @@ public class Renderer_3_2 extends RendererThread {
 
 	private void renderProjectiles(List<Projectile> projectiles) {
 		if (projectiles.size() > 0) {
-			GLShader shader = new GLPhongShader();
-			shader.create(PHONG_SHADER_NAME);
+			// GLShader shader = new GLPhongShader();
+			// shader.create(PHONG_SHADER_NAME);
 			for (Projectile p : projectiles) {
 				if (p.getModel() == null) {
-
-					p.createModel(assContainer.getProjectileFactory(), shader);
+					p.createModel(assContainer.getProjectileFactory(), phongShader);
+					p.getModel().debugType = "projectile";
 				}
 			}
 
-			glWorld.copyCameraMatricesToShader(shader);
+			glWorld.copyCameraMatricesToShader(phongShader);
 			for (Projectile p : projectiles) {
 				try {
 					p.getModel().draw();

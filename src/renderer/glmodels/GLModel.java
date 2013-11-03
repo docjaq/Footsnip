@@ -43,6 +43,8 @@ public abstract class GLModel {
 
 	protected GLShader shader;
 
+	public String debugType;
+
 	// protected FloatBuffer matrix44Buffer = null;
 
 	public GLShader getShader() {
@@ -141,6 +143,9 @@ public abstract class GLModel {
 		// This order is important for building the matrix
 		clearModelMatrix();
 		// Matrix4f.scale(modelScale, modelMatrix, modelMatrix);
+		// if (debugType != null && debugType.equals("projectile")) {
+		// System.out.println(modelPos.x + "," + modelPos.y + "," + modelPos.z);
+		// }
 
 		modelMatrix.scale(modelScale);
 		modelMatrix.translate(modelPos);
