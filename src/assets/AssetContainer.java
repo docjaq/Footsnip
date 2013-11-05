@@ -2,6 +2,7 @@ package assets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import renderer.glmodels.GLProjectileFactory;
 import assets.entities.Monster;
@@ -37,7 +38,8 @@ public class AssetContainer {
 
 	public AssetContainer() {
 		monsters = new ArrayList<Monster>(0);
-		projectiles = new ArrayList<Projectile>(0);
+		// So the list can be rendered and added to at the same time
+		projectiles = new CopyOnWriteArrayList<Projectile>();
 		tiles = new HashmapDataStructure();
 	}
 

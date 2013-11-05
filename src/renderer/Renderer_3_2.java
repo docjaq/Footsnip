@@ -202,7 +202,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		// Initialise projectile factory
 		assContainer.setProjectileFactory(new GLDefaultProjectileFactory());
-		assContainer.setProjectiles(new ArrayList<Projectile>());
+		// assContainer.setProjectiles(new ArrayList<Projectile>());
 
 	}
 
