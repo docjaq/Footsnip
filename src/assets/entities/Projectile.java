@@ -13,6 +13,10 @@ import collision.Collidable;
 
 public class Projectile extends Entity {
 
+	private boolean destroyable = false;
+
+	private static final int DAMAGE = 10;
+
 	private static final float DEFAULT_MOVEMENT_SPEED = 0.00001f;
 	private static final float ADDITIVE_VELOCITY_SCALE = 50.00f;
 
@@ -78,16 +82,27 @@ public class Projectile extends Entity {
 
 	@Override
 	public void collidedWith(Collidable subject) {
-		// Means that this works for instances of Monster
-		if (Monster.class.isAssignableFrom(subject.getClass())) {
-			// health--;
-			// System.out.printf("Health: %d\n", health);
+		if (!destroyable) {
+			// Lock the subject so that multiple fast collisions (faster than
+			// the renderering thread) don't cause monster health to be reduced
+			// too often
+			synchronized (subject) {
+				// If it hits a monster
+				if (Monster.class.isAssignableFrom(subject.getClass())) {
+					System.out.println("Hit");
+					((Monster) subject).modifyHealth(-DAMAGE);
+				}
 
-			// if (health < 1) {
-			// GameControl.playerDead();
-			// }
+				// If it hits anything
+				if (!Player.class.isAssignableFrom(subject.getClass())) {
+					destroyable = true;
+				}
+			}
 
-			System.out.println("Hit");
 		}
+	}
+
+	public boolean isDestroyable() {
+		return destroyable;
 	}
 }

@@ -26,6 +26,7 @@ import renderer.glshaders.GLShader;
 import thread.RendererThread;
 import util.Utils;
 import assets.AssetContainer;
+import assets.entities.Entity;
 import assets.entities.Monster;
 import assets.entities.MonsterFactory;
 import assets.entities.Player;
@@ -224,21 +225,32 @@ public class Renderer_3_2 extends RendererThread {
 		 * monsters are dead!
 		 */
 		glWorld.copyCameraMatricesToShader(monsters.get(0).getModel().getShader());
+		List<Entity> toRemove = new ArrayList<Entity>();
+		for (Monster m : monsters) {
+			if (m.isDestroyable()) {
+				toRemove.add(m);
+			}
+		}
+		monsters.removeAll(toRemove);
 		for (Monster m : monsters) {
 			m.getModel().draw();
 		}
 	}
 
 	private void renderProjectiles(List<Projectile> projectiles) {
+
+		List<Entity> toRemove = new ArrayList<Entity>();
+
 		if (projectiles.size() > 0) {
-			// GLShader shader = new GLPhongShader();
-			// shader.create(PHONG_SHADER_NAME);
 			for (Projectile p : projectiles) {
-				if (p.getModel() == null) {
+				if (p.isDestroyable()) {
+					toRemove.add(p);
+				} else if (p.getModel() == null) {
 					p.createModel(assContainer.getProjectileFactory(), phongShader);
 					p.getModel().debugType = "projectile";
 				}
 			}
+			projectiles.removeAll(toRemove);
 
 			glWorld.copyCameraMatricesToShader(phongShader);
 			for (Projectile p : projectiles) {

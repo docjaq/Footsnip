@@ -12,6 +12,8 @@ public class Monster extends Entity {
 	private final float POS_DELTA = (float) Math.random() * 0.0004f;
 	private float rotationDelta = (float) Math.random() * 1.0f;
 
+	private int health = 30;
+
 	public void setRotationDelta(float rotationDelta) {
 		// TODO: Dividing this by 30 seems a bit arbitrary, but we're going to
 		// multiply by the time delta later, which is typically about 30.
@@ -90,5 +92,21 @@ public class Monster extends Entity {
 		if (Player.class.isAssignableFrom(subject.getClass())) {
 			rotationDelta *= 1.01;
 		}
+	}
+
+	public void modifyHealth(int modification) {
+		health += modification;
+	}
+
+	public boolean isDestroyable() {
+		if (health <= 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public int getHealth() {
+		return health;
 	}
 }
