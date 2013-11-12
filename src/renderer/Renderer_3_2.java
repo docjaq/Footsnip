@@ -224,7 +224,8 @@ public class Renderer_3_2 extends RendererThread {
 		 * container I guess. Yes, because this throws an exception if all the
 		 * monsters are dead!
 		 */
-		glWorld.copyCameraMatricesToShader(monsters.get(0).getModel().getShader());
+		// glWorld.copyCameraMatricesToShader(monsters.get(0).getModel().getShader());
+		glWorld.copyCameraMatricesToShader(phongShader);
 		List<Entity> toRemove = new ArrayList<Entity>();
 		for (Monster m : monsters) {
 			if (m.isDestroyable()) {
