@@ -18,7 +18,6 @@ public class GLWorld {
 	public static final Vector3f BASIS_Y = new Vector3f(0, 1, 0);
 	public static final Vector3f BASIS_Z = new Vector3f(0, 0, 1);
 
-	/** Public for speed... */
 	public Matrix4f projectionMatrix;
 	public Matrix4f viewMatrix;
 	// * public Matrix4f modelMatrix;
@@ -26,7 +25,6 @@ public class GLWorld {
 	private int width;
 	private int height;
 
-	// I *think* this should be here.
 	private Vector3f cameraPos;
 
 	// private GLShader worldShader;
@@ -43,9 +41,6 @@ public class GLWorld {
 		this.cameraPos = cameraPos;
 
 		setupMatrices();
-
-		// worldShader = new GLWorldShader(this);
-		// worldShader.create();
 	}
 
 	private void setupMatrices() {
@@ -76,10 +71,7 @@ public class GLWorld {
 		matrix44Buffer = BufferUtils.createFloatBuffer(16);
 	}
 
-	// ATTENTION: Setting it to the identity seems more efficient than creating
-	// a new one?
 	public void clearViewMatrix() {
-		// viewMatrix = new Matrix4f();
 		viewMatrix.setIdentity();
 	}
 
@@ -88,13 +80,11 @@ public class GLWorld {
 	}
 
 	public void copyCameraMatricesToShader(GLShader shader) {
-		shader.bindShader();
 		projectionMatrix.store(matrix44Buffer);
 		matrix44Buffer.flip();
 		GL20.glUniformMatrix4(shader.getProjectionMatrixLocation(), false, matrix44Buffer);
 		viewMatrix.store(matrix44Buffer);
 		matrix44Buffer.flip();
 		GL20.glUniformMatrix4(shader.getViewMatrixLocation(), false, matrix44Buffer);
-		shader.unbindShader();
 	}
 }

@@ -21,12 +21,12 @@ import renderer.glshaders.GLShader;
 
 public abstract class GLModel {
 
-	// Quad Position variables
+	// Model positions
 	public Vector3f modelPos;
 	public Vector3f modelAngle;
 	private Vector3f modelScale;
 
-	// Quad variables
+	// Model GL Variables
 	protected int vaoId = 0;
 	protected int vboId = 0;
 	protected int vboiId = 0;
@@ -38,22 +38,12 @@ public abstract class GLModel {
 
 	protected float[] color;
 
-	// Model Matrix
+	// This could actually just be static or a single object in the renderer.
+	// Having one per model is a waste, though not really much of an overhead
+	// for now
 	protected Matrix4f modelMatrix;
 
-	protected GLShader shader;
-
-	public String debugType;
-
-	// protected FloatBuffer matrix44Buffer = null;
-
-	public GLShader getShader() {
-		return shader;
-	}
-
-	public void setShader(GLShader shader) {
-		this.shader = shader;
-	}
+	// public String debugType;
 
 	public GLModel(Vector3f modelPos, Vector3f modelAngle, float modelScale, GLShader shader, float[] color) {
 		// Set the default quad rotation, scale and position values
@@ -61,17 +51,15 @@ public abstract class GLModel {
 		this.modelAngle = modelAngle;
 		this.modelScale = new Vector3f(1.0f, 1.0f, 1.0f);
 		setModelScale(modelScale);
-		this.shader = shader;
+		// this.shader = shader;
 		this.color = color;
 
 		modelMatrix = new Matrix4f();
 	}
 
-	public void draw() {
+	public void draw(GLShader shader) {
 
 		transform();
-		getShader().bindShader();
-		// copyModelMatrixToShader();
 
 		shader.copyUniformsToShader(modelMatrix, color);
 
@@ -79,7 +67,7 @@ public abstract class GLModel {
 		GL30.glBindVertexArray(vaoId);
 
 		// Currently, our GLModel, therefore, only supports 3 arrays; xyz, rgb,
-		// and st. If we load them in the current manner, they MUST all be
+		// and nxnynz. If we load them in the current manner, they MUST all be
 		// present
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
@@ -101,32 +89,26 @@ public abstract class GLModel {
 		GL20.glDisableVertexAttribArray(1);
 		GL20.glDisableVertexAttribArray(2);
 		GL30.glBindVertexArray(0);
-
-		getShader().unbindShader();
 	}
 
 	public void cleanUp() {
 		cleanUpGeometry();
 	}
 
-	// TODO: Check if there is a texture, as with draw()
 	protected void cleanUpGeometry() {
 		// Clean up geometry
 
 		// Select the VAO
 		GL30.glBindVertexArray(vaoId);
 
-		// Disable the VBO index from the VAO attributes list
+		// Disable the VBO index from the VAO attributes list, xyz, nxnynz, rgb
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
-		// This last one was missing in the original code, but seems important
-		// to clear the data for the st texture coords
 		GL20.glDisableVertexAttribArray(2);
 
 		// Delete the vertex VBO
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		GL15.glDeleteBuffers(vboId);
-		// modelMatrix = new Matrix4f();
 
 		// Delete the index VBO
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -142,10 +124,6 @@ public abstract class GLModel {
 	public void transform() {
 		// This order is important for building the matrix
 		clearModelMatrix();
-		// Matrix4f.scale(modelScale, modelMatrix, modelMatrix);
-		// if (debugType != null && debugType.equals("projectile")) {
-		// System.out.println(modelPos.x + "," + modelPos.y + "," + modelPos.z);
-		// }
 
 		modelMatrix.scale(modelScale);
 		modelMatrix.translate(modelPos);

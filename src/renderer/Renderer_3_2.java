@@ -38,29 +38,17 @@ import assets.world.PolygonHeightmapTile;
 import assets.world.datastructures.TileDataStructure;
 import exception.RendererException;
 
-public class Renderer_3_2<T> extends RendererThread {
+public class Renderer_3_2 extends RendererThread {
 
-	// private final String[] GEN_SHADER_NAME = {
-	// "resources/shaders/general/vertex.glsl",
-	// "resources/shaders/general/fragment.glsl" };
-	// private final String[] TEX_SHADER_NAME = {
-	// "resources/shaders/textured/vertex.glsl",
-	// "resources/shaders/textured/fragment.glsl" };
 	private final String[] PHONG_SHADER_NAME = { "resources/shaders/phonglighting/vertex.glsl",
 			"resources/shaders/phonglighting/fragment.glsl" };
-
-	// ATTENTION: Just for now
-	// private final String PLAYER_TEXTURE = "resources/images/ship.png";
-	// private final String[] MONSTER_TEXTURES = {
-	// "resources/images/virus1.png", "resources/images/virus2.png",
-	// "resources/images/virus3.png", "resources/images/Bacteria.png" };
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
 	private final int WIDTH = 1024;
 	private final int HEIGHT = 768;
 
-	private final int MAX_FPS = 60;
+	private final int MAX_FPS = 200;
 
 	private Map<Class<?>, GLShader> shaderMap;
 
@@ -94,11 +82,6 @@ public class Renderer_3_2<T> extends RendererThread {
 		// Camera is actually static at this stage
 		glWorld = new GLWorld(WIDTH, HEIGHT, new Vector3f(0, 0, 0));
 
-		// GLShader texturedShader = new GLTexturedShader();
-		// texturedShader.create(TEX_SHADER_NAME);
-		// System.out.println("Textured shader ID " +
-		// texturedShader.getProgramID());
-
 		shaderMap = new HashMap<Class<?>, GLShader>();
 
 		GLPhongShader phongShader = new GLPhongShader();
@@ -117,9 +100,7 @@ public class Renderer_3_2<T> extends RendererThread {
 	// TODO: Sort this method out so we can apply transforms and shit to our
 	// 'data structure' of models. Currently it's pretty hard-coded to our
 	private void logicCycle() {
-		// assContainer.getPlayer().rotate(frameDelta);
 
-		// -- Update matrices
 		// Reset view and model matrices
 		glWorld.clearViewMatrix();
 		glWorld.setCameraPos(assContainer.getPlayer().getModel().modelPos);
@@ -129,10 +110,15 @@ public class Renderer_3_2<T> extends RendererThread {
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 
-		renderPlayer(assContainer.getPlayer());
-		renderMonsters(assContainer.getMonsters());
-		renderProjectiles(assContainer.getProjectiles());
-		renderTiles(assContainer.getTileDataStructure());
+		GLShader currentShader = shaderMap.get(GLPhongShader.class);
+		currentShader.bindShader();
+		glWorld.copyCameraMatricesToShader(currentShader);
+
+		renderPlayer(assContainer.getPlayer(), currentShader);
+		renderMonsters(assContainer.getMonsters(), currentShader);
+		renderProjectiles(assContainer.getProjectiles(), currentShader);
+		renderTiles(assContainer.getTileDataStructure(), currentShader);
+		currentShader.unbindShader();
 
 		exitOnGLError("logicCycle");
 	}
@@ -143,27 +129,11 @@ public class Renderer_3_2<T> extends RendererThread {
 		float tileScale = 1f;
 		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-		// GLTileFactory glTileFactory = new GLTilePlanarFactory();
 		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, tilePos);
 		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129, assContainer.getTileDataStructure());
 		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
 		initialTile.setModel(model);
 
-		// Terrain Mesh Debugging
-		/*
-		 * ArrayList<GLTriangle> triangles = (ArrayList<GLTriangle>)
-		 * ((GLTileMidpointDisplacementFactory)
-		 * glTileFactory).getFactoryTriangles(); ArrayList<GLVertex> vertices =
-		 * (ArrayList<GLVertex>) ((GLTileMidpointDisplacementFactory)
-		 * glTileFactory).getFactoryVertices(); Ply ply = new Ply(triangles,
-		 * vertices); ply.write(new File("TerrainTest.ply"));
-		 */
-		//
-
-		// GLTileFactory glTileFactory = new
-		// GLTileMidpointDisplacementFactory(4);
-
-		// initialTile = new PolygonHeightmapTile(null, model, tilePos);
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
 	}
 
@@ -174,12 +144,9 @@ public class Renderer_3_2<T> extends RendererThread {
 		float playerScale = 1f;
 		Vector4f playerColor = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
 		float[] playerColorArray = { playerColor.x, playerColor.y, playerColor.z, playerColor.w };
-		// GLModel model = new GLTexturedQuad(modelPos, modelAngle, modelScale,
-		// texturedShader, modelColor, PLAYER_TEXTURE);
 
 		Ply playerMesh = new Ply();
 		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"), playerColor);
-
 		/**
 		 * TODO: This playerColorArray is sent to the shader, but it's bollocks
 		 * and does nothing. Need to either use it in the shader (worked
@@ -188,12 +155,8 @@ public class Renderer_3_2<T> extends RendererThread {
 		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices(), playerPos, playerAngle, playerScale, shader,
 				playerColorArray);
 
-		assContainer.setPlayer(new Player(playerModel, "Dave the Cunt", 0, new float[] { 1.0f, 0.0f, 0.0f }));
-
+		assContainer.setPlayer(new Player(playerModel, "Dave", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 		assContainer.setMonsters(new ArrayList<Monster>());
-
-		// String texture = MONSTER_TEXTURES[(int) Math.floor(Math.random()
-		// * 4)];
 
 		Vector4f monsterColor = new Vector4f(0.3f, 0.3f, 0.05f, 1.0f);
 		Ply monsterMesh = new Ply();
@@ -207,29 +170,18 @@ public class Renderer_3_2<T> extends RendererThread {
 
 		// Initialise projectile factory
 		assContainer.setProjectileFactory(new GLDefaultProjectileFactory());
-		// assContainer.setProjectiles(new ArrayList<Projectile>());
-
 	}
 
-	private void renderTiles(TileDataStructure dataStructure) {
-		dataStructure.draw(glWorld);
+	private void renderTiles(TileDataStructure dataStructure, GLShader shader) {
+		dataStructure.draw(shader);
 	}
 
-	private void renderPlayer(Player player) {
-		glWorld.copyCameraMatricesToShader(player.getModel().getShader());
-		player.getModel().draw();
+	private void renderPlayer(Player player, GLShader shader) {
+		player.getModel().draw(shader);
 	}
 
-	private void renderMonsters(List<Monster> monsters) {
-		/*
-		 * TODO: All the getShader() method calls for the monsters points to the
-		 * same shader, so just grab it from the first monster and set up the
-		 * matrices once. A better solution would be to grab it from some parent
-		 * container I guess. Yes, because this throws an exception if all the
-		 * monsters are dead!
-		 */
-		// glWorld.copyCameraMatricesToShader(monsters.get(0).getModel().getShader());
-		glWorld.copyCameraMatricesToShader(shaderMap.get(GLPhongShader.class));
+	private void renderMonsters(List<Monster> monsters, GLShader shader) {
+
 		List<Entity> toRemove = new ArrayList<Entity>();
 		for (Monster m : monsters) {
 			if (m.isDestroyable()) {
@@ -238,11 +190,11 @@ public class Renderer_3_2<T> extends RendererThread {
 		}
 		monsters.removeAll(toRemove);
 		for (Monster m : monsters) {
-			m.getModel().draw();
+			m.getModel().draw(shader);
 		}
 	}
 
-	private void renderProjectiles(List<Projectile> projectiles) {
+	private void renderProjectiles(List<Projectile> projectiles, GLShader shader) {
 
 		List<Entity> toRemove = new ArrayList<Entity>();
 
@@ -251,16 +203,14 @@ public class Renderer_3_2<T> extends RendererThread {
 				if (p.isDestroyable()) {
 					toRemove.add(p);
 				} else if (p.getModel() == null) {
-					p.createModel(assContainer.getProjectileFactory(), shaderMap.get(GLPhongShader.class));
-					p.getModel().debugType = "projectile";
+					p.createModel(assContainer.getProjectileFactory(), shader);
 				}
 			}
 			projectiles.removeAll(toRemove);
 
-			glWorld.copyCameraMatricesToShader(shaderMap.get(GLPhongShader.class));
 			for (Projectile p : projectiles) {
 				try {
-					p.getModel().draw();
+					p.getModel().draw(shaderMap.get(GLPhongShader.class));
 				} catch (NullPointerException e) {
 					System.out.println("Exception: GLModel does not exist");
 				}

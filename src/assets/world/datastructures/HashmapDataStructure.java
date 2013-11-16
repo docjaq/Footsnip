@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import renderer.GLWorld;
 import renderer.glmodels.GLTileFactory;
+import renderer.glshaders.GLShader;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
 
@@ -40,15 +40,15 @@ public class HashmapDataStructure implements TileDataStructure {
 	}
 
 	@Override
-	public void draw(GLWorld glWorld) {
-		glWorld.copyCameraMatricesToShader(initialTile.getModel().getShader());
+	public void draw(GLShader shader) {
+		// glWorld.copyCameraMatricesToShader(initialTile.getModel().getShader());
 		for (AbstractTile t : map.values()) {
 			if (t.getModel() == null) {
 
-				t.createModel(glTileFactory, initialTile.getModel().getShader());
+				t.createModel(glTileFactory, shader);
 			}
 			try {
-				t.getModel().draw();
+				t.getModel().draw(shader);
 			} catch (NullPointerException e) {
 				System.out.println("Exception: GLModel does not exist");
 			}

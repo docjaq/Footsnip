@@ -34,7 +34,5 @@ public class PolygonHeightmapTile extends AbstractTile {
 
 		this.model = glTileFactory.create(this, tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
 
-		// new GLTilePlane(tilePos, tileAngle, tileScale, shader, tileColor,
-		// AbstractTile.SIZE);
 	}
 }

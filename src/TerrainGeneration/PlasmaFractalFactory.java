@@ -6,16 +6,14 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+/*TODO: Need to attribute the base code of this class, but I've forgotten where I got it from. Fix!! */
+
 public class PlasmaFractalFactory {
 
 	private static final float variance = 0.4f;
 
 	public static void create(float[][] inputMatrix) {
 		int size = inputMatrix.length;
-		/*
-		 * for (int i = 0; i < inputMatrix.length; i++) { for (int j = 0; j <
-		 * inputMatrix.length; j++) { inputMatrix[i][j] = 0; } }
-		 */
 		recursiveGeneration(inputMatrix, 0, 0, size, size, 0, 0, 0, 0);
 		scale(inputMatrix, size);
 		// smooth(inputMatrix, size);
@@ -45,10 +43,6 @@ public class PlasmaFractalFactory {
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
 				matrix[x][y] = (matrix[x][y] - minZ) / ((maxZ - minZ) * 2);
-				// matrix[x][y] *= variance;
-				// if (matrix[x][y] > 0.18f) {
-				// matrix[x][y] = 0.18f;
-				// }
 			}
 		}
 	}
@@ -83,21 +77,9 @@ public class PlasmaFractalFactory {
 			recursiveGeneration(matrix, x + newWidth, y, newWidth, newHeight, Edge1, c2, Edge2, Middle);
 			recursiveGeneration(matrix, x + newWidth, y + newHeight, newWidth, newHeight, Middle, Edge2, c3, Edge3);
 			recursiveGeneration(matrix, x, y + newHeight, newWidth, newHeight, Edge4, Middle, Edge3, c4);
-		} else // This is the "base case," where each grid piece is less than
-				// the size of a pixel.
-		{
-			// The four corners of the grid piece will be averaged and drawn as
-			// a single pixel.
+		} else {
 			float c = (c1 + c2 + c3 + c4) / 4f;
-
-			// g.setColor(new Color(c, c, c, 1));
-
 			matrix[(int) x][(int) y] = c;
-			// System.out.println((int) (x) + "," + (int) (y));// Java doesn't
-			// have
-			// a function
-			// to draw a single pixel, so
-			// a 1 by 1 rectangle is used.
 		}
 	}
 
@@ -112,7 +94,6 @@ public class PlasmaFractalFactory {
 
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
-				// System.out.print(matrix[x][y] + ",");
 				myImage.setRGB(x, y,
 						pack(new int[] { (int) (matrix[x][y] * 255f), (int) (matrix[x][y] * 255f), (int) (matrix[x][y] * 255f) }));
 			}

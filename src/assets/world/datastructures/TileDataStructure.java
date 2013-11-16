@@ -2,8 +2,8 @@ package assets.world.datastructures;
 
 import java.util.List;
 
-import renderer.GLWorld;
 import renderer.glmodels.GLTileFactory;
+import renderer.glshaders.GLShader;
 import assets.world.AbstractTile;
 
 public interface TileDataStructure {
@@ -30,7 +30,7 @@ public interface TileDataStructure {
 	 * someone adding a new data-structure that they must check to see if a tile
 	 * is not null
 	 **/
-	public void draw(GLWorld glWorld);
+	public void draw(GLShader shader);
 
 	public AbstractTile getInitialTile();
 
