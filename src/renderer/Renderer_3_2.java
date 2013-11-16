@@ -6,7 +6,9 @@ import static renderer.GLUtilityMethods.setupOpenGL;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import main.Main;
 import mesh.Ply;
@@ -36,7 +38,7 @@ import assets.world.PolygonHeightmapTile;
 import assets.world.datastructures.TileDataStructure;
 import exception.RendererException;
 
-public class Renderer_3_2 extends RendererThread {
+public class Renderer_3_2<T> extends RendererThread {
 
 	// private final String[] GEN_SHADER_NAME = {
 	// "resources/shaders/general/vertex.glsl",
@@ -60,7 +62,7 @@ public class Renderer_3_2 extends RendererThread {
 
 	private final int MAX_FPS = 60;
 
-	private GLShader phongShader; // debug
+	private Map<Class<?>, GLShader> shaderMap;
 
 	/**
 	 * The time of the last frame, to calculate the time delta for rotating
@@ -97,9 +99,11 @@ public class Renderer_3_2 extends RendererThread {
 		// System.out.println("Textured shader ID " +
 		// texturedShader.getProgramID());
 
-		phongShader = new GLPhongShader();
+		shaderMap = new HashMap<Class<?>, GLShader>();
+
+		GLPhongShader phongShader = new GLPhongShader();
 		phongShader.create(PHONG_SHADER_NAME);
-		System.out.println("Phong shader ID " + phongShader.getProgramID());
+		shaderMap.put(GLPhongShader.class, phongShader);
 
 		createEntities(phongShader);
 		createWorld(phongShader);
@@ -225,7 +229,7 @@ public class Renderer_3_2 extends RendererThread {
 		 * monsters are dead!
 		 */
 		// glWorld.copyCameraMatricesToShader(monsters.get(0).getModel().getShader());
-		glWorld.copyCameraMatricesToShader(phongShader);
+		glWorld.copyCameraMatricesToShader(shaderMap.get(GLPhongShader.class));
 		List<Entity> toRemove = new ArrayList<Entity>();
 		for (Monster m : monsters) {
 			if (m.isDestroyable()) {
@@ -247,13 +251,13 @@ public class Renderer_3_2 extends RendererThread {
 				if (p.isDestroyable()) {
 					toRemove.add(p);
 				} else if (p.getModel() == null) {
-					p.createModel(assContainer.getProjectileFactory(), phongShader);
+					p.createModel(assContainer.getProjectileFactory(), shaderMap.get(GLPhongShader.class));
 					p.getModel().debugType = "projectile";
 				}
 			}
 			projectiles.removeAll(toRemove);
 
-			glWorld.copyCameraMatricesToShader(phongShader);
+			glWorld.copyCameraMatricesToShader(shaderMap.get(GLPhongShader.class));
 			for (Projectile p : projectiles) {
 				try {
 					p.getModel().draw();
@@ -270,12 +274,6 @@ public class Renderer_3_2 extends RendererThread {
 		logicCycle();
 
 		exitOnGLError("loopCycle");
-
-		// TODO: Just for debugging, randomly vary the frame rate with a 1/100
-		// chance per frame.
-		// if (Math.random() > 0.99) {
-		// maximumFrameRate = new Random().nextInt(60) + 20;
-		// }
 
 		// Force a maximum FPS.
 		Display.sync(MAX_FPS);
