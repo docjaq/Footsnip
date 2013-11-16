@@ -84,7 +84,7 @@ public class Projectile extends Entity {
 	public void collidedWith(Collidable subject) {
 		if (!destroyable) {
 			// Lock the subject so that multiple fast collisions (faster than
-			// the renderering thread) don't cause monster health to be reduced
+			// the rendering thread) don't cause monster health to be reduced
 			// too often
 			synchronized (subject) {
 				// If it hits a monster
