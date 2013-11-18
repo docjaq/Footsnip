@@ -8,7 +8,6 @@ import org.lwjgl.util.vector.Vector4f;
 
 import renderer.GLWorld;
 import renderer.glmodels.GLProjectileFactory;
-import renderer.glshaders.GLShader;
 import collision.Collidable;
 
 public class Projectile extends Entity {
@@ -70,13 +69,13 @@ public class Projectile extends Entity {
 		}
 	}
 
-	public void createModel(GLProjectileFactory projectileFactory, GLShader shader) {
+	public void createModel(GLProjectileFactory projectileFactory) {
 		if (this.model != null) {
 			throw new RuntimeException("You can only set the model once.");
 		}
 		float[] color = { 0.0f, 0.4f, 1.0f, 1.0f };
 
-		this.model = projectileFactory.create(this.startPosition, this.angle, this.scale, shader, color);
+		this.model = projectileFactory.create(this.startPosition, this.angle, this.scale, color);
 
 	}
 

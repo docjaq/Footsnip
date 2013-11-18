@@ -27,8 +27,6 @@ public class GLWorld {
 
 	private Vector3f cameraPos;
 
-	// private GLShader worldShader;
-
 	public void setCameraPos(Vector3f cameraPos) {
 		this.cameraPos.x = -cameraPos.x;
 		this.cameraPos.y = -cameraPos.y;

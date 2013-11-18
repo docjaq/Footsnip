@@ -41,11 +41,10 @@ public class HashmapDataStructure implements TileDataStructure {
 
 	@Override
 	public void draw(GLShader shader) {
-		// glWorld.copyCameraMatricesToShader(initialTile.getModel().getShader());
 		for (AbstractTile t : map.values()) {
 			if (t.getModel() == null) {
 
-				t.createModel(glTileFactory, shader);
+				t.createModel(glTileFactory);
 			}
 			try {
 				t.getModel().draw(shader);

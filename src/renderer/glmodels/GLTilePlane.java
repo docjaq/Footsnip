@@ -16,15 +16,14 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import renderer.glprimitives.GLVertex;
-import renderer.glshaders.GLShader;
 
 public class GLTilePlane extends GLModel {
 
 	// final static float length = 1f;
 	final static float zOffset = -0.01f;
 
-	public GLTilePlane(Vector3f modelPos, Vector3f modelAngle, float modelScale, GLShader shader, float[] color, float size) {
-		super(modelPos, modelAngle, modelScale, shader, color);
+	public GLTilePlane(Vector3f modelPos, Vector3f modelAngle, float modelScale, float[] color, float size) {
+		super(modelPos, modelAngle, modelScale, color);
 
 		Vector4f rgba = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
 		float halfSize = size / 2.0f;

@@ -131,7 +131,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, tilePos);
 		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129, assContainer.getTileDataStructure());
-		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
+		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, tileColor, AbstractTile.SIZE);
 		initialTile.setModel(model);
 
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
@@ -152,7 +152,7 @@ public class Renderer_3_2 extends RendererThread {
 		 * and does nothing. Need to either use it in the shader (worked
 		 * pre-phong), or remove it from the engine
 		 **/
-		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices(), playerPos, playerAngle, playerScale, shader,
+		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices(), playerPos, playerAngle, playerScale,
 				playerColorArray);
 
 		assContainer.setPlayer(new Player(playerModel, "Dave", 0, new float[] { 1.0f, 0.0f, 0.0f }));
@@ -203,14 +203,14 @@ public class Renderer_3_2 extends RendererThread {
 				if (p.isDestroyable()) {
 					toRemove.add(p);
 				} else if (p.getModel() == null) {
-					p.createModel(assContainer.getProjectileFactory(), shader);
+					p.createModel(assContainer.getProjectileFactory());
 				}
 			}
 			projectiles.removeAll(toRemove);
 
 			for (Projectile p : projectiles) {
 				try {
-					p.getModel().draw(shaderMap.get(GLPhongShader.class));
+					p.getModel().draw(shader);
 				} catch (NullPointerException e) {
 					System.out.println("Exception: GLModel does not exist");
 				}

@@ -8,7 +8,6 @@ import org.lwjgl.util.vector.Vector4f;
 
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
-import renderer.glshaders.GLShader;
 import TerrainGeneration.PlasmaFractalFactory;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
@@ -50,7 +49,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		generatePlanarMesh();
 	}
 
-	public GLMesh create(AbstractTile tile, Vector3f position, Vector3f rotation, float scale, GLShader shader, float[] color, float size) {
+	public GLMesh create(AbstractTile tile, Vector3f position, Vector3f rotation, float scale, float[] color, float size) {
 		/*
 		 * TODO: Create copy of factoryVertices, and a copy of factoryTriangles.
 		 * Currently not doing this, as it will screw up the references between
@@ -92,7 +91,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		computeNormalsForAllTriangles(this.factoryTriangles, this.factoryVertices);
 
 		// Create mesh from vertexList and TriangleList
-		return new GLMesh(this.factoryTriangles, this.factoryVertices, position, rotation, scale, shader, color);
+		return new GLMesh(this.factoryTriangles, this.factoryVertices, position, rotation, scale, color);
 	}
 
 	private void generatePlanarMesh() {

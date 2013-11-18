@@ -7,8 +7,6 @@ import mesh.Ply;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import renderer.glshaders.GLShader;
-
 public class GLDefaultProjectileFactory implements GLProjectileFactory {
 
 	private Ply mesh;
@@ -19,7 +17,7 @@ public class GLDefaultProjectileFactory implements GLProjectileFactory {
 		mesh.read(new File("resources/meshes/projectile_small.ply"), projectileColor);
 	}
 
-	public GLMesh create(Vector3f position, Vector3f angle, float scale, GLShader shader, float[] color) {
-		return new GLMesh(mesh.getTriangles(), mesh.getVertices(), position, angle, scale, shader, color);
+	public GLMesh create(Vector3f position, Vector3f angle, float scale, float[] color) {
+		return new GLMesh(mesh.getTriangles(), mesh.getVertices(), position, angle, scale, color);
 	}
 }

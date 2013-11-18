@@ -4,7 +4,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTileFactory;
-import renderer.glshaders.GLShader;
 import assets.Asset;
 import assets.world.datastructures.DataStructureKey2D;
 
@@ -32,7 +31,7 @@ public abstract class AbstractTile implements Asset {
 		return SIZE;
 	}
 
-	public abstract void createModel(GLTileFactory glTileFactory, GLShader shader);
+	public abstract void createModel(GLTileFactory glTileFactory);
 
 	public void setModel(GLModel model) {
 		if (this.model != null) {

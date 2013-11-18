@@ -15,7 +15,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
-import renderer.glshaders.GLShader;
 
 public class GLMesh extends GLModel {
 
@@ -23,8 +22,8 @@ public class GLMesh extends GLModel {
 	// private List<GLTriangle> triangleList;
 
 	public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList, Vector3f modelPos, Vector3f modelAngle, float modelScale,
-			GLShader shader, float[] color) {
-		super(modelPos, modelAngle, modelScale, shader, color);
+			float[] color) {
+		super(modelPos, modelAngle, modelScale, color);
 
 		// this.triangleList = triangleList;
 		// this.vertexList = vertexList;

@@ -45,7 +45,7 @@ public abstract class GLModel {
 
 	// public String debugType;
 
-	public GLModel(Vector3f modelPos, Vector3f modelAngle, float modelScale, GLShader shader, float[] color) {
+	public GLModel(Vector3f modelPos, Vector3f modelAngle, float modelScale, float[] color) {
 		// Set the default quad rotation, scale and position values
 		this.modelPos = modelPos;
 		this.modelAngle = modelAngle;

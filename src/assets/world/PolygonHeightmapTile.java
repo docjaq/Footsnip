@@ -4,7 +4,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTileFactory;
-import renderer.glshaders.GLShader;
 import assets.world.datastructures.DataStructureKey2D;
 
 public class PolygonHeightmapTile extends AbstractTile {
@@ -24,7 +23,7 @@ public class PolygonHeightmapTile extends AbstractTile {
 	}
 
 	@Override
-	public void createModel(GLTileFactory glTileFactory, GLShader shader) {
+	public void createModel(GLTileFactory glTileFactory) {
 		if (this.model != null) {
 			throw new RuntimeException("You can only set the model once.");
 		}
@@ -32,7 +31,7 @@ public class PolygonHeightmapTile extends AbstractTile {
 		float tileScale = 1f;
 		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-		this.model = glTileFactory.create(this, tilePos, tileAngle, tileScale, shader, tileColor, AbstractTile.SIZE);
+		this.model = glTileFactory.create(this, tilePos, tileAngle, tileScale, tileColor, AbstractTile.SIZE);
 
 	}
 }
