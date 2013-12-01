@@ -20,7 +20,6 @@ public class ControlThread extends GameThread {
 	private boolean rightPressed = false;
 	private boolean upPressed = false;
 	private boolean downPressed = false;
-	private boolean firePressed = false;
 
 	/** The time of the last iteration, to calculate the time delta. */
 	private long lastIterationTime;
@@ -98,10 +97,11 @@ public class ControlThread extends GameThread {
 	private void moveEntities(int timeDelta) {
 		assContainer.getPlayer().move(timeDelta);
 
-		// int frameDelta = getFrameTimeDelta();
 		for (Monster m : assContainer.getMonsters()) {
-			m.rotate(timeDelta);
-			m.moveRandom();
+			if (m != null) {
+				m.rotate(timeDelta);
+				m.moveRandom();
+			}
 		}
 
 		for (Projectile projectile : assContainer.getProjectiles()) {
