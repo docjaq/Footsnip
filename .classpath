@@ -9,5 +9,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="footsnip/lib/LWJGL/native"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/luaj-jse-3.0-beta1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

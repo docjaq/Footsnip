@@ -10,7 +10,7 @@ import renderer.glshaders.GLShader;
 
 public class MonsterFactory {
 
-	public static Monster createMesh(GeometryFile mesh, GLShader shader, Vector3f monsterPos) {
+	public static Monster createMesh(GeometryFile mesh, GLShader shader, Vector3f monsterPos, float rotationDelta) {
 
 		Vector3f monsterAngle = new Vector3f(0, 0, 0);
 		float monsterScale = 1f;
@@ -26,7 +26,7 @@ public class MonsterFactory {
 
 		GLModel monsterModel = new GLMesh(mesh.getTriangles(), mesh.getVertices(), monsterPos, monsterAngle, monsterScale, monsterColor);
 		Monster monster = new Monster(monsterModel, "Monster_", 0);
-		monster.setRotationDelta((float) Math.random() * 5f - 2.5f);
+		monster.setRotationDelta(rotationDelta);
 
 		return monster;
 	}
