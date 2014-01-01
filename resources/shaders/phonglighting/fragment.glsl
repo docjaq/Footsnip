@@ -12,6 +12,7 @@ uniform vec4 lightIntensity;
 uniform vec4 ambientIntensity;
 
 uniform vec3 cameraSpaceLightPos;
+
 uniform float lightAttenuation;
 
 uniform mat4 projectionMatrix;

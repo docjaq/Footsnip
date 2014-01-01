@@ -5,11 +5,9 @@ import java.nio.FloatBuffer;
 import maths.LinearAlgebra;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-import renderer.glshaders.GLShader;
 import exception.RendererException;
 
 public class GLWorld {
@@ -75,14 +73,5 @@ public class GLWorld {
 
 	public void transformCamera() {
 		Matrix4f.translate(cameraPos, viewMatrix, viewMatrix);
-	}
-
-	public void copyCameraMatricesToShader(GLShader shader) {
-		projectionMatrix.store(matrix44Buffer);
-		matrix44Buffer.flip();
-		GL20.glUniformMatrix4(shader.getProjectionMatrixLocation(), false, matrix44Buffer);
-		viewMatrix.store(matrix44Buffer);
-		matrix44Buffer.flip();
-		GL20.glUniformMatrix4(shader.getViewMatrixLocation(), false, matrix44Buffer);
 	}
 }

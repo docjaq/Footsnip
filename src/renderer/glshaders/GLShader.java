@@ -12,7 +12,9 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
+import renderer.GLWorld;
 import exception.RendererException;
 
 public abstract class GLShader {
@@ -25,10 +27,13 @@ public abstract class GLShader {
 	protected int projectionMatrixLocation;
 	protected int viewMatrixLocation;
 
+	protected GLWorld glWorld;
+
 	protected FloatBuffer matrix44Buffer = null;
 
-	public GLShader() {
+	public GLShader(GLWorld glWorld) {
 		matrix44Buffer = BufferUtils.createFloatBuffer(16);
+		this.glWorld = glWorld;
 	}
 
 	public void create(String[] shaderName) throws RendererException {
@@ -52,7 +57,16 @@ public abstract class GLShader {
 
 	public abstract void setupShaderVariables();
 
-	public abstract void copyUniformsToShader(Matrix4f modelMatrix, float[] color);
+	public abstract void copyUniformsToShader(Matrix4f modelMatrix, Vector3f modelPos);
+
+	public void copyCameraMatricesToShader() {
+		glWorld.projectionMatrix.store(matrix44Buffer);
+		matrix44Buffer.flip();
+		GL20.glUniformMatrix4(projectionMatrixLocation, false, matrix44Buffer);
+		glWorld.viewMatrix.store(matrix44Buffer);
+		matrix44Buffer.flip();
+		GL20.glUniformMatrix4(viewMatrixLocation, false, matrix44Buffer);
+	}
 
 	public void destroy() {
 		GL20.glDetachShader(programID, vertID);

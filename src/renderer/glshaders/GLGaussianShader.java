@@ -10,10 +10,13 @@ import org.lwjgl.util.vector.Vector4f;
 
 import renderer.GLWorld;
 
-public class GLPhongShader extends GLShader {
+public class GLGaussianShader extends GLShader {
 
-	private final float lightAttenuation = 0.7f;
+	private final float lightAttenuation = 3.7f;
 	private final float shininessFactor = 2.0f;
+	private final float DIR_LIGHT_INTENSITY = 5;
+	private final float AMB_LIGHT_INTENSITY = 0;
+	private Vector4f lightPos;
 	// private final float lightHeight = 2f;
 
 	// int modelToCameraMatrixUnif;
@@ -33,9 +36,11 @@ public class GLPhongShader extends GLShader {
 	// This is used at the start of the program...
 	// private final int projectionBlockIndex = 2;
 
-	public GLPhongShader(GLWorld glWorld) {
+	public GLGaussianShader(GLWorld glWorld) {
 		super(glWorld);
 		vector4Buffer = BufferUtils.createFloatBuffer(4);
+
+		lightPos = new Vector4f(0.0f, 0.0f, 1.5f, 1.0f);
 	}
 
 	@Override
@@ -99,10 +104,13 @@ public class GLPhongShader extends GLShader {
 		// GL20.glUniform4f(getFragColorLocation(), color[0], color[1],
 		// color[2], color[3]);
 
-		GL20.glUniform4f(lightIntensityUnif, 1.8f, 1.8f, 1.8f, 1.0f);
-		GL20.glUniform4f(ambientIntensityUnif, 0.4f, 0.4f, 0.4f, 1.0f);
+		GL20.glUniform4f(lightIntensityUnif, DIR_LIGHT_INTENSITY, DIR_LIGHT_INTENSITY, DIR_LIGHT_INTENSITY, 1.0f);
+		GL20.glUniform4f(ambientIntensityUnif, AMB_LIGHT_INTENSITY, AMB_LIGHT_INTENSITY, AMB_LIGHT_INTENSITY, 1.0f);
 
-		Vector4f lightPos = new Vector4f(0.0f, 0.0f, 2.5f, 1.0f);
+		// Matrix4f.transform(glWorld.viewMatrix, lightPos, lightPos);
+		// Matrix4f.transform(glWorld.projectionMatrix, lightPos, lightPos);
+
+		// Matrix4f.transform(modelMatrix, lightPos, lightPos);
 		lightPos.store(vector4Buffer);
 		vector4Buffer.flip();
 

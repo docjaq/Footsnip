@@ -2,14 +2,15 @@ package renderer.glshaders;
 
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
+import renderer.GLWorld;
 import exception.RendererException;
 
 public class GLGeneralShader extends GLShader {
 
-	public GLGeneralShader() throws RendererException {
-		super();
-		// this.glWorld = glWorld;
+	public GLGeneralShader(GLWorld glWorld) throws RendererException {
+		super(glWorld);
 	}
 
 	public void setupShaderVariables() {
@@ -29,12 +30,13 @@ public class GLGeneralShader extends GLShader {
 	}
 
 	@Override
-	public void copyUniformsToShader(Matrix4f modelMatrix, float[] color) {
+	public void copyUniformsToShader(Matrix4f modelMatrix, Vector3f modelPos) {
 
 		modelMatrix.store(matrix44Buffer);
 		matrix44Buffer.flip();
 
 		GL20.glUniformMatrix4(getModelMatrixLocation(), false, matrix44Buffer);
-		GL20.glUniform4f(getFragColorLocation(), color[0], color[1], color[2], color[3]);
+		// GL20.glUniform4f(getFragColorLocation(), color[0], color[1],
+		// color[2], color[3]);
 	}
 }

@@ -22,8 +22,8 @@ public class GLTilePlane extends GLModel {
 	// final static float length = 1f;
 	final static float zOffset = -0.01f;
 
-	public GLTilePlane(Vector3f modelPos, Vector3f modelAngle, float modelScale, float[] color, float size) {
-		super(modelPos, modelAngle, modelScale, color);
+	public GLTilePlane(Vector3f modelPos, Vector3f modelAngle, float modelScale, float size) {
+		super(modelPos, modelAngle, modelScale);
 
 		Vector4f rgba = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
 		float halfSize = size / 2.0f;

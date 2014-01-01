@@ -45,10 +45,16 @@ public class GLUtilityMethods {
 		// Setup an OpenGL context with API version 3.2
 		try {
 			PixelFormat pixelFormat = new PixelFormat();
+			// withForwardCompatible Forces older versions not to work.
+			// Doesn't work on OS X
 			ContextAttribs contextAtrributes = new ContextAttribs(3, 2).withForwardCompatible(true).withProfileCore(true);
 
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setTitle(windowTitle);
+
+			// Not necessary to create the canvas like this, except on OS X.
+			// Does not guarantee forward compatibility with new OpenGL
+			// versions.
 			Display.create(pixelFormat, contextAtrributes);
 
 			GL11.glViewport(0, 0, width, height);
@@ -74,6 +80,7 @@ public class GLUtilityMethods {
 		exitOnGLError("setupOpenGL");
 	}
 
+	// TODO: Need to actually make sure we destroy everything properly
 	public static void destroyOpenGL(GLWorld glWorld, Player player) {
 
 		// Clean up world shader
