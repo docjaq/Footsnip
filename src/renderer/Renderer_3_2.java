@@ -23,7 +23,7 @@ import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTileFactory;
 import renderer.glmodels.GLTileMidpointDisplacementFactory;
-import renderer.glshaders.GLGaussianShader;
+import renderer.glshaders.GLPhongShader;
 import renderer.glshaders.GLShader;
 import thread.RendererThread;
 import util.Utils;
@@ -40,8 +40,8 @@ import exception.RendererException;
 
 public class Renderer_3_2 extends RendererThread {
 
-	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/phonglighting/test_vert.glsl",
-			"resources/shaders/phonglighting/test_frag.glsl" };
+	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/phonglighting/vertex.glsl",
+			"resources/shaders/phonglighting/fragment.glsl" };
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
@@ -51,6 +51,8 @@ public class Renderer_3_2 extends RendererThread {
 	private final int MAX_FPS = 200;
 
 	private Map<Class<?>, GLShader> shaderMap;
+
+	private Class<GLPhongShader> defaultShaderClass = GLPhongShader.class;
 
 	/**
 	 * The time of the last frame, to calculate the time delta for rotating
@@ -84,12 +86,12 @@ public class Renderer_3_2 extends RendererThread {
 
 		shaderMap = new HashMap<Class<?>, GLShader>();
 
-		GLShader defaultShader = new GLGaussianShader(glWorld);
-		defaultShader.create(DEFAULT_SHADER_LOCATION);
-		shaderMap.put(GLGaussianShader.class, defaultShader);
+		GLShader currentShader = new GLPhongShader(glWorld);
+		currentShader.create(DEFAULT_SHADER_LOCATION);
+		shaderMap.put(defaultShaderClass, currentShader);
 
-		createEntities(defaultShader);
-		createWorld(defaultShader);
+		createEntities(currentShader);
+		createWorld(currentShader);
 	}
 
 	protected void afterLoop() {
@@ -110,7 +112,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 
-		GLShader currentShader = shaderMap.get(GLGaussianShader.class);
+		GLShader currentShader = shaderMap.get(defaultShaderClass);
 		currentShader.bindShader();
 		currentShader.copyCameraMatricesToShader();
 
