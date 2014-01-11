@@ -42,7 +42,7 @@ import exception.RendererException;
 
 public class Renderer_3_2 extends RendererThread {
 
-	private final String[] PHONG_SHADER_NAME = { "resources/shaders/phonglighting/vertex.glsl",
+	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/phonglighting/vertex.glsl",
 			"resources/shaders/phonglighting/fragment.glsl" };
 
 	// Setup variables
@@ -53,6 +53,8 @@ public class Renderer_3_2 extends RendererThread {
 	private final int MAX_FPS = 200;
 
 	private Map<Class<?>, GLShader> shaderMap;
+
+	private Class<GLPhongShader> defaultShaderClass = GLPhongShader.class;
 
 	/**
 	 * The time of the last frame, to calculate the time delta for rotating
@@ -86,12 +88,12 @@ public class Renderer_3_2 extends RendererThread {
 
 		shaderMap = new HashMap<Class<?>, GLShader>();
 
-		GLPhongShader phongShader = new GLPhongShader();
-		phongShader.create(PHONG_SHADER_NAME);
-		shaderMap.put(GLPhongShader.class, phongShader);
+		GLShader currentShader = new GLPhongShader(glWorld);
+		currentShader.create(DEFAULT_SHADER_LOCATION);
+		shaderMap.put(defaultShaderClass, currentShader);
 
-		createEntities(phongShader);
-		createWorld(phongShader);
+		createEntities(currentShader);
+		createWorld(currentShader);
 	}
 
 	protected void afterLoop() {
@@ -112,9 +114,9 @@ public class Renderer_3_2 extends RendererThread {
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 
-		GLShader currentShader = shaderMap.get(GLPhongShader.class);
+		GLShader currentShader = shaderMap.get(defaultShaderClass);
 		currentShader.bindShader();
-		glWorld.copyCameraMatricesToShader(currentShader);
+		currentShader.copyCameraMatricesToShader();
 
 		renderPlayer(assContainer.getPlayer(), currentShader);
 		renderMonsters(assContainer.getMonsters(), currentShader);
@@ -129,11 +131,10 @@ public class Renderer_3_2 extends RendererThread {
 		Vector3f tilePos = new Vector3f(0, 0, 0);
 		Vector3f tileAngle = new Vector3f(0, 0, 0);
 		float tileScale = 1f;
-		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, tilePos);
 		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129, assContainer.getTileDataStructure());
-		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, tileColor, AbstractTile.SIZE);
+		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, AbstractTile.SIZE);
 		initialTile.setModel(model);
 
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
@@ -144,18 +145,11 @@ public class Renderer_3_2 extends RendererThread {
 		Vector3f playerPos = new Vector3f(0, 0, 0);
 		Vector3f playerAngle = new Vector3f(0, 0, 0);
 		float playerScale = 1f;
-		Vector4f playerColor = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
-		float[] playerColorArray = { playerColor.x, playerColor.y, playerColor.z, playerColor.w };
+		Vector4f playerColor = new Vector4f(0.9f, 0.9f, 0.9f, 1.0f);
 
 		Ply playerMesh = new Ply();
 		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"), playerColor);
-		/**
-		 * TODO: This playerColorArray is sent to the shader, but it's bollocks
-		 * and does nothing. Need to either use it in the shader (worked
-		 * pre-phong), or remove it from the engine
-		 **/
-		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices(), playerPos, playerAngle, playerScale,
-				playerColorArray);
+		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices(), playerPos, playerAngle, playerScale);
 
 		assContainer.setPlayer(new Player(playerModel, "Dave", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 		assContainer.setMonsters(new ArrayList<Monster>());

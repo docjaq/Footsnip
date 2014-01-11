@@ -8,24 +8,24 @@ out vec4 diffuseColor;
 out vec3 vertexNormal;
 out vec3 cameraSpacePosition;
 
-//Test
+uniform mat4 modelMatrix;
+uniform mat4 normalMatrix;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
-//in vec4 in_Color;
+//I think I should be applying a clip matrix here as well to clip the geometry
+//uniform vec3 cameraSpaceLightPos;
 
-uniform mat4 modelMatrix;
-uniform mat4 normalMatrix;
-
-void main() {
-
+void main()
+{
 	gl_Position = projectionMatrix * viewMatrix *  modelMatrix * position;
 	
-	vertexNormal = (projectionMatrix * viewMatrix * normalMatrix * normal).xyz;
-	
+    vertexNormal = (projectionMatrix * viewMatrix * normalMatrix * normal).xyz;
+    
 	diffuseColor = inDiffuseColor;
-	
-    cameraSpacePosition = gl_Position.xyz;
-}
 
+	cameraSpacePosition = (projectionMatrix * viewMatrix * modelMatrix * position).xyz;
+    
+    //cameraSpaceLightPos
+}

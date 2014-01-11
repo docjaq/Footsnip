@@ -36,7 +36,7 @@ public abstract class GLModel {
 	/* MAKE SURE THAT THIS RADIUS HAS BEEN SET BY THE IMPLEMENTING CLASS */
 	protected float radius;
 
-	protected float[] color;
+	// protected float[] color;
 
 	// This could actually just be static or a single object in the renderer.
 	// Having one per model is a waste, though not really much of an overhead
@@ -45,14 +45,13 @@ public abstract class GLModel {
 
 	// public String debugType;
 
-	public GLModel(Vector3f modelPos, Vector3f modelAngle, float modelScale, float[] color) {
+	public GLModel(Vector3f modelPos, Vector3f modelAngle, float modelScale) {
 		// Set the default quad rotation, scale and position values
 		this.modelPos = modelPos;
 		this.modelAngle = modelAngle;
 		this.modelScale = new Vector3f(1.0f, 1.0f, 1.0f);
 		setModelScale(modelScale);
 		// this.shader = shader;
-		this.color = color;
 
 		modelMatrix = new Matrix4f();
 	}
@@ -61,7 +60,7 @@ public abstract class GLModel {
 
 		transform();
 
-		shader.copyUniformsToShader(modelMatrix, color);
+		shader.copyUniformsToShader(modelMatrix, modelPos);
 
 		// Bind to the VAO that has all the information about the vertices
 		GL30.glBindVertexArray(vaoId);
@@ -173,15 +172,5 @@ public abstract class GLModel {
 
 	public float getRadius() {
 		return radius;
-	}
-
-	// abstract void setRadius();
-
-	public void setColor(float[] color) {
-		this.color = color;
-	}
-
-	public float[] getColor() {
-		return color;
 	}
 }

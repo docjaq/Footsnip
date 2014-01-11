@@ -18,18 +18,8 @@ import renderer.glprimitives.GLVertex;
 
 public class GLMesh extends GLModel {
 
-	// private List<GLVertex> vertexList;
-	// private List<GLTriangle> triangleList;
-
-	public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList, Vector3f modelPos, Vector3f modelAngle, float modelScale,
-			float[] color) {
-		super(modelPos, modelAngle, modelScale, color);
-
-		// this.triangleList = triangleList;
-		// this.vertexList = vertexList;
-		// vertexList = mesh.getVertices();
-		// mesh.normaliseAndCentre(vertexList); //Shit
-		// triangleList = mesh.getTriangles();
+	public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList, Vector3f modelPos, Vector3f modelAngle, float modelScale) {
+		super(modelPos, modelAngle, modelScale);
 
 		FloatBuffer verticesFloatBuffer = BufferUtils.createFloatBuffer(vertexList.size() * GLVertex.stride);
 		for (GLVertex v : vertexList) {
