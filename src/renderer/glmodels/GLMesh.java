@@ -69,10 +69,10 @@ public class GLMesh extends GLModel {
 
 		exitOnGLError("setupQuad");
 
-		setRadius(vertexList);
+		setRadius(computeRadius(vertexList));
 	}
 
-	private void setRadius(List<GLVertex> vertexList) {
+	private float computeRadius(List<GLVertex> vertexList) {
 		float maxDist = 0;
 		float currentDist = 0;
 		for (GLVertex v : vertexList) {
@@ -81,8 +81,9 @@ public class GLMesh extends GLModel {
 				maxDist = currentDist;
 			}
 		}
-		this.radius = maxDist;
-		this.radius *= getModelScale();
+		float radius = maxDist;
+		radius *= getModelScale();
+		return radius;
 	}
 
 	/*
