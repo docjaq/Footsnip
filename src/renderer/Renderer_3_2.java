@@ -42,8 +42,8 @@ import exception.RendererException;
 
 public class Renderer_3_2 extends RendererThread {
 
-	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/phonglighting/vertex.glsl",
-			"resources/shaders/phonglighting/fragment.glsl" };
+	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/lighting/phong_vert.glsl",
+			"resources/shaders/lighting/phong_frag.glsl" };
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
@@ -133,7 +133,7 @@ public class Renderer_3_2 extends RendererThread {
 		float tileScale = 1f;
 
 		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, tilePos);
-		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129, assContainer.getTileDataStructure());
+		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(65, assContainer.getTileDataStructure());
 		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, AbstractTile.SIZE);
 		initialTile.setModel(model);
 
