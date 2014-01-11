@@ -34,6 +34,8 @@ import assets.entities.Entity;
 import assets.entities.Monster;
 import assets.entities.MonsterFactory;
 import assets.entities.Player;
+import assets.entities.PolygonalScenery;
+import assets.entities.PolygonalSceneryFactory;
 import assets.entities.Projectile;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
@@ -94,6 +96,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		createEntities(currentShader);
 		createWorld(currentShader);
+		createScenery(currentShader);
 	}
 
 	protected void afterLoop() {
@@ -118,10 +121,12 @@ public class Renderer_3_2 extends RendererThread {
 		currentShader.bindShader();
 		currentShader.copyCameraMatricesToShader();
 
-		renderPlayer(assContainer.getPlayer(), currentShader);
-		renderMonsters(assContainer.getMonsters(), currentShader);
-		renderProjectiles(assContainer.getProjectiles(), currentShader);
+		renderScenery(assContainer.getPolygonalSceneries(), currentShader);
 		renderTiles(assContainer.getTileDataStructure(), currentShader);
+		renderMonsters(assContainer.getMonsters(), currentShader);
+		renderPlayer(assContainer.getPlayer(), currentShader);
+		renderProjectiles(assContainer.getProjectiles(), currentShader);
+
 		currentShader.unbindShader();
 
 		exitOnGLError("logicCycle");
@@ -138,6 +143,14 @@ public class Renderer_3_2 extends RendererThread {
 		initialTile.setModel(model);
 
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
+	}
+
+	private void createScenery(GLShader shader) {
+		// Hardcoded because Dave's mother is a prostitute
+
+		assContainer.setPolygonalSceneries(new ArrayList<PolygonalScenery>());
+		Vector3f sceneryPos = new Vector3f(0.05f, 0.05f, 0);
+		assContainer.addPolygonalScenery(PolygonalSceneryFactory.create(shader, sceneryPos));
 	}
 
 	private void createEntities(GLShader shader) throws RendererException {
@@ -168,7 +181,7 @@ public class Renderer_3_2 extends RendererThread {
 			Vector3f monsterPos = new Vector3f((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
-			assContainer.addMonster(MonsterFactory.createMesh(monsterMesh, shader, monsterPos, rotationDelta));
+			assContainer.addMonster(MonsterFactory.create(monsterMesh, shader, monsterPos, rotationDelta));
 		}
 
 		// Initialise projectile factory
@@ -177,6 +190,12 @@ public class Renderer_3_2 extends RendererThread {
 
 	private void renderTiles(TileDataStructure dataStructure, GLShader shader) {
 		dataStructure.draw(shader);
+	}
+
+	private void renderScenery(List<PolygonalScenery> scenery, GLShader shader) {
+		for (PolygonalScenery s : scenery) {
+			s.getModel().draw(shader);
+		}
 	}
 
 	private void renderPlayer(Player player, GLShader shader) {

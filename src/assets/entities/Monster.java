@@ -20,13 +20,6 @@ public class Monster extends Entity {
 		this.rotationDelta = rotationDelta / 20.0f;
 	}
 
-	// private float scaleDelta = 0.001f;
-
-	// private Vector3f scaleAddResolution = new Vector3f(scaleDelta,
-	// scaleDelta, scaleDelta);
-	// private Vector3f scaleMinusResolution = new Vector3f(-scaleDelta,
-	// -scaleDelta, -scaleDelta);
-
 	public Monster(GLModel model, String name, int level) {
 		super(model, name);
 		this.level = level;

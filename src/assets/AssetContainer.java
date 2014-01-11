@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import renderer.glmodels.GLProjectileFactory;
 import assets.entities.Monster;
 import assets.entities.Player;
+import assets.entities.PolygonalScenery;
 import assets.entities.Projectile;
 import assets.world.datastructures.HashmapDataStructure;
 import assets.world.datastructures.TileDataStructure;
@@ -16,9 +17,10 @@ public class AssetContainer {
 	private Player player;
 
 	private List<Monster> monsters;
-	// TODO: Put monster factory here
 
 	private List<Projectile> projectiles;
+
+	private List<PolygonalScenery> polygonalSceneries;
 
 	public void setProjectiles(List<Projectile> projectiles) {
 		this.projectiles = projectiles;
@@ -85,5 +87,17 @@ public class AssetContainer {
 
 	public List<Projectile> getProjectiles() {
 		return projectiles;
+	}
+
+	public List<PolygonalScenery> getPolygonalSceneries() {
+		return polygonalSceneries;
+	}
+
+	public void setPolygonalSceneries(List<PolygonalScenery> polygonalSceneries) {
+		this.polygonalSceneries = polygonalSceneries;
+	}
+
+	public void addPolygonalScenery(PolygonalScenery polygonalScenery) {
+		this.polygonalSceneries.add(polygonalScenery);
 	}
 }
