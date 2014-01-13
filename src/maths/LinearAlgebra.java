@@ -44,11 +44,6 @@ public class LinearAlgebra {
 		return sum;
 	}
 
-	// public static float[] subVec3D(Vector4f A, Vector4f B) {
-	// float[] sum = { A[0] - B[0], A[1] - B[1], A[2] - B[2] };
-	// return sum;
-	// }
-
 	// TODO: Replace this with vec3f
 	public static float[] crossProduct(float[] A, float[] B) {
 
