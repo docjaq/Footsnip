@@ -176,9 +176,10 @@ public class Renderer_3_2 extends RendererThread {
 		_G.get("dofile").call(LuaValue.valueOf(script));
 		LuaValue getRotationDelta = _G.get("getRotationDelta");
 
-		float spread = 5;
-		for (int i = 0; i < 300; i++) {
+		float spread = 1;
+		for (int i = 0; i < 1; i++) {
 			Vector3f monsterPos = new Vector3f((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
+			// Vector3f monsterPos = new Vector3f(-0.45f, -0.45f, 0);
 
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
 			assContainer.addMonster(MonsterFactory.create(monsterMesh, shader, monsterPos, rotationDelta));

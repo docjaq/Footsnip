@@ -1,10 +1,11 @@
 package location;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
 import assets.entities.Entity;
+import assets.entities.Monster;
 import assets.world.AbstractTile;
 import assets.world.datastructures.DataStructureKey2D;
 import assets.world.datastructures.TileDataStructure;
@@ -22,6 +23,11 @@ public class LocationMethods {
 		Vector3f modelPos = entity.getModel().modelPos;
 		float xPos = modelPos.x;
 		float yPos = modelPos.y;
+
+		if (entity instanceof Monster) {
+			System.out.println(modelPos.x + "," + modelPos.y);
+		}
+
 		if (xPos > 0) {
 			xPos += HALF_TILE_WIDTH;
 		} else {
@@ -32,7 +38,6 @@ public class LocationMethods {
 		} else {
 			yPos -= HALF_TILE_WIDTH;
 		}
-		// System.out.println((int) (xPos / HALF_TILE_WIDTH));
 		DataStructureKey2D key = new DataStructureKey2D((int) (xPos / AbstractTile.SIZE), (int) (yPos / AbstractTile.SIZE));
 
 		return data.getTileUsingKey(key);
@@ -42,7 +47,12 @@ public class LocationMethods {
 		entity.locatedWithin(locateEntity(entity, data), data);
 	}
 
-	public static void locateMonsters(ArrayList<Entity> monsters, TileDataStructure data) {
-		// TODO: For loop to locate monsters
+	// TODO: Had to change this to List<Monsters> from List<Entity> because it
+	// said the type was wrong. This confused me entirely as Monster subclasses
+	// Entity, but I changed it for now.
+	public static void locateMonsters(List<Monster> monsters, TileDataStructure data) {
+		for (Monster m : monsters) {
+			m.locatedWithin(locateEntity(m, data), data);
+		}
 	}
 }
