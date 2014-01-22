@@ -39,7 +39,7 @@ import assets.entities.PolygonalSceneryFactory;
 import assets.entities.Projectile;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
-import assets.world.datastructures.TileDataStructure;
+import assets.world.datastructures.TileDataStructure2D;
 import exception.RendererException;
 
 public class Renderer_3_2 extends RendererThread {
@@ -176,7 +176,7 @@ public class Renderer_3_2 extends RendererThread {
 		_G.get("dofile").call(LuaValue.valueOf(script));
 		LuaValue getRotationDelta = _G.get("getRotationDelta");
 
-		float spread = 1;
+		float spread = 2;
 		for (int i = 0; i < 1; i++) {
 			Vector3f monsterPos = new Vector3f((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 			// Vector3f monsterPos = new Vector3f(-0.45f, -0.45f, 0);
@@ -189,7 +189,7 @@ public class Renderer_3_2 extends RendererThread {
 		assContainer.setProjectileFactory(new GLDefaultProjectileFactory());
 	}
 
-	private void renderTiles(TileDataStructure dataStructure, GLShader shader) {
+	private void renderTiles(TileDataStructure2D dataStructure, GLShader shader) {
 		dataStructure.draw(shader);
 	}
 

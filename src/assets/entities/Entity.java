@@ -4,7 +4,7 @@ import location.Locatable;
 import maths.LinearAlgebra;
 import renderer.glmodels.GLModel;
 import assets.world.AbstractTile;
-import assets.world.datastructures.TileDataStructure;
+import assets.world.datastructures.TileDataStructure2D;
 import collision.Collidable;
 
 public class Entity extends AbstractEntity implements Collidable, Locatable {
@@ -40,7 +40,9 @@ public class Entity extends AbstractEntity implements Collidable, Locatable {
 	}
 
 	@Override
-	public void locatedWithin(AbstractTile tile, TileDataStructure data) {
-		System.out.println("Entity at: " + tile.getKey().x + "," + tile.getKey().y);
+	public void locatedWithin(AbstractTile tile, TileDataStructure2D data) {
+		if (tile != currentTile) {
+			currentTile = tile;
+		}
 	}
 }

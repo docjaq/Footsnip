@@ -11,7 +11,7 @@ import renderer.glshaders.GLShader;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
 
-public class HashmapDataStructure implements TileDataStructure {
+public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 	/*
 	 * Needs to be Concurrent to allow the draw() and
@@ -24,7 +24,7 @@ public class HashmapDataStructure implements TileDataStructure {
 	private AbstractTile initialTile;
 	private GLTileFactory glTileFactory;
 
-	public HashmapDataStructure() {
+	public HashmapTileDataStructure2D() {
 		map = new ConcurrentHashMap<DataStructureKey2D, AbstractTile>();
 	}
 

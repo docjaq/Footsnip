@@ -10,19 +10,13 @@ import assets.Asset;
 
 public abstract class AbstractEntity implements Asset {
 
-	// May or may refer to animation, whether the object can be destroyed, or
-	// whether it 'physically' moves
-	// private boolean dynamic;
-
-	// Physical properties
-	// private float speed;
-	// private float acceleration;
-
-	// TODO: If this is fast enough, it works nicely. If not, just make model
-	// public. Same with some of the variables in GLModel Etc
+	private static int newUniqueId = 0;
 	protected GLModel model;
+	protected Integer uniqueId;
 
 	public AbstractEntity() {
+		uniqueId = newUniqueId;
+		newUniqueId++;
 	}
 
 	public AbstractEntity(GLModel model) {
@@ -43,13 +37,11 @@ public abstract class AbstractEntity implements Asset {
 
 	public void destroy() {
 		model.cleanUp();
-
-		// Cleanup non-gl stuff
+		// TODO: Cleanup non-gl stuff
 	}
 
-	/****************
-	 * Potential methods
-	 */
-	// public abstract void update();
-	// public abstract void checkStillAlive();
+	public Integer getUniqueID() {
+		return uniqueId;
+	}
+
 }

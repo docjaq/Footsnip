@@ -6,7 +6,7 @@ import renderer.glmodels.GLTileFactory;
 import renderer.glshaders.GLShader;
 import assets.world.AbstractTile;
 
-public interface TileDataStructure {
+public interface TileDataStructure2D {
 
 	public void init(GLTileFactory glTileFactory, AbstractTile tile);
 

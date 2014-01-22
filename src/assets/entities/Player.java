@@ -7,7 +7,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
 import assets.world.AbstractTile;
-import assets.world.datastructures.TileDataStructure;
+import assets.world.datastructures.TileDataStructure2D;
 import collision.Collidable;
 
 public class Player extends Entity {
@@ -151,7 +151,7 @@ public class Player extends Entity {
 	}
 
 	@Override
-	public void locatedWithin(AbstractTile tile, TileDataStructure data) {
+	public void locatedWithin(AbstractTile tile, TileDataStructure2D data) {
 		if (tile != currentTile) {
 			currentTile = tile;
 			System.out.println(tile.getKey().x + "," + tile.getKey().y);
