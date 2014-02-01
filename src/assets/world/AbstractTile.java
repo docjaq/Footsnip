@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTileFactory;
 import assets.Asset;
-import assets.entities.Monster;
+import assets.entities.Entity;
 import assets.world.datastructures.DataStructureKey2D;
 
 public abstract class AbstractTile implements Asset {
@@ -17,7 +17,7 @@ public abstract class AbstractTile implements Asset {
 	protected Vector3f tilePos; // I don't like this, it should be temporary
 	protected DataStructureKey2D key;
 
-	protected Map<Integer, Monster> containedMonsters;
+	protected Map<Integer, Entity> containedEntities;
 
 	public static final float SIZE = 1.0f;
 
@@ -26,7 +26,7 @@ public abstract class AbstractTile implements Asset {
 		this.model = model;
 		this.tilePos = tilePos;
 
-		containedMonsters = new HashMap<Integer, Monster>();
+		containedEntities = new HashMap<Integer, Entity>();
 	}
 
 	public GLModel getModel() {
@@ -58,7 +58,7 @@ public abstract class AbstractTile implements Asset {
 		this.key = key;
 	}
 
-	public Map<Integer, Monster> getContainedMonsters() {
-		return containedMonsters;
+	public Map<Integer, Entity> getContainedEntities() {
+		return containedEntities;
 	}
 }

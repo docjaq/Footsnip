@@ -6,6 +6,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import assets.entities.Entity;
 import assets.entities.Monster;
+import assets.entities.Projectile;
 import assets.world.AbstractTile;
 import assets.world.datastructures.DataStructureKey2D;
 import assets.world.datastructures.TileDataStructure2D;
@@ -49,6 +50,14 @@ public class LocationMethods {
 	public static void locateMonsters(List<Monster> monsters, TileDataStructure2D data) {
 		for (Monster m : monsters) {
 			m.locatedWithin(locateEntity(m, data), data);
+		}
+	}
+
+	public static void locateProjectiles(List<Projectile> projectiles, TileDataStructure2D data) {
+		for (Projectile p : projectiles) {
+			if (p.readyForCollisionDetection()) {
+				p.locatedWithin(locateEntity(p, data), data);
+			}
 		}
 	}
 }

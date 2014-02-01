@@ -12,8 +12,6 @@ import collision.Collidable;
 
 public class Projectile extends Entity {
 
-	private boolean destroyable = false;
-
 	private static final int DAMAGE = 10;
 
 	private static final float DEFAULT_MOVEMENT_SPEED = 0.00001f;
@@ -92,8 +90,10 @@ public class Projectile extends Entity {
 					((Monster) subject).modifyHealth(-DAMAGE);
 				}
 
-				// If it hits anything
-				if (!Player.class.isAssignableFrom(subject.getClass())) {
+				// If it hits a monster
+				// if (!Entity.class.isAssignableFrom(subject.getClass())) {
+				if (Monster.class.isAssignableFrom(subject.getClass())) {
+					// System.out.println("Is this happening?");
 					destroyable = true;
 				}
 			}
@@ -101,6 +101,7 @@ public class Projectile extends Entity {
 		}
 	}
 
+	@Override
 	public boolean isDestroyable() {
 		return destroyable;
 	}

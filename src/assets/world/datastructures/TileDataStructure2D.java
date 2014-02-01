@@ -1,5 +1,6 @@
 package assets.world.datastructures;
 
+import java.util.Iterator;
 import java.util.List;
 
 import renderer.glmodels.GLTileFactory;
@@ -38,12 +39,16 @@ public interface TileDataStructure2D {
 
 	public AbstractTile getTileTop(AbstractTile tile);
 
-	// public AbstractTile getTileTopRight(AbstractTile tile);
-
 	public AbstractTile getTileRight(AbstractTile tile);
 
 	public AbstractTile getTileLeft(AbstractTile tile);
 
 	public AbstractTile getTileBottom(AbstractTile tile);
+
+	// Need to be able to cleanly iterate through tiles. This is the best way
+	// that I could think of to do it quickly and independent of the
+	// data-structure
+
+	public Iterator getIterator();
 
 }

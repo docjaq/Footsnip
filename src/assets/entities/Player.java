@@ -152,10 +152,17 @@ public class Player extends Entity {
 
 	@Override
 	public void locatedWithin(AbstractTile tile, TileDataStructure2D data) {
+
 		if (tile != currentTile) {
-			currentTile = tile;
-			System.out.println(tile.getKey().x + "," + tile.getKey().y);
+			if (currentTile != null) {
+				currentTile.getContainedEntities().remove(this.uniqueId);
+			}
+			if (tile != null) {
+				tile.getContainedEntities().put(this.uniqueId, this);
+				currentTile = tile;
+			}
 			data.populateNeighbouringTiles(currentTile);
+			System.out.println(tile.getKey().x + "," + tile.getKey().y);
 		}
 	}
 

@@ -177,7 +177,7 @@ public class Renderer_3_2 extends RendererThread {
 		LuaValue getRotationDelta = _G.get("getRotationDelta");
 
 		float spread = 2;
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 10; i++) {
 			Vector3f monsterPos = new Vector3f((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 			// Vector3f monsterPos = new Vector3f(-0.45f, -0.45f, 0);
 
@@ -191,6 +191,17 @@ public class Renderer_3_2 extends RendererThread {
 
 	private void renderTiles(TileDataStructure2D dataStructure, GLShader shader) {
 		dataStructure.draw(shader);
+
+		/*
+		 * TileDataStructure2D tiles = assContainer.getTileDataStructure(); for
+		 * (AbstractTile tile : tiles.getTilesAsList()) { //
+		 * System.out.println("Number of entities: " + //
+		 * tile.getContainedEntities().size()); for (Map.Entry<Integer, Entity>
+		 * entry : tile.getContainedEntities().entrySet()) { if
+		 * (entry.getValue() instanceof Projectile) {
+		 * System.out.println("Found a projectile!"); } } }
+		 */
+
 	}
 
 	private void renderScenery(List<PolygonalScenery> scenery, GLShader shader) {

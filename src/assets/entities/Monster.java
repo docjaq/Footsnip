@@ -1,8 +1,6 @@
 package assets.entities;
 
 import renderer.glmodels.GLModel;
-import assets.world.AbstractTile;
-import assets.world.datastructures.TileDataStructure2D;
 import collision.Collidable;
 
 //This should probably be a class NPC, which Monster then extends, but decided
@@ -87,32 +85,24 @@ public class Monster extends Entity {
 		if (Player.class.isAssignableFrom(subject.getClass())) {
 			rotationDelta *= 1.01;
 		}
+		if (Monster.class.isAssignableFrom(subject.getClass())) {
+			System.out.println("Monster-monster collision");
+		}
 	}
 
 	public void modifyHealth(int modification) {
 		health += modification;
 	}
 
+	@Override
 	public boolean isDestroyable() {
 		if (health <= 0) {
-			return true;
-		} else {
-			return false;
+			destroyable = true;
 		}
+		return destroyable;
 	}
 
 	public int getHealth() {
 		return health;
-	}
-
-	@Override
-	public void locatedWithin(AbstractTile tile, TileDataStructure2D data) {
-		if (tile != currentTile) {
-			if (currentTile != null) {
-				currentTile.getContainedMonsters().remove(this.uniqueId);
-			}
-			tile.getContainedMonsters().put(this.uniqueId, this);
-			currentTile = tile;
-		}
 	}
 }

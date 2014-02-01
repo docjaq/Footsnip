@@ -10,17 +10,15 @@ import assets.Asset;
 
 public abstract class AbstractEntity implements Asset {
 
-	private static int newUniqueId = 0;
+	private static int globalEntityIdCounter = 0;
 	protected GLModel model;
 	protected Integer uniqueId;
 
-	public AbstractEntity() {
-		uniqueId = newUniqueId;
-		newUniqueId++;
-	}
-
 	public AbstractEntity(GLModel model) {
 		this.model = model;
+
+		uniqueId = globalEntityIdCounter;
+		globalEntityIdCounter++;
 	}
 
 	public GLModel getModel() {
