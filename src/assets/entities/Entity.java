@@ -43,10 +43,10 @@ public class Entity extends AbstractEntity implements Collidable, Locatable {
 	public void locatedWithin(AbstractTile tile, TileDataStructure2D data) {
 		if (tile != currentTile) {
 			if (currentTile != null) {
-				currentTile.getContainedEntities().remove(this.uniqueId);
+				currentTile.getContainedEntities().remove(this);
 			}
 			if (tile != null) {
-				tile.getContainedEntities().put(this.uniqueId, this);
+				tile.getContainedEntities().add(this);
 				currentTile = tile;
 			} else {
 				// If the tile doesn't exist at all, for now, remove the entity

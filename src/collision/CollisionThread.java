@@ -17,8 +17,8 @@ public class CollisionThread extends GameThread {
 		super(assContainer, threadDelay, mainApplication, "Collision Thread");
 	}
 
-	@Override
-	protected void gameLoop() {
+	// @Override
+	protected void gameLoopOld() {
 		// Put the player and monsters in a list
 		List<Entity> entities = new ArrayList<Entity>(assContainer.getMonsters().size() + assContainer.getProjectiles().size() + 1);
 		entities.add(assContainer.getPlayer());
@@ -38,19 +38,19 @@ public class CollisionThread extends GameThread {
 		CollisionMethods.checkEntityCollisions(entities);
 	}
 
-	// @Override
-	protected void gameLoopReplacement() {
+	@Override
+	protected void gameLoop() {
 
 		TileDataStructure2D tiles = assContainer.getTileDataStructure();
+
+		int count = 0;
 
 		for (AbstractTile tile : tiles.getTilesAsList()) {
 
 			CollisionMethods.checkEntityCollisions(tile.getContainedEntities());
-
-			// for (Map.Entry<Integer, Entity> entry :
-			// tile.getContainedEntities().entrySet()) {
-			// }
+			count += tile.getContainedEntities().size() * tile.getContainedEntities().size() - tile.getContainedEntities().size() / 2;
 		}
 
+		// System.out.println("Computing " + count + " collisions");
 	}
 }

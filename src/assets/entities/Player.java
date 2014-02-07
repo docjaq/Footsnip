@@ -155,10 +155,10 @@ public class Player extends Entity {
 
 		if (tile != currentTile) {
 			if (currentTile != null) {
-				currentTile.getContainedEntities().remove(this.uniqueId);
+				currentTile.getContainedEntities().remove(this);
 			}
 			if (tile != null) {
-				tile.getContainedEntities().put(this.uniqueId, this);
+				tile.getContainedEntities().add(this);
 				currentTile = tile;
 			}
 			data.populateNeighbouringTiles(currentTile);

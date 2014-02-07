@@ -1,7 +1,7 @@
 package assets.world;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -17,7 +17,7 @@ public abstract class AbstractTile implements Asset {
 	protected Vector3f tilePos; // I don't like this, it should be temporary
 	protected DataStructureKey2D key;
 
-	protected Map<Integer, Entity> containedEntities;
+	protected List<Entity> containedEntities;
 
 	public static final float SIZE = 1.0f;
 
@@ -26,7 +26,7 @@ public abstract class AbstractTile implements Asset {
 		this.model = model;
 		this.tilePos = tilePos;
 
-		containedEntities = new HashMap<Integer, Entity>();
+		containedEntities = new ArrayList<Entity>();
 	}
 
 	public GLModel getModel() {
@@ -58,7 +58,7 @@ public abstract class AbstractTile implements Asset {
 		this.key = key;
 	}
 
-	public Map<Integer, Entity> getContainedEntities() {
+	public List<Entity> getContainedEntities() {
 		return containedEntities;
 	}
 }

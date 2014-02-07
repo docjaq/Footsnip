@@ -192,15 +192,16 @@ public class Renderer_3_2 extends RendererThread {
 	private void renderTiles(TileDataStructure2D dataStructure, GLShader shader) {
 		dataStructure.draw(shader);
 
-		/*
-		 * TileDataStructure2D tiles = assContainer.getTileDataStructure(); for
-		 * (AbstractTile tile : tiles.getTilesAsList()) { //
-		 * System.out.println("Number of entities: " + //
-		 * tile.getContainedEntities().size()); for (Map.Entry<Integer, Entity>
-		 * entry : tile.getContainedEntities().entrySet()) { if
-		 * (entry.getValue() instanceof Projectile) {
-		 * System.out.println("Found a projectile!"); } } }
-		 */
+		TileDataStructure2D tiles = assContainer.getTileDataStructure();
+		for (AbstractTile tile : tiles.getTilesAsList()) { //
+			// System.out.println("Number of entities: " + //
+			// tile.getContainedEntities().size());
+			for (Entity entry : tile.getContainedEntities()) {
+				if (entry instanceof Projectile) {
+					// System.out.println("Found a projectile!");
+				}
+			}
+		}
 
 	}
 
