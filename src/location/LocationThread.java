@@ -8,7 +8,7 @@ import assets.AssetContainer;
 public class LocationThread extends GameThread {
 
 	public LocationThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
-		super(assContainer, threadDelay, mainApplication, "Location Thread");
+		super(assContainer, threadDelay, mainApplication);
 	}
 
 	@Override

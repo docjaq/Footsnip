@@ -6,11 +6,9 @@ import java.util.List;
 import main.Main;
 import assets.AssetContainer;
 
-public abstract class GameThread extends Thread implements ObservableThread {
+public abstract class GameThread implements Runnable, ObservableThread {
 	protected Main mainApplication;
 
-	/** Everything must need a player. */
-	// protected Player player;
 	protected AssetContainer assContainer;
 
 	/** List of listeners that care about when the initial setup is complete. */
@@ -22,8 +20,7 @@ public abstract class GameThread extends Thread implements ObservableThread {
 	/** Pause between iterations. */
 	private int threadDelay;
 
-	public GameThread(AssetContainer assContainer, int threadDelay, Main mainApplication, String name) {
-		super(name);
+	public GameThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
 		this.assContainer = assContainer;
 		this.threadDelay = threadDelay;
 		this.mainApplication = mainApplication;
@@ -36,17 +33,16 @@ public abstract class GameThread extends Thread implements ObservableThread {
 	public void run() {
 		setup();
 
-		while (!timeToStop) {
-			gameLoop();
-
-			try {
+		try {
+			while (!timeToStop) {
+				gameLoop();
 				Thread.sleep(threadDelay);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			afterLoop();
 		}
-
-		afterLoop();
 	}
 
 	protected void beforeLoop() {

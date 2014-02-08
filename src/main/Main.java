@@ -2,6 +2,9 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import location.LocationThread;
 import renderer.Renderer_3_2;
@@ -15,9 +18,11 @@ import exception.RendererException;
 
 public class Main implements GameListener {
 
-	private List<GameThread> childThreads = new ArrayList<GameThread>(3);
+	private List<GameThread> childThreads = new ArrayList<GameThread>(4);
 
 	private long startMillis = System.currentTimeMillis();
+
+	final ExecutorService executor = Executors.newFixedThreadPool(4);
 
 	/*********************************
 	 * JAQ Levels should maybe be entities, as it would seemingly make
@@ -45,9 +50,7 @@ public class Main implements GameListener {
 		final AssetContainer assContainer = new AssetContainer();
 
 		GameThread rendererThread = new Renderer_3_2(assContainer, this);
-
-		rendererThread.setPriority(Thread.MAX_PRIORITY);
-		rendererThread.start();
+		executor.execute(rendererThread);
 		childThreads.add(rendererThread);
 
 		rendererThread.registerSetupObserver(new ThreadObserver() {
@@ -55,27 +58,36 @@ public class Main implements GameListener {
 			public void setupDone(ObservableThread subject) {
 				// Renderer is set up, so start the control thread.
 				GameThread controlThread = new ControlThread(assContainer, 10, Main.this);
-				controlThread.setPriority(Thread.MIN_PRIORITY);
-				controlThread.start();
 				childThreads.add(controlThread);
+				executor.execute(controlThread);
 
 				GameThread collisionThread = new CollisionThread(assContainer, 10, Main.this);
-				collisionThread.setPriority(Thread.NORM_PRIORITY);
-				collisionThread.start();
 				childThreads.add(collisionThread);
+				executor.execute(collisionThread);
 
 				GameThread locationThread = new LocationThread(assContainer, 10, Main.this);
-				locationThread.setPriority(Thread.NORM_PRIORITY);
-				locationThread.start();
 				childThreads.add(locationThread);
+				executor.execute(locationThread);
 			}
 		});
 	}
 
 	public void quitGame() {
-		// Nicely stop the child threads.
 		for (GameThread thread : childThreads) {
 			thread.stopThread();
+		}
+
+		executor.shutdown();
+		try {
+			if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
+				executor.shutdownNow();
+				if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
+					System.err.println("Thread pool did not terminate");
+				}
+			}
+		} catch (InterruptedException ie) {
+			executor.shutdownNow();
+			Thread.currentThread().interrupt();
 		}
 	}
 

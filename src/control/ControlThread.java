@@ -25,7 +25,7 @@ public class ControlThread extends GameThread {
 	private long lastIterationTime;
 
 	public ControlThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
-		super(assContainer, threadDelay, mainApplication, "Control Thread");
+		super(assContainer, threadDelay, mainApplication);
 
 		// Initialise the delta.
 		getIterationDelta();

@@ -13,7 +13,7 @@ import assets.AssetContainer;
 public abstract class RendererThread extends GameThread {
 
 	public RendererThread(AssetContainer assContainer, Main mainApplication) {
-		super(assContainer, -1, mainApplication, "Renderer Thread");
+		super(assContainer, -1, mainApplication);
 	}
 
 	@Override
