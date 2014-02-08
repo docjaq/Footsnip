@@ -77,15 +77,15 @@ public class GLTilePlane extends GLModel {
 
 		exitOnGLError("setupQuad");
 
-		setRadius();
+		setRadius(computeRadius());
 	}
 
 	/**
 	 * Actual tile has no radius, though the things that belong to the tile will
 	 **/
-	protected void setRadius() {
-		radius = 0;
-
+	protected float computeRadius() {
+		float radius = 0;
+		return radius;
 	}
 
 }
