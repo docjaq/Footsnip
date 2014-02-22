@@ -20,13 +20,6 @@ public class Monster extends Entity {
 		this.rotationDelta = rotationDelta / 20.0f;
 	}
 
-	// private float scaleDelta = 0.001f;
-
-	// private Vector3f scaleAddResolution = new Vector3f(scaleDelta,
-	// scaleDelta, scaleDelta);
-	// private Vector3f scaleMinusResolution = new Vector3f(-scaleDelta,
-	// -scaleDelta, -scaleDelta);
-
 	public Monster(GLModel model, String name, int level) {
 		super(model, name);
 		this.level = level;
@@ -92,18 +85,21 @@ public class Monster extends Entity {
 		if (Player.class.isAssignableFrom(subject.getClass())) {
 			rotationDelta *= 1.01;
 		}
+		if (Monster.class.isAssignableFrom(subject.getClass())) {
+			System.out.println("Monster-monster collision");
+		}
 	}
 
 	public void modifyHealth(int modification) {
 		health += modification;
 	}
 
+	@Override
 	public boolean isDestroyable() {
 		if (health <= 0) {
-			return true;
-		} else {
-			return false;
+			destroyable = true;
 		}
+		return destroyable;
 	}
 
 	public int getHealth() {

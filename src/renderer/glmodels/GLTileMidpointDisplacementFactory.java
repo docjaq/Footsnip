@@ -11,7 +11,7 @@ import renderer.glprimitives.GLVertex;
 import TerrainGeneration.PlasmaFractalFactory;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
-import assets.world.datastructures.TileDataStructure;
+import assets.world.datastructures.TileDataStructure2D;
 
 public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	/*
@@ -34,12 +34,12 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 
 	private List<GLTriangle> factoryTriangles;
 	private int tileComplexity;
-	private TileDataStructure tileDataStructure;
+	private TileDataStructure2D tileDataStructure;
 
 	final static float zOffset = -0.1f;
 	final static float zAdjust = 0.005f;
 
-	public GLTileMidpointDisplacementFactory(int tileComplexity, TileDataStructure tileDataStructure) {
+	public GLTileMidpointDisplacementFactory(int tileComplexity, TileDataStructure2D tileDataStructure) {
 		this.tileComplexity = tileComplexity;
 		this.tileDataStructure = tileDataStructure;
 		// this.heightMap = new float[tileComplexity][tileComplexity];

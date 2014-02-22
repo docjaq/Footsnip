@@ -4,13 +4,14 @@ import location.Locatable;
 import maths.LinearAlgebra;
 import renderer.glmodels.GLModel;
 import assets.world.AbstractTile;
-import assets.world.datastructures.TileDataStructure;
+import assets.world.datastructures.TileDataStructure2D;
 import collision.Collidable;
 
 public class Entity extends AbstractEntity implements Collidable, Locatable {
 
 	private String name;
 	protected AbstractTile currentTile;
+	protected boolean destroyable = false;
 
 	public Entity(GLModel model, String name) {
 		super(model);
@@ -39,8 +40,22 @@ public class Entity extends AbstractEntity implements Collidable, Locatable {
 		return model != null;
 	}
 
-	@Override
-	public void locatedWithin(AbstractTile tile, TileDataStructure data) {
-		System.out.println("Located within tile: " + tile.getKey().x + "," + tile.getKey().y);
+	public void locatedWithin(AbstractTile tile, TileDataStructure2D data) {
+		if (tile != currentTile) {
+			if (currentTile != null) {
+				currentTile.getContainedEntities().remove(this);
+			}
+			if (tile != null) {
+				tile.getContainedEntities().add(this);
+				currentTile = tile;
+			} else {
+				// If the tile doesn't exist at all, for now, remove the entity
+				destroyable = true;
+			}
+		}
+	}
+
+	public boolean isDestroyable() {
+		return destroyable;
 	}
 }

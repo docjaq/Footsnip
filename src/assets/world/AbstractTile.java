@@ -1,10 +1,14 @@
 package assets.world;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTileFactory;
 import assets.Asset;
+import assets.entities.Entity;
 import assets.world.datastructures.DataStructureKey2D;
 
 public abstract class AbstractTile implements Asset {
@@ -12,15 +16,17 @@ public abstract class AbstractTile implements Asset {
 	protected GLModel model;
 	protected Vector3f tilePos; // I don't like this, it should be temporary
 	protected DataStructureKey2D key;
-	public static final float SIZE = 1.0f;
 
-	public AbstractTile() {
-	}
+	protected List<Entity> containedEntities;
+
+	public static final float SIZE = 1.0f;
 
 	public AbstractTile(DataStructureKey2D key, GLModel model, Vector3f tilePos) {
 		this.key = key;
 		this.model = model;
 		this.tilePos = tilePos;
+
+		containedEntities = new ArrayList<Entity>();
 	}
 
 	public GLModel getModel() {
@@ -50,5 +56,9 @@ public abstract class AbstractTile implements Asset {
 
 	public void setKey(DataStructureKey2D key) {
 		this.key = key;
+	}
+
+	public List<Entity> getContainedEntities() {
+		return containedEntities;
 	}
 }

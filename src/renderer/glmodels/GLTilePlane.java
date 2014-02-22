@@ -29,10 +29,10 @@ public class GLTilePlane extends GLModel {
 		float halfSize = size / 2.0f;
 
 		List<GLVertex> vertexList = new ArrayList<GLVertex>(4);
-		vertexList.add(new GLVertex(new Vector4f(-halfSize, -halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
-		vertexList.add(new GLVertex(new Vector4f(-halfSize, halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
-		vertexList.add(new GLVertex(new Vector4f(halfSize, halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
-		vertexList.add(new GLVertex(new Vector4f(halfSize, -halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(0, new Vector4f(-halfSize, -halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(1, new Vector4f(-halfSize, halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(2, new Vector4f(halfSize, halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(3, new Vector4f(halfSize, -halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
 
 		System.out.println("Lists: " + "null" + "," + vertexList.size());
 

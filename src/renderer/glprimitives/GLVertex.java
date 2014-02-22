@@ -57,39 +57,42 @@ public class GLVertex {
 		this.index = index;
 	}
 
-	public GLVertex(Vector4f xyzw, Vector4f rgba, Vector4f nxnynznw) {
+	public GLVertex(int index, Vector4f xyzw, Vector4f rgba, Vector4f nxnynznw) {
+		this.index = index;
 		this.xyzw = xyzw;
 		this.rgba = rgba;
 		this.nxnynznw = nxnynznw;
 	}
 
-	public GLVertex(float x, float y, float z, float w, float r, float g, float b, float a, float nx, float ny, float nz, float nw) {
-		this.xyzw = new Vector4f(x, y, z, w);
-		this.rgba = new Vector4f(r, g, b, a);
-		this.nxnynznw = new Vector4f(nx, ny, nz, nw);
-	}
-
-	public GLVertex(float x, float y, float z, float w, Vector4f rgba, float nx, float ny, float nz, float nw) {
-		this.xyzw = new Vector4f(x, y, z, w);
-		this.rgba = rgba;
-		this.nxnynznw = new Vector4f(nx, ny, nz, nw);
-	}
-
-	public GLVertex(float x, float y, float z, Vector4f rgba, float nx, float ny, float nz) {
-		this.xyzw = new Vector4f(x, y, z, 1f);
-		this.rgba = rgba;
-		this.nxnynznw = new Vector4f(nx, ny, nz, 1f);
-	}
-
-	public GLVertex(float x, float y, float z, Vector4f rgba) {
-		this.xyzw = new Vector4f(x, y, z, 1f);
-		this.rgba = rgba;
-	}
+	/*
+	 * public GLVertex(float x, float y, float z, float w, float r, float g,
+	 * float b, float a, float nx, float ny, float nz, float nw) { this.xyzw =
+	 * new Vector4f(x, y, z, w); this.rgba = new Vector4f(r, g, b, a);
+	 * this.nxnynznw = new Vector4f(nx, ny, nz, nw); }
+	 * 
+	 * public GLVertex(float x, float y, float z, float w, Vector4f rgba, float
+	 * nx, float ny, float nz, float nw) { this.xyzw = new Vector4f(x, y, z, w);
+	 * this.rgba = rgba; this.nxnynznw = new Vector4f(nx, ny, nz, nw); }
+	 * 
+	 * public GLVertex(float x, float y, float z, Vector4f rgba, float nx, float
+	 * ny, float nz) { this.xyzw = new Vector4f(x, y, z, 1f); this.rgba = rgba;
+	 * this.nxnynznw = new Vector4f(nx, ny, nz, 1f); }
+	 * 
+	 * public GLVertex(float x, float y, float z, Vector4f rgba) { this.xyzw =
+	 * new Vector4f(x, y, z, 1f); this.rgba = rgba; }
+	 */
 
 	public GLVertex(int index, float x, float y, float z, Vector4f rgba) {
 		this.index = index;
 		this.xyzw = new Vector4f(x, y, z, 1f);
 		this.rgba = rgba;// new Vector4f(0, 0, 0, 1);
+	}
+
+	public GLVertex(int index, float x, float y, float z, Vector4f rgba, Vector4f nxnynznw) {
+		this.index = index;
+		this.xyzw = new Vector4f(x, y, z, 1f);
+		this.rgba = rgba;
+		this.nxnynznw = nxnynznw;
 	}
 
 	// Setters

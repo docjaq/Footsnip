@@ -7,18 +7,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import renderer.glmodels.GLProjectileFactory;
 import assets.entities.Monster;
 import assets.entities.Player;
+import assets.entities.PolygonalScenery;
 import assets.entities.Projectile;
-import assets.world.datastructures.HashmapDataStructure;
-import assets.world.datastructures.TileDataStructure;
+import assets.world.datastructures.HashmapTileDataStructure2D;
+import assets.world.datastructures.TileDataStructure2D;
 
 public class AssetContainer {
 
 	private Player player;
 
 	private List<Monster> monsters;
-	// TODO: Put monster factory here
 
 	private List<Projectile> projectiles;
+
+	private List<PolygonalScenery> polygonalSceneries;
 
 	public void setProjectiles(List<Projectile> projectiles) {
 		this.projectiles = projectiles;
@@ -34,18 +36,18 @@ public class AssetContainer {
 		return projectileFactory;
 	}
 
-	private TileDataStructure tiles;
+	private TileDataStructure2D tiles;
 
 	public AssetContainer() {
 		monsters = new ArrayList<Monster>(0);
 		// So the list can be rendered and added to at the same time
 		projectiles = new CopyOnWriteArrayList<Projectile>();
-		tiles = new HashmapDataStructure();
+		tiles = new HashmapTileDataStructure2D();
 	}
 
 	/** AbstractTiles **/
 
-	public TileDataStructure getTileDataStructure() {
+	public TileDataStructure2D getTileDataStructure() {
 		return tiles;
 	}
 
@@ -85,5 +87,17 @@ public class AssetContainer {
 
 	public List<Projectile> getProjectiles() {
 		return projectiles;
+	}
+
+	public List<PolygonalScenery> getPolygonalSceneries() {
+		return polygonalSceneries;
+	}
+
+	public void setPolygonalSceneries(List<PolygonalScenery> polygonalSceneries) {
+		this.polygonalSceneries = polygonalSceneries;
+	}
+
+	public void addPolygonalScenery(PolygonalScenery polygonalScenery) {
+		this.polygonalSceneries.add(polygonalScenery);
 	}
 }

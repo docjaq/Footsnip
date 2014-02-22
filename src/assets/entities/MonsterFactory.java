@@ -10,7 +10,7 @@ import renderer.glshaders.GLShader;
 
 public class MonsterFactory {
 
-	public static Monster createMesh(GeometryFile mesh, GLShader shader, Vector3f monsterPos, float rotationDelta) {
+	public static Monster create(GeometryFile mesh, GLShader shader, Vector3f monsterPos, float rotationDelta) {
 
 		Vector3f monsterAngle = new Vector3f(0, 0, 0);
 		float monsterScale = 1f;

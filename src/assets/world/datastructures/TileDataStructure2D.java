@@ -1,12 +1,13 @@
 package assets.world.datastructures;
 
+import java.util.Iterator;
 import java.util.List;
 
 import renderer.glmodels.GLTileFactory;
 import renderer.glshaders.GLShader;
 import assets.world.AbstractTile;
 
-public interface TileDataStructure {
+public interface TileDataStructure2D {
 
 	public void init(GLTileFactory glTileFactory, AbstractTile tile);
 
@@ -38,12 +39,16 @@ public interface TileDataStructure {
 
 	public AbstractTile getTileTop(AbstractTile tile);
 
-	// public AbstractTile getTileTopRight(AbstractTile tile);
-
 	public AbstractTile getTileRight(AbstractTile tile);
 
 	public AbstractTile getTileLeft(AbstractTile tile);
 
 	public AbstractTile getTileBottom(AbstractTile tile);
+
+	// Need to be able to cleanly iterate through tiles. This is the best way
+	// that I could think of to do it quickly and independent of the
+	// data-structure
+
+	public Iterator getIterator();
 
 }

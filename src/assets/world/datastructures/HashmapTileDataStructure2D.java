@@ -1,6 +1,7 @@
 package assets.world.datastructures;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,7 +12,7 @@ import renderer.glshaders.GLShader;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
 
-public class HashmapDataStructure implements TileDataStructure {
+public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 	/*
 	 * Needs to be Concurrent to allow the draw() and
@@ -24,7 +25,7 @@ public class HashmapDataStructure implements TileDataStructure {
 	private AbstractTile initialTile;
 	private GLTileFactory glTileFactory;
 
-	public HashmapDataStructure() {
+	public HashmapTileDataStructure2D() {
 		map = new ConcurrentHashMap<DataStructureKey2D, AbstractTile>();
 	}
 
@@ -43,7 +44,6 @@ public class HashmapDataStructure implements TileDataStructure {
 	public void draw(GLShader shader) {
 		for (AbstractTile t : map.values()) {
 			if (t.getModel() == null) {
-
 				t.createModel(glTileFactory);
 			}
 			try {
@@ -150,5 +150,10 @@ public class HashmapDataStructure implements TileDataStructure {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public Iterator<?> getIterator() {
+		return map.entrySet().iterator();
 	}
 }
