@@ -1,5 +1,7 @@
 package audio;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Scanner;
@@ -51,16 +53,16 @@ public class AudioEngine {
 		// Loads the wave file from this class's package in your classpath
 		// WaveData waveFile = WaveData.create("fancypants.wav");
 
-		java.io.FileInputStream fin = null;
+		BufferedInputStream bis;
 		try {
-			fin = new java.io.FileInputStream("resources/audio/fancypants.wav");
+			bis = new BufferedInputStream(new FileInputStream("resources/audio/fancypants.wav"));
 		} catch (java.io.FileNotFoundException ex) {
 			ex.printStackTrace();
 			return AL10.AL_FALSE;
 		}
-		WaveData waveFile = WaveData.create(fin);
+		WaveData waveFile = WaveData.create(bis);
 		try {
-			fin.close();
+			bis.close();
 		} catch (java.io.IOException ex) {
 		}
 
