@@ -17,22 +17,31 @@ public class AudioEngine {
 	private static AudioEngine instance;
 
 	IntBuffer buffer = BufferUtils.createIntBuffer(1);
-
 	IntBuffer source = BufferUtils.createIntBuffer(1);
-
 	FloatBuffer sourcePos = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
-
 	FloatBuffer sourceVel = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
-
 	FloatBuffer listenerPos = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
-
 	FloatBuffer listenerVel = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
-
 	FloatBuffer listenerOri = (FloatBuffer) BufferUtils.createFloatBuffer(6).put(new float[] { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f })
 			.rewind();
 
 	private AudioEngine() {
-		// No-op
+
+		try {
+			AL.create();
+		} catch (LWJGLException le) {
+			le.printStackTrace();
+			return;
+		}
+		AL10.alGetError();
+
+		// Load the wav data.
+		if (loadALData() == AL10.AL_FALSE) {
+			System.out.println("Error loading data.");
+			return;
+		}
+
+		setListenerValues();
 	}
 
 	public synchronized static AudioEngine getInstance() {
@@ -55,7 +64,7 @@ public class AudioEngine {
 
 		BufferedInputStream bis;
 		try {
-			bis = new BufferedInputStream(new FileInputStream("resources/audio/fancypants.wav"));
+			bis = new BufferedInputStream(new FileInputStream("resources/audio/Shot.wav"));
 		} catch (java.io.FileNotFoundException ex) {
 			ex.printStackTrace();
 			return AL10.AL_FALSE;
@@ -101,6 +110,10 @@ public class AudioEngine {
 
 	public static void main(String[] args) {
 		AudioEngine.getInstance().execute();
+	}
+
+	public void playSomeAudio() {
+		AL10.alSourcePlay(source.get(0));
 	}
 
 	public void execute() {
@@ -156,6 +169,11 @@ public class AudioEngine {
 			}
 			;
 		}
+		killALData();
+		AL.destroy();
+	}
+
+	public void close() {
 		killALData();
 		AL.destroy();
 	}

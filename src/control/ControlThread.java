@@ -3,7 +3,6 @@ package control;
 import main.Main;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.util.vector.Vector3f;
 
 import thread.GameThread;
 import util.Utils;
@@ -54,7 +53,7 @@ public class ControlThread extends GameThread {
 			}
 
 			if (Keyboard.getEventKey() == Keyboard.KEY_SPACE && Keyboard.getEventKeyState()) {
-				fireProjectile();
+				assContainer.addProjectile(assContainer.getPlayer().fireProjectile());
 			}
 		}
 
@@ -82,16 +81,6 @@ public class ControlThread extends GameThread {
 		}
 
 		moveEntities(timeDelta);
-	}
-
-	private void fireProjectile() {
-		System.out.println("Fire");
-
-		Vector3f position = new Vector3f(assContainer.getPlayer().getModel().modelPos);
-		Vector3f angle = new Vector3f(assContainer.getPlayer().getModel().modelAngle);
-		Vector3f movementVector = new Vector3f(assContainer.getPlayer().getMovementVector());
-		float scale = 1.0f;
-		assContainer.addProjectile(new Projectile(position, angle, scale, movementVector));
 	}
 
 	private void moveEntities(int timeDelta) {

@@ -8,6 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
 import renderer.glmodels.GLModel;
 import assets.world.AbstractTile;
 import assets.world.datastructures.TileDataStructure2D;
+import audio.AudioEngine;
 import collision.Collidable;
 
 public class Player extends Entity {
@@ -123,6 +124,18 @@ public class Player extends Entity {
 			movementVector.x *= diff;
 			movementVector.y *= diff;
 		}
+	}
+
+	public Projectile fireProjectile() {
+
+		AudioEngine.getInstance().playSomeAudio();
+
+		Vector3f position = new Vector3f(this.model.modelPos);
+		Vector3f angle = new Vector3f(this.model.modelAngle);
+		Vector3f movementVector = new Vector3f(this.movementVector);
+		float scale = 1.0f;
+
+		return new Projectile(position, angle, scale, movementVector);
 	}
 
 	/*

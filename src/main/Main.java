@@ -12,6 +12,7 @@ import thread.GameThread;
 import thread.ObservableThread;
 import thread.ThreadObserver;
 import assets.AssetContainer;
+import audio.AudioEngine;
 import collision.CollisionThread;
 import control.ControlThread;
 import exception.RendererException;
@@ -70,16 +71,21 @@ public class Main implements GameListener {
 				executor.execute(locationThread);
 			}
 		});
+
+		AudioEngine.getInstance();
 	}
 
 	public void quitGame() {
+
+		AudioEngine.getInstance().close();
+
 		for (GameThread thread : childThreads) {
 			thread.stopThread();
 		}
 
 		executor.shutdown();
 		try {
-			if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
+			if (!executor.awaitTermination(1L, TimeUnit.SECONDS)) {
 				executor.shutdownNow();
 				if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
 					System.err.println("Thread pool did not terminate");
