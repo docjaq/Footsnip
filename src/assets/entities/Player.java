@@ -100,6 +100,9 @@ public class Player extends Entity {
 	}
 
 	public void accelerateMovement() {
+
+		AudioEngine.getInstance().playPlayerSound();
+
 		currentDirectionVector.x = (float) Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z));
 		currentDirectionVector.y = (float) Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z));
 		currentDirectionVector.scale(MOVEMENT_ACCELERATION);
@@ -128,7 +131,7 @@ public class Player extends Entity {
 
 	public Projectile fireProjectile() {
 
-		AudioEngine.getInstance().playSomeAudio();
+		AudioEngine.getInstance().playProjectileSound();
 
 		Vector3f position = new Vector3f(this.model.modelPos);
 		Vector3f angle = new Vector3f(this.model.modelAngle);

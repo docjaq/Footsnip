@@ -56,6 +56,13 @@ public class Entity extends AbstractEntity implements Collidable, Locatable {
 	}
 
 	public boolean isDestroyable() {
+		if (destroyable) {
+			destroy();
+		}
 		return destroyable;
+	}
+
+	public void destroy() {
+		currentTile.getContainedEntities().remove(this);
 	}
 }

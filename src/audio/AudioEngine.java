@@ -14,12 +14,21 @@ import org.lwjgl.util.WaveData;
 
 public class AudioEngine {
 
+	private static final int NUM_BUFFERS = 3;
+	private static final int NUM_SOURCES = 3;
+
+	private static final int SOUND_PLAYER = 0;
+	private static final int SOUND_MONSTER = 1;
+	private static final int SOUND_PROJECTILE = 2;
+
 	private static AudioEngine instance;
 
-	IntBuffer buffer = BufferUtils.createIntBuffer(1);
-	IntBuffer source = BufferUtils.createIntBuffer(1);
-	FloatBuffer sourcePos = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
-	FloatBuffer sourceVel = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
+	IntBuffer buffer = BufferUtils.createIntBuffer(NUM_BUFFERS);
+	IntBuffer source = BufferUtils.createIntBuffer(NUM_SOURCES);
+
+	FloatBuffer sourcePos = (FloatBuffer) BufferUtils.createFloatBuffer(3 * NUM_SOURCES).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
+	FloatBuffer sourceVel = (FloatBuffer) BufferUtils.createFloatBuffer(3 * NUM_SOURCES).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
+
 	FloatBuffer listenerPos = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
 	FloatBuffer listenerVel = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
 	FloatBuffer listenerOri = (FloatBuffer) BufferUtils.createFloatBuffer(6).put(new float[] { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f })
@@ -52,22 +61,13 @@ public class AudioEngine {
 		return instance;
 	}
 
-	int loadALData() {
-		// Load wav data into a buffer.
-		AL10.alGenBuffers(buffer);
-
-		if (AL10.alGetError() != AL10.AL_NO_ERROR)
-			return AL10.AL_FALSE;
-
-		// Loads the wave file from this class's package in your classpath
-		// WaveData waveFile = WaveData.create("fancypants.wav");
-
+	private void loadAudioFile(String fileLocation, int bufferIndex) {
 		BufferedInputStream bis;
 		try {
-			bis = new BufferedInputStream(new FileInputStream("resources/audio/Shot.wav"));
+			bis = new BufferedInputStream(new FileInputStream(fileLocation));
 		} catch (java.io.FileNotFoundException ex) {
 			ex.printStackTrace();
-			return AL10.AL_FALSE;
+			return;
 		}
 		WaveData waveFile = WaveData.create(bis);
 		try {
@@ -75,8 +75,28 @@ public class AudioEngine {
 		} catch (java.io.IOException ex) {
 		}
 
-		AL10.alBufferData(buffer.get(0), waveFile.format, waveFile.data, waveFile.samplerate);
+		AL10.alBufferData(buffer.get(bufferIndex), waveFile.format, waveFile.data, waveFile.samplerate);
 		waveFile.dispose();
+	}
+
+	private void setupAudioSource(int bufferIndex, float gain) {
+		AL10.alSourcei(source.get(bufferIndex), AL10.AL_BUFFER, buffer.get(bufferIndex));
+		AL10.alSourcef(source.get(bufferIndex), AL10.AL_PITCH, 1.0f);
+		AL10.alSourcef(source.get(bufferIndex), AL10.AL_GAIN, gain);
+		AL10.alSource(source.get(bufferIndex), AL10.AL_POSITION, (FloatBuffer) sourcePos.position(bufferIndex * 3));
+		AL10.alSource(source.get(bufferIndex), AL10.AL_VELOCITY, (FloatBuffer) sourceVel.position(bufferIndex * 3));
+	}
+
+	private int loadALData() {
+		// Load wav data into a buffer.
+		AL10.alGenBuffers(buffer);
+
+		if (AL10.alGetError() != AL10.AL_NO_ERROR)
+			return AL10.AL_FALSE;
+
+		loadAudioFile("resources/audio/Rocket.wav", SOUND_PLAYER);
+		loadAudioFile("resources/audio/Explode.wav", SOUND_MONSTER);
+		loadAudioFile("resources/audio/Shot.wav", SOUND_PROJECTILE);
 
 		// Bind the buffer with the source.
 		AL10.alGenSources(source);
@@ -84,11 +104,9 @@ public class AudioEngine {
 		if (AL10.alGetError() != AL10.AL_NO_ERROR)
 			return AL10.AL_FALSE;
 
-		AL10.alSourcei(source.get(0), AL10.AL_BUFFER, buffer.get(0));
-		AL10.alSourcef(source.get(0), AL10.AL_PITCH, 1.0f);
-		AL10.alSourcef(source.get(0), AL10.AL_GAIN, 1.0f);
-		AL10.alSource(source.get(0), AL10.AL_POSITION, sourcePos);
-		AL10.alSource(source.get(0), AL10.AL_VELOCITY, sourceVel);
+		setupAudioSource(SOUND_PLAYER, 0.8f);
+		setupAudioSource(SOUND_MONSTER, 1.0f);
+		setupAudioSource(SOUND_PROJECTILE, 0.2f);
 
 		// Do another error check and return.
 		if (AL10.alGetError() == AL10.AL_NO_ERROR)
@@ -108,12 +126,17 @@ public class AudioEngine {
 		AL10.alDeleteBuffers(buffer);
 	}
 
-	public static void main(String[] args) {
-		AudioEngine.getInstance().execute();
+	public void playPlayerSound() {
+		AL10.alSourcePlay(source.get(SOUND_PLAYER));
 	}
 
-	public void playSomeAudio() {
-		AL10.alSourcePlay(source.get(0));
+	public void playMonsterSound() {
+		System.out.println("Fuck off");
+		AL10.alSourcePlay(source.get(SOUND_MONSTER));
+	}
+
+	public void playProjectileSound() {
+		AL10.alSourcePlay(source.get(SOUND_PROJECTILE));
 	}
 
 	public void execute() {

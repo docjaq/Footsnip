@@ -100,9 +100,4 @@ public class Projectile extends Entity {
 
 		}
 	}
-
-	@Override
-	public boolean isDestroyable() {
-		return destroyable;
-	}
 }

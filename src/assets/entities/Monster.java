@@ -1,6 +1,7 @@
 package assets.entities;
 
 import renderer.glmodels.GLModel;
+import audio.AudioEngine;
 import collision.Collidable;
 
 //This should probably be a class NPC, which Monster then extends, but decided
@@ -96,9 +97,16 @@ public class Monster extends Entity {
 
 	@Override
 	public boolean isDestroyable() {
+
 		if (health <= 0) {
+			AudioEngine.getInstance().playMonsterSound();
 			destroyable = true;
 		}
+
+		if (destroyable) {
+			destroy();
+		}
+
 		return destroyable;
 	}
 
