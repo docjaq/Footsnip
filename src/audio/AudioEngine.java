@@ -94,7 +94,7 @@ public class AudioEngine {
 		if (AL10.alGetError() != AL10.AL_NO_ERROR)
 			return AL10.AL_FALSE;
 
-		loadAudioFile("resources/audio/Rocket.wav", SOUND_PLAYER);
+		loadAudioFile("resources/audio/Rocket_vshort.wav", SOUND_PLAYER);
 		loadAudioFile("resources/audio/Explode.wav", SOUND_MONSTER);
 		loadAudioFile("resources/audio/Shot.wav", SOUND_PROJECTILE);
 
@@ -127,7 +127,10 @@ public class AudioEngine {
 	}
 
 	public void playPlayerSound() {
-		AL10.alSourcePlay(source.get(SOUND_PLAYER));
+		if (AL10.alGetSourcei(source.get(SOUND_PLAYER), AL10.AL_SOURCE_STATE) != AL10.AL_PLAYING) {
+			AL10.alSourcePlay(source.get(SOUND_PLAYER));
+		}
+
 	}
 
 	public void playMonsterSound() {
