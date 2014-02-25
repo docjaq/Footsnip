@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Scanner;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -17,41 +16,20 @@ public class AudioEngine {
 	private static final int NUM_BUFFERS = 3;
 	private static final int NUM_SOURCES = 3;
 
-	private static final int SOUND_PLAYER = 0;
-	private static final int SOUND_MONSTER = 1;
-	private static final int SOUND_PROJECTILE = 2;
-
 	private static AudioEngine instance;
 
-	IntBuffer buffer = BufferUtils.createIntBuffer(NUM_BUFFERS);
-	IntBuffer source = BufferUtils.createIntBuffer(NUM_SOURCES);
+	private IntBuffer buffer = BufferUtils.createIntBuffer(NUM_BUFFERS);
+	private IntBuffer source = BufferUtils.createIntBuffer(NUM_SOURCES);
 
-	FloatBuffer sourcePos = (FloatBuffer) BufferUtils.createFloatBuffer(3 * NUM_SOURCES).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
-	FloatBuffer sourceVel = (FloatBuffer) BufferUtils.createFloatBuffer(3 * NUM_SOURCES).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
-
-	FloatBuffer listenerPos = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
-	FloatBuffer listenerVel = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
-	FloatBuffer listenerOri = (FloatBuffer) BufferUtils.createFloatBuffer(6).put(new float[] { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f })
+	private FloatBuffer sourcePos = (FloatBuffer) BufferUtils.createFloatBuffer(3 * NUM_SOURCES).put(new float[] { 0.0f, 0.0f, 0.0f })
+			.rewind();
+	private FloatBuffer sourceVel = (FloatBuffer) BufferUtils.createFloatBuffer(3 * NUM_SOURCES).put(new float[] { 0.0f, 0.0f, 0.0f })
 			.rewind();
 
-	private AudioEngine() {
-
-		try {
-			AL.create();
-		} catch (LWJGLException le) {
-			le.printStackTrace();
-			return;
-		}
-		AL10.alGetError();
-
-		// Load the wav data.
-		if (loadALData() == AL10.AL_FALSE) {
-			System.out.println("Error loading data.");
-			return;
-		}
-
-		setListenerValues();
-	}
+	private FloatBuffer listenerPos = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
+	private FloatBuffer listenerVel = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
+	private FloatBuffer listenerOri = (FloatBuffer) BufferUtils.createFloatBuffer(6)
+			.put(new float[] { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f }).rewind();
 
 	public synchronized static AudioEngine getInstance() {
 		if (instance == null) {
@@ -61,58 +39,82 @@ public class AudioEngine {
 		return instance;
 	}
 
-	private void loadAudioFile(String fileLocation, int bufferIndex) {
-		BufferedInputStream bis;
-		try {
-			bis = new BufferedInputStream(new FileInputStream(fileLocation));
-		} catch (java.io.FileNotFoundException ex) {
-			ex.printStackTrace();
-			return;
-		}
-		WaveData waveFile = WaveData.create(bis);
-		try {
-			bis.close();
-		} catch (java.io.IOException ex) {
-		}
-
-		AL10.alBufferData(buffer.get(bufferIndex), waveFile.format, waveFile.data, waveFile.samplerate);
-		waveFile.dispose();
+	private AudioEngine() {
+		init();
+		loadWavData();
+		setListenerValues();
 	}
 
-	private void setupAudioSource(int bufferIndex, float gain) {
-		AL10.alSourcei(source.get(bufferIndex), AL10.AL_BUFFER, buffer.get(bufferIndex));
-		AL10.alSourcef(source.get(bufferIndex), AL10.AL_PITCH, 1.0f);
-		AL10.alSourcef(source.get(bufferIndex), AL10.AL_GAIN, gain);
-		AL10.alSource(source.get(bufferIndex), AL10.AL_POSITION, (FloatBuffer) sourcePos.position(bufferIndex * 3));
-		AL10.alSource(source.get(bufferIndex), AL10.AL_VELOCITY, (FloatBuffer) sourceVel.position(bufferIndex * 3));
+	private void init() {
+		try {
+			AL.create();
+		} catch (LWJGLException e) {
+			throw new AudioException("Error initialising AudioEngine", e);
+		}
+
+		checkForErrors();
 	}
 
-	private int loadALData() {
+	private void checkForErrors() {
+		if (AL10.alGetError() != AL10.AL_NO_ERROR) {
+			throw new AudioException("Error initialising AudioEngine; error code from OpenAL: " + AL10.alGetError());
+		}
+	}
+
+	private void loadWavData() {
 		// Load wav data into a buffer.
 		AL10.alGenBuffers(buffer);
 
-		if (AL10.alGetError() != AL10.AL_NO_ERROR)
-			return AL10.AL_FALSE;
+		checkForErrors();
 
-		loadAudioFile("resources/audio/Rocket_vshort.wav", SOUND_PLAYER);
-		loadAudioFile("resources/audio/Explode.wav", SOUND_MONSTER);
-		loadAudioFile("resources/audio/Shot.wav", SOUND_PROJECTILE);
+		loadAudioFile("resources/audio/Rocket_vshort.wav", SoundType.PLAYER);
+		loadAudioFile("resources/audio/Explode.wav", SoundType.MONSTER);
+		loadAudioFile("resources/audio/Shot.wav", SoundType.PROJECTILE);
 
 		// Bind the buffer with the source.
 		AL10.alGenSources(source);
 
-		if (AL10.alGetError() != AL10.AL_NO_ERROR)
-			return AL10.AL_FALSE;
+		checkForErrors();
 
-		setupAudioSource(SOUND_PLAYER, 0.8f);
-		setupAudioSource(SOUND_MONSTER, 1.0f);
-		setupAudioSource(SOUND_PROJECTILE, 0.2f);
+		setupAudioSource(SoundType.PLAYER, 0.8f);
+		setupAudioSource(SoundType.MONSTER, 1.0f);
+		setupAudioSource(SoundType.PROJECTILE, 0.2f);
 
-		// Do another error check and return.
-		if (AL10.alGetError() == AL10.AL_NO_ERROR)
-			return AL10.AL_TRUE;
+		checkForErrors();
+	}
 
-		return AL10.AL_FALSE;
+	private void loadAudioFile(String fileLocation, SoundType soundType) {
+		BufferedInputStream bis = loadFile(fileLocation);
+		WaveData waveFile = WaveData.create(bis);
+		closeFile(bis);
+
+		AL10.alBufferData(buffer.get(soundType.index()), waveFile.format, waveFile.data, waveFile.samplerate);
+		waveFile.dispose();
+	}
+
+	private void closeFile(BufferedInputStream bis) {
+		try {
+			bis.close();
+		} catch (java.io.IOException ex) {
+			throw new AudioException("Error closing wav file.", ex);
+		}
+	}
+
+	private BufferedInputStream loadFile(String fileLocation) {
+		try {
+			return new BufferedInputStream(new FileInputStream(fileLocation));
+		} catch (java.io.FileNotFoundException ex) {
+			throw new AudioException("Error reading wav file.", ex);
+		}
+	}
+
+	private void setupAudioSource(SoundType soundType, float gain) {
+		int index = soundType.index();
+		AL10.alSourcei(source.get(index), AL10.AL_BUFFER, buffer.get(index));
+		AL10.alSourcef(source.get(index), AL10.AL_PITCH, 1.0f);
+		AL10.alSourcef(source.get(index), AL10.AL_GAIN, gain);
+		AL10.alSource(source.get(index), AL10.AL_POSITION, (FloatBuffer) sourcePos.position(index * 3));
+		AL10.alSource(source.get(index), AL10.AL_VELOCITY, (FloatBuffer) sourceVel.position(index * 3));
 	}
 
 	void setListenerValues() {
@@ -127,76 +129,17 @@ public class AudioEngine {
 	}
 
 	public void playPlayerSound() {
-		if (AL10.alGetSourcei(source.get(SOUND_PLAYER), AL10.AL_SOURCE_STATE) != AL10.AL_PLAYING) {
-			AL10.alSourcePlay(source.get(SOUND_PLAYER));
+		if (AL10.alGetSourcei(source.get(SoundType.PLAYER.index()), AL10.AL_SOURCE_STATE) != AL10.AL_PLAYING) {
+			AL10.alSourcePlay(source.get(SoundType.PLAYER.index()));
 		}
-
 	}
 
 	public void playMonsterSound() {
-		System.out.println("Fuck off");
-		AL10.alSourcePlay(source.get(SOUND_MONSTER));
+		AL10.alSourcePlay(source.get(SoundType.MONSTER.index()));
 	}
 
 	public void playProjectileSound() {
-		AL10.alSourcePlay(source.get(SOUND_PROJECTILE));
-	}
-
-	public void execute() {
-		// Initialize OpenAL and clear the error bit.
-		try {
-			AL.create();
-		} catch (LWJGLException le) {
-			le.printStackTrace();
-			return;
-		}
-		AL10.alGetError();
-
-		// Load the wav data.
-		if (loadALData() == AL10.AL_FALSE) {
-			System.out.println("Error loading data.");
-			return;
-		}
-
-		setListenerValues();
-
-		// Loop.
-		System.out.println("OpenAL Tutorial 1 - Single Static Source");
-		System.out.println("[Menu]");
-		System.out.println("p - Play the sample.");
-		System.out.println("s - Stop the sample.");
-		System.out.println("h - Pause the sample.");
-		System.out.println("q - Quit the program.");
-		char c = ' ';
-		Scanner stdin = new Scanner(System.in);
-		while (c != 'q') {
-			try {
-				System.out.print("Input: ");
-				c = (char) stdin.nextLine().charAt(0);
-			} catch (Exception ex) {
-				c = 'q';
-			}
-
-			switch (c) {
-			// Pressing 'p' will begin playing the sample.
-			case 'p':
-				AL10.alSourcePlay(source.get(0));
-				break;
-
-			// Pressing 's' will stop the sample from playing.
-			case 's':
-				AL10.alSourceStop(source.get(0));
-				break;
-
-			// Pressing 'h' will pause the sample.
-			case 'h':
-				AL10.alSourcePause(source.get(0));
-				break;
-			}
-			;
-		}
-		killALData();
-		AL.destroy();
+		AL10.alSourcePlay(source.get(SoundType.PROJECTILE.index()));
 	}
 
 	public void close() {
