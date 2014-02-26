@@ -1,12 +1,9 @@
 package assets.entities;
 
-import static maths.LinearAlgebra.degreesToRadians;
-
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import renderer.GLWorld;
 import renderer.glmodels.GLProjectileFactory;
 import collision.Collidable;
 
@@ -41,9 +38,9 @@ public class Projectile extends Entity {
 		Vector4f additiveMovement = new Vector4f(ADDITIVE_VELOCITY_SCALE, 0.0f, 0.0f, 1.0f);
 
 		Matrix4f rotationMatrix = new Matrix4f();
-		rotationMatrix.rotate(degreesToRadians(angle.z), GLWorld.BASIS_Z);
-		rotationMatrix.rotate(degreesToRadians(angle.y), GLWorld.BASIS_Y);
-		rotationMatrix.rotate(degreesToRadians(angle.x), GLWorld.BASIS_X);
+		// rotationMatrix.rotate(degreesToRadians(angle.z), GLWorld.BASIS_Z);
+		// rotationMatrix.rotate(degreesToRadians(angle.y), GLWorld.BASIS_Y);
+		// rotationMatrix.rotate(degreesToRadians(angle.x), GLWorld.BASIS_X);
 
 		Matrix4f.transform(rotationMatrix, additiveMovement, additiveMovement);
 		Vector3f vec3fAdditiveMovement = new Vector3f(additiveMovement.x, additiveMovement.y, additiveMovement.z);

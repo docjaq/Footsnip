@@ -8,13 +8,15 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.text.MessageFormat;
 
+import maths.types.MatrixStack;
+import maths.types.Vector4;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 
 import renderer.GLWorld;
+import renderer.MaterialParams;
 import exception.RendererException;
 
 public abstract class GLShader {
@@ -31,9 +33,13 @@ public abstract class GLShader {
 
 	protected FloatBuffer matrix44Buffer = null;
 
-	public GLShader(GLWorld glWorld) {
+	protected int projectionBlockIndex;
+
+	public GLShader(GLWorld glWorld, int projectionBlockIndex) {
 		matrix44Buffer = BufferUtils.createFloatBuffer(16);
 		this.glWorld = glWorld;
+
+		this.projectionBlockIndex = projectionBlockIndex;
 	}
 
 	public void create(String[] shaderName) throws RendererException {
@@ -57,16 +63,18 @@ public abstract class GLShader {
 
 	public abstract void setupShaderVariables();
 
-	public abstract void copyUniformsToShader(Matrix4f modelMatrix, Vector3f modelPos);
+	public abstract void copySpecificUniformsToShader(MatrixStack modelMatrix);
 
-	public void copyCameraMatricesToShader() {
-		glWorld.projectionMatrix.store(matrix44Buffer);
-		matrix44Buffer.flip();
-		GL20.glUniformMatrix4(projectionMatrixLocation, false, matrix44Buffer);
-		glWorld.viewMatrix.store(matrix44Buffer);
-		matrix44Buffer.flip();
-		GL20.glUniformMatrix4(viewMatrixLocation, false, matrix44Buffer);
-	}
+	public abstract void copySharedUniformsToShader(Vector4 lightPosCameraSpace, MaterialParams materialParams);
+
+	// public void copyCameraMatricesToShader() {
+	// glWorld.projectionMatrix.store(matrix44Buffer);
+	// matrix44Buffer.flip();
+	// GL20.glUniformMatrix4(projectionMatrixLocation, false, matrix44Buffer);
+	// glWorld.viewMatrix.store(matrix44Buffer);
+	// matrix44Buffer.flip();
+	// GL20.glUniformMatrix4(viewMatrixLocation, false, matrix44Buffer);
+	// }
 
 	public void destroy() {
 		GL20.glDetachShader(programID, vertID);

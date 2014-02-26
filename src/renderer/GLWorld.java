@@ -3,6 +3,7 @@ package renderer;
 import java.nio.FloatBuffer;
 
 import maths.LinearAlgebra;
+import maths.types.Vector3;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix4f;
@@ -12,9 +13,9 @@ import exception.RendererException;
 
 public class GLWorld {
 
-	public static final Vector3f BASIS_X = new Vector3f(1, 0, 0);
-	public static final Vector3f BASIS_Y = new Vector3f(0, 1, 0);
-	public static final Vector3f BASIS_Z = new Vector3f(0, 0, 1);
+	public static final Vector3 BASIS_X = new Vector3(1, 0, 0);
+	public static final Vector3 BASIS_Y = new Vector3(0, 1, 0);
+	public static final Vector3 BASIS_Z = new Vector3(0, 0, 1);
 
 	public Matrix4f projectionMatrix;
 	public Matrix4f viewMatrix;

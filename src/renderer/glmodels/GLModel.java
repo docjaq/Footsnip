@@ -2,6 +2,7 @@ package renderer.glmodels;
 
 import static maths.LinearAlgebra.degreesToRadians;
 import static renderer.GLUtilityMethods.exitOnGLError;
+import maths.types.MatrixStack;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -56,11 +57,16 @@ public abstract class GLModel {
 		modelMatrix = new Matrix4f();
 	}
 
-	public void draw(GLShader shader) {
+	public void draw(GLShader shader, MatrixStack modelMatrix) {
 
-		transform();
+		// transform();
+		modelMatrix.getTop().translate(modelPos.x, modelPos.y, modelPos.z);
 
-		shader.copyUniformsToShader(modelMatrix, modelPos);
+		modelMatrix.getTop().rotate(degreesToRadians(modelAngle.z), GLWorld.BASIS_Z);
+		modelMatrix.getTop().rotate(degreesToRadians(modelAngle.y), GLWorld.BASIS_Y);
+		modelMatrix.getTop().rotate(degreesToRadians(modelAngle.x), GLWorld.BASIS_X);
+
+		shader.copySpecificUniformsToShader(modelMatrix);
 
 		// Bind to the VAO that has all the information about the vertices
 		GL30.glBindVertexArray(vaoId);
@@ -124,12 +130,12 @@ public abstract class GLModel {
 		// This order is important for building the matrix
 		clearModelMatrix();
 
-		modelMatrix.scale(modelScale);
-		modelMatrix.translate(modelPos);
+		// modelMatrix.scale(modelScale);
+		// modelMatrix.translate(modelPos);
 
-		modelMatrix.rotate(degreesToRadians(modelAngle.z), GLWorld.BASIS_Z);
-		modelMatrix.rotate(degreesToRadians(modelAngle.y), GLWorld.BASIS_Y);
-		modelMatrix.rotate(degreesToRadians(modelAngle.x), GLWorld.BASIS_X);
+		// modelMatrix.rotate(degreesToRadians(modelAngle.z), GLWorld.BASIS_Z);
+		// modelMatrix.rotate(degreesToRadians(modelAngle.y), GLWorld.BASIS_Y);
+		// modelMatrix.rotate(degreesToRadians(modelAngle.x), GLWorld.BASIS_X);
 
 	}
 

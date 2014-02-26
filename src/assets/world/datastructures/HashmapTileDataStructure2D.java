@@ -5,10 +5,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import maths.types.MatrixStack;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glmodels.GLTileFactory;
 import renderer.glshaders.GLShader;
+import util.MousePoles.ObjectPole;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
 
@@ -41,13 +44,18 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	}
 
 	@Override
-	public void draw(GLShader shader) {
+	public void draw(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix) {
 		for (AbstractTile t : map.values()) {
 			if (t.getModel() == null) {
 				t.createModel(glTileFactory);
 			}
 			try {
-				t.getModel().draw(shader);
+				modelMatrix.pushMatrix();
+				{
+					modelMatrix.getTop().mult(objectPole.calcMatrix());
+					t.getModel().draw(shader, modelMatrix);
+				}
+				modelMatrix.popMatrix();
 			} catch (NullPointerException e) {
 				System.out.println("Exception: GLModel does not exist");
 			}

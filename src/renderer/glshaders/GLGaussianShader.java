@@ -1,14 +1,22 @@
 package renderer.glshaders;
 
+import static org.lwjgl.opengl.GL20.glUniform1f;
+import static org.lwjgl.opengl.GL20.glUniform3;
+import static org.lwjgl.opengl.GL20.glUniform4f;
+
 import java.nio.FloatBuffer;
+
+import maths.types.Matrix3;
+import maths.types.MatrixStack;
+import maths.types.Vector4;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.opengl.GL31;
 import org.lwjgl.util.vector.Vector4f;
 
 import renderer.GLWorld;
+import renderer.MaterialParams;
 
 public class GLGaussianShader extends GLShader {
 
@@ -22,22 +30,23 @@ public class GLGaussianShader extends GLShader {
 	// int modelToCameraMatrixUnif;
 	// int normalModelToCameraMatrixUnif;
 
-	int lightIntensityUnif;
-	int ambientIntensityUnif;
+	private int modelToCameraMatrixUniform;
 
-	int normalMatrixLocation;
-	int cameraSpaceLightPosUnif;
-	int lightAttenuationUnif;
-	int shininessFactorUnif;
-	int baseDiffuseColorUnif;
+	private int lightIntensityUniform;
+	private int ambientIntensityUniform;
+
+	private int normalModelToCameraMatrixUniform;
+	private int cameraSpaceLightPositionUniform;
+	private int lightAttenuationUniform;
+	private int shininessFactorUniform;
 
 	FloatBuffer vector4Buffer = null;
 
 	// This is used at the start of the program...
 	// private final int projectionBlockIndex = 2;
 
-	public GLGaussianShader(GLWorld glWorld) {
-		super(glWorld);
+	public GLGaussianShader(GLWorld glWorld, int projectionBlockIndex) {
+		super(glWorld, projectionBlockIndex);
 		vector4Buffer = BufferUtils.createFloatBuffer(4);
 
 		lightPos = new Vector4f(0.0f, 0.0f, 1.5f, 1.0f);
@@ -46,77 +55,37 @@ public class GLGaussianShader extends GLShader {
 	@Override
 	public void setupShaderVariables() {
 
-		projectionMatrixLocation = GL20.glGetUniformLocation(programID, "projectionMatrix");
-		viewMatrixLocation = GL20.glGetUniformLocation(programID, "viewMatrix");
-		modelMatrixLocation = GL20.glGetUniformLocation(programID, "modelMatrix");
+		modelToCameraMatrixUniform = GL20.glGetUniformLocation(programID, "modelToCameraMatrix");
+		lightIntensityUniform = GL20.glGetUniformLocation(programID, "lightIntensity");
+		ambientIntensityUniform = GL20.glGetUniformLocation(programID, "ambientIntensity");
 
-		// TODO: I've just taken this from the GLTexturedShader; without it I
-		// get an 'invalid operation' error, on the line
-		// GL20.glUniform4f(getFragColorLocation(), color[0], color[1],
-		// color[2], color[3]); in copyUniformsToShader(). I don't know if it's
-		// right, but it makes it work for me :)
-		// Allows for a colour in the fragment shader
-		fragColorLocation = GL20.glGetUniformLocation(programID, "fragColor");
+		normalModelToCameraMatrixUniform = GL20.glGetUniformLocation(programID, "normalModelToCameraMatrix");
+		cameraSpaceLightPositionUniform = GL20.glGetUniformLocation(programID, "cameraSpaceLightPos");
+		lightAttenuationUniform = GL20.glGetUniformLocation(programID, "lightAttenuation");
+		shininessFactorUniform = GL20.glGetUniformLocation(programID, "shininessFactor");
 
-		normalMatrixLocation = GL20.glGetUniformLocation(programID, "normalMatrix");
-		lightIntensityUnif = GL20.glGetUniformLocation(programID, "lightIntensity");
-		ambientIntensityUnif = GL20.glGetUniformLocation(programID, "ambientIntensity");
-
-		// normalModelToCameraMatrixUnif = glGetUniformLocation(programID,
-		// "normalModelToCameraMatrix");
-		cameraSpaceLightPosUnif = GL20.glGetUniformLocation(programID, "cameraSpaceLightPos");
-		lightAttenuationUnif = GL20.glGetUniformLocation(programID, "lightAttenuation");
-		shininessFactorUnif = GL20.glGetUniformLocation(programID, "shininessFactor");
-		baseDiffuseColorUnif = GL20.glGetUniformLocation(programID, "baseDiffuseColor");
-
-		// int projectionBlock = glGetUniformBlockIndex(programID,
-		// "Projection");
-		// glUniformBlockBinding(programID, projectionBlock,
-		// projectionBlockIndex);
+		int projectionBlock = GL31.glGetUniformBlockIndex(programID, "Projection");
+		GL31.glUniformBlockBinding(programID, projectionBlock, projectionBlockIndex);
 
 	}
 
+	// Copy all of the shader uniforms that are shared with all objects (i.e.
+	// only need to be sent once)
 	@Override
-	public void copyUniformsToShader(Matrix4f modelMatrix, Vector3f modelPos) {
+	public void copySharedUniformsToShader(Vector4 lightPosCameraSpace, MaterialParams materialParams) {
+		glUniform4f(lightIntensityUniform, 0.8f, 0.8f, 0.8f, 1);
+		glUniform4f(ambientIntensityUniform, 0.2f, 0.2f, 0.2f, 1);
+		glUniform3(cameraSpaceLightPositionUniform, lightPosCameraSpace.toBuffer());
+		glUniform1f(lightAttenuationUniform, lightAttenuation);
+		glUniform1f(shininessFactorUniform, materialParams.getSpecularValue());
 
-		modelMatrix.store(matrix44Buffer);
-		matrix44Buffer.flip();
+	}
 
-		GL20.glUniformMatrix4(getModelMatrixLocation(), false, matrix44Buffer);
-
-		Matrix4f normMatrix = new Matrix4f();
-		normMatrix.load(modelMatrix);
-		/*
-		 * normMatrix.m00 = modelMatrix.m00; normMatrix.m01 = modelMatrix.m01;
-		 * normMatrix.m02 = modelMatrix.m02; normMatrix.m03 = modelMatrix.m03;
-		 * normMatrix.m10 = modelMatrix.m10; normMatrix.m11 = modelMatrix.m11;
-		 * normMatrix.m12 = modelMatrix.m12; normMatrix.m13 = modelMatrix.m13;
-		 * normMatrix.m20 = modelMatrix.m20; normMatrix.m21 = modelMatrix.m21;
-		 * normMatrix.m22 = modelMatrix.m22; normMatrix.m23 = modelMatrix.m23;
-		 */
-
-		normMatrix.invert();
-		normMatrix.transpose();
-		normMatrix.store(matrix44Buffer);
-		matrix44Buffer.flip();
-		GL20.glUniformMatrix4(normalMatrixLocation, false, matrix44Buffer);
-
-		// GL20.glUniform4f(getFragColorLocation(), color[0], color[1],
-		// color[2], color[3]);
-
-		GL20.glUniform4f(lightIntensityUnif, DIR_LIGHT_INTENSITY, DIR_LIGHT_INTENSITY, DIR_LIGHT_INTENSITY, 1.0f);
-		GL20.glUniform4f(ambientIntensityUnif, AMB_LIGHT_INTENSITY, AMB_LIGHT_INTENSITY, AMB_LIGHT_INTENSITY, 1.0f);
-
-		// Matrix4f.transform(glWorld.viewMatrix, lightPos, lightPos);
-		// Matrix4f.transform(glWorld.projectionMatrix, lightPos, lightPos);
-
-		// Matrix4f.transform(modelMatrix, lightPos, lightPos);
-		lightPos.store(vector4Buffer);
-		vector4Buffer.flip();
-
-		GL20.glUniform3(cameraSpaceLightPosUnif, vector4Buffer);
-		GL20.glUniform1f(lightAttenuationUnif, lightAttenuation);
-		GL20.glUniform1f(shininessFactorUnif, shininessFactor);
-
+	// Copy the shaders that are specific to this model (i.e. any translations
+	// required. Possibly other things?
+	@Override
+	public void copySpecificUniformsToShader(MatrixStack modelMatrix) {
+		GL20.glUniformMatrix4(modelToCameraMatrixUniform, false, modelMatrix.getTop().toBuffer());
+		GL20.glUniformMatrix3(normalModelToCameraMatrixUniform, false, new Matrix3(modelMatrix.getTop()).inverse().transpose().toBuffer());
 	}
 }
