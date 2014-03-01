@@ -1,7 +1,6 @@
 package assets.world;
 
-import org.lwjgl.util.vector.Vector3f;
-
+import maths.types.Vector3;
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTileFactory;
 import assets.world.datastructures.DataStructureKey2D;
@@ -18,7 +17,7 @@ public class PolygonHeightmapTile extends AbstractTile {
 		this.heightmap = heightmap;
 	}
 
-	public PolygonHeightmapTile(DataStructureKey2D key, GLModel model, Vector3f tilePos) {
+	public PolygonHeightmapTile(DataStructureKey2D key, GLModel model, Vector3 tilePos) {
 		super(key, model, tilePos);
 	}
 
@@ -27,7 +26,7 @@ public class PolygonHeightmapTile extends AbstractTile {
 		if (this.model != null) {
 			throw new RuntimeException("You can only set the model once.");
 		}
-		Vector3f tileAngle = new Vector3f(0, 0, 0);
+		Vector3 tileAngle = new Vector3(0, 0, 0);
 		float tileScale = 1f;
 		float[] tileColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 

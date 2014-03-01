@@ -1,7 +1,7 @@
 package renderer.glprimitives;
 
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
+import maths.types.Vector3;
+import maths.types.Vector4;
 
 public class GLVertex {
 
@@ -38,9 +38,9 @@ public class GLVertex {
 	 * Probably not. Have also made this public to allow for quicker access. BAD
 	 * JON.
 	 **/
-	public Vector4f rgba;
-	public Vector4f nxnynznw;
-	public Vector4f xyzw;
+	public Vector4 rgba;
+	public Vector4 nxnynznw;
+	public Vector4 xyzw;
 	public int index;
 
 	/**
@@ -57,7 +57,7 @@ public class GLVertex {
 		this.index = index;
 	}
 
-	public GLVertex(int index, Vector4f xyzw, Vector4f rgba, Vector4f nxnynznw) {
+	public GLVertex(int index, Vector4 xyzw, Vector4 rgba, Vector4 nxnynznw) {
 		this.index = index;
 		this.xyzw = xyzw;
 		this.rgba = rgba;
@@ -82,15 +82,15 @@ public class GLVertex {
 	 * new Vector4f(x, y, z, 1f); this.rgba = rgba; }
 	 */
 
-	public GLVertex(int index, float x, float y, float z, Vector4f rgba) {
+	public GLVertex(int index, float x, float y, float z, Vector4 rgba) {
 		this.index = index;
-		this.xyzw = new Vector4f(x, y, z, 1f);
+		this.xyzw = new Vector4(x, y, z, 1f);
 		this.rgba = rgba;// new Vector4f(0, 0, 0, 1);
 	}
 
-	public GLVertex(int index, float x, float y, float z, Vector4f rgba, Vector4f nxnynznw) {
+	public GLVertex(int index, float x, float y, float z, Vector4 rgba, Vector4 nxnynznw) {
 		this.index = index;
-		this.xyzw = new Vector4f(x, y, z, 1f);
+		this.xyzw = new Vector4(x, y, z, 1f);
 		this.rgba = rgba;
 		this.nxnynznw = nxnynznw;
 	}
@@ -108,24 +108,24 @@ public class GLVertex {
 		this.setNXNYNZNW(nx, ny, nz, 1f);
 	}
 
-	public void setNXNYNZ(Vector3f nxnynznw) {
-		this.setNXNYNZNW(nxnynznw.x, nxnynznw.y, nxnynznw.z, 1f);
+	public void setNXNYNZ(Vector3 nxnynznw) {
+		this.setNXNYNZNW(nxnynznw.x(), nxnynznw.y(), nxnynznw.z(), 1f);
 	}
 
 	public void setXYZW(float x, float y, float z, float w) {
-		this.xyzw = new Vector4f(x, y, z, w);
+		this.xyzw = new Vector4(x, y, z, w);
 	}
 
 	public void setRGBA(float r, float g, float b, float a) {
-		this.rgba = new Vector4f(r, g, b, 1f);
+		this.rgba = new Vector4(r, g, b, 1f);
 	}
 
-	public void setRGBA(Vector4f rgba) {
+	public void setRGBA(Vector4 rgba) {
 		this.rgba = rgba;
 	}
 
 	public void setNXNYNZNW(float nx, float ny, float nz, float nw) {
-		this.nxnynznw = new Vector4f(nx, ny, nz, nw);
+		this.nxnynznw = new Vector4(nx, ny, nz, nw);
 	}
 
 	// Getters
@@ -134,20 +134,20 @@ public class GLVertex {
 		int i = 0;
 
 		// Insert XYZW elements
-		out[i++] = this.xyzw.x;
-		out[i++] = this.xyzw.y;
-		out[i++] = this.xyzw.z;
-		out[i++] = this.xyzw.w;
+		out[i++] = this.xyzw.x();
+		out[i++] = this.xyzw.y();
+		out[i++] = this.xyzw.z();
+		out[i++] = this.xyzw.w();
 		// Insert RGBA elements
-		out[i++] = this.rgba.x;
-		out[i++] = this.rgba.y;
-		out[i++] = this.rgba.z;
-		out[i++] = this.rgba.w;
+		out[i++] = this.rgba.x();
+		out[i++] = this.rgba.y();
+		out[i++] = this.rgba.z();
+		out[i++] = this.rgba.w();
 		// Insert ST elements
-		out[i++] = this.nxnynznw.x;
-		out[i++] = this.nxnynznw.y;
-		out[i++] = this.nxnynznw.z;
-		out[i++] = this.nxnynznw.w;
+		out[i++] = this.nxnynznw.x();
+		out[i++] = this.nxnynznw.y();
+		out[i++] = this.nxnynznw.z();
+		out[i++] = this.nxnynznw.w();
 
 		return out;
 	}
@@ -157,36 +157,36 @@ public class GLVertex {
 	 * some of them are different sizes, to be consistent, it makes sense. Ho
 	 * hum.
 	 **/
-	public Vector4f getXYZW() {
-		return new Vector4f(this.xyzw);
+	public Vector4 getXYZW() {
+		return new Vector4(this.xyzw);
 	}
 
-	public Vector3f getXYZ() {
-		return new Vector3f(this.xyzw.x, this.xyzw.y, this.xyzw.z);
+	public Vector3 getXYZ() {
+		return new Vector3(this.xyzw.x(), this.xyzw.y(), this.xyzw.z());
 	}
 
-	public Vector4f getRGBA() {
-		return new Vector4f(this.rgba);
+	public Vector4 getRGBA() {
+		return new Vector4(this.rgba);
 	}
 
-	public Vector3f getRGB() {
-		return new Vector3f(this.rgba.x, this.rgba.y, this.rgba.z);
+	public Vector3 getRGB() {
+		return new Vector3(this.rgba.x(), this.rgba.y(), this.rgba.z());
 	}
 
-	public Vector4f getNXNYNZNW() {
-		return new Vector4f(this.nxnynznw);
+	public Vector4 getNXNYNZNW() {
+		return new Vector4(this.nxnynznw);
 	}
 
-	public Vector3f getNXNYNZ() {
-		return new Vector3f(this.nxnynznw.x, this.nxnynznw.y, this.nxnynznw.z);
+	public Vector3 getNXNYNZ() {
+		return new Vector3(this.nxnynznw.x(), this.nxnynznw.y(), this.nxnynznw.z());
 	}
 
 	@Override
 	public Object clone() {
 		GLVertex cloned = new GLVertex();
-		cloned.setXYZW(this.xyzw.x, this.xyzw.y, this.xyzw.z, this.xyzw.w);
-		cloned.setRGBA(this.rgba.x, this.rgba.y, this.rgba.z, this.rgba.w);
-		cloned.setNXNYNZNW(this.nxnynznw.x, this.nxnynznw.y, this.nxnynznw.z, this.nxnynznw.w);
+		cloned.setXYZW(this.xyzw.x(), this.xyzw.y(), this.xyzw.z(), this.xyzw.w());
+		cloned.setRGBA(this.rgba.x(), this.rgba.y(), this.rgba.z(), this.rgba.w());
+		cloned.setNXNYNZNW(this.nxnynznw.x(), this.nxnynznw.y(), this.nxnynznw.z(), this.nxnynznw.w());
 		return cloned;
 	}
 }

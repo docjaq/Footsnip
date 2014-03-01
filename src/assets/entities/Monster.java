@@ -31,19 +31,19 @@ public class Monster extends Entity {
 	}
 
 	public void moveLeft() {
-		model.modelPos.x -= POS_DELTA;
+		model.modelPos.x(model.modelPos.x() - POS_DELTA);
 	}
 
 	public void moveRight() {
-		model.modelPos.x += POS_DELTA;
+		model.modelPos.x(model.modelPos.x() + POS_DELTA);
 	}
 
 	public void moveUp() {
-		model.modelPos.y += POS_DELTA;
+		model.modelPos.y(model.modelPos.y() + POS_DELTA);
 	}
 
 	public void moveDown() {
-		model.modelPos.y -= POS_DELTA;
+		model.modelPos.y(model.modelPos.y() - POS_DELTA);
 	}
 
 	public void moveRandom() {
@@ -76,9 +76,9 @@ public class Monster extends Entity {
 	 */
 
 	public void rotate(int timeDelta) {
-		model.modelAngle.z += rotationDelta * timeDelta;
-		model.modelAngle.y += rotationDelta * timeDelta;
-		model.modelAngle.x += rotationDelta * timeDelta;
+		model.modelAngle.z(model.modelAngle.z() + rotationDelta * timeDelta);
+		model.modelAngle.y(model.modelAngle.y() + rotationDelta * timeDelta);
+		model.modelAngle.x(model.modelAngle.x() + rotationDelta * timeDelta);
 	}
 
 	@Override

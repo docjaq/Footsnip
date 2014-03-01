@@ -3,13 +3,12 @@ package renderer.glmodels;
 import static maths.LinearAlgebra.degreesToRadians;
 import static renderer.GLUtilityMethods.exitOnGLError;
 import maths.types.MatrixStack;
+import maths.types.Vector3;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 
 import renderer.GLWorld;
 import renderer.glshaders.GLShader;
@@ -23,9 +22,9 @@ import renderer.glshaders.GLShader;
 public abstract class GLModel {
 
 	// Model positions
-	public Vector3f modelPos;
-	public Vector3f modelAngle;
-	private Vector3f modelScale;
+	public Vector3 modelPos;
+	public Vector3 modelAngle;
+	private Vector3 modelScale;
 
 	// Model GL Variables
 	protected int vaoId = 0;
@@ -42,29 +41,29 @@ public abstract class GLModel {
 	// This could actually just be static or a single object in the renderer.
 	// Having one per model is a waste, though not really much of an overhead
 	// for now
-	protected Matrix4f modelMatrix;
+	// protected Matrix4f modelMatrix;
 
 	// public String debugType;
 
-	public GLModel(Vector3f modelPos, Vector3f modelAngle, float modelScale) {
+	public GLModel(Vector3 modelPos, Vector3 modelAngle, float modelScale) {
 		// Set the default quad rotation, scale and position values
 		this.modelPos = modelPos;
 		this.modelAngle = modelAngle;
-		this.modelScale = new Vector3f(1.0f, 1.0f, 1.0f);
+		this.modelScale = new Vector3(1.0f, 1.0f, 1.0f);
 		setModelScale(modelScale);
 		// this.shader = shader;
 
-		modelMatrix = new Matrix4f();
+		// modelMatrix = new Matrix4f();
 	}
 
 	public void draw(GLShader shader, MatrixStack modelMatrix) {
 
 		// transform();
-		modelMatrix.getTop().translate(modelPos.x, modelPos.y, modelPos.z);
+		modelMatrix.getTop().translate(modelPos.x(), modelPos.y(), modelPos.z());
 
-		modelMatrix.getTop().rotate(degreesToRadians(modelAngle.z), GLWorld.BASIS_Z);
-		modelMatrix.getTop().rotate(degreesToRadians(modelAngle.y), GLWorld.BASIS_Y);
-		modelMatrix.getTop().rotate(degreesToRadians(modelAngle.x), GLWorld.BASIS_X);
+		modelMatrix.getTop().rotate(degreesToRadians(modelAngle.z()), GLWorld.BASIS_Z);
+		modelMatrix.getTop().rotate(degreesToRadians(modelAngle.y()), GLWorld.BASIS_Y);
+		modelMatrix.getTop().rotate(degreesToRadians(modelAngle.x()), GLWorld.BASIS_X);
 
 		shader.copySpecificUniformsToShader(modelMatrix);
 
@@ -128,7 +127,7 @@ public abstract class GLModel {
 
 	public void transform() {
 		// This order is important for building the matrix
-		clearModelMatrix();
+		// clearModelMatrix();
 
 		// modelMatrix.scale(modelScale);
 		// modelMatrix.translate(modelPos);
@@ -154,10 +153,10 @@ public abstract class GLModel {
 
 	// ATTENTION:Setting it to the identity seems more efficient than creating a
 	// new one?
-	protected void clearModelMatrix() {
-		// modelMatrix = new Matrix4f();
-		modelMatrix.setIdentity();
-	}
+	// protected void clearModelMatrix() {
+	// modelMatrix = new Matrix4f();
+	// modelMatrix.setIdentity();
+	// }
 
 	public void setModelScale(float modelScale) {
 		/**
@@ -165,15 +164,13 @@ public abstract class GLModel {
 		 * This means that we can compute the bounding sphere more easily at
 		 * runtime
 		 **/
-		this.modelScale.x = modelScale;
-		this.modelScale.y = modelScale;
-		this.modelScale.z = modelScale;
+		this.modelScale.set(modelScale, modelScale, modelScale);
 
 		radius *= getModelScale();
 	}
 
 	public float getModelScale() {
-		return modelScale.x;
+		return modelScale.x();
 	}
 
 	public float getRadius() {

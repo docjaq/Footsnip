@@ -1,8 +1,8 @@
 package renderer.glmodels;
 
-import org.lwjgl.util.vector.Vector3f;
+import maths.types.Vector3;
 
 public interface GLProjectileFactory {
-	public GLModel create(Vector3f position, Vector3f angle, float scale, float[] color);
+	public GLModel create(Vector3 position, Vector3 angle, float scale, float[] color);
 
 }

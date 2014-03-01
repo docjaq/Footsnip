@@ -10,8 +10,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import org.lwjgl.util.vector.Vector4f;
-
+import maths.types.Vector4;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
 import exception.GameException;
@@ -43,7 +42,7 @@ public class Ply extends AbstractGeometryFile {
 		return vertices;
 	}
 
-	public void read(File file, Vector4f color) {
+	public void read(File file, Vector4 color) {
 
 		try {
 			Scanner scanner = new Scanner(new BufferedReader(new FileReader(file)));
@@ -79,7 +78,7 @@ public class Ply extends AbstractGeometryFile {
 		triangles = new ArrayList<GLTriangle>(numFaces);
 	}
 
-	private void readGeometry(Scanner scanner, Vector4f color) {
+	private void readGeometry(Scanner scanner, Vector4 color) {
 
 		for (int i = 0; i < numVertices; i++) {
 			String line = scanner.nextLine();
@@ -113,10 +112,10 @@ public class Ply extends AbstractGeometryFile {
 			out.newLine();
 
 			for (GLVertex v : vertices) {
-				out.write(Float.toString(v.xyzw.x) + " " + Float.toString(v.xyzw.y) + " " + Float.toString(v.xyzw.z) + " "
-						+ Float.toString(v.nxnynznw.x) + " " + Float.toString(v.nxnynznw.y) + " " + Float.toString(v.nxnynznw.z));
-				out.newLine();
+				out.write(Float.toString(v.xyzw.x()) + " " + Float.toString(v.xyzw.y()) + " " + Float.toString(v.xyzw.z()) + " "
+						+ Float.toString(v.nxnynznw.x()) + " " + Float.toString(v.nxnynznw.y()) + " " + Float.toString(v.nxnynznw.z()));
 			}
+			out.newLine();
 
 			for (GLTriangle t : triangles) {
 

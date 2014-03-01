@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import maths.types.MatrixStack;
-
-import org.lwjgl.util.vector.Vector3f;
-
+import maths.types.Vector3;
 import renderer.glmodels.GLTileFactory;
 import renderer.glshaders.GLShader;
 import util.MousePoles.ObjectPole;
@@ -81,7 +79,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 		int adjustedX = parentKey.x + xAdjust;
 		int adjustedY = parentKey.y + yAdjust;
-		Vector3f position = new Vector3f(adjustedX * tile.getSize(), adjustedY * tile.getSize(), 0);
+		Vector3 position = new Vector3(adjustedX * tile.getSize(), adjustedY * tile.getSize(), 0);
 		DataStructureKey2D key = new DataStructureKey2D(adjustedX, adjustedY);
 
 		if (map.containsKey(key)) {

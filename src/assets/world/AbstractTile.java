@@ -3,8 +3,7 @@ package assets.world;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.util.vector.Vector3f;
-
+import maths.types.Vector3;
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTileFactory;
 import assets.Asset;
@@ -14,14 +13,14 @@ import assets.world.datastructures.DataStructureKey2D;
 public abstract class AbstractTile implements Asset {
 
 	protected GLModel model;
-	protected Vector3f tilePos; // I don't like this, it should be temporary
+	protected Vector3 tilePos; // I don't like this, it should be temporary
 	protected DataStructureKey2D key;
 
 	protected List<Entity> containedEntities;
 
 	public static final float SIZE = 1.0f;
 
-	public AbstractTile(DataStructureKey2D key, GLModel model, Vector3f tilePos) {
+	public AbstractTile(DataStructureKey2D key, GLModel model, Vector3 tilePos) {
 		this.key = key;
 		this.model = model;
 		this.tilePos = tilePos;

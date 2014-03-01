@@ -1,6 +1,6 @@
 package maths;
 
-import org.lwjgl.util.vector.Vector3f;
+import maths.types.Vector3;
 
 public class LinearAlgebra {
 
@@ -56,12 +56,12 @@ public class LinearAlgebra {
 		return crossProduct;
 	}
 
-	public static float euclideanDistance(Vector3f a, Vector3f b) {
-		float dx = a.x - b.x;
+	public static float euclideanDistance(Vector3 a, Vector3 b) {
+		float dx = a.x() - b.x();
 		dx *= dx;
-		float dy = a.y - b.y;
+		float dy = a.y() - b.y();
 		dy *= dy;
-		float dz = a.z - b.z;
+		float dz = a.z() - b.z();
 		dz *= dz;
 
 		return (float) Math.sqrt(dx + dy + dz);

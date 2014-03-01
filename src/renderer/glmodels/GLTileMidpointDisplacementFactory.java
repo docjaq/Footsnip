@@ -3,9 +3,8 @@ package renderer.glmodels;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
-
+import maths.types.Vector3;
+import maths.types.Vector4;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
 import TerrainGeneration.PlasmaFractalFactory;
@@ -49,7 +48,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		generatePlanarMesh();
 	}
 
-	public GLMesh create(AbstractTile tile, Vector3f position, Vector3f rotation, float scale, float size) {
+	public GLMesh create(AbstractTile tile, Vector3 position, Vector3 rotation, float scale, float size) {
 		/*
 		 * TODO: Create copy of factoryVertices, and a copy of factoryTriangles.
 		 * Currently not doing this, as it will screw up the references between
@@ -134,8 +133,8 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	private void adjustMeshAccordingToHeightmap(float[][] heightmap, List<GLVertex> vertices) {
 		int x = 0, y = 0;
 		for (GLVertex v : vertices) {
-			v.xyzw.z = heightmap[x][y] - 0.5f; // was 0.3f
-			v.rgba = new Vector4f(Math.abs(v.xyzw.z * 2) + 0.4f, 0.4f, 0.6f, 1f);
+			v.xyzw.z(heightmap[x][y] - 0.5f); // was 0.3f
+			v.rgba = new Vector4(Math.abs(v.xyzw.z() * 2) + 0.4f, 0.4f, 0.6f, 1f);
 			x++;
 			if (x == tileComplexity) {
 				x = 0;
@@ -211,16 +210,16 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	}
 
 	public static void addNormalToTriangle(GLVertex v0, GLVertex v1, GLVertex v2) {
-		Vector3f vn0 = Vector3f.cross(Vector3f.sub(v1.getXYZ(), v0.getXYZ(), null), Vector3f.sub(v2.getXYZ(), v0.getXYZ(), null), null);
-		vn0.normalise();
+		Vector3 vn0 = Vector3.sub(v1.getXYZ(), v0.getXYZ()).cross(Vector3.sub(v2.getXYZ(), v0.getXYZ()));
+		vn0.normalize();
 		v0.setNXNYNZ(vn0);
 
-		Vector3f vn1 = Vector3f.cross(Vector3f.sub(v2.getXYZ(), v1.getXYZ(), null), Vector3f.sub(v0.getXYZ(), v1.getXYZ(), null), null);
-		vn1.normalise();
+		Vector3 vn1 = Vector3.sub(v2.getXYZ(), v1.getXYZ()).cross(Vector3.sub(v0.getXYZ(), v1.getXYZ()));
+		vn1.normalize();
 		v1.setNXNYNZ(vn1);
 
-		Vector3f vn2 = Vector3f.cross(Vector3f.sub(v0.getXYZ(), v2.getXYZ(), null), Vector3f.sub(v1.getXYZ(), v2.getXYZ(), null), null);
-		vn2.normalise();
+		Vector3 vn2 = Vector3.sub(v0.getXYZ(), v2.getXYZ()).cross(Vector3.sub(v1.getXYZ(), v2.getXYZ()));
+		vn2.normalize();
 		v2.setNXNYNZ(vn2);
 	}
 }

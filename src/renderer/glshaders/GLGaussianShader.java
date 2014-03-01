@@ -73,8 +73,8 @@ public class GLGaussianShader extends GLShader {
 	// only need to be sent once)
 	@Override
 	public void copySharedUniformsToShader(Vector4 lightPosCameraSpace, MaterialParams materialParams) {
-		glUniform4f(lightIntensityUniform, 0.8f, 0.8f, 0.8f, 1);
-		glUniform4f(ambientIntensityUniform, 0.2f, 0.2f, 0.2f, 1);
+		glUniform4f(lightIntensityUniform, 1.8f, 1.8f, 1.8f, 1);
+		glUniform4f(ambientIntensityUniform, 0.05f, 0.05f, 0.05f, 1);
 		glUniform3(cameraSpaceLightPositionUniform, lightPosCameraSpace.toBuffer());
 		glUniform1f(lightAttenuationUniform, lightAttenuation);
 		glUniform1f(shininessFactorUniform, materialParams.getSpecularValue());

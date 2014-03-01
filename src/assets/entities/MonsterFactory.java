@@ -1,18 +1,16 @@
 package assets.entities;
 
+import maths.types.Vector3;
 import mesh.GeometryFile;
-
-import org.lwjgl.util.vector.Vector3f;
-
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glshaders.GLShader;
 
 public class MonsterFactory {
 
-	public static Monster create(GeometryFile mesh, GLShader shader, Vector3f monsterPos, float rotationDelta) {
+	public static Monster create(GeometryFile mesh, GLShader shader, Vector3 monsterPos, float rotationDelta) {
 
-		Vector3f monsterAngle = new Vector3f(0, 0, 0);
+		Vector3 monsterAngle = new Vector3(0, 0, 0);
 		float monsterScale = 1f;
 
 		/**

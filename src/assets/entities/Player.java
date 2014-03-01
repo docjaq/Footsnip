@@ -2,9 +2,7 @@ package assets.entities;
 
 import main.GameControl;
 import maths.LinearAlgebra;
-
-import org.lwjgl.util.vector.Vector3f;
-
+import maths.types.Vector3;
 import renderer.glmodels.GLModel;
 import assets.world.AbstractTile;
 import assets.world.datastructures.TileDataStructure2D;
@@ -33,13 +31,13 @@ public class Player extends Entity {
 
 	private float rotationDelta;
 
-	private Vector3f movementVector;
+	private Vector3 movementVector;
 
-	public Vector3f getMovementVector() {
+	public Vector3 getMovementVector() {
 		return movementVector;
 	}
 
-	private Vector3f currentDirectionVector;
+	private Vector3 currentDirectionVector;
 
 	public Player(GLModel model, String name, int age, float[] color) {
 		super(model, name);
@@ -47,15 +45,15 @@ public class Player extends Entity {
 		this.color = color;
 
 		rotationDelta = DEFAULT_ROTATION_SPEED;
-		this.movementVector = new Vector3f(0f, 0f, 0f);
-		this.currentDirectionVector = new Vector3f(0f, 0f, 0f);
+		this.movementVector = new Vector3(0f, 0f, 0f);
+		this.currentDirectionVector = new Vector3(0f, 0f, 0f);
 
-		this.defaultYaw = model.modelAngle.x;
+		this.defaultYaw = model.modelAngle.x();
 	}
 
 	public void setModel(GLModel model) {
 		super.setModel(model);
-		this.defaultYaw = model.modelAngle.x;
+		this.defaultYaw = model.modelAngle.x();
 	}
 
 	public int getAge() {
@@ -67,12 +65,12 @@ public class Player extends Entity {
 	}
 
 	public void move(int timeDelta) {
-		model.modelPos.x += movementVector.x * DEFAULT_MOVEMENT_SPEED * timeDelta;
-		model.modelPos.y += movementVector.y * DEFAULT_MOVEMENT_SPEED * timeDelta;
+		model.modelPos.x(model.modelPos.x() + movementVector.x() * DEFAULT_MOVEMENT_SPEED * timeDelta);
+		model.modelPos.y(model.modelPos.y() + movementVector.y() * DEFAULT_MOVEMENT_SPEED * timeDelta);
 	}
 
 	public void rotateCCW(int timeDelta) {
-		model.modelAngle.z += rotationDelta * timeDelta;
+		model.modelAngle.z(model.modelAngle.z() + rotationDelta * timeDelta);
 		/** Currently looks a bit crap */
 		/*
 		 * yawDiff -= rotationDelta; capMinYaw(); model.modelAngle.x =
@@ -81,7 +79,7 @@ public class Player extends Entity {
 	}
 
 	public void rotateCW(int timeDelta) {
-		model.modelAngle.z -= rotationDelta * timeDelta;
+		model.modelAngle.z(model.modelAngle.z() - rotationDelta * timeDelta);
 		/** Currently looks a bit crap */
 		/*
 		 * yawDiff += rotationDelta; capMaxYaw(); model.modelAngle.x =
@@ -95,7 +93,7 @@ public class Player extends Entity {
 
 	public void resetRotationSpeed() {
 		rotationDelta = DEFAULT_ROTATION_SPEED;
-		model.modelAngle.x = defaultYaw;
+		model.modelAngle.x(defaultYaw);
 		// yawDiff = 0;
 	}
 
@@ -103,20 +101,20 @@ public class Player extends Entity {
 
 		AudioEngine.getInstance().playPlayerSound();
 
-		currentDirectionVector.x = (float) Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z));
-		currentDirectionVector.y = (float) Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z));
-		currentDirectionVector.scale(MOVEMENT_ACCELERATION);
+		currentDirectionVector.x((float) Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z())));
+		currentDirectionVector.y((float) Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z())));
+		currentDirectionVector.mult(MOVEMENT_ACCELERATION);
 
-		Vector3f.add(movementVector, currentDirectionVector, movementVector);
+		movementVector.add(currentDirectionVector);
 		capMaxMovementSpeed();
 	}
 
 	public void decelerateMovement() {
-		currentDirectionVector.x = (float) Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z));
-		currentDirectionVector.y = (float) Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z));
-		currentDirectionVector.scale(MOVEMENT_ACCELERATION);
+		currentDirectionVector.x((float) Math.cos(LinearAlgebra.degreesToRadians(model.modelAngle.z())));
+		currentDirectionVector.y((float) Math.sin(LinearAlgebra.degreesToRadians(model.modelAngle.z())));
+		currentDirectionVector.mult(MOVEMENT_ACCELERATION);
 
-		Vector3f.sub(movementVector, currentDirectionVector, movementVector);
+		movementVector.sub(currentDirectionVector);
 		capMaxMovementSpeed();
 	}
 
@@ -124,8 +122,8 @@ public class Player extends Entity {
 		float currentSpeed = movementVector.length();
 		if (currentSpeed > MAX_MOVEMENT_SPEED) {
 			float diff = MAX_MOVEMENT_SPEED / currentSpeed;
-			movementVector.x *= diff;
-			movementVector.y *= diff;
+			movementVector.x(movementVector.x() * diff);
+			movementVector.y(movementVector.y() * diff);
 		}
 	}
 
@@ -133,9 +131,9 @@ public class Player extends Entity {
 
 		AudioEngine.getInstance().playProjectileSound();
 
-		Vector3f position = new Vector3f(this.model.modelPos);
-		Vector3f angle = new Vector3f(this.model.modelAngle);
-		Vector3f movementVector = new Vector3f(this.movementVector);
+		Vector3 position = new Vector3(this.model.modelPos);
+		Vector3 angle = new Vector3(this.model.modelAngle);
+		Vector3 movementVector = new Vector3(this.movementVector);
 		float scale = 1.0f;
 
 		return new Projectile(position, angle, scale, movementVector);
@@ -149,9 +147,9 @@ public class Player extends Entity {
 
 	// DEBUG: Just to debug the model geometry
 	public void rotate(int timeDelta) {
-		model.modelAngle.z += rotationDelta * timeDelta;
-		model.modelAngle.y += rotationDelta * timeDelta;
-		model.modelAngle.x += rotationDelta * timeDelta;
+		model.modelAngle.z(model.modelAngle.z() + rotationDelta * timeDelta);
+		model.modelAngle.y(model.modelAngle.y() + rotationDelta * timeDelta);
+		model.modelAngle.x(model.modelAngle.x() + rotationDelta * timeDelta);
 	}
 
 	@Override

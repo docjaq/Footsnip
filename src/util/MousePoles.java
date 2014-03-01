@@ -238,11 +238,11 @@ public class MousePoles {
 			degSpinRotation = data.degSpinRotation;
 		}
 
-		public ViewData(Vector3 v, Quaternion q, float r, float d) {
-			targetPos = v;
-			orient = q.copy();
-			radius = r;
-			degSpinRotation = d;
+		public ViewData(Vector3 targetPos, Quaternion orient, float radius, float degSpinRotation) {
+			this.targetPos = targetPos;
+			this.orient = orient.copy();
+			this.radius = radius;
+			this.degSpinRotation = degSpinRotation;
 		}
 	}
 

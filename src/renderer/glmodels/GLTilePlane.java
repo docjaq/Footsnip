@@ -7,13 +7,14 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import maths.types.Vector3;
+import maths.types.Vector4;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 
 import renderer.glprimitives.GLVertex;
 
@@ -22,17 +23,17 @@ public class GLTilePlane extends GLModel {
 	// final static float length = 1f;
 	final static float zOffset = -0.01f;
 
-	public GLTilePlane(Vector3f modelPos, Vector3f modelAngle, float modelScale, float size) {
+	public GLTilePlane(Vector3 modelPos, Vector3 modelAngle, float modelScale, float size) {
 		super(modelPos, modelAngle, modelScale);
 
-		Vector4f rgba = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
+		Vector4 rgba = new Vector4((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
 		float halfSize = size / 2.0f;
 
 		List<GLVertex> vertexList = new ArrayList<GLVertex>(4);
-		vertexList.add(new GLVertex(0, new Vector4f(-halfSize, -halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
-		vertexList.add(new GLVertex(1, new Vector4f(-halfSize, halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
-		vertexList.add(new GLVertex(2, new Vector4f(halfSize, halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
-		vertexList.add(new GLVertex(3, new Vector4f(halfSize, -halfSize, zOffset, 1), rgba, new Vector4f(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(0, new Vector4(-halfSize, -halfSize, zOffset, 1), rgba, new Vector4(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(1, new Vector4(-halfSize, halfSize, zOffset, 1), rgba, new Vector4(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(2, new Vector4(halfSize, halfSize, zOffset, 1), rgba, new Vector4(0, 0, 1, 1)));
+		vertexList.add(new GLVertex(3, new Vector4(halfSize, -halfSize, zOffset, 1), rgba, new Vector4(0, 0, 1, 1)));
 
 		System.out.println("Lists: " + "null" + "," + vertexList.size());
 
