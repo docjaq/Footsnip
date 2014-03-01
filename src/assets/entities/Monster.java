@@ -1,5 +1,9 @@
 package assets.entities;
 
+import java.nio.FloatBuffer;
+
+import org.lwjgl.BufferUtils;
+
 import renderer.glmodels.GLModel;
 import audio.AudioEngine;
 import collision.Collidable;
@@ -99,7 +103,7 @@ public class Monster extends Entity {
 	public boolean isDestroyable() {
 
 		if (health <= 0) {
-			AudioEngine.getInstance().playMonsterSound();
+			AudioEngine.getInstance().playMonsterSound(getPosition());
 			destroyable = true;
 		}
 
@@ -108,6 +112,11 @@ public class Monster extends Entity {
 		}
 
 		return destroyable;
+	}
+
+	private FloatBuffer getPosition() {
+		return (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { model.modelPos.x, model.modelPos.y, model.modelPos.z })
+				.rewind();
 	}
 
 	public int getHealth() {

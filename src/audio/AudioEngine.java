@@ -1,7 +1,6 @@
 package audio;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -10,6 +9,8 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.util.WaveData;
+
+import util.FileUtil;
 
 public class AudioEngine {
 
@@ -48,11 +49,11 @@ public class AudioEngine {
 	private void init() {
 		try {
 			AL.create();
+			checkForErrors();
 		} catch (LWJGLException e) {
 			throw new AudioException("Error initialising AudioEngine", e);
 		}
 
-		checkForErrors();
 	}
 
 	private void checkForErrors() {
@@ -67,79 +68,80 @@ public class AudioEngine {
 
 		checkForErrors();
 
-		loadAudioFile("resources/audio/Rocket_vshort.wav", SoundType.PLAYER);
-		loadAudioFile("resources/audio/Explode.wav", SoundType.MONSTER);
-		loadAudioFile("resources/audio/Shot.wav", SoundType.PROJECTILE);
+		loadAudioFiles();
 
 		// Bind the buffer with the source.
 		AL10.alGenSources(source);
 
 		checkForErrors();
 
-		setupAudioSource(SoundType.PLAYER, 0.8f);
-		setupAudioSource(SoundType.MONSTER, 1.0f);
-		setupAudioSource(SoundType.PROJECTILE, 0.2f);
+		setupAudioSources();
 
 		checkForErrors();
 	}
 
-	private void loadAudioFile(String fileLocation, SoundType soundType) {
-		BufferedInputStream bis = loadFile(fileLocation);
+	private void loadAudioFiles() {
+		for (SoundType soundType : SoundType.values()) {
+			loadAudioFile(soundType);
+		}
+	}
+
+	private void loadAudioFile(SoundType soundType) {
+		BufferedInputStream bis = FileUtil.loadFile(soundType.fileLocation());
 		WaveData waveFile = WaveData.create(bis);
-		closeFile(bis);
+		FileUtil.closeFile(bis);
 
 		AL10.alBufferData(buffer.get(soundType.index()), waveFile.format, waveFile.data, waveFile.samplerate);
 		waveFile.dispose();
 	}
 
-	private void closeFile(BufferedInputStream bis) {
-		try {
-			bis.close();
-		} catch (java.io.IOException ex) {
-			throw new AudioException("Error closing wav file.", ex);
+	private void setupAudioSources() {
+		for (SoundType soundType : SoundType.values()) {
+			setupAudioSource(soundType);
 		}
 	}
 
-	private BufferedInputStream loadFile(String fileLocation) {
-		try {
-			return new BufferedInputStream(new FileInputStream(fileLocation));
-		} catch (java.io.FileNotFoundException ex) {
-			throw new AudioException("Error reading wav file.", ex);
-		}
+	private void setSourcePosition(SoundType soundType, FloatBuffer position) {
+		AL10.alSource(source.get(soundType.index()), AL10.AL_POSITION, position);
 	}
 
-	private void setupAudioSource(SoundType soundType, float gain) {
+	private void setupAudioSource(SoundType soundType) {
 		int index = soundType.index();
 		AL10.alSourcei(source.get(index), AL10.AL_BUFFER, buffer.get(index));
 		AL10.alSourcef(source.get(index), AL10.AL_PITCH, 1.0f);
-		AL10.alSourcef(source.get(index), AL10.AL_GAIN, gain);
-		AL10.alSource(source.get(index), AL10.AL_POSITION, (FloatBuffer) sourcePos.position(index * 3));
+		AL10.alSourcef(source.get(index), AL10.AL_GAIN, soundType.gain());
+		setSourcePosition(soundType, (FloatBuffer) sourcePos.position(index * 3));
 		AL10.alSource(source.get(index), AL10.AL_VELOCITY, (FloatBuffer) sourceVel.position(index * 3));
 	}
 
-	void setListenerValues() {
+	private void setListenerValues() {
 		AL10.alListener(AL10.AL_POSITION, listenerPos);
 		AL10.alListener(AL10.AL_VELOCITY, listenerVel);
 		AL10.alListener(AL10.AL_ORIENTATION, listenerOri);
 	}
 
-	void killALData() {
+	private void killALData() {
 		AL10.alDeleteSources(source);
 		AL10.alDeleteBuffers(buffer);
 	}
 
 	public void playPlayerSound() {
 		if (AL10.alGetSourcei(source.get(SoundType.PLAYER.index()), AL10.AL_SOURCE_STATE) != AL10.AL_PLAYING) {
-			AL10.alSourcePlay(source.get(SoundType.PLAYER.index()));
+			// play(SoundType.PLAYER);
 		}
 	}
 
-	public void playMonsterSound() {
-		AL10.alSourcePlay(source.get(SoundType.MONSTER.index()));
+	public void playMonsterSound(FloatBuffer position) {
+		setSourcePosition(SoundType.MONSTER, position);
+		play(SoundType.MONSTER);
 	}
 
 	public void playProjectileSound() {
-		AL10.alSourcePlay(source.get(SoundType.PROJECTILE.index()));
+		// play(SoundType.PROJECTILE);
+	}
+
+	private void play(SoundType soundType) {
+		AL10.alSourcePlay(source.get(soundType.index()));
 	}
 
 	public void close() {
