@@ -76,7 +76,6 @@ public class Renderer_3_2 extends RendererThread {
 	/** The number of frames rendered since lastFPSUpdate. */
 	private int framesThisSecond;
 
-	private GLWorld glWorld;
 	private int projectionUniformBuffer;
 	private final int projectionBlockIndex = 2;
 	private ViewPole viewPole;
@@ -96,9 +95,6 @@ public class Renderer_3_2 extends RendererThread {
 		float[] backgroundColor = { 1f, 1f, 1f, 1.0f };
 		setupOpenGL(WIDTH, HEIGHT, WINDOW_TITLE, backgroundColor, projectionUniformBuffer, projectionBlockIndex);
 
-		// Camera is actually static at this stage
-		glWorld = new GLWorld(WIDTH, HEIGHT, new Vector3(0, 0, 0));
-
 		// Vector3: Target position of camera focus
 		// Quaternion: Orientation of the camera relative to the target
 		// Distance (or radius) from target
@@ -116,7 +112,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		shaderMap = new HashMap<Class<?>, GLShader>();
 
-		GLShader currentShader = new GLGaussianShader(glWorld, projectionBlockIndex);
+		GLShader currentShader = new GLGaussianShader(projectionBlockIndex);
 		currentShader.create(DEFAULT_SHADER_LOCATION);
 		shaderMap.put(defaultShaderClass, currentShader);
 
@@ -128,31 +124,25 @@ public class Renderer_3_2 extends RendererThread {
 
 	protected void afterLoop() {
 		// TODO: Modify this to accept the whole entity data-structure
-		destroyOpenGL(glWorld, assContainer.getPlayer());
+		destroyOpenGL(assContainer.getPlayer());
 	}
 
-	private Vector4 calcLightPosition() {
-		float lightHeight = 0.1f, lightRadius = 0.5f;
-		startTime += 0.003;
-
-		Vector4 ret = new Vector4(1.0f, 0.0f, lightHeight, 1);
-		ret.x((float) Math.cos(startTime * 2 * Math.PI) * lightRadius);
-		ret.y((float) Math.sin(startTime * 2 * Math.PI) * lightRadius);
-
-		return ret;
-	}
+	// private Vector4 calcLightPosition() {
+	// float lightHeight = 0.1f, lightRadius = 0.5f;
+	// startTime += 0.003;
+	//
+	// Vector4 ret = new Vector4(1.0f, 0.0f, lightHeight, 1);
+	// ret.x((float) Math.cos(startTime * 2 * Math.PI) * lightRadius);
+	// ret.y((float) Math.sin(startTime * 2 * Math.PI) * lightRadius);
+	//
+	// return ret;
+	// }
 
 	private void logicCycle() {
 
 		Utils.updateMousePoles(viewPole, objectPole);
+		// Translate camera to new Player position
 		viewPole.setTargetPos(assContainer.getPlayer().getModel().modelPos);
-
-		// Reset view and model matrices
-		// glWorld.clearViewMatrix(); //LA REMOVED
-		glWorld.setCameraPos(assContainer.getPlayer().getModel().modelPos);
-
-		// Translate camera
-		// glWorld.transformCamera(); //LA REMOVED
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 

@@ -32,23 +32,13 @@ public class Projectile extends Entity {
 		this.scale = scale;
 
 		this.movementVector = movementVector;
-		// System.out.println(angle.x + "," + angle.y + "," + angle.z);
 
-		// TODO: This could all be done a bit more neatly
 		Vector4 additiveMovement = new Vector4(ADDITIVE_VELOCITY_SCALE, 0.0f, 0.0f, 1.0f);
-		// System.out.println("addMov = " + additiveMovement.x() + ", " +
-		// additiveMovement.y() + ", " + additiveMovement.z());
-		// System.out.println("angle = " + angle.x() + ", " + angle.y() + ", " +
-		// angle.z());
 
 		Matrix4 rotationMatrix = new Matrix4().clearToIdentity();
 		rotationMatrix.rotateDeg(angle.z(), GLWorld.BASIS_Z);
 		rotationMatrix.rotateDeg(angle.y(), GLWorld.BASIS_Y);
 		rotationMatrix.rotateDeg(angle.x(), GLWorld.BASIS_X);
-
-		// Matrix4f.transform(rotationMatrix, additiveMovement,
-		// additiveMovement);
-		// System.out.println(rotationMatrix.);
 
 		additiveMovement = rotationMatrix.mult(additiveMovement);
 

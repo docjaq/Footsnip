@@ -1,6 +1,5 @@
 package renderer.glmodels;
 
-import static maths.LinearAlgebra.degreesToRadians;
 import static renderer.GLUtilityMethods.exitOnGLError;
 import maths.types.MatrixStack;
 import maths.types.Vector3;
@@ -36,24 +35,11 @@ public abstract class GLModel {
 	/* MAKE SURE THAT THIS RADIUS HAS BEEN SET BY THE IMPLEMENTING CLASS */
 	private float radius;
 
-	// protected float[] color;
-
-	// This could actually just be static or a single object in the renderer.
-	// Having one per model is a waste, though not really much of an overhead
-	// for now
-	// protected Matrix4f modelMatrix;
-
-	// public String debugType;
-
 	public GLModel(Vector3 modelPos, Vector3 modelAngle, float modelScale) {
 		// Set the default quad rotation, scale and position values
 		this.modelPos = modelPos;
 		this.modelAngle = modelAngle;
-		this.modelScale = new Vector3(1.0f, 1.0f, 1.0f);
 		setModelScale(modelScale);
-		// this.shader = shader;
-
-		// modelMatrix = new Matrix4f();
 	}
 
 	public void draw(GLShader shader, MatrixStack modelMatrix) {
@@ -61,9 +47,11 @@ public abstract class GLModel {
 		// transform();
 		modelMatrix.getTop().translate(modelPos.x(), modelPos.y(), modelPos.z());
 
-		modelMatrix.getTop().rotate(degreesToRadians(modelAngle.z()), GLWorld.BASIS_Z);
-		modelMatrix.getTop().rotate(degreesToRadians(modelAngle.y()), GLWorld.BASIS_Y);
-		modelMatrix.getTop().rotate(degreesToRadians(modelAngle.x()), GLWorld.BASIS_X);
+		modelMatrix.getTop().rotateDeg(modelAngle.z(), GLWorld.BASIS_Z);
+		modelMatrix.getTop().rotateDeg(modelAngle.y(), GLWorld.BASIS_Y);
+		modelMatrix.getTop().rotateDeg(modelAngle.x(), GLWorld.BASIS_X);
+
+		modelMatrix.getTop().scale(modelScale);
 
 		shader.copySpecificUniformsToShader(modelMatrix);
 
@@ -100,7 +88,6 @@ public abstract class GLModel {
 	}
 
 	protected void cleanUpGeometry() {
-		// Clean up geometry
 
 		// Select the VAO
 		GL30.glBindVertexArray(vaoId);
@@ -125,45 +112,15 @@ public abstract class GLModel {
 		exitOnGLError("destroyOpenGL");
 	}
 
-	public void transform() {
-		// This order is important for building the matrix
-		// clearModelMatrix();
-
-		// modelMatrix.scale(modelScale);
-		// modelMatrix.translate(modelPos);
-
-		// modelMatrix.rotate(degreesToRadians(modelAngle.z), GLWorld.BASIS_Z);
-		// modelMatrix.rotate(degreesToRadians(modelAngle.y), GLWorld.BASIS_Y);
-		// modelMatrix.rotate(degreesToRadians(modelAngle.x), GLWorld.BASIS_X);
-
-	}
-
-	// ATTENTION: Before, had a local Floatbuffer in the class, but as it's just
-	// used to copy stuff to the shader, seems a waste. Maybe a better way than
-	// sending the reference around though?
-	// public void copyModelMatrixToShader() {
-
-	// }
-
-	// public void matrixCleanup() {
-	// modelMatrix.store(matrix44Buffer);
-	// matrix44Buffer.flip();
-	// GL20.glUniformMatrix4(modelMatrixLocation, false, matrix44Buffer);
-	// }
-
-	// ATTENTION:Setting it to the identity seems more efficient than creating a
-	// new one?
-	// protected void clearModelMatrix() {
-	// modelMatrix = new Matrix4f();
-	// modelMatrix.setIdentity();
-	// }
-
 	public void setModelScale(float modelScale) {
 		/**
 		 * This has been changed to only allow uniform scaling of the model.
 		 * This means that we can compute the bounding sphere more easily at
 		 * runtime
 		 **/
+		if (this.modelScale == null) {
+			this.modelScale = new Vector3();
+		}
 		this.modelScale.set(modelScale, modelScale, modelScale);
 
 		radius *= getModelScale();

@@ -117,10 +117,8 @@ public class GLUtilityMethods {
 		GL15.glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
-	public static void destroyOpenGL(GLWorld glWorld, Player player) {
-
+	public static void destroyOpenGL(Player player) {
 		player.destroy();
-
 		Display.destroy();
 	}
 

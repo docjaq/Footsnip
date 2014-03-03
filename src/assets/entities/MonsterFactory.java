@@ -11,7 +11,7 @@ public class MonsterFactory {
 	public static Monster create(GeometryFile mesh, GLShader shader, Vector3 monsterPos, float rotationDelta) {
 
 		Vector3 monsterAngle = new Vector3(0, 0, 0);
-		float monsterScale = 1f;
+		float monsterScale = (float) (Math.random() * 2f);
 
 		/**
 		 * TODO: Currently the color is actually set per vertex of the mesh when
