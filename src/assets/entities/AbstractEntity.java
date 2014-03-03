@@ -3,11 +3,6 @@ package assets.entities;
 import renderer.glmodels.GLModel;
 import assets.Asset;
 
-/************************
- * @author docjaq This is the abstract class that all entities should subclass.
- *         So Characters, loot, etc
- */
-
 public abstract class AbstractEntity implements Asset {
 
 	private static int globalEntityIdCounter = 0;
