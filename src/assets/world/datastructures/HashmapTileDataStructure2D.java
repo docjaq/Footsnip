@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import maths.types.MatrixStack;
 import maths.types.Vector3;
+import renderer.GLPosition;
 import renderer.glmodels.GLTileFactory;
 import renderer.glshaders.GLShader;
 import util.MousePoles.ObjectPole;
@@ -46,16 +47,18 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		for (AbstractTile t : map.values()) {
 			if (t.getModel() == null) {
 				t.createModel(glTileFactory);
+
 			}
 			try {
 				modelMatrix.pushMatrix();
 				{
 					modelMatrix.getTop().mult(objectPole.calcMatrix());
-					t.getModel().draw(shader, modelMatrix);
+					t.getModel().draw(shader, modelMatrix, t.getPosition());
 				}
 				modelMatrix.popMatrix();
 			} catch (NullPointerException e) {
-				System.out.println("Exception: GLModel does not exist");
+				System.err.println("Tile Rendering failed");
+				e.printStackTrace();
 			}
 		}
 
@@ -79,7 +82,9 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 		int adjustedX = parentKey.x + xAdjust;
 		int adjustedY = parentKey.y + yAdjust;
-		Vector3 position = new Vector3(adjustedX * tile.getSize(), adjustedY * tile.getSize(), 0);
+		Vector3 tilePosition = new Vector3(adjustedX * tile.getSize(), adjustedY * tile.getSize(), 0);
+		Vector3 tileAngle = new Vector3(0, 0, 0);
+		GLPosition position = new GLPosition(tilePosition, tileAngle, AbstractTile.SIZE, 0);
 		DataStructureKey2D key = new DataStructureKey2D(adjustedX, adjustedY);
 
 		if (map.containsKey(key)) {

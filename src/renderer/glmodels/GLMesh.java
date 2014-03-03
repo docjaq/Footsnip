@@ -6,8 +6,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
 
-import maths.types.Vector3;
-
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -19,8 +17,8 @@ import renderer.glprimitives.GLVertex;
 
 public class GLMesh extends GLModel {
 
-	public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList, Vector3 modelPos, Vector3 modelAngle, float modelScale) {
-		super(modelPos, modelAngle, modelScale);
+	public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList) {
+		super();
 
 		FloatBuffer verticesFloatBuffer = BufferUtils.createFloatBuffer(vertexList.size() * GLVertex.stride);
 		for (GLVertex v : vertexList) {
@@ -70,7 +68,7 @@ public class GLMesh extends GLModel {
 
 		exitOnGLError("setupQuad");
 
-		setRadius(computeRadius(vertexList));
+		setModelRadius(computeRadius(vertexList));
 	}
 
 	private float computeRadius(List<GLVertex> vertexList) {
@@ -83,7 +81,7 @@ public class GLMesh extends GLModel {
 			}
 		}
 		float radius = maxDist;
-		radius *= getModelScale();
+
 		return radius;
 	}
 

@@ -48,7 +48,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		generatePlanarMesh();
 	}
 
-	public GLMesh create(AbstractTile tile, Vector3 position, Vector3 rotation, float scale, float size) {
+	public GLMesh create(AbstractTile tile) {
 		/*
 		 * TODO: Create copy of factoryVertices, and a copy of factoryTriangles.
 		 * Currently not doing this, as it will screw up the references between
@@ -90,7 +90,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		computeNormalsForAllTriangles(this.factoryTriangles, this.factoryVertices);
 
 		// Create mesh from vertexList and TriangleList
-		return new GLMesh(this.factoryTriangles, this.factoryVertices, position, rotation, scale);
+		return new GLMesh(this.factoryTriangles, this.factoryVertices);
 	}
 
 	private void generatePlanarMesh() {

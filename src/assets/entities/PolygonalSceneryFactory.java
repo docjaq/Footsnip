@@ -5,6 +5,7 @@ import java.util.List;
 
 import maths.types.Vector3;
 import maths.types.Vector4;
+import renderer.GLPosition;
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glprimitives.GLTriangle;
@@ -28,8 +29,10 @@ public class PolygonalSceneryFactory {
 		List<GLTriangle> triangleList = new ArrayList<GLTriangle>();
 		triangleList.add(new GLTriangle(vertexList.get(0), vertexList.get(1), vertexList.get(2)));
 
-		GLModel polygonalSceneryModel = new GLMesh(triangleList, vertexList, sceneryPos, sceneryAngle, sceneryScale);
-		PolygonalScenery polygon = new PolygonalScenery(polygonalSceneryModel, "Scenery");
+		GLModel polygonalSceneryModel = new GLMesh(triangleList, vertexList);
+		GLPosition position = new GLPosition(sceneryPos, sceneryAngle, sceneryScale, polygonalSceneryModel.getModelRadius());
+
+		PolygonalScenery polygon = new PolygonalScenery(polygonalSceneryModel, position, "Scenery");
 
 		return polygon;
 	}

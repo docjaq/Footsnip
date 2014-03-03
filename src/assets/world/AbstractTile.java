@@ -3,7 +3,7 @@ package assets.world;
 import java.util.ArrayList;
 import java.util.List;
 
-import maths.types.Vector3;
+import renderer.GLPosition;
 import renderer.glmodels.GLModel;
 import renderer.glmodels.GLTileFactory;
 import assets.Asset;
@@ -13,23 +13,28 @@ import assets.world.datastructures.DataStructureKey2D;
 public abstract class AbstractTile implements Asset {
 
 	protected GLModel model;
-	protected Vector3 tilePos; // I don't like this, it should be temporary
+	protected GLPosition position;
+	// protected Vector3 tilePos; // I don't like this, it should be temporary
 	protected DataStructureKey2D key;
 
 	protected List<Entity> containedEntities;
 
 	public static final float SIZE = 1.0f;
 
-	public AbstractTile(DataStructureKey2D key, GLModel model, Vector3 tilePos) {
+	public AbstractTile(DataStructureKey2D key, GLModel model, GLPosition position) {
 		this.key = key;
 		this.model = model;
-		this.tilePos = tilePos;
+		this.position = position;
 
 		containedEntities = new ArrayList<Entity>();
 	}
 
 	public GLModel getModel() {
 		return model;
+	}
+
+	public GLPosition getPosition() {
+		return position;
 	}
 
 	public float getSize() {

@@ -3,6 +3,7 @@ package assets.entities;
 import maths.types.Matrix4;
 import maths.types.Vector3;
 import maths.types.Vector4;
+import renderer.GLPosition;
 import renderer.GLWorld;
 import renderer.glmodels.GLProjectileFactory;
 import collision.Collidable;
@@ -18,27 +19,28 @@ public class Projectile extends Entity {
 	private float[] color;
 
 	private Vector3 movementVector;
-	private Vector3 startPosition;
-	private Vector3 angle;
-	private float scale;
 
-	public Projectile(Vector3 startPosition, Vector3 angle, float scale, Vector3 movementVector) {
-		super(null, "Projectile " + System.currentTimeMillis());
+	// private Vector3 startPosition;
+	// private Vector3 angle;
+	// private float scale;
+
+	public Projectile(GLPosition position, Vector3 movementVector) {
+		super(null, position, "Projectile " + System.currentTimeMillis());
 		this.age = 0;
 
-		this.startPosition = startPosition;
-		this.startPosition.x(this.startPosition.x() - 0.01f);
-		this.angle = angle;
-		this.scale = scale;
+		// this.startPosition = startPosition;
+		position.modelPos.z(position.modelPos.z() - 0.01f);
+		// this.angle = angle;
+		// this.scale = scale;
 
 		this.movementVector = movementVector;
 
 		Vector4 additiveMovement = new Vector4(ADDITIVE_VELOCITY_SCALE, 0.0f, 0.0f, 1.0f);
 
 		Matrix4 rotationMatrix = new Matrix4().clearToIdentity();
-		rotationMatrix.rotateDeg(angle.z(), GLWorld.BASIS_Z);
-		rotationMatrix.rotateDeg(angle.y(), GLWorld.BASIS_Y);
-		rotationMatrix.rotateDeg(angle.x(), GLWorld.BASIS_X);
+		rotationMatrix.rotateDeg(position.modelAngle.z(), GLWorld.BASIS_Z);
+		rotationMatrix.rotateDeg(position.modelAngle.y(), GLWorld.BASIS_Y);
+		rotationMatrix.rotateDeg(position.modelAngle.x(), GLWorld.BASIS_X);
 
 		additiveMovement = rotationMatrix.mult(additiveMovement);
 
@@ -60,8 +62,8 @@ public class Projectile extends Entity {
 
 	public void move(int timeDelta) {
 		if (model != null) {
-			model.modelPos.x(model.modelPos.x() + movementVector.x() * DEFAULT_MOVEMENT_SPEED * timeDelta);
-			model.modelPos.y(model.modelPos.y() + movementVector.y() * DEFAULT_MOVEMENT_SPEED * timeDelta);
+			position.modelPos.x(position.modelPos.x() + movementVector.x() * DEFAULT_MOVEMENT_SPEED * timeDelta);
+			position.modelPos.y(position.modelPos.y() + movementVector.y() * DEFAULT_MOVEMENT_SPEED * timeDelta);
 		}
 	}
 
@@ -71,8 +73,8 @@ public class Projectile extends Entity {
 		}
 		float[] color = { 0.0f, 0.4f, 1.0f, 1.0f };
 
-		this.model = projectileFactory.create(this.startPosition, this.angle, this.scale, color);
-
+		this.model = projectileFactory.create(color);
+		this.position.setEntityRadiusWithModelRadius(this.model.getModelRadius());
 	}
 
 	@Override

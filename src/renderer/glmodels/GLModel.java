@@ -2,13 +2,13 @@ package renderer.glmodels;
 
 import static renderer.GLUtilityMethods.exitOnGLError;
 import maths.types.MatrixStack;
-import maths.types.Vector3;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import renderer.GLPosition;
 import renderer.GLWorld;
 import renderer.glshaders.GLShader;
 
@@ -21,9 +21,9 @@ import renderer.glshaders.GLShader;
 public abstract class GLModel {
 
 	// Model positions
-	public Vector3 modelPos;
-	public Vector3 modelAngle;
-	private Vector3 modelScale;
+	// public Vector3 modelPos;
+	// public Vector3 modelAngle;
+	// private Vector3 modelScale;
 
 	// Model GL Variables
 	protected int vaoId = 0;
@@ -31,27 +31,37 @@ public abstract class GLModel {
 	protected int vboiId = 0;
 	protected int indicesCount = 0;
 
+	protected float modelRadius;
+
 	// Collision variables
 	/* MAKE SURE THAT THIS RADIUS HAS BEEN SET BY THE IMPLEMENTING CLASS */
-	private float radius;
+	// private float radius;
 
-	public GLModel(Vector3 modelPos, Vector3 modelAngle, float modelScale) {
+	public GLModel() {
 		// Set the default quad rotation, scale and position values
-		this.modelPos = modelPos;
-		this.modelAngle = modelAngle;
-		setModelScale(modelScale);
+		// this.modelPos = modelPos;
+		// this.modelAngle = modelAngle;
+		// setModelScale(modelScale);
 	}
 
-	public void draw(GLShader shader, MatrixStack modelMatrix) {
+	protected void setModelRadius(float modelRadius) {
+		this.modelRadius = modelRadius;
+	}
+
+	public float getModelRadius() {
+		return modelRadius;
+	}
+
+	public void draw(GLShader shader, MatrixStack modelMatrix, GLPosition position) {
 
 		// transform();
-		modelMatrix.getTop().translate(modelPos.x(), modelPos.y(), modelPos.z());
+		modelMatrix.getTop().translate(position.modelPos.x(), position.modelPos.y(), position.modelPos.z());
 
-		modelMatrix.getTop().rotateDeg(modelAngle.z(), GLWorld.BASIS_Z);
-		modelMatrix.getTop().rotateDeg(modelAngle.y(), GLWorld.BASIS_Y);
-		modelMatrix.getTop().rotateDeg(modelAngle.x(), GLWorld.BASIS_X);
+		modelMatrix.getTop().rotateDeg(position.modelAngle.z(), GLWorld.BASIS_Z);
+		modelMatrix.getTop().rotateDeg(position.modelAngle.y(), GLWorld.BASIS_Y);
+		modelMatrix.getTop().rotateDeg(position.modelAngle.x(), GLWorld.BASIS_X);
 
-		modelMatrix.getTop().scale(modelScale);
+		modelMatrix.getTop().scale(position.modelScale);
 
 		shader.copySpecificUniformsToShader(modelMatrix);
 
@@ -112,29 +122,4 @@ public abstract class GLModel {
 		exitOnGLError("destroyOpenGL");
 	}
 
-	public void setModelScale(float modelScale) {
-		/**
-		 * This has been changed to only allow uniform scaling of the model.
-		 * This means that we can compute the bounding sphere more easily at
-		 * runtime
-		 **/
-		if (this.modelScale == null) {
-			this.modelScale = new Vector3();
-		}
-		this.modelScale.set(modelScale, modelScale, modelScale);
-
-		radius *= getModelScale();
-	}
-
-	public float getModelScale() {
-		return modelScale.x();
-	}
-
-	public float getRadius() {
-		return radius;
-	}
-
-	public void setRadius(float radius) {
-		this.radius = radius;
-	}
 }

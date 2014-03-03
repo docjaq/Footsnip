@@ -1,5 +1,6 @@
 package assets.entities;
 
+import renderer.GLPosition;
 import renderer.glmodels.GLModel;
 import assets.Asset;
 
@@ -7,10 +8,12 @@ public abstract class AbstractEntity implements Asset {
 
 	private static int globalEntityIdCounter = 0;
 	protected GLModel model;
+	protected GLPosition position;
 	protected Integer uniqueId;
 
-	public AbstractEntity(GLModel model) {
+	public AbstractEntity(GLModel model, GLPosition position) {
 		this.model = model;
+		this.position = position;
 
 		uniqueId = globalEntityIdCounter;
 		globalEntityIdCounter++;
@@ -18,6 +21,10 @@ public abstract class AbstractEntity implements Asset {
 
 	public GLModel getModel() {
 		return model;
+	}
+
+	public GLPosition getPosition() {
+		return position;
 	}
 
 	public void setModel(GLModel model) {

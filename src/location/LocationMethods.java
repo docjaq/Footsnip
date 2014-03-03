@@ -20,7 +20,7 @@ public class LocationMethods {
 		 * Tiles are actually offset by 0.5: initial tile is [-0.5,0.5]^2, so we
 		 * must adjust the containment check
 		 **/
-		Vector3 modelPos = entity.getModel().modelPos;
+		Vector3 modelPos = entity.getPosition().modelPos;
 		float xPos = modelPos.x();
 		float yPos = modelPos.y();
 

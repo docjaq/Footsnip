@@ -7,7 +7,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import maths.types.Vector3;
 import maths.types.Vector4;
 
 import org.lwjgl.BufferUtils;
@@ -17,17 +16,18 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import renderer.glprimitives.GLVertex;
+import assets.world.AbstractTile;
 
 public class GLTilePlane extends GLModel {
 
 	// final static float length = 1f;
 	final static float zOffset = -0.01f;
 
-	public GLTilePlane(Vector3 modelPos, Vector3 modelAngle, float modelScale, float size) {
-		super(modelPos, modelAngle, modelScale);
+	public GLTilePlane() {
+		super();
 
 		Vector4 rgba = new Vector4((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
-		float halfSize = size / 2.0f;
+		float halfSize = AbstractTile.SIZE / 2.0f;
 
 		List<GLVertex> vertexList = new ArrayList<GLVertex>(4);
 		vertexList.add(new GLVertex(0, new Vector4(-halfSize, -halfSize, zOffset, 1), rgba, new Vector4(0, 0, 1, 1)));
@@ -78,7 +78,7 @@ public class GLTilePlane extends GLModel {
 
 		exitOnGLError("setupQuad");
 
-		setRadius(computeRadius());
+		setModelRadius(computeRadius());
 	}
 
 	/**

@@ -45,7 +45,6 @@ import assets.entities.Player;
 import assets.entities.PolygonalScenery;
 import assets.entities.PolygonalSceneryFactory;
 import assets.entities.Projectile;
-import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
 import assets.world.datastructures.TileDataStructure2D;
 import exception.RendererException;
@@ -142,7 +141,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		Utils.updateMousePoles(viewPole, objectPole);
 		// Translate camera to new Player position
-		viewPole.setTargetPos(assContainer.getPlayer().getModel().modelPos);
+		viewPole.setTargetPos(assContainer.getPlayer().getPosition().modelPos);
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 
@@ -155,8 +154,9 @@ public class Renderer_3_2 extends RendererThread {
 		// modelToCamera matrix
 		modelMatrix.setTop(viewPole.calcMatrix());
 
-		GLModel model = assContainer.getPlayer().getModel();
-		Vector4 worldLightPos = new Vector4(model.modelPos.x(), (model.modelPos.y()), model.modelPos.z() + 0.3f, 1);
+		// GLModel model = assContainer.getPlayer().getModel();
+		Vector4 worldLightPos = new Vector4(assContainer.getPlayer().getPosition().modelPos.x(),
+				(assContainer.getPlayer().getPosition().modelPos.y()), assContainer.getPlayer().getPosition().modelPos.z() + 0.3f, 1);
 		// Vector4 worldLightPos = calcLightPosition();
 
 		// Confused why I don't need to push/pop this...
@@ -185,10 +185,11 @@ public class Renderer_3_2 extends RendererThread {
 		Vector3 tilePos = new Vector3(0, 0, 0);
 		Vector3 tileAngle = new Vector3(0, 0, 0);
 		float tileScale = 1f;
+		GLPosition position = new GLPosition(tilePos, tileAngle, tileScale, 0);
 
-		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, tilePos);
+		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, position);
 		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129, assContainer.getTileDataStructure());
-		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, AbstractTile.SIZE);
+		GLModel model = glTileFactory.create(initialTile);
 		initialTile.setModel(model);
 
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
@@ -211,9 +212,10 @@ public class Renderer_3_2 extends RendererThread {
 
 		Ply playerMesh = new Ply();
 		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"), playerColor);
-		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices(), playerPos, playerAngle, playerScale);
+		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices());
+		GLPosition playerPosition = new GLPosition(playerPos, playerAngle, playerScale, playerModel.getModelRadius());
 
-		assContainer.setPlayer(new Player(playerModel, "Dave", 0, new float[] { 1.0f, 0.0f, 0.0f }));
+		assContainer.setPlayer(new Player(playerModel, playerPosition, "Dave", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 		assContainer.setMonsters(new ArrayList<Monster>());
 
 		Vector4 monsterColor = new Vector4(0.3f, 0.3f, 0.05f, 1.0f);
@@ -225,11 +227,13 @@ public class Renderer_3_2 extends RendererThread {
 		_G.get("dofile").call(LuaValue.valueOf(script));
 		LuaValue getRotationDelta = _G.get("getRotationDelta");
 
+		MonsterFactory monsterFactory = new MonsterFactory(monsterMesh);
+
 		float spread = 2;
 		for (int i = 0; i < 10; i++) {
 			Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
-			assContainer.addMonster(MonsterFactory.create(monsterMesh, shader, monsterPos, rotationDelta));
+			assContainer.addMonster(monsterFactory.create(monsterMesh, shader, monsterPos, rotationDelta));
 		}
 
 		// Initialise projectile factory
@@ -245,7 +249,7 @@ public class Renderer_3_2 extends RendererThread {
 			modelMatrix.pushMatrix();
 			{
 				modelMatrix.getTop().mult(objectPole.calcMatrix());
-				s.getModel().draw(shader, modelMatrix);
+				s.getModel().draw(shader, modelMatrix, s.getPosition());
 			}
 			modelMatrix.popMatrix();
 		}
@@ -255,7 +259,7 @@ public class Renderer_3_2 extends RendererThread {
 		modelMatrix.pushMatrix();
 		{
 			modelMatrix.getTop().mult(objectPole.calcMatrix());
-			player.getModel().draw(shader, modelMatrix);
+			player.getModel().draw(shader, modelMatrix, player.getPosition());
 		}
 		modelMatrix.popMatrix();
 	}
@@ -273,7 +277,7 @@ public class Renderer_3_2 extends RendererThread {
 			modelMatrix.pushMatrix();
 			{
 				modelMatrix.getTop().mult(objectPole.calcMatrix());
-				m.getModel().draw(shader, modelMatrix);
+				m.getModel().draw(shader, modelMatrix, m.getPosition());
 			}
 			modelMatrix.popMatrix();
 		}
@@ -299,11 +303,11 @@ public class Renderer_3_2 extends RendererThread {
 					modelMatrix.pushMatrix();
 					{
 						modelMatrix.getTop().mult(objectPole.calcMatrix());
-						p.getModel().draw(shader, modelMatrix);
+						p.getModel().draw(shader, modelMatrix, p.getPosition());
 					}
 					modelMatrix.popMatrix();
 				} catch (NullPointerException e) {
-					System.out.println("Exception: GLModel does not exist");
+					System.out.println("Exception: Projectile GLModel does not exist");
 				}
 
 			}
