@@ -99,10 +99,16 @@ public class Renderer_3_2 extends RendererThread {
 		// Camera is actually static at this stage
 		glWorld = new GLWorld(WIDTH, HEIGHT, new Vector3(0, 0, 0));
 
-		ViewData viewData = new ViewData(new Vector3(0, 0.5f, 0f), new Quaternion(0.0f, 0, 0, 1f), 5, 0);
+		// Vector3: Target position of camera focus
+		// Quaternion: Orientation of the camera relative to the target
+		// Distance (or radius) from target
+		// Rotation around target/position vector
+		ViewData viewData = new ViewData(new Vector3(0, 0.0f, 0f), new Quaternion(0.0f, 0, 0, 1f), 1.4f, 0);
+
 		ViewScale viewScale = new ViewScale(0.2f, 20, 1.5f, 0.5f, 0, 0, 90f / 250f);
+
 		// Setup initial transform for object in MODEL space
-		ObjectData objectData = new ObjectData(new Vector3(0, 0.5f, 0), new Quaternion());
+		ObjectData objectData = new ObjectData(new Vector3(0, 0.0f, 0), new Quaternion());
 
 		// Set the viewing stuff AND the object stuff in the MousePoles class
 		viewPole = new ViewPole(viewData, viewScale, MouseButton.LEFT_BUTTON);
@@ -139,6 +145,7 @@ public class Renderer_3_2 extends RendererThread {
 	private void logicCycle() {
 
 		Utils.updateMousePoles(viewPole, objectPole);
+		viewPole.setTargetPos(assContainer.getPlayer().getModel().modelPos);
 
 		// Reset view and model matrices
 		// glWorld.clearViewMatrix(); //LA REMOVED
@@ -159,7 +166,7 @@ public class Renderer_3_2 extends RendererThread {
 		modelMatrix.setTop(viewPole.calcMatrix());
 
 		GLModel model = assContainer.getPlayer().getModel();
-		Vector4 worldLightPos = new Vector4(model.modelPos.x(), (model.modelPos.y() + 0.5f), model.modelPos.z(), 1);
+		Vector4 worldLightPos = new Vector4(model.modelPos.x(), (model.modelPos.y()), model.modelPos.z() + 0.3f, 1);
 		// Vector4 worldLightPos = calcLightPosition();
 
 		// Confused why I don't need to push/pop this...
@@ -190,7 +197,7 @@ public class Renderer_3_2 extends RendererThread {
 		float tileScale = 1f;
 
 		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, tilePos);
-		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(257, assContainer.getTileDataStructure());
+		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129, assContainer.getTileDataStructure());
 		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, AbstractTile.SIZE);
 		initialTile.setModel(model);
 

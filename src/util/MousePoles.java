@@ -487,6 +487,12 @@ public class MousePoles {
 			currView.targetPos.add(calcMatrix().toQuaternion().conjugate().mult(cameraOffset));
 		}
 
+		public void setTargetPos(Vector3 targetPos) {
+			currView.targetPos.x(targetPos.x());
+			currView.targetPos.y(targetPos.y());
+			currView.targetPos.z(targetPos.z());
+		}
+
 		@Override
 		public void charPress(long deltaTime) {
 			boolean isShiftPressed = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
