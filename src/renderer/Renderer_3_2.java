@@ -56,8 +56,8 @@ public class Renderer_3_2 extends RendererThread {
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
-	private final int WIDTH = 1920;
-	private final int HEIGHT = 1080;
+	private final int WIDTH = 1024;
+	private final int HEIGHT = 768;
 
 	private final int MAX_FPS = 400;
 
@@ -230,7 +230,7 @@ public class Renderer_3_2 extends RendererThread {
 		MonsterFactory monsterFactory = new MonsterFactory(monsterMesh);
 
 		float spread = 2;
-		for (int i = 0; i < 50; i++) {
+		for (int i = 0; i < 10; i++) {
 			Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
 			assContainer.addMonster(monsterFactory.create(monsterMesh, shader, monsterPos, rotationDelta));
