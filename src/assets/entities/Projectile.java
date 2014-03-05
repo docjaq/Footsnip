@@ -5,7 +5,7 @@ import math.types.Vector3;
 import math.types.Vector4;
 import renderer.GLPosition;
 import renderer.GLWorld;
-import renderer.glmodels.GLProjectileFactory;
+import renderer.glmodels.GLModel;
 import collision.Collidable;
 
 public class Projectile extends Entity {
@@ -20,18 +20,13 @@ public class Projectile extends Entity {
 
 	private Vector3 movementVector;
 
-	// private Vector3 startPosition;
-	// private Vector3 angle;
-	// private float scale;
+	public Projectile(GLModel model, GLPosition position, Vector3 movementVector) {
+		super(model, position, "Projectile " + System.currentTimeMillis());
 
-	public Projectile(GLPosition position, Vector3 movementVector) {
-		super(null, position, "Projectile " + System.currentTimeMillis());
+		this.position.setEntityRadiusWithModelRadius(this.model.getModelRadius());
 		this.age = 0;
 
-		// this.startPosition = startPosition;
 		position.modelPos.z(position.modelPos.z() - 0.01f);
-		// this.angle = angle;
-		// this.scale = scale;
 
 		this.movementVector = movementVector;
 
@@ -46,8 +41,6 @@ public class Projectile extends Entity {
 
 		Vector3 vec3fAdditiveMovement = new Vector3(additiveMovement.x(), additiveMovement.y(), additiveMovement.z());
 
-		// Vector3.add(this.movementVector, vec3fAdditiveMovement,
-		// this.movementVector);
 		movementVector.add(vec3fAdditiveMovement);
 
 	}
@@ -67,15 +60,15 @@ public class Projectile extends Entity {
 		}
 	}
 
-	public void createModel(GLProjectileFactory projectileFactory) {
-		if (this.model != null) {
-			throw new RuntimeException("You can only set the model once.");
-		}
-		float[] color = { 0.0f, 0.4f, 1.0f, 1.0f };
-
-		this.model = projectileFactory.create(color);
-		this.position.setEntityRadiusWithModelRadius(this.model.getModelRadius());
-	}
+	// public void createModel(GLProjectileFactory projectileFactory) {
+	// if (this.model != null) {
+	// throw new RuntimeException("You can only set the model once.");
+	// }
+	// float[] color = { 0.0f, 0.4f, 1.0f, 1.0f };
+	//
+	// this.model = projectileFactory.create(color);
+	// this.position.setEntityRadiusWithModelRadius(this.model.getModelRadius());
+	// }
 
 	@Override
 	public void collidedWith(Collidable subject) {

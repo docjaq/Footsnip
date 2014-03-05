@@ -4,6 +4,7 @@ import main.GameControl;
 import math.LinearAlgebra;
 import math.types.Vector3;
 import renderer.GLPosition;
+import renderer.glmodels.GLDefaultProjectileFactory;
 import renderer.glmodels.GLModel;
 import assets.world.AbstractTile;
 import assets.world.datastructures.TileDataStructure2D;
@@ -140,7 +141,7 @@ public class Player extends Entity {
 
 		GLPosition position = new GLPosition(projPosition, projAngle, projScale, 0);
 
-		return new Projectile(position, movementVector);
+		return new Projectile(GLDefaultProjectileFactory.getInstance().create(), position, movementVector);
 	}
 
 	/*

@@ -237,7 +237,7 @@ public class Renderer_3_2 extends RendererThread {
 		}
 
 		// Initialise projectile factory
-		assContainer.setProjectileFactory(new GLDefaultProjectileFactory());
+		assContainer.setProjectileFactory(GLDefaultProjectileFactory.getInstance());
 	}
 
 	private void renderTiles(TileDataStructure2D dataStructure, GLShader shader, MatrixStack modelMatrix) {
@@ -292,8 +292,6 @@ public class Renderer_3_2 extends RendererThread {
 			for (Projectile p : projectiles) {
 				if (p.isDestroyable()) {
 					toRemove.add(p);
-				} else if (p.getModel() == null) {
-					p.createModel(assContainer.getProjectileFactory());
 				}
 			}
 			projectiles.removeAll(toRemove);

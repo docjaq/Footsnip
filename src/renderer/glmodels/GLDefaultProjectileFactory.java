@@ -7,15 +7,27 @@ import mesh.Ply;
 
 public class GLDefaultProjectileFactory implements GLProjectileFactory {
 
-	private Ply mesh;
+	private static GLDefaultProjectileFactory instance;
 
-	public GLDefaultProjectileFactory() {
+	private Ply mesh;
+	private GLModel model;
+
+	private GLDefaultProjectileFactory() {
 		Vector4 projectileColor = new Vector4(0.8f, 0.9f, 1.0f, 1.0f);
 		mesh = new Ply();
 		mesh.read(new File("resources/meshes/projectile_small.ply"), projectileColor);
+		this.model = new GLMesh(mesh.getTriangles(), mesh.getVertices());
 	}
 
-	public GLMesh create(float[] color) {
-		return new GLMesh(mesh.getTriangles(), mesh.getVertices());
+	public synchronized static GLDefaultProjectileFactory getInstance() {
+		if (instance == null) {
+			instance = new GLDefaultProjectileFactory();
+		}
+
+		return instance;
+	}
+
+	public GLModel create() {
+		return model;
 	}
 }
