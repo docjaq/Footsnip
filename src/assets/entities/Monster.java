@@ -88,7 +88,7 @@ public class Monster extends Entity {
 			rotationDelta *= 1.01;
 		}
 		if (Monster.class.isAssignableFrom(subject.getClass())) {
-			System.out.println("Monster-monster collision");
+			// TODO: Do something
 		}
 	}
 
