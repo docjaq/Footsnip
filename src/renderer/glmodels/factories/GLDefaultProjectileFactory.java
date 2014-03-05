@@ -1,7 +1,9 @@
-package renderer.glmodels;
+package renderer.glmodels.factories;
 
 import java.io.File;
 
+import renderer.glmodels.GLMesh;
+import renderer.glmodels.GLModel;
 import math.types.Vector4;
 import mesh.Ply;
 

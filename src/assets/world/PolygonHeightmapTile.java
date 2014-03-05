@@ -2,7 +2,7 @@ package assets.world;
 
 import renderer.GLPosition;
 import renderer.glmodels.GLModel;
-import renderer.glmodels.GLTileFactory;
+import renderer.glmodels.factories.GLTileFactory;
 import assets.world.datastructures.DataStructureKey2D;
 
 public class PolygonHeightmapTile extends AbstractTile {

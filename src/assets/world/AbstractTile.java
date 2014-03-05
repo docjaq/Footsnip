@@ -5,7 +5,7 @@ import java.util.List;
 
 import renderer.GLPosition;
 import renderer.glmodels.GLModel;
-import renderer.glmodels.GLTileFactory;
+import renderer.glmodels.factories.GLTileFactory;
 import assets.Asset;
 import assets.entities.Entity;
 import assets.world.datastructures.DataStructureKey2D;

@@ -1,5 +1,6 @@
-package renderer.glmodels;
+package renderer.glmodels.factories;
 
+import renderer.glmodels.GLTilePlane;
 import assets.world.AbstractTile;
 
 public class GLTilePlanarFactory implements GLTileFactory {

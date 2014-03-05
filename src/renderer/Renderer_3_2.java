@@ -22,11 +22,11 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
-import renderer.glmodels.GLDefaultProjectileFactory;
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
-import renderer.glmodels.GLTileFactory;
-import renderer.glmodels.GLTileMidpointDisplacementFactory;
+import renderer.glmodels.factories.GLDefaultProjectileFactory;
+import renderer.glmodels.factories.GLTileFactory;
+import renderer.glmodels.factories.GLTileMidpointDisplacementFactory;
 import renderer.glshaders.GLGaussianShader;
 import renderer.glshaders.GLShader;
 import thread.RendererThread;

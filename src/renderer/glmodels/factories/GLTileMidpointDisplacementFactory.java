@@ -1,10 +1,11 @@
-package renderer.glmodels;
+package renderer.glmodels.factories;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import math.types.Vector3;
 import math.types.Vector4;
+import renderer.glmodels.GLMesh;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
 import terraingeneration.PlasmaFractalFactory;

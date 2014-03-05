@@ -9,7 +9,7 @@ import camera.CameraModel.ObjectPole;
 import math.types.MatrixStack;
 import math.types.Vector3;
 import renderer.GLPosition;
-import renderer.glmodels.GLTileFactory;
+import renderer.glmodels.factories.GLTileFactory;
 import renderer.glshaders.GLShader;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;

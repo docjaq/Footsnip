@@ -5,7 +5,7 @@ import java.util.List;
 
 import camera.CameraModel.ObjectPole;
 import math.types.MatrixStack;
-import renderer.glmodels.GLTileFactory;
+import renderer.glmodels.factories.GLTileFactory;
 import renderer.glshaders.GLShader;
 import assets.world.AbstractTile;
 

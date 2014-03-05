@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import renderer.glmodels.GLProjectileFactory;
+import renderer.glmodels.factories.GLProjectileFactory;
 import assets.entities.Monster;
 import assets.entities.Player;
 import assets.entities.PolygonalScenery;
