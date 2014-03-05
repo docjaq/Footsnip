@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 import main.Main;
-import maths.types.MatrixStack;
-import maths.types.Quaternion;
-import maths.types.Vector3;
-import maths.types.Vector4;
+import math.types.MatrixStack;
+import math.types.Quaternion;
+import math.types.Vector3;
+import math.types.Vector4;
 import mesh.Ply;
 
 import org.luaj.vm2.LuaValue;
@@ -30,13 +30,6 @@ import renderer.glmodels.GLTileMidpointDisplacementFactory;
 import renderer.glshaders.GLGaussianShader;
 import renderer.glshaders.GLShader;
 import thread.RendererThread;
-import util.MousePoles.MouseButton;
-import util.MousePoles.ObjectData;
-import util.MousePoles.ObjectPole;
-import util.MousePoles.ViewData;
-import util.MousePoles.ViewPole;
-import util.MousePoles.ViewScale;
-import util.Utils;
 import assets.AssetContainer;
 import assets.entities.Entity;
 import assets.entities.Monster;
@@ -47,6 +40,13 @@ import assets.entities.PolygonalSceneryFactory;
 import assets.entities.Projectile;
 import assets.world.PolygonHeightmapTile;
 import assets.world.datastructures.TileDataStructure2D;
+import camera.CameraModel.MouseButton;
+import camera.CameraModel.ObjectData;
+import camera.CameraModel.ObjectPole;
+import camera.CameraModel.ViewData;
+import camera.CameraModel.ViewPole;
+import camera.CameraModel.ViewScale;
+import camera.CameraUtils;
 import exception.RendererException;
 
 public class Renderer_3_2 extends RendererThread {
@@ -86,7 +86,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		// Initialise FPS calculation fields.
 		framesThisSecond = 0;
-		lastFPSUpdate = Utils.getTime();
+		lastFPSUpdate = CameraUtils.getTime();
 		getFrameTimeDelta();
 	}
 
@@ -139,7 +139,7 @@ public class Renderer_3_2 extends RendererThread {
 
 	private void logicCycle() {
 
-		Utils.updateMousePoles(viewPole, objectPole);
+		CameraUtils.updateMousePoles(viewPole, objectPole);
 		// Translate camera to new Player position
 		viewPole.setTargetPos(assContainer.getPlayer().getPosition().modelPos);
 
@@ -230,7 +230,7 @@ public class Renderer_3_2 extends RendererThread {
 		MonsterFactory monsterFactory = new MonsterFactory(monsterMesh);
 
 		float spread = 2;
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < 50; i++) {
 			Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
 			assContainer.addMonster(monsterFactory.create(monsterMesh, shader, monsterPos, rotationDelta));
@@ -341,7 +341,7 @@ public class Renderer_3_2 extends RendererThread {
 	 * TODO: Just displaying it in the title bar for now.
 	 */
 	private void updateFPS() {
-		if (Utils.getTime() - lastFPSUpdate > 1000) {
+		if (CameraUtils.getTime() - lastFPSUpdate > 1000) {
 			Display.setTitle("FPS: " + framesThisSecond);
 			framesThisSecond = 0;
 			lastFPSUpdate += 1000;
@@ -356,7 +356,7 @@ public class Renderer_3_2 extends RendererThread {
 	 * @return Milliseconds since the last frame.
 	 */
 	protected int getFrameTimeDelta() {
-		long time = Utils.getTime();
+		long time = CameraUtils.getTime();
 		int delta = (int) (time - lastFrameTime);
 		lastFrameTime = time;
 

@@ -1,8 +1,8 @@
 package assets.entities;
 
 import main.GameControl;
-import maths.LinearAlgebra;
-import maths.types.Vector3;
+import math.LinearAlgebra;
+import math.types.Vector3;
 import renderer.GLPosition;
 import renderer.glmodels.GLModel;
 import assets.world.AbstractTile;

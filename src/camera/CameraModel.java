@@ -1,11 +1,12 @@
-package util;
+package camera;
 
-import maths.types.Matrix4;
-import maths.types.Quaternion;
-import maths.types.Vector2;
-import maths.types.Vector3;
+import math.LinearAlgebra;
+import math.types.Matrix4;
+import math.types.Quaternion;
+import math.types.Vector2;
+import math.types.Vector3;
 
-public class MousePoles {
+public class CameraModel {
 	public enum MouseButton {
 		LEFT_BUTTON, MIDDLE_BUTTON, RIGHT_BUTTON;
 
@@ -123,7 +124,7 @@ public class MousePoles {
 		}
 
 		private Quaternion calcRotationQuat(int axis, float angle) {
-			return Utils.angleAxisDeg(angle, axisVectors[axis]);
+			return LinearAlgebra.angleAxisDeg(angle, axisVectors[axis]);
 		}
 
 		private void rotateWorldDegrees(Quaternion rot, boolean fromInitial) {
@@ -314,7 +315,7 @@ public class MousePoles {
 
 			mat.translate(0, 0, -currView.radius);
 
-			Quaternion fullRotation = Utils.angleAxisDeg(currView.degSpinRotation, new Vector3(0, 0, 1)).mult(currView.orient);
+			Quaternion fullRotation = LinearAlgebra.angleAxisDeg(currView.degSpinRotation, new Vector3(0, 0, 1)).mult(currView.orient);
 			mat.mult(fullRotation.toMatrix());
 
 			mat.translate(currView.targetPos.copy().mult(-1));
@@ -346,21 +347,21 @@ public class MousePoles {
 		public void processXChange(int diffX) {
 			float degAngleDiff = diffX * viewScale.rotationScale;
 
-			currView.orient = startDragOrient.copy().mult(Utils.angleAxisDeg(degAngleDiff, new Vector3(0, 1, 0)));
+			currView.orient = startDragOrient.copy().mult(LinearAlgebra.angleAxisDeg(degAngleDiff, new Vector3(0, 1, 0)));
 		}
 
 		public void processYChange(int diffY) {
 			float degAngleDiff = diffY * viewScale.rotationScale;
 
-			currView.orient = Utils.angleAxisDeg(degAngleDiff, new Vector3(1, 0, 0)).mult(startDragOrient);
+			currView.orient = LinearAlgebra.angleAxisDeg(degAngleDiff, new Vector3(1, 0, 0)).mult(startDragOrient);
 		}
 
 		public void processXYChange(int diffX, int diffY) {
 			float degXAngleDiff = diffX * viewScale.rotationScale;
 			float degYAngleDiff = diffY * viewScale.rotationScale;
 
-			currView.orient = startDragOrient.copy().mult(Utils.angleAxisDeg(degXAngleDiff, new Vector3(0, 1, 0)));
-			currView.orient = Utils.angleAxisDeg(degYAngleDiff, new Vector3(1, 0, 0)).mult(currView.orient);
+			currView.orient = startDragOrient.copy().mult(LinearAlgebra.angleAxisDeg(degXAngleDiff, new Vector3(0, 1, 0)));
+			currView.orient = LinearAlgebra.angleAxisDeg(degYAngleDiff, new Vector3(1, 0, 0)).mult(currView.orient);
 		}
 
 		public void processSpinAxis(int diffX) {

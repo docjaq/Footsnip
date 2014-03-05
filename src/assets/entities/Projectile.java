@@ -1,8 +1,8 @@
 package assets.entities;
 
-import maths.types.Matrix4;
-import maths.types.Vector3;
-import maths.types.Vector4;
+import math.types.Matrix4;
+import math.types.Vector3;
+import math.types.Vector4;
 import renderer.GLPosition;
 import renderer.GLWorld;
 import renderer.glmodels.GLProjectileFactory;

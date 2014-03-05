@@ -1,7 +1,7 @@
 package renderer.glprimitives;
 
-import maths.types.Vector3;
-import maths.types.Vector4;
+import math.types.Vector3;
+import math.types.Vector4;
 
 public class GLVertex {
 

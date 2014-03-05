@@ -2,7 +2,7 @@ package location;
 
 import java.util.List;
 
-import maths.types.Vector3;
+import math.types.Vector3;
 import assets.entities.Entity;
 import assets.entities.Monster;
 import assets.entities.Projectile;

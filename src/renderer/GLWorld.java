@@ -1,6 +1,6 @@
 package renderer;
 
-import maths.types.Vector3;
+import math.types.Vector3;
 
 public class GLWorld {
 

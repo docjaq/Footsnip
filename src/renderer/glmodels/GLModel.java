@@ -1,7 +1,7 @@
 package renderer.glmodels;
 
 import static renderer.GLUtilityMethods.exitOnGLError;
-import maths.types.MatrixStack;
+import math.types.MatrixStack;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;

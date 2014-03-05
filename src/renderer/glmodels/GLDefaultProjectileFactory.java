@@ -2,7 +2,7 @@ package renderer.glmodels;
 
 import java.io.File;
 
-import maths.types.Vector4;
+import math.types.Vector4;
 import mesh.Ply;
 
 public class GLDefaultProjectileFactory implements GLProjectileFactory {

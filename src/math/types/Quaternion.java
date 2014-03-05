@@ -1,4 +1,4 @@
-package maths.types;
+package math.types;
 
 public class Quaternion {
 	private float x, y, z, w;

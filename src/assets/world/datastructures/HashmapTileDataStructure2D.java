@@ -5,12 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import maths.types.MatrixStack;
-import maths.types.Vector3;
+import camera.CameraModel.ObjectPole;
+import math.types.MatrixStack;
+import math.types.Vector3;
 import renderer.GLPosition;
 import renderer.glmodels.GLTileFactory;
 import renderer.glshaders.GLShader;
-import util.MousePoles.ObjectPole;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
 

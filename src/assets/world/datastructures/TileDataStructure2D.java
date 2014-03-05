@@ -3,10 +3,10 @@ package assets.world.datastructures;
 import java.util.Iterator;
 import java.util.List;
 
-import maths.types.MatrixStack;
+import camera.CameraModel.ObjectPole;
+import math.types.MatrixStack;
 import renderer.glmodels.GLTileFactory;
 import renderer.glshaders.GLShader;
-import util.MousePoles.ObjectPole;
 import assets.world.AbstractTile;
 
 public interface TileDataStructure2D {

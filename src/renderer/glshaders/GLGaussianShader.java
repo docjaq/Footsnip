@@ -3,9 +3,9 @@ package renderer.glshaders;
 import static org.lwjgl.opengl.GL20.glUniform1f;
 import static org.lwjgl.opengl.GL20.glUniform3;
 import static org.lwjgl.opengl.GL20.glUniform4f;
-import maths.types.Matrix3;
-import maths.types.MatrixStack;
-import maths.types.Vector4;
+import math.types.Matrix3;
+import math.types.MatrixStack;
+import math.types.Vector4;
 
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL31;

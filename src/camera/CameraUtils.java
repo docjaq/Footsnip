@@ -1,20 +1,17 @@
-package util;
+package camera;
 
-import maths.types.Matrix4;
-import maths.types.Quaternion;
-import maths.types.Vector2;
-import maths.types.Vector3;
+import math.types.Vector2;
 
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import util.MousePoles.MouseButton;
-import util.MousePoles.MouseModifier;
-import util.MousePoles.ObjectPole;
-import util.MousePoles.ViewPole;
+import camera.CameraModel.MouseButton;
+import camera.CameraModel.MouseModifier;
+import camera.CameraModel.ObjectPole;
+import camera.CameraModel.ViewPole;
 
-public final class Utils {
+public final class CameraUtils {
 	/**
 	 * Gets the current time in milliseconds, using LWJGLs high resolution
 	 * timer.
@@ -23,29 +20,6 @@ public final class Utils {
 	 */
 	public static long getTime() {
 		return Sys.getTime() * 1000 / Sys.getTimerResolution();
-	}
-
-	public static Quaternion angleAxisDeg(float angle, Vector3 vec) {
-		return new Quaternion((float) Math.toRadians(angle), vec);
-	}
-
-	public static float clamp(float value, float low, float high) {
-		return Math.min(Math.max(value, low), high);
-	}
-
-	public static float mix(float f1, float f2, float a) {
-		return f1 + (f2 - f1) * a;
-	}
-
-	public static Matrix4 lookAt(Vector3 eye, Vector3 center, Vector3 up) {
-		Vector3 f = center.copy().sub(eye).normalize();
-		up = up.copy().normalize();
-
-		Vector3 s = f.cross(up);
-		Vector3 u = s.cross(f);
-
-		return new Matrix4(new float[] { s.x(), u.x(), -f.x(), 0, s.y(), u.y(), -f.y(), 0, s.z(), u.z(), -f.z(), 0, 0, 0, 0, 1 })
-				.translate(eye.copy().mult(-1));
 	}
 
 	public static void updateMousePoles(ViewPole... viewPoles) {

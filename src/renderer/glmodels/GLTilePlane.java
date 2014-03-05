@@ -7,7 +7,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import maths.types.Vector4;
+import math.types.Vector4;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;

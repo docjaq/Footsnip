@@ -3,7 +3,7 @@ package mesh;
 import java.io.File;
 import java.util.ArrayList;
 
-import maths.types.Vector4;
+import math.types.Vector4;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
 

@@ -1,6 +1,8 @@
-package maths;
+package math;
 
-import maths.types.Vector3;
+import math.types.Matrix4;
+import math.types.Quaternion;
+import math.types.Vector3;
 
 public class LinearAlgebra {
 
@@ -65,5 +67,28 @@ public class LinearAlgebra {
 		dz *= dz;
 
 		return (float) Math.sqrt(dx + dy + dz);
+	}
+
+	public static Quaternion angleAxisDeg(float angle, Vector3 vec) {
+		return new Quaternion((float) Math.toRadians(angle), vec);
+	}
+
+	public static float clamp(float value, float low, float high) {
+		return Math.min(Math.max(value, low), high);
+	}
+
+	public static float mix(float f1, float f2, float a) {
+		return f1 + (f2 - f1) * a;
+	}
+
+	public static Matrix4 lookAt(Vector3 eye, Vector3 center, Vector3 up) {
+		Vector3 f = center.copy().sub(eye).normalize();
+		up = up.copy().normalize();
+
+		Vector3 s = f.cross(up);
+		Vector3 u = s.cross(f);
+
+		return new Matrix4(new float[] { s.x(), u.x(), -f.x(), 0, s.y(), u.y(), -f.y(), 0, s.z(), u.z(), -f.z(), 0, 0, 0, 0, 1 })
+				.translate(eye.copy().mult(-1));
 	}
 }

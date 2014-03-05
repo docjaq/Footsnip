@@ -3,11 +3,11 @@ package renderer.glmodels;
 import java.util.ArrayList;
 import java.util.List;
 
-import maths.types.Vector3;
-import maths.types.Vector4;
+import math.types.Vector3;
+import math.types.Vector4;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
-import TerrainGeneration.PlasmaFractalFactory;
+import terraingeneration.PlasmaFractalFactory;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
 import assets.world.datastructures.TileDataStructure2D;

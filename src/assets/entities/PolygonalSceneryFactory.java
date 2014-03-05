@@ -3,8 +3,8 @@ package assets.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import maths.types.Vector3;
-import maths.types.Vector4;
+import math.types.Vector3;
+import math.types.Vector4;
 import renderer.GLPosition;
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;

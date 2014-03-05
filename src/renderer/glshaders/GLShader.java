@@ -7,8 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-import maths.types.MatrixStack;
-import maths.types.Vector4;
+import math.types.MatrixStack;
+import math.types.Vector4;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;

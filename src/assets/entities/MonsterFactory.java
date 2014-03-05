@@ -1,6 +1,6 @@
 package assets.entities;
 
-import maths.types.Vector3;
+import math.types.Vector3;
 import mesh.GeometryFile;
 import renderer.GLPosition;
 import renderer.glmodels.GLMesh;

@@ -1,7 +1,7 @@
 package assets.entities;
 
 import location.Locatable;
-import maths.LinearAlgebra;
+import math.LinearAlgebra;
 import renderer.GLPosition;
 import renderer.glmodels.GLModel;
 import assets.world.AbstractTile;
