@@ -23,11 +23,6 @@ public class AudioEngine {
 	private IntBuffer buffer = BufferUtils.createIntBuffer(NUM_BUFFERS);
 	private IntBuffer source = BufferUtils.createIntBuffer(NUM_SOURCES);
 
-	private FloatBuffer sourcePos = (FloatBuffer) BufferUtils.createFloatBuffer(3 * NUM_SOURCES).put(new float[] { 0.0f, 0.0f, 0.0f })
-			.rewind();
-	private FloatBuffer sourceVel = (FloatBuffer) BufferUtils.createFloatBuffer(3 * NUM_SOURCES).put(new float[] { 0.0f, 0.0f, 0.0f })
-			.rewind();
-
 	private FloatBuffer listenerPos = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
 	private FloatBuffer listenerVel = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
 	private FloatBuffer listenerOri = (FloatBuffer) BufferUtils.createFloatBuffer(6)
@@ -106,13 +101,15 @@ public class AudioEngine {
 		AL10.alSource(source.get(soundType.index()), AL10.AL_POSITION, position);
 	}
 
+	private void setSourceVelocity(SoundType soundType, FloatBuffer velocity) {
+		AL10.alSource(source.get(soundType.index()), AL10.AL_VELOCITY, velocity);
+	}
+
 	private void setupAudioSource(SoundType soundType) {
 		int index = soundType.index();
 		AL10.alSourcei(source.get(index), AL10.AL_BUFFER, buffer.get(index));
 		AL10.alSourcef(source.get(index), AL10.AL_PITCH, 1.0f);
 		AL10.alSourcef(source.get(index), AL10.AL_GAIN, soundType.gain());
-		setSourcePosition(soundType, (FloatBuffer) sourcePos.position(index * 3));
-		AL10.alSource(source.get(index), AL10.AL_VELOCITY, (FloatBuffer) sourceVel.position(index * 3));
 	}
 
 	private void setListenerValues() {
@@ -136,6 +133,7 @@ public class AudioEngine {
 		FloatBuffer positionBuffer = (FloatBuffer) BufferUtils.createFloatBuffer(3)
 				.put(new float[] { glPosition.modelPos.x(), glPosition.modelPos.y(), glPosition.modelPos.z() }).rewind();
 		setSourcePosition(SoundType.MONSTER, positionBuffer);
+		setSourceVelocity(SoundType.MONSTER, BufferUtils.createFloatBuffer(3));
 		play(SoundType.MONSTER);
 	}
 
