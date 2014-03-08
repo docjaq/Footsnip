@@ -5,9 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.lwjgl.util.vector.Vector3f;
-
-import renderer.glmodels.GLTileFactory;
+import camera.CameraModel.ObjectPole;
+import math.types.MatrixStack;
+import math.types.Vector3;
+import renderer.GLPosition;
+import renderer.glmodels.factories.GLTileFactory;
 import renderer.glshaders.GLShader;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
@@ -41,15 +43,22 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	}
 
 	@Override
-	public void draw(GLShader shader) {
+	public void draw(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix) {
 		for (AbstractTile t : map.values()) {
 			if (t.getModel() == null) {
 				t.createModel(glTileFactory);
+
 			}
 			try {
-				t.getModel().draw(shader);
+				modelMatrix.pushMatrix();
+				{
+					modelMatrix.getTop().mult(objectPole.calcMatrix());
+					t.getModel().draw(shader, modelMatrix, t.getPosition());
+				}
+				modelMatrix.popMatrix();
 			} catch (NullPointerException e) {
-				System.out.println("Exception: GLModel does not exist");
+				System.err.println("Tile Rendering failed");
+				e.printStackTrace();
 			}
 		}
 
@@ -73,7 +82,9 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 		int adjustedX = parentKey.x + xAdjust;
 		int adjustedY = parentKey.y + yAdjust;
-		Vector3f position = new Vector3f(adjustedX * tile.getSize(), adjustedY * tile.getSize(), 0);
+		Vector3 tilePosition = new Vector3(adjustedX * tile.getSize(), adjustedY * tile.getSize(), 0);
+		Vector3 tileAngle = new Vector3(0, 0, 0);
+		GLPosition position = new GLPosition(tilePosition, tileAngle, AbstractTile.SIZE, 0);
 		DataStructureKey2D key = new DataStructureKey2D(adjustedX, adjustedY);
 
 		if (map.containsKey(key)) {

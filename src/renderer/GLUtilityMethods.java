@@ -1,9 +1,25 @@
 package renderer;
 
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_LEQUAL;
+import static org.lwjgl.opengl.GL11.glDepthFunc;
+import static org.lwjgl.opengl.GL11.glDepthMask;
+import static org.lwjgl.opengl.GL11.glDepthRange;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL30.glBindBufferRange;
+import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
+import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+
+import math.types.Matrix4;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
@@ -11,6 +27,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
@@ -41,7 +58,9 @@ public class GLUtilityMethods {
 		}
 	}
 
-	public static void setupOpenGL(int width, int height, String windowTitle, float[] backgroundColor) {
+	public static void setupOpenGL(int width, int height, String windowTitle, float[] backgroundColor, int projectionUniformBuffer,
+			int projectionBlockIndex) {
+
 		// Setup an OpenGL context with API version 3.2
 		try {
 			PixelFormat pixelFormat = new PixelFormat();
@@ -68,29 +87,38 @@ public class GLUtilityMethods {
 		GL11.glClearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3]);
 
 		// Map the internal OpenGL coordinate system to the entire screen
-		GL11.glViewport(0, 0, width, height);
+		// GL11.glViewport(0, 0, width, height);
 
-		// UNSURE: Not having thse was causing all the transparency! Oops,
-		// forgot. This seems like the right way to do it in 3.2, but NOT
-		// ENTIRELY SURE
 		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glDepthMask(true);
+		GL11.glCullFace(GL11.GL_BACK);
+		GL11.glFrontFace(GL11.GL_CCW);
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(true);
+		glDepthFunc(GL_LEQUAL);
+		glDepthRange(0, 1);
+		glEnable(GL_DEPTH_CLAMP);
+
+		projectionUniformBuffer = glGenBuffers();
+		glBindBuffer(GL_UNIFORM_BUFFER, projectionUniformBuffer);
+		glBufferData(GL_UNIFORM_BUFFER, 16 * 4, GL_DYNAMIC_DRAW);
+		glBindBufferRange(GL_UNIFORM_BUFFER, projectionBlockIndex, projectionUniformBuffer, 0, 16 * 4);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		resized(width, height, projectionUniformBuffer);
 
 		exitOnGLError("setupOpenGL");
 	}
 
-	// TODO: Need to actually make sure we destroy everything properly
-	public static void destroyOpenGL(GLWorld glWorld, Player player) {
+	public static void resized(int width, int height, int projectionUniformBuffer) {
+		GL11.glViewport(0, 0, width, height);
+		GL15.glBindBuffer(GL_UNIFORM_BUFFER, projectionUniformBuffer);
+		GL15.glBufferSubData(GL_UNIFORM_BUFFER, 0, new Matrix4().clearToPerspectiveDeg(45, width, height, 1, 1000).toBuffer());
+		GL15.glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	}
 
-		// Clean up world shader
-		// glWorld.destroy();
-
-		// Clean up all of our models
-		// This should probably clean all the shaders attached to a model as
-		// well
+	public static void destroyOpenGL(Player player) {
 		player.destroy();
-
 		Display.destroy();
 	}
 

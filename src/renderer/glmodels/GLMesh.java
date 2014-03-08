@@ -11,15 +11,14 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Vector3f;
 
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
 
 public class GLMesh extends GLModel {
 
-	public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList, Vector3f modelPos, Vector3f modelAngle, float modelScale) {
-		super(modelPos, modelAngle, modelScale);
+	public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList) {
+		super();
 
 		FloatBuffer verticesFloatBuffer = BufferUtils.createFloatBuffer(vertexList.size() * GLVertex.stride);
 		for (GLVertex v : vertexList) {
@@ -69,7 +68,7 @@ public class GLMesh extends GLModel {
 
 		exitOnGLError("setupQuad");
 
-		setRadius(computeRadius(vertexList));
+		setModelRadius(computeRadius(vertexList));
 	}
 
 	private float computeRadius(List<GLVertex> vertexList) {
@@ -82,7 +81,7 @@ public class GLMesh extends GLModel {
 			}
 		}
 		float radius = maxDist;
-		radius *= getModelScale();
+
 		return radius;
 	}
 

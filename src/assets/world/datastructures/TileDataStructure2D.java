@@ -3,7 +3,9 @@ package assets.world.datastructures;
 import java.util.Iterator;
 import java.util.List;
 
-import renderer.glmodels.GLTileFactory;
+import camera.CameraModel.ObjectPole;
+import math.types.MatrixStack;
+import renderer.glmodels.factories.GLTileFactory;
 import renderer.glshaders.GLShader;
 import assets.world.AbstractTile;
 
@@ -31,7 +33,7 @@ public interface TileDataStructure2D {
 	 * someone adding a new data-structure that they must check to see if a tile
 	 * is not null
 	 **/
-	public void draw(GLShader shader);
+	public void draw(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix);
 
 	public AbstractTile getInitialTile();
 

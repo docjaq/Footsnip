@@ -11,24 +11,25 @@ import java.util.List;
 import java.util.Map;
 
 import main.Main;
+import math.types.MatrixStack;
+import math.types.Quaternion;
+import math.types.Vector3;
+import math.types.Vector4;
 import mesh.Ply;
 
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.JsePlatform;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 
-import renderer.glmodels.GLDefaultProjectileFactory;
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
-import renderer.glmodels.GLTileFactory;
-import renderer.glmodels.GLTileMidpointDisplacementFactory;
-import renderer.glshaders.GLPhongShader;
+import renderer.glmodels.factories.GLDefaultProjectileFactory;
+import renderer.glmodels.factories.GLTileFactory;
+import renderer.glmodels.factories.GLTileMidpointDisplacementFactory;
+import renderer.glshaders.GLGaussianShader;
 import renderer.glshaders.GLShader;
 import thread.RendererThread;
-import util.Utils;
 import assets.AssetContainer;
 import assets.entities.Entity;
 import assets.entities.Monster;
@@ -37,34 +38,36 @@ import assets.entities.Player;
 import assets.entities.PolygonalScenery;
 import assets.entities.PolygonalSceneryFactory;
 import assets.entities.Projectile;
-import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
 import assets.world.datastructures.TileDataStructure2D;
+import camera.CameraModel.MouseButton;
+import camera.CameraModel.ObjectData;
+import camera.CameraModel.ObjectPole;
+import camera.CameraModel.ViewData;
+import camera.CameraModel.ViewPole;
+import camera.CameraModel.ViewScale;
+import camera.CameraUtils;
 import exception.RendererException;
 
 public class Renderer_3_2 extends RendererThread {
 
-	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/lighting/phong_vert.glsl",
-			"resources/shaders/lighting/phong_frag.glsl" };
+	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/lighting/gaussian_vert.glsl",
+			"resources/shaders/lighting/gaussian_frag.glsl" };
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
 	private final int WIDTH = 1024;
 	private final int HEIGHT = 768;
 
-	private final int MAX_FPS = 200;
+	private final int MAX_FPS = 400;
 
 	private Map<Class<?>, GLShader> shaderMap;
 
-	private Class<GLPhongShader> defaultShaderClass = GLPhongShader.class;
+	private Class<GLGaussianShader> defaultShaderClass = GLGaussianShader.class;
 
-	/**
-	 * The time of the last frame, to calculate the time delta for rotating
-	 * monsters.
-	 */
+	// The time of the last frame, to calculate the time delta for rotating
+	// monsters.
 	private long lastFrameTime;
-
-	private GLWorld glWorld;
 
 	/** The time we started counting frames. */
 	private long lastFPSUpdate;
@@ -72,60 +75,106 @@ public class Renderer_3_2 extends RendererThread {
 	/** The number of frames rendered since lastFPSUpdate. */
 	private int framesThisSecond;
 
+	private int projectionUniformBuffer;
+	private final int projectionBlockIndex = 2;
+	private ViewPole viewPole;
+	private ObjectPole objectPole;
+	float startTime = 0;
+
 	public Renderer_3_2(AssetContainer assContainer, Main mainApplication) {
 		super(assContainer, mainApplication);
 
 		// Initialise FPS calculation fields.
 		framesThisSecond = 0;
-		lastFPSUpdate = Utils.getTime();
+		lastFPSUpdate = CameraUtils.getTime();
 		getFrameTimeDelta();
 	}
 
 	protected void beforeLoop() throws RendererException {
 		float[] backgroundColor = { 1f, 1f, 1f, 1.0f };
-		setupOpenGL(WIDTH, HEIGHT, WINDOW_TITLE, backgroundColor);
+		setupOpenGL(WIDTH, HEIGHT, WINDOW_TITLE, backgroundColor, projectionUniformBuffer, projectionBlockIndex);
 
-		// Camera is actually static at this stage
-		glWorld = new GLWorld(WIDTH, HEIGHT, new Vector3f(0, 0, 0));
+		// Vector3: Target position of camera focus
+		// Quaternion: Orientation of the camera relative to the target
+		// Distance (or radius) from target
+		// Rotation around target/position vector
+		ViewData viewData = new ViewData(new Vector3(0, 0.0f, 0f), new Quaternion(0.0f, 0, 0, 1f), 1.4f, 0);
+
+		ViewScale viewScale = new ViewScale(0.2f, 20, 1.5f, 0.5f, 0, 0, 90f / 250f);
+
+		// Setup initial transform for object in MODEL space
+		ObjectData objectData = new ObjectData(new Vector3(0, 0.0f, 0), new Quaternion());
+
+		// Set the viewing stuff AND the object stuff in the MousePoles class
+		viewPole = new ViewPole(viewData, viewScale, MouseButton.LEFT_BUTTON);
+		objectPole = new ObjectPole(objectData, 90f / 250f, MouseButton.RIGHT_BUTTON, viewPole);
 
 		shaderMap = new HashMap<Class<?>, GLShader>();
 
-		GLShader currentShader = new GLPhongShader(glWorld);
+		GLShader currentShader = new GLGaussianShader(projectionBlockIndex);
 		currentShader.create(DEFAULT_SHADER_LOCATION);
 		shaderMap.put(defaultShaderClass, currentShader);
 
 		createEntities(currentShader);
 		createWorld(currentShader);
 		createScenery(currentShader);
+
 	}
 
 	protected void afterLoop() {
 		// TODO: Modify this to accept the whole entity data-structure
-		destroyOpenGL(glWorld, assContainer.getPlayer());
+		destroyOpenGL(assContainer.getPlayer());
 	}
 
-	// TODO: Sort this method out so we can apply transforms and shit to our
-	// 'data structure' of models. Currently it's pretty hard-coded to our
+	// private Vector4 calcLightPosition() {
+	// float lightHeight = 0.1f, lightRadius = 0.5f;
+	// startTime += 0.003;
+	//
+	// Vector4 ret = new Vector4(1.0f, 0.0f, lightHeight, 1);
+	// ret.x((float) Math.cos(startTime * 2 * Math.PI) * lightRadius);
+	// ret.y((float) Math.sin(startTime * 2 * Math.PI) * lightRadius);
+	//
+	// return ret;
+	// }
+
 	private void logicCycle() {
 
-		// Reset view and model matrices
-		glWorld.clearViewMatrix();
-		glWorld.setCameraPos(assContainer.getPlayer().getModel().modelPos);
-
-		// Translate camera
-		glWorld.transformCamera();
+		CameraUtils.updateMousePoles(viewPole, objectPole);
+		// Translate camera to new Player position
+		viewPole.setTargetPos(assContainer.getPlayer().getPosition().modelPos);
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 
 		GLShader currentShader = shaderMap.get(defaultShaderClass);
 		currentShader.bindShader();
-		currentShader.copyCameraMatricesToShader();
 
-		renderScenery(assContainer.getPolygonalSceneries(), currentShader);
-		renderTiles(assContainer.getTileDataStructure(), currentShader);
-		renderMonsters(assContainer.getMonsters(), currentShader);
-		renderPlayer(assContainer.getPlayer(), currentShader);
-		renderProjectiles(assContainer.getProjectiles(), currentShader);
+		MatrixStack modelMatrix = new MatrixStack();
+
+		// Judging by how it's used, this 'model matrix' must be the
+		// modelToCamera matrix
+		modelMatrix.setTop(viewPole.calcMatrix());
+
+		// GLModel model = assContainer.getPlayer().getModel();
+		Vector4 worldLightPos = new Vector4(assContainer.getPlayer().getPosition().modelPos.x(),
+				(assContainer.getPlayer().getPosition().modelPos.y()), assContainer.getPlayer().getPosition().modelPos.z() + 0.3f, 1);
+		// Vector4 worldLightPos = calcLightPosition();
+
+		// Confused why I don't need to push/pop this...
+		Vector4 lightPosCameraSpace = modelMatrix.getTop().mult(worldLightPos);
+
+		// Copy shared matrices to shader
+		currentShader.copySharedUniformsToShader(lightPosCameraSpace, new MaterialParams());
+		{
+			modelMatrix.pushMatrix();
+			{
+				renderPlayer(assContainer.getPlayer(), currentShader, modelMatrix);
+				renderMonsters(assContainer.getMonsters(), currentShader, modelMatrix);
+				renderTiles(assContainer.getTileDataStructure(), currentShader, modelMatrix);
+				renderScenery(assContainer.getPolygonalSceneries(), currentShader, modelMatrix);
+				renderProjectiles(assContainer.getProjectiles(), currentShader, modelMatrix);
+			}
+			modelMatrix.popMatrix();
+		}
 
 		currentShader.unbindShader();
 
@@ -133,13 +182,14 @@ public class Renderer_3_2 extends RendererThread {
 	}
 
 	private void createWorld(GLShader shader) throws RendererException {
-		Vector3f tilePos = new Vector3f(0, 0, 0);
-		Vector3f tileAngle = new Vector3f(0, 0, 0);
+		Vector3 tilePos = new Vector3(0, 0, 0);
+		Vector3 tileAngle = new Vector3(0, 0, 0);
 		float tileScale = 1f;
+		GLPosition position = new GLPosition(tilePos, tileAngle, tileScale, 0);
 
-		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, tilePos);
-		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(65, assContainer.getTileDataStructure());
-		GLModel model = glTileFactory.create(initialTile, tilePos, tileAngle, tileScale, AbstractTile.SIZE);
+		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, position);
+		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129, assContainer.getTileDataStructure());
+		GLModel model = glTileFactory.create(initialTile);
 		initialTile.setModel(model);
 
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
@@ -149,25 +199,26 @@ public class Renderer_3_2 extends RendererThread {
 		// Hardcoded because Dave's mother is a prostitute
 
 		assContainer.setPolygonalSceneries(new ArrayList<PolygonalScenery>());
-		Vector3f sceneryPos = new Vector3f(0.05f, 0.05f, 0);
+		Vector3 sceneryPos = new Vector3(0.05f, 0.05f, 0);
 		assContainer.addPolygonalScenery(PolygonalSceneryFactory.create(shader, sceneryPos));
 	}
 
 	private void createEntities(GLShader shader) throws RendererException {
 
-		Vector3f playerPos = new Vector3f(0, 0, 0);
-		Vector3f playerAngle = new Vector3f(0, 0, 0);
+		Vector3 playerPos = new Vector3(0, 0, 0);
+		Vector3 playerAngle = new Vector3(0, 0, 0);
 		float playerScale = 1f;
-		Vector4f playerColor = new Vector4f(0.9f, 0.9f, 0.9f, 1.0f);
+		Vector4 playerColor = new Vector4(0.4f, 0.4f, 1.0f, 1.0f);
 
 		Ply playerMesh = new Ply();
 		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"), playerColor);
-		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices(), playerPos, playerAngle, playerScale);
+		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices());
+		GLPosition playerPosition = new GLPosition(playerPos, playerAngle, playerScale, playerModel.getModelRadius());
 
-		assContainer.setPlayer(new Player(playerModel, "Dave", 0, new float[] { 1.0f, 0.0f, 0.0f }));
+		assContainer.setPlayer(new Player(playerModel, playerPosition, "Dave", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 		assContainer.setMonsters(new ArrayList<Monster>());
 
-		Vector4f monsterColor = new Vector4f(0.3f, 0.3f, 0.05f, 1.0f);
+		Vector4 monsterColor = new Vector4(0.3f, 0.3f, 0.05f, 1.0f);
 		Ply monsterMesh = new Ply();
 		monsterMesh.read(new File("resources/meshes/SmoothBlob_small.ply"), monsterColor);
 
@@ -176,46 +227,44 @@ public class Renderer_3_2 extends RendererThread {
 		_G.get("dofile").call(LuaValue.valueOf(script));
 		LuaValue getRotationDelta = _G.get("getRotationDelta");
 
+		MonsterFactory monsterFactory = new MonsterFactory(monsterMesh);
+
 		float spread = 2;
 		for (int i = 0; i < 10; i++) {
-			Vector3f monsterPos = new Vector3f((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
-			// Vector3f monsterPos = new Vector3f(-0.45f, -0.45f, 0);
-
+			Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
-			assContainer.addMonster(MonsterFactory.create(monsterMesh, shader, monsterPos, rotationDelta));
+			assContainer.addMonster(monsterFactory.create(monsterMesh, shader, monsterPos, rotationDelta));
 		}
 
 		// Initialise projectile factory
-		assContainer.setProjectileFactory(new GLDefaultProjectileFactory());
+		assContainer.setProjectileFactory(GLDefaultProjectileFactory.getInstance());
 	}
 
-	private void renderTiles(TileDataStructure2D dataStructure, GLShader shader) {
-		dataStructure.draw(shader);
-
-		TileDataStructure2D tiles = assContainer.getTileDataStructure();
-		for (AbstractTile tile : tiles.getTilesAsList()) { //
-			// System.out.println("Number of entities: " + //
-			// tile.getContainedEntities().size());
-			for (Entity entry : tile.getContainedEntities()) {
-				if (entry instanceof Projectile) {
-					// System.out.println("Found a projectile!");
-				}
-			}
-		}
-
+	private void renderTiles(TileDataStructure2D dataStructure, GLShader shader, MatrixStack modelMatrix) {
+		dataStructure.draw(shader, objectPole, modelMatrix);
 	}
 
-	private void renderScenery(List<PolygonalScenery> scenery, GLShader shader) {
+	private void renderScenery(List<PolygonalScenery> scenery, GLShader shader, MatrixStack modelMatrix) {
 		for (PolygonalScenery s : scenery) {
-			s.getModel().draw(shader);
+			modelMatrix.pushMatrix();
+			{
+				modelMatrix.getTop().mult(objectPole.calcMatrix());
+				s.getModel().draw(shader, modelMatrix, s.getPosition());
+			}
+			modelMatrix.popMatrix();
 		}
 	}
 
-	private void renderPlayer(Player player, GLShader shader) {
-		player.getModel().draw(shader);
+	private void renderPlayer(Player player, GLShader shader, MatrixStack modelMatrix) {
+		modelMatrix.pushMatrix();
+		{
+			modelMatrix.getTop().mult(objectPole.calcMatrix());
+			player.getModel().draw(shader, modelMatrix, player.getPosition());
+		}
+		modelMatrix.popMatrix();
 	}
 
-	private void renderMonsters(List<Monster> monsters, GLShader shader) {
+	private void renderMonsters(List<Monster> monsters, GLShader shader, MatrixStack modelMatrix) {
 
 		List<Entity> toRemove = new ArrayList<Entity>();
 		for (Monster m : monsters) {
@@ -225,11 +274,17 @@ public class Renderer_3_2 extends RendererThread {
 		}
 		monsters.removeAll(toRemove);
 		for (Monster m : monsters) {
-			m.getModel().draw(shader);
+			modelMatrix.pushMatrix();
+			{
+				modelMatrix.getTop().mult(objectPole.calcMatrix());
+				m.getModel().draw(shader, modelMatrix, m.getPosition());
+			}
+			modelMatrix.popMatrix();
 		}
+
 	}
 
-	private void renderProjectiles(List<Projectile> projectiles, GLShader shader) {
+	private void renderProjectiles(List<Projectile> projectiles, GLShader shader, MatrixStack modelMatrix) {
 
 		List<Entity> toRemove = new ArrayList<Entity>();
 
@@ -237,17 +292,20 @@ public class Renderer_3_2 extends RendererThread {
 			for (Projectile p : projectiles) {
 				if (p.isDestroyable()) {
 					toRemove.add(p);
-				} else if (p.getModel() == null) {
-					p.createModel(assContainer.getProjectileFactory());
 				}
 			}
 			projectiles.removeAll(toRemove);
 
 			for (Projectile p : projectiles) {
 				try {
-					p.getModel().draw(shader);
+					modelMatrix.pushMatrix();
+					{
+						modelMatrix.getTop().mult(objectPole.calcMatrix());
+						p.getModel().draw(shader, modelMatrix, p.getPosition());
+					}
+					modelMatrix.popMatrix();
 				} catch (NullPointerException e) {
-					System.out.println("Exception: GLModel does not exist");
+					System.out.println("Exception: Projectile GLModel does not exist");
 				}
 
 			}
@@ -281,7 +339,7 @@ public class Renderer_3_2 extends RendererThread {
 	 * TODO: Just displaying it in the title bar for now.
 	 */
 	private void updateFPS() {
-		if (Utils.getTime() - lastFPSUpdate > 1000) {
+		if (CameraUtils.getTime() - lastFPSUpdate > 1000) {
 			Display.setTitle("FPS: " + framesThisSecond);
 			framesThisSecond = 0;
 			lastFPSUpdate += 1000;
@@ -296,7 +354,7 @@ public class Renderer_3_2 extends RendererThread {
 	 * @return Milliseconds since the last frame.
 	 */
 	protected int getFrameTimeDelta() {
-		long time = Utils.getTime();
+		long time = CameraUtils.getTime();
 		int delta = (int) (time - lastFrameTime);
 		lastFrameTime = time;
 

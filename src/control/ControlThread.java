@@ -4,8 +4,8 @@ import main.Main;
 
 import org.lwjgl.input.Keyboard;
 
+import camera.CameraUtils;
 import thread.GameThread;
-import util.Utils;
 import assets.AssetContainer;
 import assets.entities.Monster;
 import assets.entities.Projectile;
@@ -104,7 +104,7 @@ public class ControlThread extends GameThread {
 	 * @return Milliseconds since the last iteration.
 	 */
 	private int getIterationDelta() {
-		long time = Utils.getTime();
+		long time = CameraUtils.getTime();
 		int delta = (int) (time - lastIterationTime);
 		lastIterationTime = time;
 

@@ -7,7 +7,7 @@ import assets.entities.Entity;
 public class CollisionMethods {
 	private static boolean sphericalIntersectionTest(Entity a, Entity b) {
 		float distance = a.getEuclideanDistance(b);
-		if (distance < a.getModel().getRadius() + b.getModel().getRadius()) {
+		if (distance < a.getPosition().getEntityRadius() + b.getPosition().getEntityRadius()) {
 			return true;
 		}
 		return false;

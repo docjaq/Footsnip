@@ -1,15 +1,14 @@
 package renderer.glmodels;
 
-import static maths.LinearAlgebra.degreesToRadians;
 import static renderer.GLUtilityMethods.exitOnGLError;
+import math.types.MatrixStack;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 
+import renderer.GLPosition;
 import renderer.GLWorld;
 import renderer.glshaders.GLShader;
 
@@ -22,9 +21,9 @@ import renderer.glshaders.GLShader;
 public abstract class GLModel {
 
 	// Model positions
-	public Vector3f modelPos;
-	public Vector3f modelAngle;
-	private Vector3f modelScale;
+	// public Vector3 modelPos;
+	// public Vector3 modelAngle;
+	// private Vector3 modelScale;
 
 	// Model GL Variables
 	protected int vaoId = 0;
@@ -32,35 +31,39 @@ public abstract class GLModel {
 	protected int vboiId = 0;
 	protected int indicesCount = 0;
 
+	protected float modelRadius;
+
 	// Collision variables
 	/* MAKE SURE THAT THIS RADIUS HAS BEEN SET BY THE IMPLEMENTING CLASS */
-	private float radius;
+	// private float radius;
 
-	// protected float[] color;
-
-	// This could actually just be static or a single object in the renderer.
-	// Having one per model is a waste, though not really much of an overhead
-	// for now
-	protected Matrix4f modelMatrix;
-
-	// public String debugType;
-
-	public GLModel(Vector3f modelPos, Vector3f modelAngle, float modelScale) {
+	public GLModel() {
 		// Set the default quad rotation, scale and position values
-		this.modelPos = modelPos;
-		this.modelAngle = modelAngle;
-		this.modelScale = new Vector3f(1.0f, 1.0f, 1.0f);
-		setModelScale(modelScale);
-		// this.shader = shader;
-
-		modelMatrix = new Matrix4f();
+		// this.modelPos = modelPos;
+		// this.modelAngle = modelAngle;
+		// setModelScale(modelScale);
 	}
 
-	public void draw(GLShader shader) {
+	protected void setModelRadius(float modelRadius) {
+		this.modelRadius = modelRadius;
+	}
 
-		transform();
+	public float getModelRadius() {
+		return modelRadius;
+	}
 
-		shader.copyUniformsToShader(modelMatrix, modelPos);
+	public void draw(GLShader shader, MatrixStack modelMatrix, GLPosition position) {
+
+		// transform();
+		modelMatrix.getTop().translate(position.modelPos.x(), position.modelPos.y(), position.modelPos.z());
+
+		modelMatrix.getTop().rotateDeg(position.modelAngle.z(), GLWorld.BASIS_Z);
+		modelMatrix.getTop().rotateDeg(position.modelAngle.y(), GLWorld.BASIS_Y);
+		modelMatrix.getTop().rotateDeg(position.modelAngle.x(), GLWorld.BASIS_X);
+
+		modelMatrix.getTop().scale(position.modelScale);
+
+		shader.copySpecificUniformsToShader(modelMatrix);
 
 		// Bind to the VAO that has all the information about the vertices
 		GL30.glBindVertexArray(vaoId);
@@ -95,7 +98,6 @@ public abstract class GLModel {
 	}
 
 	protected void cleanUpGeometry() {
-		// Clean up geometry
 
 		// Select the VAO
 		GL30.glBindVertexArray(vaoId);
@@ -120,61 +122,4 @@ public abstract class GLModel {
 		exitOnGLError("destroyOpenGL");
 	}
 
-	public void transform() {
-		// This order is important for building the matrix
-		clearModelMatrix();
-
-		modelMatrix.scale(modelScale);
-		modelMatrix.translate(modelPos);
-
-		modelMatrix.rotate(degreesToRadians(modelAngle.z), GLWorld.BASIS_Z);
-		modelMatrix.rotate(degreesToRadians(modelAngle.y), GLWorld.BASIS_Y);
-		modelMatrix.rotate(degreesToRadians(modelAngle.x), GLWorld.BASIS_X);
-
-	}
-
-	// ATTENTION: Before, had a local Floatbuffer in the class, but as it's just
-	// used to copy stuff to the shader, seems a waste. Maybe a better way than
-	// sending the reference around though?
-	// public void copyModelMatrixToShader() {
-
-	// }
-
-	// public void matrixCleanup() {
-	// modelMatrix.store(matrix44Buffer);
-	// matrix44Buffer.flip();
-	// GL20.glUniformMatrix4(modelMatrixLocation, false, matrix44Buffer);
-	// }
-
-	// ATTENTION:Setting it to the identity seems more efficient than creating a
-	// new one?
-	protected void clearModelMatrix() {
-		// modelMatrix = new Matrix4f();
-		modelMatrix.setIdentity();
-	}
-
-	public void setModelScale(float modelScale) {
-		/**
-		 * This has been changed to only allow uniform scaling of the model.
-		 * This means that we can compute the bounding sphere more easily at
-		 * runtime
-		 **/
-		this.modelScale.x = modelScale;
-		this.modelScale.y = modelScale;
-		this.modelScale.z = modelScale;
-
-		radius *= getModelScale();
-	}
-
-	public float getModelScale() {
-		return modelScale.x;
-	}
-
-	public float getRadius() {
-		return radius;
-	}
-
-	public void setRadius(float radius) {
-		this.radius = radius;
-	}
 }
