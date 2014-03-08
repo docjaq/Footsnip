@@ -1,19 +1,26 @@
 package assets.entities;
 
+import math.types.Vector3;
 import mesh.GeometryFile;
-
-import org.lwjgl.util.vector.Vector3f;
-
+import renderer.GLPosition;
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glshaders.GLShader;
 
 public class MonsterFactory {
 
-	public static Monster create(GeometryFile mesh, GLShader shader, Vector3f monsterPos, float rotationDelta) {
+	private GeometryFile mesh;
+	private GLModel model;
 
-		Vector3f monsterAngle = new Vector3f(0, 0, 0);
-		float monsterScale = 1f;
+	public MonsterFactory(GeometryFile mesh) {
+		this.mesh = mesh;
+		model = new GLMesh(mesh.getTriangles(), mesh.getVertices());
+	}
+
+	public Monster create(GeometryFile mesh, GLShader shader, Vector3 monsterPos, float rotationDelta) {
+
+		Vector3 monsterAngle = new Vector3(0, 0, 0);
+		float monsterScale = (float) (Math.random() * 2f);
 
 		/**
 		 * TODO: Currently the color is actually set per vertex of the mesh when
@@ -22,11 +29,10 @@ public class MonsterFactory {
 		 * that could be changed by modifying the GeometryFile for every
 		 * creation, but for now it's fixed, and this color array does nothing
 		 **/
-		// float[] monsterColor = { (float) Math.random(), (float)
-		// Math.random(), (float) Math.random(), (float) 1 };
+		GLPosition position = new GLPosition(monsterPos, monsterAngle, monsterScale, model.getModelRadius());
+		position.setEntityRadiusWithModelRadius(model.getModelRadius());
 
-		GLModel monsterModel = new GLMesh(mesh.getTriangles(), mesh.getVertices(), monsterPos, monsterAngle, monsterScale);
-		Monster monster = new Monster(monsterModel, "Monster_", 0);
+		Monster monster = new Monster(model, position, "Monster_", 0);
 		monster.setRotationDelta(rotationDelta);
 
 		return monster;

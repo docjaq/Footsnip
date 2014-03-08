@@ -2,8 +2,7 @@ package location;
 
 import java.util.List;
 
-import org.lwjgl.util.vector.Vector3f;
-
+import math.types.Vector3;
 import assets.entities.Entity;
 import assets.entities.Monster;
 import assets.entities.Projectile;
@@ -21,9 +20,9 @@ public class LocationMethods {
 		 * Tiles are actually offset by 0.5: initial tile is [-0.5,0.5]^2, so we
 		 * must adjust the containment check
 		 **/
-		Vector3f modelPos = entity.getModel().modelPos;
-		float xPos = modelPos.x;
-		float yPos = modelPos.y;
+		Vector3 modelPos = entity.getPosition().modelPos;
+		float xPos = modelPos.x();
+		float yPos = modelPos.y();
 
 		if (xPos > 0) {
 			xPos += HALF_TILE_WIDTH;

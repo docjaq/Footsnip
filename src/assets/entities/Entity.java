@@ -1,7 +1,8 @@
 package assets.entities;
 
 import location.Locatable;
-import maths.LinearAlgebra;
+import math.LinearAlgebra;
+import renderer.GLPosition;
 import renderer.glmodels.GLModel;
 import assets.world.AbstractTile;
 import assets.world.datastructures.TileDataStructure2D;
@@ -13,8 +14,8 @@ public class Entity extends AbstractEntity implements Collidable, Locatable {
 	protected AbstractTile currentTile;
 	protected boolean destroyable = false;
 
-	public Entity(GLModel model, String name) {
-		super(model);
+	public Entity(GLModel model, GLPosition position, String name) {
+		super(model, position);
 		this.name = name;
 	}
 
@@ -27,7 +28,7 @@ public class Entity extends AbstractEntity implements Collidable, Locatable {
 	}
 
 	public float getEuclideanDistance(Entity other) {
-		return LinearAlgebra.euclideanDistance(this.model.modelPos, other.model.modelPos);
+		return LinearAlgebra.euclideanDistance(this.position.modelPos, other.position.modelPos);
 	}
 
 	@Override

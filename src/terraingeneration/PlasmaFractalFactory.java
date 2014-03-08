@@ -1,4 +1,4 @@
-package TerrainGeneration;
+package terraingeneration;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

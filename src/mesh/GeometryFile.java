@@ -3,14 +3,13 @@ package mesh;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.lwjgl.util.vector.Vector4f;
-
+import math.types.Vector4;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
 
 public interface GeometryFile {
 
-	public void read(File file, Vector4f color);
+	public void read(File file, Vector4 color);
 
 	public void write(File file);
 

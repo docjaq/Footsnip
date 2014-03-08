@@ -4,6 +4,7 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 
+import renderer.GLPosition;
 import renderer.glmodels.GLModel;
 import audio.AudioEngine;
 import collision.Collidable;
@@ -25,8 +26,8 @@ public class Monster extends Entity {
 		this.rotationDelta = rotationDelta / 20.0f;
 	}
 
-	public Monster(GLModel model, String name, int level) {
-		super(model, name);
+	public Monster(GLModel model, GLPosition position, String name, int level) {
+		super(model, position, name);
 		this.level = level;
 	}
 
@@ -35,19 +36,19 @@ public class Monster extends Entity {
 	}
 
 	public void moveLeft() {
-		model.modelPos.x -= POS_DELTA;
+		position.modelPos.x(position.modelPos.x() - POS_DELTA);
 	}
 
 	public void moveRight() {
-		model.modelPos.x += POS_DELTA;
+		position.modelPos.x(position.modelPos.x() + POS_DELTA);
 	}
 
 	public void moveUp() {
-		model.modelPos.y += POS_DELTA;
+		position.modelPos.y(position.modelPos.y() + POS_DELTA);
 	}
 
 	public void moveDown() {
-		model.modelPos.y -= POS_DELTA;
+		position.modelPos.y(position.modelPos.y() - POS_DELTA);
 	}
 
 	public void moveRandom() {
@@ -80,9 +81,9 @@ public class Monster extends Entity {
 	 */
 
 	public void rotate(int timeDelta) {
-		model.modelAngle.z += rotationDelta * timeDelta;
-		model.modelAngle.y += rotationDelta * timeDelta;
-		model.modelAngle.x += rotationDelta * timeDelta;
+		position.modelAngle.z(position.modelAngle.z() + rotationDelta * timeDelta);
+		position.modelAngle.y(position.modelAngle.y() + rotationDelta * timeDelta);
+		position.modelAngle.x(position.modelAngle.x() + rotationDelta * timeDelta);
 	}
 
 	@Override
@@ -91,7 +92,7 @@ public class Monster extends Entity {
 			rotationDelta *= 1.01;
 		}
 		if (Monster.class.isAssignableFrom(subject.getClass())) {
-			System.out.println("Monster-monster collision");
+			// TODO: Do something
 		}
 	}
 
