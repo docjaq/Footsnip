@@ -10,6 +10,7 @@ import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.util.WaveData;
 
+import renderer.GLPosition;
 import util.FileUtil;
 
 public class AudioEngine {
@@ -131,8 +132,10 @@ public class AudioEngine {
 		}
 	}
 
-	public void playMonsterSound(FloatBuffer position) {
-		setSourcePosition(SoundType.MONSTER, position);
+	public void playMonsterSound(GLPosition glPosition) {
+		FloatBuffer positionBuffer = (FloatBuffer) BufferUtils.createFloatBuffer(3)
+				.put(new float[] { glPosition.modelPos.x(), glPosition.modelPos.y(), glPosition.modelPos.z() }).rewind();
+		setSourcePosition(SoundType.MONSTER, positionBuffer);
 		play(SoundType.MONSTER);
 	}
 
