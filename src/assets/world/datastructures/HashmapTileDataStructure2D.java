@@ -5,14 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import camera.CameraModel.ObjectPole;
 import math.types.MatrixStack;
 import math.types.Vector3;
 import renderer.GLPosition;
 import renderer.glmodels.factories.GLTileFactory;
 import renderer.glshaders.GLShader;
+import assets.entities.Player;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
+import camera.CameraModel.ObjectPole;
 
 public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
@@ -42,8 +43,9 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		return new ArrayList<AbstractTile>(map.values());
 	}
 
-	@Override
-	public void draw(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix) {
+	// @Override
+	public void drawAlt(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix) {
+		int renderCount = 0;
 		for (AbstractTile t : map.values()) {
 			if (t.getModel() == null) {
 				t.createModel(glTileFactory);
@@ -54,6 +56,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 				{
 					modelMatrix.getTop().mult(objectPole.calcMatrix());
 					t.getModel().draw(shader, modelMatrix, t.getPosition());
+					renderCount++;
 				}
 				modelMatrix.popMatrix();
 			} catch (NullPointerException e) {
@@ -61,7 +64,41 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("Rendering = " + renderCount + " of " + map.size() + " tiles");
 
+	}
+
+	@Override
+	public void draw(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, Player player) {
+
+		drawSingleTile(shader, objectPole, modelMatrix, player.getCurrentTile());
+
+		drawSingleTile(shader, objectPole, modelMatrix, getTileTop(player.getCurrentTile()));
+		drawSingleTile(shader, objectPole, modelMatrix, getTileRight(player.getCurrentTile()));
+		drawSingleTile(shader, objectPole, modelMatrix, getTileBottom(player.getCurrentTile()));
+		drawSingleTile(shader, objectPole, modelMatrix, getTileLeft(player.getCurrentTile()));
+
+		drawSingleTile(shader, objectPole, modelMatrix, getTileTopRight(player.getCurrentTile()));
+		drawSingleTile(shader, objectPole, modelMatrix, getTileBottomRight(player.getCurrentTile()));
+		drawSingleTile(shader, objectPole, modelMatrix, getTileTopLeft(player.getCurrentTile()));
+		drawSingleTile(shader, objectPole, modelMatrix, getTileBottomLeft(player.getCurrentTile()));
+	}
+
+	private void drawSingleTile(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, AbstractTile tile) {
+		if (tile.getModel() == null) {
+			tile.createModel(glTileFactory);
+		}
+		try {
+			modelMatrix.pushMatrix();
+			{
+				modelMatrix.getTop().mult(objectPole.calcMatrix());
+				tile.getModel().draw(shader, modelMatrix, tile.getPosition());
+			}
+			modelMatrix.popMatrix();
+		} catch (NullPointerException e) {
+			System.err.println("Tile Rendering failed");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -142,6 +179,46 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		AbstractTile neighbourTile = null;
 		try {
 			neighbourTile = map.get(new DataStructureKey2D(tile.getKey().x - 1, tile.getKey().y));
+		} catch (NullPointerException e) {
+		}
+		return neighbourTile;
+	}
+
+	@Override
+	public AbstractTile getTileTopLeft(AbstractTile tile) {
+		AbstractTile neighbourTile = null;
+		try {
+			neighbourTile = map.get(new DataStructureKey2D(tile.getKey().x - 1, tile.getKey().y + 1));
+		} catch (NullPointerException e) {
+		}
+		return neighbourTile;
+	}
+
+	@Override
+	public AbstractTile getTileTopRight(AbstractTile tile) {
+		AbstractTile neighbourTile = null;
+		try {
+			neighbourTile = map.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y + 1));
+		} catch (NullPointerException e) {
+		}
+		return neighbourTile;
+	}
+
+	@Override
+	public AbstractTile getTileBottomLeft(AbstractTile tile) {
+		AbstractTile neighbourTile = null;
+		try {
+			neighbourTile = map.get(new DataStructureKey2D(tile.getKey().x - 1, tile.getKey().y - 1));
+		} catch (NullPointerException e) {
+		}
+		return neighbourTile;
+	}
+
+	@Override
+	public AbstractTile getTileBottomRight(AbstractTile tile) {
+		AbstractTile neighbourTile = null;
+		try {
+			neighbourTile = map.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y - 1));
 		} catch (NullPointerException e) {
 		}
 		return neighbourTile;

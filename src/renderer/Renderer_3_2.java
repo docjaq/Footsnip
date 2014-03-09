@@ -169,7 +169,7 @@ public class Renderer_3_2 extends RendererThread {
 			{
 				renderPlayer(assContainer.getPlayer(), currentShader, modelMatrix);
 				renderMonsters(assContainer.getMonsters(), currentShader, modelMatrix);
-				renderTiles(assContainer.getTileDataStructure(), currentShader, modelMatrix);
+				renderTiles(assContainer.getTileDataStructure(), currentShader, modelMatrix, assContainer.getPlayer());
 				renderScenery(assContainer.getPolygonalSceneries(), currentShader, modelMatrix);
 				renderProjectiles(assContainer.getProjectiles(), currentShader, modelMatrix);
 			}
@@ -240,8 +240,8 @@ public class Renderer_3_2 extends RendererThread {
 		assContainer.setProjectileFactory(GLDefaultProjectileFactory.getInstance());
 	}
 
-	private void renderTiles(TileDataStructure2D dataStructure, GLShader shader, MatrixStack modelMatrix) {
-		dataStructure.draw(shader, objectPole, modelMatrix);
+	private void renderTiles(TileDataStructure2D dataStructure, GLShader shader, MatrixStack modelMatrix, Player player) {
+		dataStructure.draw(shader, objectPole, modelMatrix, player);
 	}
 
 	private void renderScenery(List<PolygonalScenery> scenery, GLShader shader, MatrixStack modelMatrix) {

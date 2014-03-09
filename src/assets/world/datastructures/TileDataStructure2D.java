@@ -3,11 +3,12 @@ package assets.world.datastructures;
 import java.util.Iterator;
 import java.util.List;
 
-import camera.CameraModel.ObjectPole;
 import math.types.MatrixStack;
 import renderer.glmodels.factories.GLTileFactory;
 import renderer.glshaders.GLShader;
+import assets.entities.Player;
 import assets.world.AbstractTile;
+import camera.CameraModel.ObjectPole;
 
 public interface TileDataStructure2D {
 
@@ -33,7 +34,7 @@ public interface TileDataStructure2D {
 	 * someone adding a new data-structure that they must check to see if a tile
 	 * is not null
 	 **/
-	public void draw(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix);
+	public void draw(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, Player player);
 
 	public AbstractTile getInitialTile();
 
@@ -52,5 +53,13 @@ public interface TileDataStructure2D {
 	// data-structure
 
 	public Iterator getIterator();
+
+	AbstractTile getTileBottomRight(AbstractTile tile);
+
+	AbstractTile getTileBottomLeft(AbstractTile tile);
+
+	AbstractTile getTileTopRight(AbstractTile tile);
+
+	AbstractTile getTileTopLeft(AbstractTile tile);
 
 }
