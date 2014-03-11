@@ -59,7 +59,7 @@ public class Renderer_3_2 extends RendererThread {
 	private final int WIDTH = 1024;
 	private final int HEIGHT = 768;
 
-	private final int MAX_FPS = 400;
+	private final int MAX_FPS = 500;
 
 	private Map<Class<?>, GLShader> shaderMap;
 

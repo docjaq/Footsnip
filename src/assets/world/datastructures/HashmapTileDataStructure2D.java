@@ -43,7 +43,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		return new ArrayList<AbstractTile>(map.values());
 	}
 
-	// @Override
+	// Old draw method to render all scenes
 	public void drawAlt(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix) {
 		int renderCount = 0;
 		for (AbstractTile t : map.values()) {
