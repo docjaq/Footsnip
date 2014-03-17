@@ -7,9 +7,11 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL40;
 
 import renderer.GLPosition;
 import renderer.GLWorld;
+import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
 
 /*
@@ -65,6 +67,8 @@ public abstract class GLModel {
 
 		shader.copySpecificUniformsToShader(modelMatrix);
 
+		shader.copyTesselationUniformsToShader();
+
 		// Bind to the VAO that has all the information about the vertices
 		GL30.glBindVertexArray(vaoId);
 
@@ -79,11 +83,15 @@ public abstract class GLModel {
 		// the vertices
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
-		// Draw the vertices
-		// Currently, our GLModel, therefore, can only consist of triangles
-		GL11.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
-		// GL11.glDrawElements(GL11.GL_LINE_LOOP, indicesCount,
-		// GL11.GL_UNSIGNED_INT, 0);
+		// Debug mode
+		// GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+
+		if (shader instanceof GLGaussianTessellationShader) {
+			GL40.glPatchParameteri(GL40.GL_PATCH_VERTICES, 3);
+			GL11.glDrawElements(GL40.GL_PATCHES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+		} else {
+			GL11.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+		}
 
 		// Put everything back to default (deselect)
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);

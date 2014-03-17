@@ -28,6 +28,7 @@ import renderer.glmodels.factories.GLDefaultProjectileFactory;
 import renderer.glmodels.factories.GLTileFactory;
 import renderer.glmodels.factories.GLTileMidpointDisplacementFactory;
 import renderer.glshaders.GLGaussianShader;
+import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
 import thread.RendererThread;
 import assets.AssetContainer;
@@ -54,6 +55,13 @@ public class Renderer_3_2 extends RendererThread {
 	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/lighting/gaussian_vert.glsl",
 			"resources/shaders/lighting/gaussian_frag.glsl" };
 
+	private final String[] DEBUG_SHADER_LOCATION = { "resources/shaders/tessellation/gaussian_vert.glsl",
+			"resources/shaders/tessellation/gaussian_frag.glsl" };
+
+	private final String[] GAUSSIAN_TESS_SHADER_LOCATION = { "resources/shaders/tessellation/gaussian_vert.glsl",
+			"resources/shaders/tessellation/terrain_tessCont.glsl", "resources/shaders/tessellation/terrain_tessEval.glsl",
+			"resources/shaders/tessellation/terrain_geom.glsl", "resources/shaders/tessellation/gaussian_frag.glsl", };
+
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
 	private final int WIDTH = 1024;
@@ -64,6 +72,7 @@ public class Renderer_3_2 extends RendererThread {
 	private Map<Class<?>, GLShader> shaderMap;
 
 	private Class<GLGaussianShader> defaultShaderClass = GLGaussianShader.class;
+	private Class<GLGaussianTessellationShader> tessellationShaderClass = GLGaussianTessellationShader.class;
 
 	// The time of the last frame, to calculate the time delta for rotating
 	// monsters.
@@ -115,6 +124,12 @@ public class Renderer_3_2 extends RendererThread {
 		currentShader.create(DEFAULT_SHADER_LOCATION);
 		shaderMap.put(defaultShaderClass, currentShader);
 
+		System.out.println("Before shaders");
+		GLShader tessellationShader = new GLGaussianTessellationShader(projectionBlockIndex);
+		tessellationShader.create(GAUSSIAN_TESS_SHADER_LOCATION);
+		shaderMap.put(tessellationShaderClass, tessellationShader);
+		System.out.println("After shaders");
+
 		createEntities(currentShader);
 		createWorld(currentShader);
 		createScenery(currentShader);
@@ -154,10 +169,8 @@ public class Renderer_3_2 extends RendererThread {
 		// modelToCamera matrix
 		modelMatrix.setTop(viewPole.calcMatrix());
 
-		// GLModel model = assContainer.getPlayer().getModel();
 		Vector4 worldLightPos = new Vector4(assContainer.getPlayer().getPosition().modelPos.x(),
 				(assContainer.getPlayer().getPosition().modelPos.y()), assContainer.getPlayer().getPosition().modelPos.z() + 0.3f, 1);
-		// Vector4 worldLightPos = calcLightPosition();
 
 		// Confused why I don't need to push/pop this...
 		Vector4 lightPosCameraSpace = modelMatrix.getTop().mult(worldLightPos);
@@ -169,9 +182,23 @@ public class Renderer_3_2 extends RendererThread {
 			{
 				renderPlayer(assContainer.getPlayer(), currentShader, modelMatrix);
 				renderMonsters(assContainer.getMonsters(), currentShader, modelMatrix);
+				renderMonsters(assContainer.getMonsters(), currentShader, modelMatrix);
 				renderTiles(assContainer.getTileDataStructure(), currentShader, modelMatrix, assContainer.getPlayer());
 				renderScenery(assContainer.getPolygonalSceneries(), currentShader, modelMatrix);
 				renderProjectiles(assContainer.getProjectiles(), currentShader, modelMatrix);
+			}
+			modelMatrix.popMatrix();
+		}
+		currentShader.unbindShader();
+
+		currentShader = shaderMap.get(tessellationShaderClass);
+		currentShader.bindShader();
+
+		currentShader.copySharedUniformsToShader(lightPosCameraSpace, new MaterialParams());
+		{
+			modelMatrix.pushMatrix();
+			{
+
 			}
 			modelMatrix.popMatrix();
 		}

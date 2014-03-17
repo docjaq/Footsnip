@@ -14,17 +14,17 @@ import renderer.MaterialParams;
 
 public class GLGaussianShader extends GLShader {
 
-	private final float lightAttenuation = 3.7f;
+	protected final float lightAttenuation = 3.7f;
 
-	private int modelToCameraMatrixUniform;
+	protected int modelToCameraMatrixUniform;
 
-	private int lightIntensityUniform;
-	private int ambientIntensityUniform;
+	protected int lightIntensityUniform;
+	protected int ambientIntensityUniform;
 
-	private int normalModelToCameraMatrixUniform;
-	private int cameraSpaceLightPositionUniform;
-	private int lightAttenuationUniform;
-	private int shininessFactorUniform;
+	protected int normalModelToCameraMatrixUniform;
+	protected int cameraSpaceLightPositionUniform;
+	protected int lightAttenuationUniform;
+	protected int shininessFactorUniform;
 
 	public GLGaussianShader(int projectionBlockIndex) {
 		super(projectionBlockIndex);
@@ -33,11 +33,13 @@ public class GLGaussianShader extends GLShader {
 	@Override
 	public void setupShaderVariables() {
 
+		// Vertex shader uniforms
 		modelToCameraMatrixUniform = GL20.glGetUniformLocation(programID, "modelToCameraMatrix");
+		normalModelToCameraMatrixUniform = GL20.glGetUniformLocation(programID, "normalModelToCameraMatrix");
+
+		// Fragment shader uniforms
 		lightIntensityUniform = GL20.glGetUniformLocation(programID, "lightIntensity");
 		ambientIntensityUniform = GL20.glGetUniformLocation(programID, "ambientIntensity");
-
-		normalModelToCameraMatrixUniform = GL20.glGetUniformLocation(programID, "normalModelToCameraMatrix");
 		cameraSpaceLightPositionUniform = GL20.glGetUniformLocation(programID, "cameraSpaceLightPos");
 		lightAttenuationUniform = GL20.glGetUniformLocation(programID, "lightAttenuation");
 		shininessFactorUniform = GL20.glGetUniformLocation(programID, "shininessFactor");
@@ -51,6 +53,8 @@ public class GLGaussianShader extends GLShader {
 	// only need to be sent once)
 	@Override
 	public void copySharedUniformsToShader(Vector4 lightPosCameraSpace, MaterialParams materialParams) {
+
+		// All for fragment shader
 		glUniform4f(lightIntensityUniform, 1.8f, 1.8f, 1.8f, 1);
 		glUniform4f(ambientIntensityUniform, 0.05f, 0.05f, 0.05f, 1);
 		glUniform3(cameraSpaceLightPositionUniform, lightPosCameraSpace.toBuffer());
@@ -63,7 +67,12 @@ public class GLGaussianShader extends GLShader {
 	// required. Possibly other things?
 	@Override
 	public void copySpecificUniformsToShader(MatrixStack modelMatrix) {
+		// All for vertex shader
 		GL20.glUniformMatrix4(modelToCameraMatrixUniform, false, modelMatrix.getTop().toBuffer());
 		GL20.glUniformMatrix3(normalModelToCameraMatrixUniform, false, new Matrix3(modelMatrix.getTop()).inverse().transpose().toBuffer());
+	}
+
+	@Override
+	public void copyTesselationUniformsToShader() {
 	}
 }

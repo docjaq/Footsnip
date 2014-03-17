@@ -12,37 +12,59 @@ import math.types.Vector4;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL32;
+import org.lwjgl.opengl.GL40;
 
 import renderer.MaterialParams;
 import exception.RendererException;
 
 public abstract class GLShader {
 
+	// Program IDs
 	protected int programID;
 	private int vertID;
 	private int fragID;
-	protected int fragColorLocation;
-	protected int modelMatrixLocation;
-	protected int projectionMatrixLocation;
-	protected int viewMatrixLocation;
+
+	private int geomID;
+	private int tessContID;
+	private int tessEvalID;
 
 	protected int projectionBlockIndex;
 
-	public GLShader(int projectionBlockIndex) {
+	private boolean tessellation;
 
+	public GLShader(int projectionBlockIndex) {
 		this.projectionBlockIndex = projectionBlockIndex;
+		tessellation = false;
 	}
 
 	public void create(String[] shaderName) throws RendererException {
-		// Load the vertex shader
-		vertID = loadShader(shaderName[0], GL20.GL_VERTEX_SHADER);
-		// Load the fragment shader
-		fragID = loadShader(shaderName[1], GL20.GL_FRAGMENT_SHADER);
 
-		// Create a new shader program that links both shaders
 		programID = GL20.glCreateProgram();
-		GL20.glAttachShader(programID, vertID);
-		GL20.glAttachShader(programID, fragID);
+
+		if (shaderName.length == 5) {
+			tessellation = true;
+
+			vertID = loadShader(shaderName[0], GL20.GL_VERTEX_SHADER);
+			tessContID = loadShader(shaderName[1], GL40.GL_TESS_CONTROL_SHADER);
+			tessEvalID = loadShader(shaderName[2], GL40.GL_TESS_EVALUATION_SHADER);
+			geomID = loadShader(shaderName[3], GL32.GL_GEOMETRY_SHADER);
+			fragID = loadShader(shaderName[4], GL20.GL_FRAGMENT_SHADER);
+
+			GL20.glAttachShader(programID, vertID);
+			GL20.glAttachShader(programID, tessContID);
+			GL20.glAttachShader(programID, tessEvalID);
+			GL20.glAttachShader(programID, geomID);
+			GL20.glAttachShader(programID, fragID);
+
+		} else if (shaderName.length == 2) {
+			vertID = loadShader(shaderName[0], GL20.GL_VERTEX_SHADER);
+			fragID = loadShader(shaderName[1], GL20.GL_FRAGMENT_SHADER);
+
+			GL20.glAttachShader(programID, vertID);
+			GL20.glAttachShader(programID, fragID);
+		}
+
 		GL20.glLinkProgram(programID);
 
 		setupShaderVariables();
@@ -58,12 +80,25 @@ public abstract class GLShader {
 
 	public abstract void copySharedUniformsToShader(Vector4 lightPosCameraSpace, MaterialParams materialParams);
 
+	public abstract void copyTesselationUniformsToShader();
+
 	public void destroy() {
 		GL20.glDetachShader(programID, vertID);
 		GL20.glDetachShader(programID, fragID);
+		if (tessellation) {
+			GL20.glDetachShader(programID, tessContID);
+			GL20.glDetachShader(programID, tessEvalID);
+			GL20.glDetachShader(programID, geomID);
+		}
 
 		GL20.glDeleteShader(vertID);
 		GL20.glDeleteShader(fragID);
+		if (tessellation) {
+			GL20.glDeleteShader(tessContID);
+			GL20.glDeleteShader(tessEvalID);
+			GL20.glDeleteShader(geomID);
+		}
+
 		GL20.glDeleteProgram(programID);
 	}
 
@@ -112,22 +147,6 @@ public abstract class GLShader {
 
 	public void setProgramID(int programID) {
 		this.programID = programID;
-	}
-
-	public int getModelMatrixLocation() {
-		return modelMatrixLocation;
-	}
-
-	public int getProjectionMatrixLocation() {
-		return projectionMatrixLocation;
-	}
-
-	public int getViewMatrixLocation() {
-		return viewMatrixLocation;
-	}
-
-	public int getFragColorLocation() {
-		return fragColorLocation;
 	}
 
 }
