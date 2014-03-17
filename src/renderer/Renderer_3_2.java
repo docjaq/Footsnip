@@ -90,6 +90,10 @@ public class Renderer_3_2 extends RendererThread {
 	private ObjectPole objectPole;
 	float startTime = 0;
 
+	private int debugTexLoc;
+
+	// private int debugGlTexId;
+
 	public Renderer_3_2(AssetContainer assContainer, Main mainApplication) {
 		super(assContainer, mainApplication);
 
@@ -129,6 +133,25 @@ public class Renderer_3_2 extends RendererThread {
 		tessellationShader.create(GAUSSIAN_TESS_SHADER_LOCATION);
 		shaderMap.put(tessellationShaderClass, tessellationShader);
 		System.out.println("After shaders");
+
+		// READ DEBUG TEXTURE
+		// debugGlTexId = GL13.GL_TEXTURE0;
+		// Read png texture
+		debugTexLoc = GLUtilityMethods.loadPNGTextureAsData("resources/images/mountains512.png");
+		((GLGaussianTessellationShader) tessellationShader).setTextureLocation(debugTexLoc);
+		((GLGaussianTessellationShader) tessellationShader).bindSamplerUnit();
+
+		// This is the value that's then sent to the GLModel, and is then sent
+		// to the bindTexture(int specificTexture); method
+		// Then render stuff
+		// Then unbindTexture();
+
+		// Still need to do this:
+		// gaussSampler = glGenSamplers();
+		// glSamplerParameteri(gaussSampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		// glSamplerParameteri(gaussSampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		// glSamplerParameteri(gaussSampler, GL_TEXTURE_WRAP_S,
+		// GL_CLAMP_TO_EDGE);
 
 		createEntities(currentShader);
 		createWorld(currentShader);
@@ -183,7 +206,7 @@ public class Renderer_3_2 extends RendererThread {
 				renderPlayer(assContainer.getPlayer(), currentShader, modelMatrix);
 				renderMonsters(assContainer.getMonsters(), currentShader, modelMatrix);
 				renderMonsters(assContainer.getMonsters(), currentShader, modelMatrix);
-				renderTiles(assContainer.getTileDataStructure(), currentShader, modelMatrix, assContainer.getPlayer());
+
 				renderScenery(assContainer.getPolygonalSceneries(), currentShader, modelMatrix);
 				renderProjectiles(assContainer.getProjectiles(), currentShader, modelMatrix);
 			}
@@ -198,7 +221,7 @@ public class Renderer_3_2 extends RendererThread {
 		{
 			modelMatrix.pushMatrix();
 			{
-
+				renderTiles(assContainer.getTileDataStructure(), currentShader, modelMatrix, assContainer.getPlayer());
 			}
 			modelMatrix.popMatrix();
 		}
@@ -215,7 +238,7 @@ public class Renderer_3_2 extends RendererThread {
 		GLPosition position = new GLPosition(tilePos, tileAngle, tileScale, 0);
 
 		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, position);
-		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129, assContainer.getTileDataStructure());
+		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(33, assContainer.getTileDataStructure());
 		GLModel model = glTileFactory.create(initialTile);
 		initialTile.setModel(model);
 

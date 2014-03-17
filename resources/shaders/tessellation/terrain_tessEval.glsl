@@ -17,6 +17,7 @@ uniform Projection
 {
 	mat4 cameraToClipMatrix;
 };
+uniform sampler2D heightMap;
 
 //float rand(vec2 co){
 //    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
@@ -39,6 +40,11 @@ void main()
     vec3 p2 = gl_TessCoord.z * tcPosition[2];
     tePosition = vec3(p0 + p1 + p2);
     //tePosition.z += (rand(vec2(tePosition))*0.04);
+    vec2 texCoordinates = vec2(tePosition);
+    texCoordinates.x +=0.5;
+    texCoordinates.y +=0.5;
+    tePosition.z = texture(heightMap, texCoordinates).r/3-.3;
+    
     vec4 tempCamPosition = modelToCameraMatrix * vec4(tePosition, 1.0);
     tePosition = vec3(tempCamPosition);
 	gl_Position = cameraToClipMatrix * tempCamPosition;

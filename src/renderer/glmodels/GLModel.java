@@ -87,10 +87,18 @@ public abstract class GLModel {
 		// GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 
 		if (shader instanceof GLGaussianTessellationShader) {
+			((GLGaussianTessellationShader) shader).bindTexture();
+		}
+
+		if (shader instanceof GLGaussianTessellationShader) {
 			GL40.glPatchParameteri(GL40.GL_PATCH_VERTICES, 3);
 			GL11.glDrawElements(GL40.GL_PATCHES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
 		} else {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+		}
+
+		if (shader instanceof GLGaussianTessellationShader) {
+			((GLGaussianTessellationShader) shader).unbindTexture();
 		}
 
 		// Put everything back to default (deselect)

@@ -2,17 +2,39 @@ package renderer.glshaders;
 
 import static org.lwjgl.opengl.GL20.glUniform1f;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL31;
+import org.lwjgl.opengl.GL33;
 
 public class GLGaussianTessellationShader extends GLGaussianShader {
 
+	// Tessellation Control shader
 	protected int tessLevelInner;
 	protected int tesLevelOuter;
+
+	// Tessellation Evaluation shader
+	protected int heightMapUniform;
 
 	public GLGaussianTessellationShader(int projectionBlockIndex) {
 		super(projectionBlockIndex);
 	}
+
+	// Actual reference to opengl location of texture in memory
+	// This is stupid as it fixes the texture for all models using this
+	// shader...
+	private int textureLocation;
+
+	// Shader binding subset
+	private int gaussTexUnit = 0;
+
+	// Opengl Shader binding
+	private int glTextureUnit = GL13.GL_TEXTURE0;
+
+	// Binding of texture as sampler
+	private int gaussSampler;
 
 	@Override
 	public void setupShaderVariables() {
@@ -21,9 +43,12 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		modelToCameraMatrixUniform = GL20.glGetUniformLocation(programID, "modelToCameraMatrix");
 		normalModelToCameraMatrixUniform = GL20.glGetUniformLocation(programID, "normalModelToCameraMatrix");
 
+		// Tessellation Control shader uniforms
+		tessLevelInner = GL20.glGetUniformLocation(programID, "tessLevelInner");
+		tesLevelOuter = GL20.glGetUniformLocation(programID, "tessLevelOuter");
+
 		// Tessellation Evaluation shader uniforms
-		tessLevelInner = GL20.glGetUniformLocation(programID, "TessLevelInner");
-		tesLevelOuter = GL20.glGetUniformLocation(programID, "TessLevelOuter");
+		heightMapUniform = GL20.glGetUniformLocation(programID, "heightMap");
 
 		// Fragment shader uniforms
 		lightIntensityUniform = GL20.glGetUniformLocation(programID, "lightIntensity");
@@ -34,11 +59,51 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 
 		int projectionBlock = GL31.glGetUniformBlockIndex(programID, "Projection");
 		GL31.glUniformBlockBinding(programID, projectionBlock, projectionBlockIndex);
+
+		setupSamplerUBO();
 	}
 
 	@Override
 	public void copyTesselationUniformsToShader() {
-		glUniform1f(tessLevelInner, 1);
-		glUniform1f(tesLevelOuter, 1);
+		glUniform1f(tessLevelInner, 8);
+		glUniform1f(tesLevelOuter, 8);
 	}
+
+	private void setupSamplerUBO() {
+		// This is an unusual one. Seems it only needs to be bound once, but
+		// needs the actual shader bound when doing it. How odd.
+		bindShader();
+		GL20.glUniform1i(heightMapUniform, gaussTexUnit);
+		unbindShader();
+	}
+
+	public void bindSamplerUnit() {
+		// Not sure whether this needs to happen after the OpenGL texture unit
+		// has been created
+		gaussSampler = GL33.glGenSamplers();
+		GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+		GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+		GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+		GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+	}
+
+	public void bindTexture() {
+		GL13.glActiveTexture(glTextureUnit + gaussTexUnit);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureLocation);
+		GL33.glBindSampler(gaussTexUnit, gaussSampler);
+	}
+
+	public void unbindTexture() {
+		GL33.glBindSampler(gaussTexUnit, 0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+	}
+
+	public int getGaussTexUnit() {
+		return gaussTexUnit;
+	}
+
+	public void setTextureLocation(int textureLocation) {
+		this.textureLocation = textureLocation;
+	}
+
 }

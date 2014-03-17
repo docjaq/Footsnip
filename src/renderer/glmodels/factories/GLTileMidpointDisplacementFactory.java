@@ -142,7 +142,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	private void adjustMeshAccordingToHeightmap(float[][] heightmap, List<GLVertex> vertices) {
 		int x = 0, y = 0;
 		for (GLVertex v : vertices) {
-			v.xyzw.z(heightmap[x][y] - 0.5f); // was 0.3f
+			// v.xyzw.z(heightmap[x][y] - 0.5f); // was 0.3f
 			v.rgba = new Vector4(Math.abs(v.xyzw.z() * 2) + 0.4f, 0.4f, 0.9f, 1f);
 			x++;
 			if (x == tileComplexity) {
