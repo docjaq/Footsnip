@@ -98,14 +98,19 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 					if (shader instanceof GLGaussianTessellationShader) {
 						PolygonHeightmapTile polygonTile = (PolygonHeightmapTile) tile;
 
-						// Buffer is already read. Just need to bind it as a
-						// texture because we don't have the GL context
-						// otherwise
-						if (polygonTile.getTextureLocation() == -1) {
-							polygonTile.setTextureLocation(GLUtilityMethods.bindBufferAs2DTexture(polygonTile.getHeightmapBuf(),
-									GL11.GL_RED, polygonTile.getTextureSize(), polygonTile.getTextureSize()));
+						// Bind heightmap texture if not already bound
+						if (polygonTile.getHeightmapLocation() == -1) {
+							polygonTile.setHeightmapLocation(GLUtilityMethods.bindBufferAs2DTexture(polygonTile.getHeightmapBuf(),
+									GL11.GL_RED, polygonTile.getHeightmapSize(), polygonTile.getHeightmapSize()));
 						}
-						((GLGaussianTessellationShader) shader).setTextureLocation(polygonTile.getTextureLocation());
+						((GLGaussianTessellationShader) shader).setHeightmapLocation(polygonTile.getHeightmapLocation());
+
+						// Bind normalmap texture if not already bound
+						if (polygonTile.getNormalmapLocation() == -1) {
+							polygonTile.setNormalmapLocation(GLUtilityMethods.bindBufferAs2DTexture(polygonTile.getNormalmapBuf(),
+									GL11.GL_RGB, polygonTile.getNormalmapSize(), polygonTile.getNormalmapSize()));
+						}
+						((GLGaussianTessellationShader) shader).setNormalmapLocation(polygonTile.getNormalmapLocation());
 					}
 					tile.getModel().draw(shader, modelMatrix, tile.getPosition());
 				}
@@ -116,7 +121,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 			}
 		} else {
 			System.out.println("Tile hasn't been created yet! - This shouldn't really be happening!");
-			System.exit(0);
+			// System.exit(0);
 		}
 	}
 

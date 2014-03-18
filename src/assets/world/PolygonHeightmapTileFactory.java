@@ -45,12 +45,17 @@ public class PolygonHeightmapTileFactory {
 
 		float[][] heightmap = new float[tileComplexity][tileComplexity];
 		PlasmaFractalFactory.create(heightmap);
+		FloatBuffer buf = generateNormalMap(heightmap);
 
 		if (PolygonHeightmapTile.class.isInstance(tile)) {
 			PolygonHeightmapTile polygonTile = ((PolygonHeightmapTile) tile);
+
 			polygonTile.setHeightmap(heightmap);
 			polygonTile.setHeightmapBuf(convertArrayToBuffer(heightmap));
-			polygonTile.setTextureSize(tileComplexity);
+			polygonTile.setHeightmapSize(tileComplexity);
+
+			polygonTile.setNormalmapBuf(buf);
+			polygonTile.setNormalmapSize(tileComplexity);
 		}
 		adjustHeightmapToNeighbours(tile, heightmap);
 
@@ -167,44 +172,68 @@ public class PolygonHeightmapTileFactory {
 		ByteBuffer buf = ByteBuffer.allocateDirect(data.length * data.length * 4 * 3);
 		buf.order(ByteOrder.nativeOrder());
 
+		int half = data.length / 2;
+
 		FloatBuffer fBuf = buf.asFloatBuffer();
 		for (int y = 0; y < data.length; y++) {
 			for (int x = 0; x < data.length; x++) {
-				fBuf.put(calculateNormal(data, x, y));
+				float[] normal;
+				if (x < half && y < half)
+					normal = new float[] { 1, 0, 0 };//
+				else if (x > half && y < half)
+					normal = new float[] { 0, 1, 0 };
+				else if (x < half && y > half)
+					normal = new float[] { 0, 0, 1 };
+				else if (x > half && y > half)
+					normal = new float[] { 1, 1, 0 };
+				else
+					normal = new float[] { 0, 0, 0 };
+
+				// calculateNormal(data,x,
+				// y);
+				// float[] normal = calculateNormal(data, x, y);
+				// float[] normal = new float[] { (float) Math.random(), (float)
+				// Math.random(), (float) Math.random() };
+				fBuf.put(normal);
 			}
 		}
+		fBuf.flip();
 
 		return fBuf;
 	}
 
 	private float[] calculateNormal(float[][] data, int u, int v) {
-		// Value from trial & error.
-		// Seems to work fine for the scales we are dealing with.
-		float strength = 1 / 16;
+		Vector3 normal;
 
-		float tl = Math.abs(data[u - 1][v - 1]);
-		float l = Math.abs(data[u - 1][v]);
-		float bl = Math.abs(data[u - 1][v + 1]);
-		float b = Math.abs(data[u][v + 1]);
-		float br = Math.abs(data[u + 1][v + 1]);
-		float r = Math.abs(data[u + 1][v]);
-		float tr = Math.abs(data[u + 1][v - 1]);
-		float t = Math.abs(data[u][v - 1]);
+		float strength = 10f;
+		if (u > 0 && v > 0 && u < data.length - 1 && v < data.length - 1) {
+			System.out.println("Creating some normals");
+			float tl = Math.abs(data[u - 1][v - 1]);
+			float l = Math.abs(data[u - 1][v]);
+			float bl = Math.abs(data[u - 1][v + 1]);
+			float b = Math.abs(data[u][v + 1]);
+			float br = Math.abs(data[u + 1][v + 1]);
+			float r = Math.abs(data[u + 1][v]);
+			float tr = Math.abs(data[u + 1][v - 1]);
+			float t = Math.abs(data[u][v - 1]);
 
-		// Compute dx using Sobel:
-		// -1 0 1
-		// -2 0 2
-		// -1 0 1
-		float dX = tr + 2 * r + br - tl - 2 * l - bl;
+			// Compute dx using Sobel:
+			// -1 0 1
+			// -2 0 2
+			// -1 0 1
+			float dX = tr + 2 * r + br - tl - 2 * l - bl;
 
-		// Compute dy using Sobel:
-		// -1 -2 -1
-		// 0 0 0
-		// 1 2 1
-		float dY = bl + 2 * b + br - tl - 2 * t - tr;
+			// Compute dy using Sobel:
+			// -1 -2 -1
+			// 0 0 0
+			// 1 2 1
+			float dY = bl + 2 * b + br - tl - 2 * t - tr;
 
-		Vector3 normal = new Vector3(dX, dY, 1.0f / strength);
-		normal.normalize();
+			normal = new Vector3(dX, dY, 1.0f / strength);
+			normal.normalize();
+		} else {
+			normal = new Vector3(0, 0, 1);
+		}
 
 		// convert (-1.0 , 1.0) to (0.0 , 1.0), if necessary
 		// Vector3 scale = new Vector3(0.5f, 0.5f, 0.5f);

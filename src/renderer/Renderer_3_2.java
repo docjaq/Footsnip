@@ -89,10 +89,6 @@ public class Renderer_3_2 extends RendererThread {
 	private ObjectPole objectPole;
 	float startTime = 0;
 
-	private int debugTexLoc;
-
-	// private int debugGlTexId;
-
 	public Renderer_3_2(AssetContainer assContainer, Main mainApplication) {
 		super(assContainer, mainApplication);
 
@@ -133,28 +129,8 @@ public class Renderer_3_2 extends RendererThread {
 		shaderMap.put(tessellationShaderClass, tessellationShader);
 		System.out.println("After shaders");
 
-		// READ DEBUG TEXTURE
-		// debugGlTexId = GL13.GL_TEXTURE0;
-		// Read png texture
-		// debugTexLoc =
-		// GLUtilityMethods.loadPNGTextureAsData("resources/images/mountains512.png");
-		// ((GLGaussianTessellationShader)
-		// tessellationShader).setTextureLocation(debugTexLoc);
-
 		// ((GLGaussianTessellationShader)
 		// tessellationShader).bindSamplerUnit();
-
-		// This is the value that's then sent to the GLModel, and is then sent
-		// to the bindTexture(int specificTexture); method
-		// Then render stuff
-		// Then unbindTexture();
-
-		// Still need to do this:
-		// gaussSampler = glGenSamplers();
-		// glSamplerParameteri(gaussSampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		// glSamplerParameteri(gaussSampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		// glSamplerParameteri(gaussSampler, GL_TEXTURE_WRAP_S,
-		// GL_CLAMP_TO_EDGE);
 
 		createEntities(currentShader);
 		createWorld(currentShader);

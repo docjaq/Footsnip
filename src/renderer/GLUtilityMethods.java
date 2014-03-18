@@ -277,6 +277,8 @@ public class GLUtilityMethods {
 		int texId = GL11.glGenTextures();
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
 
+		// GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, dataType, width, height, 0, dataType, GL11.GL_FLOAT, buf);
 
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_BASE_LEVEL, 0);

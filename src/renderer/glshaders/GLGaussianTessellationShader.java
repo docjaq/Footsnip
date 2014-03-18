@@ -14,24 +14,28 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 	protected int tessLevelInner;
 	protected int tesLevelOuter;
 
-	// Tessellation Evaluation shader
-	protected int heightMapUniform;
-
 	public GLGaussianTessellationShader(int projectionBlockIndex) {
 		super(projectionBlockIndex);
 	}
 
+	protected int heightMapUniform;
 	// Not really sure that this is the best way to set the texture
-	private int textureLocation = -1;
-
+	private int heightmapLocation = -1;
 	// Shader binding subset
-	private int gaussTexUnit = 0;
-
+	private int heightmapTexUnit = 0;
 	// Opengl Shader binding
-	private int glTextureUnit = GL13.GL_TEXTURE0;
+	// private int glHeightmapUnit = GL13.GL_TEXTURE0;
+
+	protected int normalmapUniform;
+	// Not really sure that this is the best way to set the texture
+	private int normalmapLocation = -1;
+	// Shader binding subset
+	private int normalmapTexUnit = 1;
+	// Opengl Shader binding
+	// private int glNormalmapUnit = GL13.GL_TEXTURE0;
 
 	// Binding of texture as sampler
-	private int gaussSampler;
+	private int sampler;
 
 	@Override
 	public void setupShaderVariables() {
@@ -46,6 +50,7 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 
 		// Tessellation Evaluation shader uniforms
 		heightMapUniform = GL20.glGetUniformLocation(programID, "heightMap");
+		normalmapUniform = GL20.glGetUniformLocation(programID, "normalMap");
 
 		// Fragment shader uniforms
 		lightIntensityUniform = GL20.glGetUniformLocation(programID, "lightIntensity");
@@ -70,7 +75,8 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		// This is an unusual one. Seems it only needs to be bound once, but
 		// needs the actual shader bound when doing it. How odd.
 		bindShader();
-		GL20.glUniform1i(heightMapUniform, gaussTexUnit);
+		GL20.glUniform1i(heightMapUniform, heightmapTexUnit);
+		GL20.glUniform1i(normalmapUniform, normalmapTexUnit);
 		unbindShader();
 	}
 
@@ -79,9 +85,9 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 	public void bindSamplerUnit() {
 		// Not sure whether this needs to happen after the OpenGL texture unit
 		// has been created
-		gaussSampler = GL33.glGenSamplers();
-		GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-		GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+		sampler = GL33.glGenSamplers();
+		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 
 		// This clamps the range of the sampler access. If enabled, it will be
 		// strictly more accurate, though will result in gaps
@@ -91,27 +97,54 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		// GL12.GL_CLAMP_TO_EDGE);
 	}
 
-	public void bindTexture() {
-		GL13.glActiveTexture(glTextureUnit + gaussTexUnit);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureLocation);
-		GL33.glBindSampler(gaussTexUnit, gaussSampler);
+	public void bindHeightmap() {
+		GL13.glActiveTexture(GL13.GL_TEXTURE0 + heightmapTexUnit);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, heightmapLocation);
+		GL20.glUniform1i(heightMapUniform, heightmapTexUnit);// May be wrong
+		// GL33.glBindSampler(heightmapTexUnit, sampler);
+
 	}
 
-	public void unbindTexture() {
-		GL33.glBindSampler(gaussTexUnit, 0);
+	public void unbindHeightmap() {
+		GL33.glBindSampler(heightmapTexUnit, 0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 
-	public int getGaussTexUnit() {
-		return gaussTexUnit;
+	public void bindNormalmap() {
+		GL13.glActiveTexture(GL13.GL_TEXTURE0 + normalmapTexUnit);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalmapLocation);
+		GL20.glUniform1i(normalmapUniform, normalmapTexUnit); // May be wrong
+		// GL33.glBindSampler(normalmapTexUnit, sampler);
+
 	}
 
-	public void setTextureLocation(int textureLocation) {
-		this.textureLocation = textureLocation;
+	public void unbindNormalmap() {
+		GL33.glBindSampler(normalmapTexUnit, 0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 
-	public int getTextureLocation() {
-		return textureLocation;
+	public int getHeightmapTexUnit() {
+		return heightmapTexUnit;
+	}
+
+	public void setHeightmapLocation(int heightmapLocation) {
+		this.heightmapLocation = heightmapLocation;
+	}
+
+	public int getHeightmapLocation() {
+		return heightmapLocation;
+	}
+
+	public int getNormalmapTexUnit() {
+		return normalmapTexUnit;
+	}
+
+	public void setNormalmapLocation(int normalmapLocation) {
+		this.normalmapLocation = normalmapLocation;
+	}
+
+	public int getNormalmapLocation() {
+		return normalmapLocation;
 	}
 
 }

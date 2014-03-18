@@ -87,7 +87,8 @@ public abstract class GLModel {
 		// GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 
 		if (shader instanceof GLGaussianTessellationShader) {
-			((GLGaussianTessellationShader) shader).bindTexture();
+			((GLGaussianTessellationShader) shader).bindHeightmap();
+			((GLGaussianTessellationShader) shader).bindNormalmap();
 		}
 
 		if (shader instanceof GLGaussianTessellationShader) {
@@ -98,7 +99,8 @@ public abstract class GLModel {
 		}
 
 		if (shader instanceof GLGaussianTessellationShader) {
-			((GLGaussianTessellationShader) shader).unbindTexture();
+			((GLGaussianTessellationShader) shader).unbindHeightmap();
+			((GLGaussianTessellationShader) shader).unbindNormalmap();
 		}
 
 		// Put everything back to default (deselect)

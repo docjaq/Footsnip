@@ -18,6 +18,7 @@ uniform Projection
 	mat4 cameraToClipMatrix;
 };
 uniform sampler2D heightMap;
+uniform sampler2D normalMap;
 
 //float rand(vec2 co){
 //    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
@@ -30,10 +31,10 @@ void main()
     vec4 c2 = gl_TessCoord.z * tcDiffuseColor[2];
     teDiffuseColor = (c0 + c1 + c2);
     
-    vec3 n0 = gl_TessCoord.x * tcVertexNormal[0];
-    vec3 n1 = gl_TessCoord.y * tcVertexNormal[1];
-    vec3 n2 = gl_TessCoord.z * tcVertexNormal[2];
-    teVertexNormal = normalModelToCameraMatrix * normalize(n0 + n1 + n2);
+    //vec3 n0 = gl_TessCoord.x * tcVertexNormal[0];
+    //vec3 n1 = gl_TessCoord.y * tcVertexNormal[1];
+    //vec3 n2 = gl_TessCoord.z * tcVertexNormal[2];
+    //teVertexNormal = normalModelToCameraMatrix * normalize(n0 + n1 + n2);
     
     vec3 p0 = gl_TessCoord.x * tcPosition[0];
     vec3 p1 = gl_TessCoord.y * tcPosition[1];
@@ -44,6 +45,16 @@ void main()
     texCoordinates.x +=0.5;
     texCoordinates.y +=0.5;
     tePosition.z = texture(heightMap, texCoordinates).r/1.2-.3;
+    
+    
+    vec3 normal = (texture(normalMap, texCoordinates).rgb);
+    //normal.x= normal.x*2-1;
+    //normal.y= normal.y*2-1;
+    //normal.z= normal.z*2-1;
+    //teVertexNormal = normalModelToCameraMatrix * normalize(normal);
+
+    teVertexNormal = vec3(0,0,1);
+    teDiffuseColor = vec4(normal, 1);
     
     vec4 tempCamPosition = modelToCameraMatrix * vec4(tePosition, 1.0);
     tePosition = vec3(tempCamPosition);

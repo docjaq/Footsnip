@@ -11,8 +11,12 @@ public class PolygonHeightmapTile extends AbstractTile {
 
 	private float[][] heightmap;
 	private FloatBuffer heightmapBuf;
-	private int textureLocation = -1;
-	private int textureSize;
+	private int heightmapLocation = -1;
+	private int heightmapSize;
+
+	private FloatBuffer normalmapBuf;
+	private int normalmapLocation = -1;
+	private int normalmapSize;
 
 	public float[][] getHeightmap() {
 		return heightmap;
@@ -34,12 +38,12 @@ public class PolygonHeightmapTile extends AbstractTile {
 		this.model = glTileFactory.create(this);
 	}
 
-	public int getTextureLocation() {
-		return textureLocation;
+	public int getHeightmapLocation() {
+		return heightmapLocation;
 	}
 
-	public void setTextureLocation(int textureLocation) {
-		this.textureLocation = textureLocation;
+	public void setHeightmapLocation(int textureLocation) {
+		this.heightmapLocation = textureLocation;
 	}
 
 	public FloatBuffer getHeightmapBuf() {
@@ -50,11 +54,35 @@ public class PolygonHeightmapTile extends AbstractTile {
 		this.heightmapBuf = heightmapBuf;
 	}
 
-	public int getTextureSize() {
-		return textureSize;
+	public int getHeightmapSize() {
+		return heightmapSize;
 	}
 
-	public void setTextureSize(int textureSize) {
-		this.textureSize = textureSize;
+	public void setHeightmapSize(int heightmapSize) {
+		this.heightmapSize = heightmapSize;
+	}
+
+	public FloatBuffer getNormalmapBuf() {
+		return normalmapBuf;
+	}
+
+	public void setNormalmapBuf(FloatBuffer normalmapBuf) {
+		this.normalmapBuf = normalmapBuf;
+	}
+
+	public int getNormalmapLocation() {
+		return normalmapLocation;
+	}
+
+	public void setNormalmapLocation(int normalmapLocation) {
+		this.normalmapLocation = normalmapLocation;
+	}
+
+	public int getNormalmapSize() {
+		return normalmapSize;
+	}
+
+	public void setNormalmapSize(int normalmapSize) {
+		this.normalmapSize = normalmapSize;
 	}
 }
