@@ -18,6 +18,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 
 import math.types.Matrix4;
 
@@ -230,6 +232,57 @@ public class GLUtilityMethods {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
 
 		exitOnGLError("loadPNGTexture");
+
+		return texId;
+	}
+
+	public static int loadArrayTextureAsData(float[][] data) {
+		int tWidth = data.length;
+		int tHeight = data.length;
+
+		// Change this to
+		// http://stackoverflow.com/questions/7070576/get-one-dimensionial-array-from-a-mutlidimensional-array-in-java
+		// Float is four bytes
+		ByteBuffer buf = ByteBuffer.allocateDirect(tWidth * tHeight * 4);
+		buf.order(ByteOrder.nativeOrder());
+
+		FloatBuffer fBuf = buf.asFloatBuffer();
+		for (int y = 0; y < tHeight; y++) {
+			for (int x = 0; x < tWidth; x++) {
+				fBuf.put(data[x][y]);
+			}
+		}
+		fBuf.flip();
+
+		// Create a new texture object in memory and bind it
+		int texId = GL11.glGenTextures();
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
+
+		// All RGB bytes are aligned to each other and each component is 1 byte
+		// GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+		// MAY NOT BE NECESSARY
+
+		// Upload the texture data and generate mip maps (for scaling)
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RED, tWidth, tHeight, 0, GL11.GL_RED, GL11.GL_FLOAT, buf);
+
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_BASE_LEVEL, 0);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, 0);
+
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
+
+		return texId;
+	}
+
+	public static int bindBufferAs2DTexture(FloatBuffer buf, int dataType, int width, int height) {
+		int texId = GL11.glGenTextures();
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
+
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, dataType, width, height, 0, dataType, GL11.GL_FLOAT, buf);
+
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_BASE_LEVEL, 0);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, 0);
+
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
 
 		return texId;
 	}

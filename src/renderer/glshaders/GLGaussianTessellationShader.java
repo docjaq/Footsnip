@@ -3,7 +3,6 @@ package renderer.glshaders;
 import static org.lwjgl.opengl.GL20.glUniform1f;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL31;
@@ -22,10 +21,8 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		super(projectionBlockIndex);
 	}
 
-	// Actual reference to opengl location of texture in memory
-	// This is stupid as it fixes the texture for all models using this
-	// shader...
-	private int textureLocation;
+	// Not really sure that this is the best way to set the texture
+	private int textureLocation = -1;
 
 	// Shader binding subset
 	private int gaussTexUnit = 0;
@@ -65,8 +62,8 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 
 	@Override
 	public void copyTesselationUniformsToShader() {
-		glUniform1f(tessLevelInner, 8);
-		glUniform1f(tesLevelOuter, 8);
+		glUniform1f(tessLevelInner, 4);
+		glUniform1f(tesLevelOuter, 4);
 	}
 
 	private void setupSamplerUBO() {
@@ -77,14 +74,21 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		unbindShader();
 	}
 
+	// This actually stops the interpolation of values, and means that you get
+	// step functions rather than smooth values when sampling the heightmap
 	public void bindSamplerUnit() {
 		// Not sure whether this needs to happen after the OpenGL texture unit
 		// has been created
 		gaussSampler = GL33.glGenSamplers();
 		GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 		GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-		GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-		GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+
+		// This clamps the range of the sampler access. If enabled, it will be
+		// strictly more accurate, though will result in gaps
+		// GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_WRAP_S,
+		// GL12.GL_CLAMP_TO_EDGE);
+		// GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_WRAP_T,
+		// GL12.GL_CLAMP_TO_EDGE);
 	}
 
 	public void bindTexture() {
@@ -104,6 +108,10 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 
 	public void setTextureLocation(int textureLocation) {
 		this.textureLocation = textureLocation;
+	}
+
+	public int getTextureLocation() {
+		return textureLocation;
 	}
 
 }

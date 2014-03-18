@@ -7,12 +7,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import math.types.MatrixStack;
 import math.types.Vector3;
+
+import org.lwjgl.opengl.GL11;
+
 import renderer.GLPosition;
-import renderer.glmodels.factories.GLTileFactory;
+import renderer.GLUtilityMethods;
+import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
 import assets.entities.Player;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
+import assets.world.PolygonHeightmapTileFactory;
 import camera.CameraModel.ObjectPole;
 
 public class HashmapTileDataStructure2D implements TileDataStructure2D {
@@ -26,13 +31,13 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	// private List<AbstractTile> list; // Backed by map
 	private static final DataStructureKey2D INITIAL_KEY = new DataStructureKey2D(0, 0);
 	private AbstractTile initialTile;
-	private GLTileFactory glTileFactory;
+	private PolygonHeightmapTileFactory glTileFactory;
 
 	public HashmapTileDataStructure2D() {
 		map = new ConcurrentHashMap<DataStructureKey2D, AbstractTile>();
 	}
 
-	public void init(GLTileFactory glTileFactory, AbstractTile initialTile) {
+	public void init(PolygonHeightmapTileFactory glTileFactory, AbstractTile initialTile) {
 		this.glTileFactory = glTileFactory;
 		this.initialTile = initialTile;
 		initialTile.setKey(INITIAL_KEY);
@@ -47,10 +52,9 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	public void drawAlt(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix) {
 		int renderCount = 0;
 		for (AbstractTile t : map.values()) {
-			if (t.getModel() == null) {
-				t.createModel(glTileFactory);
-
-			}
+			// if (t.getModel() == null) {
+			// t.createModel(glTileFactory);
+			// }
 			try {
 				modelMatrix.pushMatrix();
 				{
@@ -85,19 +89,34 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	}
 
 	private void drawSingleTile(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, AbstractTile tile) {
-		if (tile.getModel() == null) {
-			tile.createModel(glTileFactory);
-		}
-		try {
-			modelMatrix.pushMatrix();
-			{
-				modelMatrix.getTop().mult(objectPole.calcMatrix());
-				tile.getModel().draw(shader, modelMatrix, tile.getPosition());
+		if (tile != null) {
+
+			try {
+				modelMatrix.pushMatrix();
+				{
+					modelMatrix.getTop().mult(objectPole.calcMatrix());
+					if (shader instanceof GLGaussianTessellationShader) {
+						PolygonHeightmapTile polygonTile = (PolygonHeightmapTile) tile;
+
+						// Buffer is already read. Just need to bind it as a
+						// texture because we don't have the GL context
+						// otherwise
+						if (polygonTile.getTextureLocation() == -1) {
+							polygonTile.setTextureLocation(GLUtilityMethods.bindBufferAs2DTexture(polygonTile.getHeightmapBuf(),
+									GL11.GL_RED, polygonTile.getTextureSize(), polygonTile.getTextureSize()));
+						}
+						((GLGaussianTessellationShader) shader).setTextureLocation(polygonTile.getTextureLocation());
+					}
+					tile.getModel().draw(shader, modelMatrix, tile.getPosition());
+				}
+				modelMatrix.popMatrix();
+			} catch (NullPointerException e) {
+				System.err.println("Tile Rendering failed");
+				e.printStackTrace();
 			}
-			modelMatrix.popMatrix();
-		} catch (NullPointerException e) {
-			System.err.println("Tile Rendering failed");
-			e.printStackTrace();
+		} else {
+			System.out.println("Tile hasn't been created yet! - This shouldn't really be happening!");
+			System.exit(0);
 		}
 	}
 
@@ -125,24 +144,10 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		DataStructureKey2D key = new DataStructureKey2D(adjustedX, adjustedY);
 
 		if (map.containsKey(key)) {
-			// System.out.println("Key (" + key.x + "," + key.y +
-			// ") already exists!");
 		} else {
-			map.put(key, new PolygonHeightmapTile(key, null, position));
+			map.put(key, glTileFactory.create(key, position));
 		}
 	}
-
-	// @Override
-	// public ArrayList<AbstractTile> getNeighbouringTiles(AbstractTile tile) {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
-
-	// @Override
-	// public AbstractTile getTileTopRight(AbstractTile tile) {
-	// return map.get(new DataStructureKey2D(tile.getKey().x + 1,
-	// tile.getKey().y + 1));
-	// }
 
 	@Override
 	public AbstractTile getTileTop(AbstractTile tile) {

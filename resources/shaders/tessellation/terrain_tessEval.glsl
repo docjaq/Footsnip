@@ -43,7 +43,7 @@ void main()
     vec2 texCoordinates = vec2(tePosition);
     texCoordinates.x +=0.5;
     texCoordinates.y +=0.5;
-    tePosition.z = texture(heightMap, texCoordinates).r/3-.3;
+    tePosition.z = texture(heightMap, texCoordinates).r/1.2-.3;
     
     vec4 tempCamPosition = modelToCameraMatrix * vec4(tePosition, 1.0);
     tePosition = vec3(tempCamPosition);

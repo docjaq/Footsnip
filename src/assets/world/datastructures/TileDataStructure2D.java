@@ -4,15 +4,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import math.types.MatrixStack;
-import renderer.glmodels.factories.GLTileFactory;
 import renderer.glshaders.GLShader;
 import assets.entities.Player;
 import assets.world.AbstractTile;
+import assets.world.PolygonHeightmapTileFactory;
 import camera.CameraModel.ObjectPole;
 
 public interface TileDataStructure2D {
 
-	public void init(GLTileFactory glTileFactory, AbstractTile tile);
+	public void init(PolygonHeightmapTileFactory glTileFactory, AbstractTile tile);
 
 	/** TODO: Consider removing this **/
 	public List<AbstractTile> getTilesAsList();

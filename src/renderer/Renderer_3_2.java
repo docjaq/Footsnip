@@ -25,8 +25,6 @@ import org.lwjgl.opengl.GL11;
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glmodels.factories.GLDefaultProjectileFactory;
-import renderer.glmodels.factories.GLTileFactory;
-import renderer.glmodels.factories.GLTileMidpointDisplacementFactory;
 import renderer.glshaders.GLGaussianShader;
 import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
@@ -39,7 +37,8 @@ import assets.entities.Player;
 import assets.entities.PolygonalScenery;
 import assets.entities.PolygonalSceneryFactory;
 import assets.entities.Projectile;
-import assets.world.PolygonHeightmapTile;
+import assets.world.AbstractTile;
+import assets.world.PolygonHeightmapTileFactory;
 import assets.world.datastructures.TileDataStructure2D;
 import camera.CameraModel.MouseButton;
 import camera.CameraModel.ObjectData;
@@ -137,9 +136,13 @@ public class Renderer_3_2 extends RendererThread {
 		// READ DEBUG TEXTURE
 		// debugGlTexId = GL13.GL_TEXTURE0;
 		// Read png texture
-		debugTexLoc = GLUtilityMethods.loadPNGTextureAsData("resources/images/mountains512.png");
-		((GLGaussianTessellationShader) tessellationShader).setTextureLocation(debugTexLoc);
-		((GLGaussianTessellationShader) tessellationShader).bindSamplerUnit();
+		// debugTexLoc =
+		// GLUtilityMethods.loadPNGTextureAsData("resources/images/mountains512.png");
+		// ((GLGaussianTessellationShader)
+		// tessellationShader).setTextureLocation(debugTexLoc);
+
+		// ((GLGaussianTessellationShader)
+		// tessellationShader).bindSamplerUnit();
 
 		// This is the value that's then sent to the GLModel, and is then sent
 		// to the bindTexture(int specificTexture); method
@@ -237,10 +240,8 @@ public class Renderer_3_2 extends RendererThread {
 		float tileScale = 1f;
 		GLPosition position = new GLPosition(tilePos, tileAngle, tileScale, 0);
 
-		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, position);
-		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(33, assContainer.getTileDataStructure());
-		GLModel model = glTileFactory.create(initialTile);
-		initialTile.setModel(model);
+		PolygonHeightmapTileFactory glTileFactory = new PolygonHeightmapTileFactory(33, assContainer.getTileDataStructure());
+		AbstractTile initialTile = glTileFactory.create(null, position);
 
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
 	}
@@ -283,7 +284,7 @@ public class Renderer_3_2 extends RendererThread {
 		for (int i = 0; i < 10; i++) {
 			Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
-			assContainer.addMonster(monsterFactory.create(monsterMesh, shader, monsterPos, rotationDelta));
+			assContainer.addMonster(monsterFactory.create(shader, monsterPos, rotationDelta));
 		}
 
 		// Initialise projectile factory
