@@ -63,8 +63,8 @@ public class Renderer_3_2 extends RendererThread {
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
-	private final int WIDTH = 1024;
-	private final int HEIGHT = 768;
+	private final int WIDTH = 1280;
+	private final int HEIGHT = 800;
 
 	private final int MAX_FPS = 500;
 
@@ -216,7 +216,7 @@ public class Renderer_3_2 extends RendererThread {
 		float tileScale = 1f;
 		GLPosition position = new GLPosition(tilePos, tileAngle, tileScale, 0);
 
-		PolygonHeightmapTileFactory glTileFactory = new PolygonHeightmapTileFactory(65, assContainer.getTileDataStructure());
+		PolygonHeightmapTileFactory glTileFactory = new PolygonHeightmapTileFactory(129, assContainer.getTileDataStructure());
 		AbstractTile initialTile = glTileFactory.create(null, position);
 
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);

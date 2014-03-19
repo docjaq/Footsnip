@@ -54,8 +54,11 @@ void main()
     normal.z= normal.z*2-1;
     //teVertexNormal = normalModelToCameraMatrix * normalize(normal);
 
-    teVertexNormal = normalModelToCameraMatrix * (normal);
-    //teDiffuseColor = vec4(normal, 1);
+    teVertexNormal = normalModelToCameraMatrix * normalize(normal);
+    
+    //Mess with vertex colors
+    teDiffuseColor.x=1+tePosition.z;
+    teDiffuseColor.z-=tePosition.z;
     
     vec4 tempCamPosition = modelToCameraMatrix * vec4(tePosition, 1.0);
     tePosition = vec3(tempCamPosition);

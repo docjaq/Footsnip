@@ -209,7 +209,7 @@ public class PolygonHeightmapTileFactory {
 	private float[] calculateNormal(float[][] data, int u, int v) {
 		Vector3 normal;
 
-		float strength = 3f;
+		float strength = 10f; // 3 and 4 work well
 		if (u > 0 && v > 0 && u < data.length - 1 && v < data.length - 1) {
 
 			float tl = Math.abs(data[u - 1][v - 1]);
