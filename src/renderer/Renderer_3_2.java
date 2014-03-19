@@ -216,7 +216,7 @@ public class Renderer_3_2 extends RendererThread {
 		float tileScale = 1f;
 		GLPosition position = new GLPosition(tilePos, tileAngle, tileScale, 0);
 
-		PolygonHeightmapTileFactory glTileFactory = new PolygonHeightmapTileFactory(33, assContainer.getTileDataStructure());
+		PolygonHeightmapTileFactory glTileFactory = new PolygonHeightmapTileFactory(65, assContainer.getTileDataStructure());
 		AbstractTile initialTile = glTileFactory.create(null, position);
 
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);

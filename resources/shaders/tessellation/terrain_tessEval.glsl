@@ -44,17 +44,18 @@ void main()
     vec2 texCoordinates = vec2(tePosition);
     texCoordinates.x +=0.5;
     texCoordinates.y +=0.5;
-    tePosition.z = texture(heightMap, texCoordinates).r/1.2-.3;
+    tePosition.z = (texture(heightMap, texCoordinates).r*2-1)*0.8-0.3;
     
     
     vec3 normal = (texture(normalMap, texCoordinates).rgb);
-    //normal.x= normal.x*2-1;
-    //normal.y= normal.y*2-1;
-    //normal.z= normal.z*2-1;
+    //This is strange that they need flipping
+    normal.x= -(normal.x*2-1);
+    normal.y= -(normal.y*2-1);
+    normal.z= normal.z*2-1;
     //teVertexNormal = normalModelToCameraMatrix * normalize(normal);
 
-    teVertexNormal = vec3(0,0,1);
-    teDiffuseColor = vec4(normal, 1);
+    teVertexNormal = normalModelToCameraMatrix * (normal);
+    //teDiffuseColor = vec4(normal, 1);
     
     vec4 tempCamPosition = modelToCameraMatrix * vec4(tePosition, 1.0);
     tePosition = vec3(tempCamPosition);

@@ -3,6 +3,7 @@ package renderer.glshaders;
 import static org.lwjgl.opengl.GL20.glUniform1f;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL31;
@@ -63,6 +64,7 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		GL31.glUniformBlockBinding(programID, projectionBlock, projectionBlockIndex);
 
 		setupSamplerUBO();
+		// bindSamplerUnit();
 	}
 
 	@Override
@@ -91,10 +93,8 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 
 		// This clamps the range of the sampler access. If enabled, it will be
 		// strictly more accurate, though will result in gaps
-		// GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_WRAP_S,
-		// GL12.GL_CLAMP_TO_EDGE);
-		// GL33.glSamplerParameteri(gaussSampler, GL11.GL_TEXTURE_WRAP_T,
-		// GL12.GL_CLAMP_TO_EDGE);
+		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
 	}
 
 	public void bindHeightmap() {

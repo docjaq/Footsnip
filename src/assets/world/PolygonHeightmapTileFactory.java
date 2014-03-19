@@ -75,7 +75,7 @@ public class PolygonHeightmapTileFactory {
 		FloatBuffer fBuf = buf.asFloatBuffer();
 		for (int y = 0; y < tHeight; y++) {
 			for (int x = 0; x < tWidth; x++) {
-				fBuf.put(array[x][y]);
+				fBuf.put((array[x][y] + 1) / 2f);
 			}
 		}
 		fBuf.flip();
@@ -84,14 +84,16 @@ public class PolygonHeightmapTileFactory {
 
 	private void generatePlanarMesh() {
 
-		float xInc = AbstractTile.SIZE / (float) (tileComplexity - 1);
-		float yInc = AbstractTile.SIZE / (float) (tileComplexity - 1);
+		int localTileComplexity = 33;
+
+		float xInc = AbstractTile.SIZE / (float) (localTileComplexity - 1);
+		float yInc = AbstractTile.SIZE / (float) (localTileComplexity - 1);
 
 		float xyOffset = AbstractTile.SIZE / 2f;
 
 		int index = 0;
 
-		for (int i = 0; i < tileComplexity * tileComplexity; i++) {
+		for (int i = 0; i < localTileComplexity * localTileComplexity; i++) {
 			GLVertex vertex = new GLVertex(i);
 			vertex.rgba = new Vector4(0.4f, 0.4f, 0.9f, 1f);
 			vertex.nxnynznw = new Vector4(0, 0, 1, 1);
@@ -99,7 +101,7 @@ public class PolygonHeightmapTileFactory {
 
 		}
 
-		for (int i = 0; i < tileComplexity; i++) {
+		for (int i = 0; i < localTileComplexity; i++) {
 			factoryVertices.get(index).setXYZ((float) (i * xInc - xyOffset), -xyOffset, zOffset);
 			index++;
 		}
@@ -107,9 +109,9 @@ public class PolygonHeightmapTileFactory {
 		int numItems = index;
 		System.out.println("NumItems: " + numItems);
 
-		for (int i = 1; i < tileComplexity; i++) {
+		for (int i = 1; i < localTileComplexity; i++) {
 			int count = 0;
-			for (int j = 0; j < tileComplexity; j++) {
+			for (int j = 0; j < localTileComplexity; j++) {
 				factoryVertices.get(index).setXYZ((float) (j * xInc - xyOffset), (float) (i * yInc - xyOffset), zOffset);
 				addTriangles(index, count, numItems);
 				index++;
@@ -177,20 +179,22 @@ public class PolygonHeightmapTileFactory {
 		FloatBuffer fBuf = buf.asFloatBuffer();
 		for (int y = 0; y < data.length; y++) {
 			for (int x = 0; x < data.length; x++) {
-				float[] normal;
-				if (x < half && y < half)
-					normal = new float[] { 1, 0, 0 };//
-				else if (x > half && y < half)
-					normal = new float[] { 0, 1, 0 };
-				else if (x < half && y > half)
-					normal = new float[] { 0, 0, 1 };
-				else if (x > half && y > half)
-					normal = new float[] { 1, 1, 0 };
-				else
-					normal = new float[] { 0, 0, 0 };
+				/*
+				 * float[] normal; if (x < half && y < half) normal = new
+				 * float[] { 1, 0, 0 };// else if (x > half && y < half) normal
+				 * = new float[] { 0, 1, 0 }; else if (x < half && y > half)
+				 * normal = new float[] { 0, 0, 1 }; else if (x > half && y >
+				 * half) normal = new float[] { 1, 1, 0 }; else normal = new
+				 * float[] { 0, 0, 0 };
+				 * 
+				 * if (x < 1 || y < 1 || x > data.length - 2 || y > data.length
+				 * - 2) { normal = new float[] { 0, 0, 0 }; }
+				 */
 
-				// calculateNormal(data,x,
-				// y);
+				float[] normal = calculateNormal(data, x, y);
+				normal[0] = (normal[0] + 1) / 2f;
+				normal[1] = (normal[1] + 1) / 2f;
+				normal[2] = (normal[2] + 1) / 2f;
 				// float[] normal = calculateNormal(data, x, y);
 				// float[] normal = new float[] { (float) Math.random(), (float)
 				// Math.random(), (float) Math.random() };
@@ -205,9 +209,9 @@ public class PolygonHeightmapTileFactory {
 	private float[] calculateNormal(float[][] data, int u, int v) {
 		Vector3 normal;
 
-		float strength = 10f;
+		float strength = 3f;
 		if (u > 0 && v > 0 && u < data.length - 1 && v < data.length - 1) {
-			System.out.println("Creating some normals");
+
 			float tl = Math.abs(data[u - 1][v - 1]);
 			float l = Math.abs(data[u - 1][v]);
 			float bl = Math.abs(data[u - 1][v + 1]);

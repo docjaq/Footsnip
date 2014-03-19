@@ -275,9 +275,14 @@ public class GLUtilityMethods {
 
 	public static int bindBufferAs2DTexture(FloatBuffer buf, int dataType, int width, int height) {
 		int texId = GL11.glGenTextures();
+
+		// GL33.glClampColor(GL33.GL_CLAMP_READ_COLOR, GL_FALSE);
+		// glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE);
+		// glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
+
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
 
-		// GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, dataType, width, height, 0, dataType, GL11.GL_FLOAT, buf);
 
