@@ -88,7 +88,7 @@ public abstract class GLModel {
 
 		if (shader instanceof GLGaussianTessellationShader) {
 			((GLGaussianTessellationShader) shader).bindHeightmap();
-			((GLGaussianTessellationShader) shader).bindNormalmap();
+			// ((GLGaussianTessellationShader) shader).bindNormalmap();
 		}
 
 		if (shader instanceof GLGaussianTessellationShader) {
@@ -100,7 +100,7 @@ public abstract class GLModel {
 
 		if (shader instanceof GLGaussianTessellationShader) {
 			((GLGaussianTessellationShader) shader).unbindHeightmap();
-			((GLGaussianTessellationShader) shader).unbindNormalmap();
+			// ((GLGaussianTessellationShader) shader).unbindNormalmap();
 		}
 
 		// Put everything back to default (deselect)

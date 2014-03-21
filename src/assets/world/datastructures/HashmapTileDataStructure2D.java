@@ -106,11 +106,16 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 						((GLGaussianTessellationShader) shader).setHeightmapLocation(polygonTile.getHeightmapLocation());
 
 						// Bind normalmap texture if not already bound
-						if (polygonTile.getNormalmapLocation() == -1) {
-							polygonTile.setNormalmapLocation(GLUtilityMethods.bindBufferAs2DTexture(polygonTile.getNormalmapBuf(),
-									GL11.GL_RGB, polygonTile.getNormalmapSize(), polygonTile.getNormalmapSize()));
-						}
-						((GLGaussianTessellationShader) shader).setNormalmapLocation(polygonTile.getNormalmapLocation());
+						/*
+						 * if (polygonTile.getNormalmapLocation() == -1) {
+						 * polygonTile.setNormalmapLocation(GLUtilityMethods.
+						 * bindBufferAs2DTexture(polygonTile.getNormalmapBuf(),
+						 * GL11.GL_RGB, polygonTile.getNormalmapSize(),
+						 * polygonTile.getNormalmapSize())); }
+						 * ((GLGaussianTessellationShader)
+						 * shader).setNormalmapLocation
+						 * (polygonTile.getNormalmapLocation());
+						 */
 					}
 					tile.getModel().draw(shader, modelMatrix, tile.getPosition());
 				}

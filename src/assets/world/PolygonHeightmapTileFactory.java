@@ -46,7 +46,7 @@ public class PolygonHeightmapTileFactory {
 		float[][] heightmap = new float[tileComplexity][tileComplexity];
 		PlasmaFractalFactory.create(heightmap);
 		// FloatBuffer buf = generateNormalMap(heightmap);
-		FloatBuffer buf = null;
+		// FloatBuffer buf = null;
 
 		if (PolygonHeightmapTile.class.isInstance(tile)) {
 			PolygonHeightmapTile polygonTile = ((PolygonHeightmapTile) tile);
@@ -55,8 +55,8 @@ public class PolygonHeightmapTileFactory {
 			polygonTile.setHeightmapBuf(convertArrayToBuffer(heightmap));
 			polygonTile.setHeightmapSize(tileComplexity);
 
-			polygonTile.setNormalmapBuf(buf);
-			polygonTile.setNormalmapSize(tileComplexity);
+			// polygonTile.setNormalmapBuf(buf);
+			// polygonTile.setNormalmapSize(tileComplexity);
 		}
 		adjustHeightmapToNeighbours(tile, heightmap);
 

@@ -14,9 +14,9 @@ public class PolygonHeightmapTile extends AbstractTile {
 	private int heightmapLocation = -1;
 	private int heightmapSize;
 
-	private FloatBuffer normalmapBuf;
-	private int normalmapLocation = -1;
-	private int normalmapSize;
+	// private FloatBuffer normalmapBuf;
+	// private int normalmapLocation = -1;
+	// private int normalmapSize;
 
 	public float[][] getHeightmap() {
 		return heightmap;
@@ -62,27 +62,27 @@ public class PolygonHeightmapTile extends AbstractTile {
 		this.heightmapSize = heightmapSize;
 	}
 
-	public FloatBuffer getNormalmapBuf() {
-		return normalmapBuf;
-	}
-
-	public void setNormalmapBuf(FloatBuffer normalmapBuf) {
-		this.normalmapBuf = normalmapBuf;
-	}
-
-	public int getNormalmapLocation() {
-		return normalmapLocation;
-	}
-
-	public void setNormalmapLocation(int normalmapLocation) {
-		this.normalmapLocation = normalmapLocation;
-	}
-
-	public int getNormalmapSize() {
-		return normalmapSize;
-	}
-
-	public void setNormalmapSize(int normalmapSize) {
-		this.normalmapSize = normalmapSize;
-	}
+	// public FloatBuffer getNormalmapBuf() {
+	// return normalmapBuf;
+	// }
+	//
+	// public void setNormalmapBuf(FloatBuffer normalmapBuf) {
+	// this.normalmapBuf = normalmapBuf;
+	// }
+	//
+	// public int getNormalmapLocation() {
+	// return normalmapLocation;
+	// }
+	//
+	// public void setNormalmapLocation(int normalmapLocation) {
+	// this.normalmapLocation = normalmapLocation;
+	// }
+	//
+	// public int getNormalmapSize() {
+	// return normalmapSize;
+	// }
+	//
+	// public void setNormalmapSize(int normalmapSize) {
+	// this.normalmapSize = normalmapSize;
+	// }
 }

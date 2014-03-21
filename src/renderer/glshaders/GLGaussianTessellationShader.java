@@ -27,11 +27,11 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 	// Opengl Shader binding
 	// private int glHeightmapUnit = GL13.GL_TEXTURE0;
 
-	protected int normalmapUniform;
+	// protected int normalmapUniform;
 	// Not really sure that this is the best way to set the texture
-	private int normalmapLocation = -1;
+	// private int normalmapLocation = -1;
 	// Shader binding subset
-	private int normalmapTexUnit = 1;
+	// private int normalmapTexUnit = 1;
 	// Opengl Shader binding
 	// private int glNormalmapUnit = GL13.GL_TEXTURE0;
 
@@ -51,7 +51,7 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 
 		// Tessellation Evaluation shader uniforms
 		heightMapUniform = GL20.glGetUniformLocation(programID, "heightMap");
-		normalmapUniform = GL20.glGetUniformLocation(programID, "normalMap");
+		// normalmapUniform = GL20.glGetUniformLocation(programID, "normalMap");
 
 		// Fragment shader uniforms
 		lightIntensityUniform = GL20.glGetUniformLocation(programID, "lightIntensity");
@@ -78,7 +78,7 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		// needs the actual shader bound when doing it. How odd.
 		bindShader();
 		GL20.glUniform1i(heightMapUniform, heightmapTexUnit);
-		GL20.glUniform1i(normalmapUniform, normalmapTexUnit);
+		// GL20.glUniform1i(normalmapUniform, normalmapTexUnit);
 		unbindShader();
 	}
 
@@ -110,18 +110,18 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 
-	public void bindNormalmap() {
-		GL13.glActiveTexture(GL13.GL_TEXTURE0 + normalmapTexUnit);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalmapLocation);
-		GL20.glUniform1i(normalmapUniform, normalmapTexUnit); // May be wrong
-		// GL33.glBindSampler(normalmapTexUnit, sampler);
-
-	}
-
-	public void unbindNormalmap() {
-		GL33.glBindSampler(normalmapTexUnit, 0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-	}
+	// public void bindNormalmap() {
+	// GL13.glActiveTexture(GL13.GL_TEXTURE0 + normalmapTexUnit);
+	// GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalmapLocation);
+	// GL20.glUniform1i(normalmapUniform, normalmapTexUnit); // May be wrong
+	// // GL33.glBindSampler(normalmapTexUnit, sampler);
+	//
+	// }
+	//
+	// public void unbindNormalmap() {
+	// GL33.glBindSampler(normalmapTexUnit, 0);
+	// GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+	// }
 
 	public int getHeightmapTexUnit() {
 		return heightmapTexUnit;
@@ -135,16 +135,16 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		return heightmapLocation;
 	}
 
-	public int getNormalmapTexUnit() {
-		return normalmapTexUnit;
-	}
-
-	public void setNormalmapLocation(int normalmapLocation) {
-		this.normalmapLocation = normalmapLocation;
-	}
-
-	public int getNormalmapLocation() {
-		return normalmapLocation;
-	}
+	// public int getNormalmapTexUnit() {
+	// return normalmapTexUnit;
+	// }
+	//
+	// public void setNormalmapLocation(int normalmapLocation) {
+	// this.normalmapLocation = normalmapLocation;
+	// }
+	//
+	// public int getNormalmapLocation() {
+	// return normalmapLocation;
+	// }
 
 }
