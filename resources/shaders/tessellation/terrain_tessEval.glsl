@@ -20,9 +20,26 @@ uniform Projection
 uniform sampler2D heightMap;
 uniform sampler2D normalMap;
 
-//float rand(vec2 co){
-//    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-//}
+//Using this to simulate the 8 possible offsets. Simply pull out values like .xx, .xz, etc. Saves a lot of local memory
+const ivec3 offset = ivec3(-1, 0, 1);
+
+vec3 computeNormal(vec2 co){
+    float tl = abs(textureOffset(heightMap, co, offset.xx).r);
+    float l = abs(textureOffset(heightMap, co, offset.xy).r);
+    float bl = abs(textureOffset(heightMap, co, offset.xz).r);
+    float b = abs(textureOffset(heightMap, co, offset.yz).r);
+    float t = abs(textureOffset(heightMap, co, offset.yx).r);
+    float br = abs(textureOffset(heightMap, co, offset.zz).r);
+    float r = abs(textureOffset(heightMap, co, offset.zy).r);
+    float tr = abs(textureOffset(heightMap, co, offset.zx).r);
+    
+    float dX = tr + 2 * r + br - tl - 2 * l - bl;
+    float dY = bl + 2 * b + br - tl - 2 * t - tr;
+    
+    vec3 normal = vec3(dX, dY, 0.1); //1.0f / 10 (1/strength) -> precompute
+    
+    return normalize(normal);
+}
 
 void main()
 {
@@ -30,11 +47,6 @@ void main()
     vec4 c1 = gl_TessCoord.y * tcDiffuseColor[1];
     vec4 c2 = gl_TessCoord.z * tcDiffuseColor[2];
     teDiffuseColor = (c0 + c1 + c2);
-    
-    //vec3 n0 = gl_TessCoord.x * tcVertexNormal[0];
-    //vec3 n1 = gl_TessCoord.y * tcVertexNormal[1];
-    //vec3 n2 = gl_TessCoord.z * tcVertexNormal[2];
-    //teVertexNormal = normalModelToCameraMatrix * normalize(n0 + n1 + n2);
     
     vec3 p0 = gl_TessCoord.x * tcPosition[0];
     vec3 p1 = gl_TessCoord.y * tcPosition[1];
@@ -47,14 +59,14 @@ void main()
     tePosition.z = (texture(heightMap, texCoordinates).r*2-1)*0.8-0.3;
     
     
-    vec3 normal = (texture(normalMap, texCoordinates).rgb);
+    //vec3 normal = (texture(normalMap, texCoordinates).rgb);
     //This is strange that they need flipping
-    normal.x= -(normal.x*2-1);
-    normal.y= -(normal.y*2-1);
-    normal.z= normal.z*2-1;
-    //teVertexNormal = normalModelToCameraMatrix * normalize(normal);
+    //normal.x= -(normal.x*2-1);
+    //normal.y= -(normal.y*2-1);
+    //normal.z= normal.z*2-1;
+    
 
-    teVertexNormal = normalModelToCameraMatrix * normalize(normal);
+    teVertexNormal = normalModelToCameraMatrix * computeNormal(texCoordinates);
     
     //Mess with vertex colors
     teDiffuseColor.x=1+tePosition.z;

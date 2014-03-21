@@ -45,7 +45,8 @@ public class PolygonHeightmapTileFactory {
 
 		float[][] heightmap = new float[tileComplexity][tileComplexity];
 		PlasmaFractalFactory.create(heightmap);
-		FloatBuffer buf = generateNormalMap(heightmap);
+		// FloatBuffer buf = generateNormalMap(heightmap);
+		FloatBuffer buf = null;
 
 		if (PolygonHeightmapTile.class.isInstance(tile)) {
 			PolygonHeightmapTile polygonTile = ((PolygonHeightmapTile) tile);
