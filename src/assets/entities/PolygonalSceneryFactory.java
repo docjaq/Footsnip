@@ -10,11 +10,10 @@ import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
-import renderer.glshaders.GLShader;
 
 public class PolygonalSceneryFactory {
 
-	public static PolygonalScenery create(GLShader shader, Vector3 sceneryPos) {
+	public static PolygonalScenery create(Vector3 sceneryPos) {
 
 		Vector3 sceneryAngle = new Vector3(0, 0, 0);
 		float sceneryScale = 1;

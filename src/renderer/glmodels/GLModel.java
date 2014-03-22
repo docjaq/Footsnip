@@ -13,6 +13,7 @@ import renderer.GLPosition;
 import renderer.GLWorld;
 import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
+import renderer.glshaders.GLWaterShader;
 
 /*
  * TODO: Need to set the model centres better, as currently they're on the
@@ -86,6 +87,11 @@ public abstract class GLModel {
 		// Debug mode
 		// GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 
+		if (shader instanceof GLWaterShader) {
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		}
+
 		if (shader instanceof GLGaussianTessellationShader) {
 			((GLGaussianTessellationShader) shader).bindHeightmap();
 			// ((GLGaussianTessellationShader) shader).bindNormalmap();
@@ -101,6 +107,11 @@ public abstract class GLModel {
 		if (shader instanceof GLGaussianTessellationShader) {
 			((GLGaussianTessellationShader) shader).unbindHeightmap();
 			// ((GLGaussianTessellationShader) shader).unbindNormalmap();
+		}
+
+		if (shader instanceof GLWaterShader) {
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		}
 
 		// Put everything back to default (deselect)

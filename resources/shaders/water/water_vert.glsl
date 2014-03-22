@@ -1,0 +1,31 @@
+#version 330
+
+//Passed in
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec4 inDiffuseColor;
+layout(location = 2) in vec3 normal;
+
+out vec4 diffuseColor;
+out vec3 vertexNormal;
+out vec3 cameraSpacePosition;
+
+//From CPU
+uniform mat4 modelToCameraMatrix;
+uniform mat3 normalModelToCameraMatrix;
+
+uniform Projection
+{
+	mat4 cameraToClipMatrix;
+};
+
+void main()
+{
+    vec4 adjustedPosition = vec4(position.x, position.y, -0.45, 1);
+    
+	vec4 tempCamPosition = modelToCameraMatrix * adjustedPosition;
+	gl_Position = cameraToClipMatrix * tempCamPosition;
+	
+	vertexNormal = normalModelToCameraMatrix * normal;
+	diffuseColor = vec4(0.1098039215686*0.7, 0.66274509803905*0.7, 0.78823529411745*0.7, 0.5);
+	cameraSpacePosition = vec3(tempCamPosition);
+}

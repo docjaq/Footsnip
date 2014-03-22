@@ -28,6 +28,7 @@ import renderer.glmodels.factories.GLDefaultProjectileFactory;
 import renderer.glshaders.GLGaussianShader;
 import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
+import renderer.glshaders.GLWaterShader;
 import thread.RendererThread;
 import assets.AssetContainer;
 import assets.entities.Entity;
@@ -54,8 +55,7 @@ public class Renderer_3_2 extends RendererThread {
 	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/lighting/gaussian_vert.glsl",
 			"resources/shaders/lighting/gaussian_frag.glsl" };
 
-	private final String[] DEBUG_SHADER_LOCATION = { "resources/shaders/tessellation/gaussian_vert.glsl",
-			"resources/shaders/tessellation/gaussian_frag.glsl" };
+	private final String[] WATER_SHADER_LOCATION = { "resources/shaders/water/water_vert.glsl", "resources/shaders/water/water_frag.glsl" };
 
 	private final String[] GAUSSIAN_TESS_SHADER_LOCATION = { "resources/shaders/tessellation/gaussian_vert.glsl",
 			"resources/shaders/tessellation/terrain_tessCont.glsl", "resources/shaders/tessellation/terrain_tessEval.glsl",
@@ -72,6 +72,7 @@ public class Renderer_3_2 extends RendererThread {
 
 	private Class<GLGaussianShader> defaultShaderClass = GLGaussianShader.class;
 	private Class<GLGaussianTessellationShader> tessellationShaderClass = GLGaussianTessellationShader.class;
+	private Class<GLWaterShader> waterShaderClass = GLWaterShader.class;
 
 	// The time of the last frame, to calculate the time delta for rotating
 	// monsters.
@@ -119,22 +120,27 @@ public class Renderer_3_2 extends RendererThread {
 
 		shaderMap = new HashMap<Class<?>, GLShader>();
 
+		// Load default shader
 		GLShader currentShader = new GLGaussianShader(projectionBlockIndex);
 		currentShader.create(DEFAULT_SHADER_LOCATION);
 		shaderMap.put(defaultShaderClass, currentShader);
 
-		System.out.println("Before shaders");
+		// Load terrain tessellation shader
 		GLShader tessellationShader = new GLGaussianTessellationShader(projectionBlockIndex);
 		tessellationShader.create(GAUSSIAN_TESS_SHADER_LOCATION);
 		shaderMap.put(tessellationShaderClass, tessellationShader);
-		System.out.println("After shaders");
+
+		// Load water shader
+		GLShader waterShader = new GLWaterShader(projectionBlockIndex);
+		waterShader.create(WATER_SHADER_LOCATION);
+		shaderMap.put(waterShaderClass, waterShader);
 
 		// ((GLGaussianTessellationShader)
 		// tessellationShader).bindSamplerUnit();
 
-		createEntities(currentShader);
-		createWorld(currentShader);
-		createScenery(currentShader);
+		createEntities();
+		createWorld();
+		createScenery();
 
 	}
 
@@ -193,24 +199,28 @@ public class Renderer_3_2 extends RendererThread {
 		}
 		currentShader.unbindShader();
 
-		currentShader = shaderMap.get(tessellationShaderClass);
-		currentShader.bindShader();
-
-		currentShader.copySharedUniformsToShader(lightPosCameraSpace, new MaterialParams());
 		{
 			modelMatrix.pushMatrix();
 			{
-				renderTiles(assContainer.getTileDataStructure(), currentShader, modelMatrix, assContainer.getPlayer());
+				currentShader = shaderMap.get(tessellationShaderClass);
+				currentShader.bindShader();
+				currentShader.copySharedUniformsToShader(lightPosCameraSpace, new MaterialParams());
+				renderTilesTerrain(assContainer.getTileDataStructure(), currentShader, modelMatrix, assContainer.getPlayer());
+				currentShader.unbindShader();
+
+				currentShader = shaderMap.get(waterShaderClass);
+				currentShader.bindShader();
+				currentShader.copySharedUniformsToShader(lightPosCameraSpace, new MaterialParams(10.5f));
+				renderTilesWater(assContainer.getTileDataStructure(), currentShader, modelMatrix, assContainer.getPlayer());
+				currentShader.unbindShader();
 			}
 			modelMatrix.popMatrix();
 		}
 
-		currentShader.unbindShader();
-
 		exitOnGLError("logicCycle");
 	}
 
-	private void createWorld(GLShader shader) throws RendererException {
+	private void createWorld() throws RendererException {
 		Vector3 tilePos = new Vector3(0, 0, 0);
 		Vector3 tileAngle = new Vector3(0, 0, 0);
 		float tileScale = 1f;
@@ -222,15 +232,15 @@ public class Renderer_3_2 extends RendererThread {
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
 	}
 
-	private void createScenery(GLShader shader) {
+	private void createScenery() {
 		// Hardcoded because Dave's mother is a prostitute
 
 		assContainer.setPolygonalSceneries(new ArrayList<PolygonalScenery>());
 		Vector3 sceneryPos = new Vector3(0.05f, 0.05f, 0);
-		assContainer.addPolygonalScenery(PolygonalSceneryFactory.create(shader, sceneryPos));
+		assContainer.addPolygonalScenery(PolygonalSceneryFactory.create(sceneryPos));
 	}
 
-	private void createEntities(GLShader shader) throws RendererException {
+	private void createEntities() throws RendererException {
 
 		Vector3 playerPos = new Vector3(0, 0, 0);
 		Vector3 playerAngle = new Vector3(0, 0, 0);
@@ -260,15 +270,19 @@ public class Renderer_3_2 extends RendererThread {
 		for (int i = 0; i < 10; i++) {
 			Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
-			assContainer.addMonster(monsterFactory.create(shader, monsterPos, rotationDelta));
+			assContainer.addMonster(monsterFactory.create(monsterPos, rotationDelta));
 		}
 
 		// Initialise projectile factory
 		assContainer.setProjectileFactory(GLDefaultProjectileFactory.getInstance());
 	}
 
-	private void renderTiles(TileDataStructure2D dataStructure, GLShader shader, MatrixStack modelMatrix, Player player) {
-		dataStructure.draw(shader, objectPole, modelMatrix, player);
+	private void renderTilesTerrain(TileDataStructure2D dataStructure, GLShader shader, MatrixStack modelMatrix, Player player) {
+		dataStructure.drawTerrain(shader, objectPole, modelMatrix, player);
+	}
+
+	private void renderTilesWater(TileDataStructure2D dataStructure, GLShader shader, MatrixStack modelMatrix, Player player) {
+		dataStructure.drawWater(shader, objectPole, modelMatrix, player);
 	}
 
 	private void renderScenery(List<PolygonalScenery> scenery, GLShader shader, MatrixStack modelMatrix) {

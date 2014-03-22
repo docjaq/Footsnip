@@ -73,22 +73,38 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	}
 
 	@Override
-	public void draw(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, Player player) {
+	public void drawTerrain(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, Player player) {
 
-		drawSingleTile(shader, objectPole, modelMatrix, player.getCurrentTile());
+		drawSingleTileTerrain(shader, objectPole, modelMatrix, player.getCurrentTile());
 
-		drawSingleTile(shader, objectPole, modelMatrix, getTileTop(player.getCurrentTile()));
-		drawSingleTile(shader, objectPole, modelMatrix, getTileRight(player.getCurrentTile()));
-		drawSingleTile(shader, objectPole, modelMatrix, getTileBottom(player.getCurrentTile()));
-		drawSingleTile(shader, objectPole, modelMatrix, getTileLeft(player.getCurrentTile()));
+		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileTop(player.getCurrentTile()));
+		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileRight(player.getCurrentTile()));
+		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileBottom(player.getCurrentTile()));
+		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileLeft(player.getCurrentTile()));
 
-		drawSingleTile(shader, objectPole, modelMatrix, getTileTopRight(player.getCurrentTile()));
-		drawSingleTile(shader, objectPole, modelMatrix, getTileBottomRight(player.getCurrentTile()));
-		drawSingleTile(shader, objectPole, modelMatrix, getTileTopLeft(player.getCurrentTile()));
-		drawSingleTile(shader, objectPole, modelMatrix, getTileBottomLeft(player.getCurrentTile()));
+		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileTopRight(player.getCurrentTile()));
+		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileBottomRight(player.getCurrentTile()));
+		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileTopLeft(player.getCurrentTile()));
+		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileBottomLeft(player.getCurrentTile()));
 	}
 
-	private void drawSingleTile(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, AbstractTile tile) {
+	@Override
+	public void drawWater(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, Player player) {
+
+		drawSingleTileWater(shader, objectPole, modelMatrix, player.getCurrentTile());
+
+		drawSingleTileWater(shader, objectPole, modelMatrix, getTileTop(player.getCurrentTile()));
+		drawSingleTileWater(shader, objectPole, modelMatrix, getTileRight(player.getCurrentTile()));
+		drawSingleTileWater(shader, objectPole, modelMatrix, getTileBottom(player.getCurrentTile()));
+		drawSingleTileWater(shader, objectPole, modelMatrix, getTileLeft(player.getCurrentTile()));
+
+		drawSingleTileWater(shader, objectPole, modelMatrix, getTileTopRight(player.getCurrentTile()));
+		drawSingleTileWater(shader, objectPole, modelMatrix, getTileBottomRight(player.getCurrentTile()));
+		drawSingleTileWater(shader, objectPole, modelMatrix, getTileTopLeft(player.getCurrentTile()));
+		drawSingleTileWater(shader, objectPole, modelMatrix, getTileBottomLeft(player.getCurrentTile()));
+	}
+
+	private void drawSingleTileTerrain(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, AbstractTile tile) {
 		if (tile != null) {
 
 			try {
@@ -126,7 +142,25 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 			}
 		} else {
 			System.out.println("Tile hasn't been created yet! - This shouldn't really be happening!");
-			// System.exit(0);
+		}
+	}
+
+	private void drawSingleTileWater(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, AbstractTile tile) {
+		if (tile != null) {
+
+			try {
+				modelMatrix.pushMatrix();
+				{
+					modelMatrix.getTop().mult(objectPole.calcMatrix());
+					tile.getModel().draw(shader, modelMatrix, tile.getPosition());
+				}
+				modelMatrix.popMatrix();
+			} catch (NullPointerException e) {
+				System.err.println("Tile Rendering failed");
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("Tile hasn't been created yet! - This shouldn't really be happening!");
 		}
 	}
 

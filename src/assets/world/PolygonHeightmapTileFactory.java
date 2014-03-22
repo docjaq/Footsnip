@@ -26,7 +26,7 @@ public class PolygonHeightmapTileFactory {
 	private int tileComplexity;
 	private TileDataStructure2D tileDataStructure;
 
-	private final static float zOffset = -0.1f;
+	private final static float zOffset = 0f;
 
 	public PolygonHeightmapTileFactory(int tileComplexity, TileDataStructure2D tileDataStructure) {
 		this.tileComplexity = tileComplexity;
@@ -45,6 +45,7 @@ public class PolygonHeightmapTileFactory {
 
 		float[][] heightmap = new float[tileComplexity][tileComplexity];
 		PlasmaFractalFactory.create(heightmap);
+		adjustHeightmapToNeighbours(tile, heightmap);
 		// FloatBuffer buf = generateNormalMap(heightmap);
 		// FloatBuffer buf = null;
 
@@ -58,7 +59,6 @@ public class PolygonHeightmapTileFactory {
 			// polygonTile.setNormalmapBuf(buf);
 			// polygonTile.setNormalmapSize(tileComplexity);
 		}
-		adjustHeightmapToNeighbours(tile, heightmap);
 
 		return tile;
 	}
@@ -99,7 +99,6 @@ public class PolygonHeightmapTileFactory {
 			vertex.rgba = new Vector4(0.4f, 0.4f, 0.9f, 1f);
 			vertex.nxnynznw = new Vector4(0, 0, 1, 1);
 			factoryVertices.add(vertex);
-
 		}
 
 		for (int i = 0; i < localTileComplexity; i++) {
