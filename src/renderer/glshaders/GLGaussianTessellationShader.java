@@ -68,7 +68,7 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 	}
 
 	@Override
-	public void copyTesselationUniformsToShader() {
+	public void copyShaderSpecificUniformsToShader() {
 		glUniform1f(tessLevelInner, 4);
 		glUniform1f(tesLevelOuter, 4);
 	}

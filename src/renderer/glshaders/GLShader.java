@@ -76,11 +76,11 @@ public abstract class GLShader {
 
 	public abstract void setupShaderVariables();
 
-	public abstract void copySpecificUniformsToShader(MatrixStack modelMatrix);
+	public abstract void copyModelSpecificUniformsToShader(MatrixStack modelMatrix);
 
 	public abstract void copySharedUniformsToShader(Vector4 lightPosCameraSpace, MaterialParams materialParams);
 
-	public abstract void copyTesselationUniformsToShader();
+	public abstract void copyShaderSpecificUniformsToShader();
 
 	public void destroy() {
 		GL20.glDetachShader(programID, vertID);

@@ -66,13 +66,13 @@ public class GLGaussianShader extends GLShader {
 	// Copy the shaders that are specific to this model (i.e. any translations
 	// required. Possibly other things?
 	@Override
-	public void copySpecificUniformsToShader(MatrixStack modelMatrix) {
+	public void copyModelSpecificUniformsToShader(MatrixStack modelMatrix) {
 		// All for vertex shader
 		GL20.glUniformMatrix4(modelToCameraMatrixUniform, false, modelMatrix.getTop().toBuffer());
 		GL20.glUniformMatrix3(normalModelToCameraMatrixUniform, false, new Matrix3(modelMatrix.getTop()).inverse().transpose().toBuffer());
 	}
 
 	@Override
-	public void copyTesselationUniformsToShader() {
+	public void copyShaderSpecificUniformsToShader() {
 	}
 }

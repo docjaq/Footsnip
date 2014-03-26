@@ -30,7 +30,7 @@ void main()
 	float atten = calcAttenuation(cameraSpacePosition, lightDir);
 	vec4 attenIntensity = atten * lightIntensity;
 	
-	vec3 surfaceNormal = normalize(vertexNormal);
+	vec3 surfaceNormal = normalize(vec3(vertexNormal.x, vertexNormal.y, sin(vertexNormal.z)));
 	float cosAngIncidence = dot(surfaceNormal, lightDir);
 	cosAngIncidence = clamp(cosAngIncidence, 0.0, 1.0);
 	
