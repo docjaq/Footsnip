@@ -1,27 +1,20 @@
 package audio;
 
-import java.io.BufferedInputStream;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
-import org.lwjgl.util.WaveData;
 
 import renderer.GLPosition;
-import util.FileUtil;
+import assets.entities.Monster;
 
 public class AudioEngine {
 
-	private static final int NUM_BUFFERS = 3;
-	private static final int NUM_SOURCES = 3;
-
 	private static AudioEngine instance;
 
-	private IntBuffer buffer = BufferUtils.createIntBuffer(NUM_BUFFERS);
-	private IntBuffer source = BufferUtils.createIntBuffer(NUM_SOURCES);
+	private EntitySound<Monster> monsterSound;
 
 	private FloatBuffer listenerPos = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
 	private FloatBuffer listenerVel = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
@@ -38,7 +31,7 @@ public class AudioEngine {
 
 	private AudioEngine() {
 		init();
-		loadWavData();
+		setupSounds();
 		setListenerValues();
 	}
 
@@ -47,69 +40,18 @@ public class AudioEngine {
 			AL.create();
 			checkForErrors();
 		} catch (LWJGLException e) {
-			throw new AudioException("Error initialising AudioEngine", e);
+			throw new RuntimeException("Error initialising AudioEngine", e);
 		}
+	}
 
+	private void setupSounds() {
+		monsterSound = new MonsterSound();
 	}
 
 	private void checkForErrors() {
 		if (AL10.alGetError() != AL10.AL_NO_ERROR) {
-			throw new AudioException("Error initialising AudioEngine; error code from OpenAL: " + AL10.alGetError());
+			throw new ALException(AL10.alGetError());
 		}
-	}
-
-	private void loadWavData() {
-		// Load wav data into a buffer.
-		AL10.alGenBuffers(buffer);
-
-		checkForErrors();
-
-		loadAudioFiles();
-
-		// Bind the buffer with the source.
-		AL10.alGenSources(source);
-
-		checkForErrors();
-
-		setupAudioSources();
-
-		checkForErrors();
-	}
-
-	private void loadAudioFiles() {
-		for (SoundType soundType : SoundType.values()) {
-			loadAudioFile(soundType);
-		}
-	}
-
-	private void loadAudioFile(SoundType soundType) {
-		BufferedInputStream bis = FileUtil.loadFile(soundType.fileLocation());
-		WaveData waveFile = WaveData.create(bis);
-		FileUtil.closeFile(bis);
-
-		AL10.alBufferData(buffer.get(soundType.index()), waveFile.format, waveFile.data, waveFile.samplerate);
-		waveFile.dispose();
-	}
-
-	private void setupAudioSources() {
-		for (SoundType soundType : SoundType.values()) {
-			setupAudioSource(soundType);
-		}
-	}
-
-	private void setSourcePosition(SoundType soundType, FloatBuffer position) {
-		AL10.alSource(source.get(soundType.index()), AL10.AL_POSITION, position);
-	}
-
-	private void setSourceVelocity(SoundType soundType, FloatBuffer velocity) {
-		AL10.alSource(source.get(soundType.index()), AL10.AL_VELOCITY, velocity);
-	}
-
-	private void setupAudioSource(SoundType soundType) {
-		int index = soundType.index();
-		AL10.alSourcei(source.get(index), AL10.AL_BUFFER, buffer.get(index));
-		AL10.alSourcef(source.get(index), AL10.AL_PITCH, 1.0f);
-		AL10.alSourcef(source.get(index), AL10.AL_GAIN, soundType.gain());
 	}
 
 	private void setListenerValues() {
@@ -118,35 +60,30 @@ public class AudioEngine {
 		AL10.alListener(AL10.AL_ORIENTATION, listenerOri);
 	}
 
-	private void killALData() {
-		AL10.alDeleteSources(source);
-		AL10.alDeleteBuffers(buffer);
-	}
-
 	public void playPlayerSound() {
-		if (AL10.alGetSourcei(source.get(SoundType.PLAYER.index()), AL10.AL_SOURCE_STATE) != AL10.AL_PLAYING) {
-			// play(SoundType.PLAYER);
-		}
+		// if (AL10.alGetSourcei(source.get(SoundType.PLAYER.index()),
+		// AL10.AL_SOURCE_STATE) != AL10.AL_PLAYING) {
+		// play(SoundType.PLAYER);
+		// }
 	}
 
 	public void playMonsterSound(GLPosition glPosition) {
-		FloatBuffer positionBuffer = (FloatBuffer) BufferUtils.createFloatBuffer(3)
-				.put(new float[] { glPosition.modelPos.x(), glPosition.modelPos.y(), glPosition.modelPos.z() }).rewind();
-		setSourcePosition(SoundType.MONSTER, positionBuffer);
-		setSourceVelocity(SoundType.MONSTER, BufferUtils.createFloatBuffer(3));
-		play(SoundType.MONSTER);
+		// FloatBuffer positionBuffer = (FloatBuffer)
+		// BufferUtils.createFloatBuffer(3)
+		// .put(new float[] { glPosition.modelPos.x(), glPosition.modelPos.y(),
+		// glPosition.modelPos.z() }).rewind();
+		FloatBuffer positionBuffer = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
+		monsterSound.setSourcePosition(positionBuffer);
+		monsterSound.setSourceVelocity(BufferUtils.createFloatBuffer(3));
+		monsterSound.play();
 	}
 
 	public void playProjectileSound() {
 		// play(SoundType.PROJECTILE);
 	}
 
-	private void play(SoundType soundType) {
-		AL10.alSourcePlay(source.get(soundType.index()));
-	}
-
 	public void close() {
-		killALData();
+		monsterSound.killALData();
 		AL.destroy();
 	}
 }
