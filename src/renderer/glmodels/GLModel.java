@@ -68,7 +68,7 @@ public abstract class GLModel {
 
 		shader.copyModelSpecificUniformsToShader(modelMatrix);
 
-		shader.copyShaderSpecificUniformsToShader();
+		shader.copyShaderSpecificUniformsToShaderRuntime();
 
 		// Bind to the VAO that has all the information about the vertices
 		GL30.glBindVertexArray(vaoId);

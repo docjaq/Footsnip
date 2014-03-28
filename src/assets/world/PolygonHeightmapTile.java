@@ -18,6 +18,9 @@ public class PolygonHeightmapTile extends AbstractTile {
 	// private int normalmapLocation = -1;
 	// private int normalmapSize;
 
+	private boolean water;
+	private float waterHeight;
+
 	public float[][] getHeightmap() {
 		return heightmap;
 	}
@@ -60,6 +63,22 @@ public class PolygonHeightmapTile extends AbstractTile {
 
 	public void setHeightmapSize(int heightmapSize) {
 		this.heightmapSize = heightmapSize;
+	}
+
+	public boolean isWater() {
+		return water;
+	}
+
+	public void setWater(boolean water) {
+		this.water = water;
+	}
+
+	public float getWaterHeight() {
+		return waterHeight;
+	}
+
+	public void setWaterHeight(float waterHeight) {
+		this.waterHeight = waterHeight;
 	}
 
 	// public FloatBuffer getNormalmapBuf() {

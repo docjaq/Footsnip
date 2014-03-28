@@ -28,6 +28,8 @@ public class PolygonHeightmapTileFactory {
 
 	private final static float zOffset = 0f;
 
+	private final double waterChance = 0.6;
+
 	public PolygonHeightmapTileFactory(int tileComplexity, TileDataStructure2D tileDataStructure) {
 		this.tileComplexity = tileComplexity;
 		this.tileDataStructure = tileDataStructure;
@@ -58,6 +60,10 @@ public class PolygonHeightmapTileFactory {
 
 			// polygonTile.setNormalmapBuf(buf);
 			// polygonTile.setNormalmapSize(tileComplexity);
+
+			// Water stuff
+			polygonTile.setWater((Math.random() >= waterChance) ? true : false);
+			polygonTile.setWaterHeight((float) ((Math.random() * 0.05 - 0.025) + 0.45));
 		}
 
 		return tile;
@@ -85,7 +91,7 @@ public class PolygonHeightmapTileFactory {
 
 	private void generatePlanarMesh() {
 
-		int localTileComplexity = 33;
+		int localTileComplexity = 64;
 
 		float xInc = AbstractTile.SIZE / (float) (localTileComplexity - 1);
 		float yInc = AbstractTile.SIZE / (float) (localTileComplexity - 1);

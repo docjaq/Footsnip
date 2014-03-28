@@ -68,9 +68,9 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 	}
 
 	@Override
-	public void copyShaderSpecificUniformsToShader() {
-		glUniform1f(tessLevelInner, 4);
-		glUniform1f(tesLevelOuter, 4);
+	public void copyShaderSpecificUniformsToShaderInit() {
+		glUniform1f(tessLevelInner, 2);
+		glUniform1f(tesLevelOuter, 2);
 	}
 
 	private void setupSamplerUBO() {

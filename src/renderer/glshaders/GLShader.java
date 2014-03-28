@@ -80,7 +80,7 @@ public abstract class GLShader {
 
 	public abstract void copySharedUniformsToShader(Vector4 lightPosCameraSpace, MaterialParams materialParams);
 
-	public abstract void copyShaderSpecificUniformsToShader();
+	public abstract void copyShaderSpecificUniformsToShaderInit();
 
 	public void destroy() {
 		GL20.glDetachShader(programID, vertID);
@@ -147,6 +147,11 @@ public abstract class GLShader {
 
 	public void setProgramID(int programID) {
 		this.programID = programID;
+	}
+
+	public void copyShaderSpecificUniformsToShaderRuntime() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

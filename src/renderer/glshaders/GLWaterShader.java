@@ -3,10 +3,15 @@ package renderer.glshaders;
 import static org.lwjgl.opengl.GL20.glUniform1f;
 import static org.lwjgl.opengl.GL20.glUniform3;
 import static org.lwjgl.opengl.GL20.glUniform4f;
+
+import java.nio.FloatBuffer;
+
 import math.types.Matrix3;
 import math.types.MatrixStack;
+import math.types.Vector2;
 import math.types.Vector4;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL31;
 
@@ -39,6 +44,8 @@ public class GLWaterShader extends GLShader {
 	public GLWaterShader(int projectionBlockIndex) {
 		super(projectionBlockIndex);
 	}
+
+	float time = 0;
 
 	// Bind the variables here
 	@Override
@@ -96,27 +103,64 @@ public class GLWaterShader extends GLShader {
 	}
 
 	@Override
-	public void copyShaderSpecificUniformsToShader() {
+	public void copyShaderSpecificUniformsToShaderRuntime() {
+		time += 0.00001;
+		glUniform1f(timeUniform, time);
+	}
 
-		// All the variables but time are set here. Not sure when to set the
-		// time. Look at Shader class to investigate. Also, why does it loop
-		// through four, but the arrays are [8] long in the shader?
+	@Override
+	public void copyShaderSpecificUniformsToShaderInit() {
 
-		// numWaves = 4
-		// waterHeight = 4
-		/*
-		 * for (int i = 0; i < 4; ++i) { float amplitude = 0.5f / (i + 1);
-		 * waterShader->setUniform(format("amplitude[%d]", i), amplitude);
-		 * 
-		 * float wavelength = 8 * M_PI / (i + 1);
-		 * waterShader->setUniform(format("wavelength[%d]", i), wavelength);
-		 * 
-		 * float speed = 1.0f + 2*i; waterShader->setUniform(format("speed[%d]",
-		 * i), speed);
-		 * 
-		 * float angle = uniformRandomInRange(-M_PI/3, M_PI/3);
-		 * waterShader->setUniform(format("direction[%d]", i), cos(angle),
-		 * sin(angle)); }
-		 */
+		// This works really nicely, but strangely, not from all orientations.
+		// Maybe try and even further reduce the aplitude, or fix an angle that
+		// looks really nice
+
+		// Supports up to four waves
+		int numberOfWaves = 4;
+		float[] amplitude = new float[numberOfWaves];
+		float[] wavelength = new float[numberOfWaves];
+		float[] speed = new float[numberOfWaves];
+		Vector2[] direction = new Vector2[numberOfWaves];
+
+		GL20.glUniform1i(numWavesUniform, numberOfWaves);
+		glUniform1f(waterHeightUniform, -0.45f);
+
+		for (int i = 0; i < numberOfWaves; i++) {
+			amplitude[i] = 0.009f / (i + 1); // 0.01
+			wavelength[i] = (float) (0.06 * Math.PI / (float) (i + 1)); // 0.08
+			speed[i] = 1.0f + 2 * i;
+
+			// 2f rather than Math.random()
+			float angle = (float) Math.random() + 1 + (float) (-(Math.PI / 10) + (Math.PI / 10) * i);
+			direction[i] = new Vector2((float) Math.cos(angle), (float) Math.sin(angle));
+		}
+
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(amplitude.length);
+		buffer.put(amplitude);
+		buffer.rewind();
+		GL20.glUniform1(amplitudeUniform, buffer);
+
+		buffer.clear();
+		buffer.put(wavelength);
+		buffer.rewind();
+		GL20.glUniform1(wavelengthUniform, buffer);
+
+		buffer.clear();
+		buffer.put(speed);
+		buffer.rewind();
+		GL20.glUniform1(speedUniform, buffer);
+
+		for (int i = 0; i < numberOfWaves; i++) {
+			int location = GL20.glGetUniformLocation(programID, "direction[" + i + "]");
+			GL20.glUniform2f(location, direction[i].x(), direction[i].y());
+		}
+
+	}
+
+	private float uniformRandomInRange(float min, float max) {
+		assert (min < max);
+		double n = Math.random();
+		double v = min + n * (max - min);
+		return (float) v;
 	}
 }

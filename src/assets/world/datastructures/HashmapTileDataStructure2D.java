@@ -146,18 +146,20 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	}
 
 	private void drawSingleTileWater(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, AbstractTile tile) {
+		PolygonHeightmapTile polyTile = (PolygonHeightmapTile) tile;
 		if (tile != null) {
-
-			try {
-				modelMatrix.pushMatrix();
-				{
-					modelMatrix.getTop().mult(objectPole.calcMatrix());
-					tile.getModel().draw(shader, modelMatrix, tile.getPosition());
+			if (polyTile.isWater()) {
+				try {
+					modelMatrix.pushMatrix();
+					{
+						modelMatrix.getTop().mult(objectPole.calcMatrix());
+						tile.getModel().draw(shader, modelMatrix, tile.getPosition());
+					}
+					modelMatrix.popMatrix();
+				} catch (NullPointerException e) {
+					System.err.println("Tile Rendering failed");
+					e.printStackTrace();
 				}
-				modelMatrix.popMatrix();
-			} catch (NullPointerException e) {
-				System.err.println("Tile Rendering failed");
-				e.printStackTrace();
 			}
 		} else {
 			System.out.println("Tile hasn't been created yet! - This shouldn't really be happening!");

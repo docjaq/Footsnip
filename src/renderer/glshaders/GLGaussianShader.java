@@ -73,6 +73,6 @@ public class GLGaussianShader extends GLShader {
 	}
 
 	@Override
-	public void copyShaderSpecificUniformsToShader() {
+	public void copyShaderSpecificUniformsToShaderInit() {
 	}
 }

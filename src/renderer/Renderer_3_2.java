@@ -128,11 +128,17 @@ public class Renderer_3_2 extends RendererThread {
 		// Load terrain tessellation shader
 		GLShader tessellationShader = new GLGaussianTessellationShader(projectionBlockIndex);
 		tessellationShader.create(GAUSSIAN_TESS_SHADER_LOCATION);
+		tessellationShader.bindShader();
+		tessellationShader.copyShaderSpecificUniformsToShaderInit();
+		tessellationShader.unbindShader();
 		shaderMap.put(tessellationShaderClass, tessellationShader);
 
 		// Load water shader
 		GLShader waterShader = new GLWaterShader(projectionBlockIndex);
 		waterShader.create(WATER_SHADER_LOCATION);
+		waterShader.bindShader();
+		waterShader.copyShaderSpecificUniformsToShaderInit();
+		waterShader.unbindShader();
 		shaderMap.put(waterShaderClass, waterShader);
 
 		// ((GLGaussianTessellationShader)
