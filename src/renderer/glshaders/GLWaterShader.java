@@ -85,8 +85,8 @@ public class GLWaterShader extends GLShader {
 	public void copySharedUniformsToShader(Vector4 lightPosCameraSpace, MaterialParams materialParams) {
 
 		// All for fragment shader
-		glUniform4f(lightIntensityUniform, 3.8f, 3.8f, 3.8f, 1);
-		glUniform4f(ambientIntensityUniform, 0.05f, 0.05f, 0.05f, 1);
+		glUniform4f(lightIntensityUniform, 3f, 3f, 3f, 1);
+		glUniform4f(ambientIntensityUniform, 0.3f, 0.3f, 0.3f, 1);
 		glUniform3(cameraSpaceLightPositionUniform, lightPosCameraSpace.toBuffer());
 		glUniform1f(lightAttenuationUniform, lightAttenuation);
 		glUniform1f(shininessFactorUniform, materialParams.getSpecularValue());
@@ -127,11 +127,11 @@ public class GLWaterShader extends GLShader {
 
 		for (int i = 0; i < numberOfWaves; i++) {
 			amplitude[i] = 0.009f / (i + 1); // 0.01
-			wavelength[i] = (float) (0.06 * Math.PI / (float) (i + 1)); // 0.08
+			wavelength[i] = (float) (0.055 * Math.PI / (float) (i + 1)); // 0.08
 			speed[i] = 1.0f + 2 * i;
 
 			// 2f rather than Math.random()
-			float angle = (float) Math.random() + 1 + (float) (-(Math.PI / 10) + (Math.PI / 10) * i);
+			float angle = (float) Math.random() + 2 + (float) (-(Math.PI / 10) + (Math.PI / 10) * i);
 			direction[i] = new Vector2((float) Math.cos(angle), (float) Math.sin(angle));
 		}
 
