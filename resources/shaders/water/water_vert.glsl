@@ -71,7 +71,7 @@ vec3 waveNormal(float x, float y) {
 
 void main()
 {
-    vec4 adjustedPosition = vec4(position.x, position.y, -0.45, 1);
+    vec4 adjustedPosition = vec4(position.x, position.y, position.z, 1);
     vec3 adjustedNormal = vec3(normal.xyz);
     
     //Wave stuff
@@ -83,7 +83,8 @@ void main()
 	gl_Position = cameraToClipMatrix * tempCamPosition;
 	
 	vertexNormal = normalModelToCameraMatrix * adjustedNormal;
-	diffuseColor = vec4(0.07686274509802, 0.46392156862734, 0.55176470588222, 0.35);
+	//diffuseColor = vec4(0.07686274509802, 0.46392156862734, 0.55176470588222, 0.35);
+    diffuseColor = vec4(0.7, 0.7, 1, 1);
 	cameraSpacePosition = vec3(tempCamPosition);
     
     

@@ -15,6 +15,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL31;
 
+import renderer.GLCubeMap;
 import renderer.MaterialParams;
 
 public class GLWaterShader extends GLShader {
@@ -41,8 +42,12 @@ public class GLWaterShader extends GLShader {
 	protected int speedUniform;
 	protected int directionUniform;
 
-	public GLWaterShader(int projectionBlockIndex) {
+	private GLCubeMap cubeMap;
+	private int cubeMapUniform;
+
+	public GLWaterShader(int projectionBlockIndex, GLCubeMap cubeMap) {
 		super(projectionBlockIndex);
+		this.cubeMap = cubeMap;
 	}
 
 	float time = 0;
@@ -62,7 +67,7 @@ public class GLWaterShader extends GLShader {
 		lightAttenuationUniform = GL20.glGetUniformLocation(programID, "lightAttenuation");
 		shininessFactorUniform = GL20.glGetUniformLocation(programID, "shininessFactor");
 
-		// Shader specific
+		// Vert shader specific
 		waterHeightUniform = GL20.glGetUniformLocation(programID, "waterHeight");
 		timeUniform = GL20.glGetUniformLocation(programID, "time");
 		numWavesUniform = GL20.glGetUniformLocation(programID, "numWaves");
@@ -71,13 +76,21 @@ public class GLWaterShader extends GLShader {
 		speedUniform = GL20.glGetUniformLocation(programID, "speed");
 		directionUniform = GL20.glGetUniformLocation(programID, "direction");
 
+		// Frag shader specific
+		cubeMapUniform = GL20.glGetUniformLocation(programID, "cuveMap");
+
 		int projectionBlock = GL31.glGetUniformBlockIndex(programID, "Projection");
 		GL31.glUniformBlockBinding(programID, projectionBlock, projectionBlockIndex);
 
+		setupSamplerUBO();
 	}
 
-	// TODO: Add a 'Copy once to shader' type method for things that never
-	// change
+	private void setupSamplerUBO() {
+
+		bindShader();
+		GL20.glUniform1i(cubeMapUniform, cubeMap.getTexId());
+		unbindShader();
+	}
 
 	// Copy all of the shader uniforms that are shared with all objects (i.e.
 	// only need to be sent once)
@@ -104,7 +117,7 @@ public class GLWaterShader extends GLShader {
 
 	@Override
 	public void copyShaderSpecificUniformsToShaderRuntime() {
-		time += 0.00001;
+		time += 0.000005;
 		glUniform1f(timeUniform, time);
 	}
 
@@ -112,11 +125,11 @@ public class GLWaterShader extends GLShader {
 	public void copyShaderSpecificUniformsToShaderInit() {
 
 		// This works really nicely, but strangely, not from all orientations.
-		// Maybe try and even further reduce the aplitude, or fix an angle that
+		// Maybe try and even further reduce the amplitude, or fix an angle that
 		// looks really nice
 
 		// Supports up to four waves
-		int numberOfWaves = 4;
+		int numberOfWaves = 3;
 		float[] amplitude = new float[numberOfWaves];
 		float[] wavelength = new float[numberOfWaves];
 		float[] speed = new float[numberOfWaves];
@@ -126,8 +139,11 @@ public class GLWaterShader extends GLShader {
 		glUniform1f(waterHeightUniform, -0.45f);
 
 		for (int i = 0; i < numberOfWaves; i++) {
-			amplitude[i] = 0.009f / (i + 1); // 0.01
-			wavelength[i] = (float) (0.055 * Math.PI / (float) (i + 1)); // 0.08
+			// 0.004f / (i + 1)
+			amplitude[i] = 0.004f / (i + 1);
+			// (float) (0.055 * Math.PI / (float) (i + 1))
+			wavelength[i] = (float) (0.055 * Math.PI / (float) (i + 1));
+			// 1.0f + 2 * i;
 			speed[i] = 1.0f + 2 * i;
 
 			// 2f rather than Math.random()
@@ -157,10 +173,18 @@ public class GLWaterShader extends GLShader {
 
 	}
 
-	private float uniformRandomInRange(float min, float max) {
-		assert (min < max);
+	public void bindCubeMap() {
+		cubeMap.bind();
+	}
+
+	public void unbindCubeMap() {
+		// GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+	}
+
+	private float uniformRandomInRange(double d, double e) {
+		assert (d < e);
 		double n = Math.random();
-		double v = min + n * (max - min);
+		double v = d + n * (e - d);
 		return (float) v;
 	}
 }

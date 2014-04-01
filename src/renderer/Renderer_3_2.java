@@ -61,14 +61,22 @@ public class Renderer_3_2 extends RendererThread {
 			"resources/shaders/tessellation/terrain_tessCont.glsl", "resources/shaders/tessellation/terrain_tessEval.glsl",
 			"resources/shaders/tessellation/terrain_geom.glsl", "resources/shaders/tessellation/gaussian_frag.glsl", };
 
+	// Something's not currently right with this. It's either not mapping the
+	// correct images to the correct cube faces, or my vector computation in the
+	// shader is not correct
+	private final String[] CUBE_MAP_LOCATION = { "resources/cubemaps/Maskonaive/posx.png", "resources/cubemaps/Maskonaive/negx.png",
+			"resources/cubemaps/Maskonaive/negy.png", "resources/cubemaps/Maskonaive/posy.png", "resources/cubemaps/Maskonaive/posz.png",
+			"resources/cubemaps/Maskonaive/negz.png" }; // x, y, down, up
+
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
-	private final int WIDTH = 1280;
-	private final int HEIGHT = 800;
+	private final int WIDTH = 1680;
+	private final int HEIGHT = 1050;
 
 	private final int MAX_FPS = 500;
 
 	private Map<Class<?>, GLShader> shaderMap;
+	private GLCubeMap cubeMap;
 
 	private Class<GLGaussianShader> defaultShaderClass = GLGaussianShader.class;
 	private Class<GLGaussianTessellationShader> tessellationShaderClass = GLGaussianTessellationShader.class;
@@ -118,6 +126,7 @@ public class Renderer_3_2 extends RendererThread {
 		viewPole = new ViewPole(viewData, viewScale, MouseButton.LEFT_BUTTON);
 		objectPole = new ObjectPole(objectData, 90f / 250f, MouseButton.RIGHT_BUTTON, viewPole);
 
+		cubeMap = new GLCubeMap(CUBE_MAP_LOCATION, 2048, 2048, GL11.GL_RGB);
 		shaderMap = new HashMap<Class<?>, GLShader>();
 
 		// Load default shader
@@ -134,7 +143,7 @@ public class Renderer_3_2 extends RendererThread {
 		shaderMap.put(tessellationShaderClass, tessellationShader);
 
 		// Load water shader
-		GLShader waterShader = new GLWaterShader(projectionBlockIndex);
+		GLShader waterShader = new GLWaterShader(projectionBlockIndex, cubeMap);
 		waterShader.create(WATER_SHADER_LOCATION);
 		waterShader.bindShader();
 		waterShader.copyShaderSpecificUniformsToShaderInit();
@@ -196,7 +205,8 @@ public class Renderer_3_2 extends RendererThread {
 			{
 				renderPlayer(assContainer.getPlayer(), currentShader, modelMatrix);
 				renderMonsters(assContainer.getMonsters(), currentShader, modelMatrix);
-				renderMonsters(assContainer.getMonsters(), currentShader, modelMatrix);
+				// renderMonsters(assContainer.getMonsters(), currentShader,
+				// modelMatrix);
 
 				renderScenery(assContainer.getPolygonalSceneries(), currentShader, modelMatrix);
 				renderProjectiles(assContainer.getProjectiles(), currentShader, modelMatrix);
@@ -216,7 +226,7 @@ public class Renderer_3_2 extends RendererThread {
 
 				currentShader = shaderMap.get(waterShaderClass);
 				currentShader.bindShader();
-				currentShader.copySharedUniformsToShader(lightPosCameraSpace, new MaterialParams(10.5f));
+				currentShader.copySharedUniformsToShader(lightPosCameraSpace, new MaterialParams(0.8f));
 				renderTilesWater(assContainer.getTileDataStructure(), currentShader, modelMatrix, assContainer.getPlayer());
 				currentShader.unbindShader();
 			}
@@ -251,7 +261,7 @@ public class Renderer_3_2 extends RendererThread {
 		Vector3 playerPos = new Vector3(0, 0, 0);
 		Vector3 playerAngle = new Vector3(0, 0, 0);
 		float playerScale = 1f;
-		Vector4 playerColor = new Vector4(0.4f, 0.4f, 1.0f, 1.0f);
+		Vector4 playerColor = new Vector4(0.8f, 0.4f, 0.5f, 1.0f);
 
 		Ply playerMesh = new Ply();
 		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"), playerColor);

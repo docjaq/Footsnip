@@ -15,6 +15,8 @@ uniform float lightAttenuation;
 const vec4 specularColor = vec4(0.25, 0.25, 0.65, 1.0);
 uniform float shininessFactor;
 
+uniform samplerCube cubeMap;
+
 float calcAttenuation(in vec3 cameraSpacePosition, out vec3 lightDirection)
 {
 	vec3 lightDifference = cameraSpaceLightPos - cameraSpacePosition;
@@ -22,6 +24,28 @@ float calcAttenuation(in vec3 cameraSpacePosition, out vec3 lightDirection)
 	lightDirection = lightDifference * inversesqrt(lightDistanceSqr);
 	
 	return 1.0 / (1.0 + lightAttenuation * sqrt(lightDistanceSqr));
+}
+
+mat4 rotationMatrix(vec3 axis, float angle)
+{
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+                0.0,                                0.0,                                0.0,                                1.0);
+}
+
+vec4 calcCubeMapValue(vec3 viewDirection, vec3 normal){
+    vec3 r = reflect(viewDirection, normal);
+    //Currently have to do this stupid rotation because we're looking down the z axis, and the
+    //sky box is not set up that way. Alternatively, could modify the cube map images
+    //(i.e. replace *and* rotate), but... eugh.
+    r = (vec4(r, 1)*rotationMatrix(vec3(1, 0, 0), -1.57079633)).xyz;
+    return vec4(texture(cubeMap, r));
 }
 
 void main()
@@ -48,5 +72,9 @@ void main()
     specularColor * attenIntensity * gaussianTerm +
     diffuseColor  * ambientIntensity;
     
-    //outputColor.a = 0.8;
+    //Compute cubemap color
+    vec4 cubeMapColor = calcCubeMapValue(viewDirection, surfaceNormal);
+    //Blend cubemap color and gaussian color
+    outputColor = outputColor * cubeMapColor;
+    outputColor.a = 0.80;
 }

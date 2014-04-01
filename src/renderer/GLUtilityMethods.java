@@ -124,7 +124,7 @@ public class GLUtilityMethods {
 		Display.destroy();
 	}
 
-	public static int loadPNGTextureAsPicture(String filename, int textureUnit) {
+	public static int loadPNGTextureAsPictureAndBind(String filename, int textureUnit) {
 		ByteBuffer buf = null;
 		int tWidth = 0;
 		int tHeight = 0;
@@ -188,7 +188,7 @@ public class GLUtilityMethods {
 		return texId;
 	}
 
-	public static int loadPNGTextureAsData(String filename) {
+	public static int loadPNGTextureAsDataAndBind(String filename) {
 		ByteBuffer buf = null;
 		int tWidth = 0;
 		int tHeight = 0;
@@ -236,7 +236,7 @@ public class GLUtilityMethods {
 		return texId;
 	}
 
-	public static int loadArrayTextureAsData(float[][] data) {
+	public static int loadArrayTextureAsDataAndBind(float[][] data) {
 		int tWidth = data.length;
 		int tHeight = data.length;
 
@@ -271,6 +271,35 @@ public class GLUtilityMethods {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
 
 		return texId;
+	}
+
+	public static ByteBuffer loadPNG(String filename, int numColorChannels) {
+		ByteBuffer buf = null;
+		int tWidth = 0;
+		int tHeight = 0;
+
+		try {
+			// Open the PNG file as an InputStream
+			InputStream in = new FileInputStream(filename);
+			// Link the PNG decoder to this stream
+			PNGDecoder decoder = new PNGDecoder(in);
+
+			// Get the width and height of the texture
+			tWidth = decoder.getWidth();
+			tHeight = decoder.getHeight();
+
+			// Decode the PNG file in a ByteBuffer
+			buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
+			decoder.decodeFlipped(buf, decoder.getWidth() * 4, numColorChannels == 3 ? Format.RGB : Format.RGBA);
+			buf.flip();
+
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		return buf;
 	}
 
 	public static int bindBufferAs2DTexture(FloatBuffer buf, int dataType, int width, int height) {

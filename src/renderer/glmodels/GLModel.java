@@ -23,11 +23,6 @@ import renderer.glshaders.GLWaterShader;
 
 public abstract class GLModel {
 
-	// Model positions
-	// public Vector3 modelPos;
-	// public Vector3 modelAngle;
-	// private Vector3 modelScale;
-
 	// Model GL Variables
 	protected int vaoId = 0;
 	protected int vboId = 0;
@@ -36,15 +31,7 @@ public abstract class GLModel {
 
 	protected float modelRadius;
 
-	// Collision variables
-	/* MAKE SURE THAT THIS RADIUS HAS BEEN SET BY THE IMPLEMENTING CLASS */
-	// private float radius;
-
 	public GLModel() {
-		// Set the default quad rotation, scale and position values
-		// this.modelPos = modelPos;
-		// this.modelAngle = modelAngle;
-		// setModelScale(modelScale);
 	}
 
 	protected void setModelRadius(float modelRadius) {
@@ -90,6 +77,7 @@ public abstract class GLModel {
 		if (shader instanceof GLWaterShader) {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			((GLWaterShader) shader).bindCubeMap();
 		}
 
 		if (shader instanceof GLGaussianTessellationShader) {
@@ -104,15 +92,12 @@ public abstract class GLModel {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
 		}
 
-		if (shader instanceof GLGaussianTessellationShader) {
-			((GLGaussianTessellationShader) shader).unbindHeightmap();
-			// ((GLGaussianTessellationShader) shader).unbindNormalmap();
-		}
-
 		if (shader instanceof GLWaterShader) {
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		}
+
+		// Probably just have an unbind all. Or is no unbind required??
 
 		// Put everything back to default (deselect)
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
