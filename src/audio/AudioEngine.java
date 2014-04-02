@@ -9,12 +9,16 @@ import org.lwjgl.openal.AL10;
 
 import renderer.GLPosition;
 import assets.entities.Monster;
+import assets.entities.Player;
+import assets.entities.Projectile;
 
 public class AudioEngine {
 
 	private static AudioEngine instance;
 
 	private EntitySound<Monster> monsterSound;
+	private EntitySound<Projectile> projectileSound;
+	private EntitySound<Player> playerSound;
 
 	private FloatBuffer listenerPos = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
 	private FloatBuffer listenerVel = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
@@ -46,6 +50,8 @@ public class AudioEngine {
 
 	private void setupSounds() {
 		monsterSound = new MonsterSound();
+		projectileSound = new ProjectileSound();
+		playerSound = new PlayerSound();
 	}
 
 	private void checkForErrors() {
@@ -61,25 +67,19 @@ public class AudioEngine {
 	}
 
 	public void playPlayerSound() {
-		// if (AL10.alGetSourcei(source.get(SoundType.PLAYER.index()),
-		// AL10.AL_SOURCE_STATE) != AL10.AL_PLAYING) {
-		// play(SoundType.PLAYER);
-		// }
+		playerSound.play();
 	}
 
 	public void playMonsterSound(GLPosition glPosition) {
-		// FloatBuffer positionBuffer = (FloatBuffer)
-		// BufferUtils.createFloatBuffer(3)
-		// .put(new float[] { glPosition.modelPos.x(), glPosition.modelPos.y(),
-		// glPosition.modelPos.z() }).rewind();
-		FloatBuffer positionBuffer = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
+		FloatBuffer positionBuffer = (FloatBuffer) BufferUtils.createFloatBuffer(3)
+				.put(new float[] { glPosition.modelPos.x(), glPosition.modelPos.y(), glPosition.modelPos.z() }).rewind();
 		monsterSound.setSourcePosition(positionBuffer);
 		monsterSound.setSourceVelocity(BufferUtils.createFloatBuffer(3));
 		monsterSound.play();
 	}
 
 	public void playProjectileSound() {
-		// play(SoundType.PROJECTILE);
+		projectileSound.play();
 	}
 
 	public void close() {

@@ -68,6 +68,10 @@ public abstract class EntitySound<T extends Entity> {
 		AL10.alSourcePlay(source.get(0));
 	}
 
+	public boolean isPlaying() {
+		return AL10.alGetSourcei(source.get(0), AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING;
+	}
+
 	protected abstract String getFilePath();
 
 	protected float getPitch() {
