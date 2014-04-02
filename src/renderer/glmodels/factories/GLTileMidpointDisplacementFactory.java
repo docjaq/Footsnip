@@ -8,7 +8,7 @@ import math.types.Vector4;
 import renderer.glmodels.GLMesh;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
-import terraingeneration.PlasmaFractalFactory;
+import terraingen.PlasmaFractalFactory;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
 import assets.world.datastructures.TileDataStructure2D;

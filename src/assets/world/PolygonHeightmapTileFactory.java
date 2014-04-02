@@ -13,7 +13,7 @@ import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
-import terraingeneration.PlasmaFractalFactory;
+import terraingen.PlasmaFractalFactory;
 import assets.world.datastructures.DataStructureKey2D;
 import assets.world.datastructures.TileDataStructure2D;
 
