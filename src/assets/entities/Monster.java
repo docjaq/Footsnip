@@ -100,7 +100,7 @@ public class Monster extends Entity {
 	public boolean isDestroyable() {
 
 		if (health <= 0) {
-			AudioEngine.getInstance().playMonsterSound();
+			AudioEngine.getInstance().playMonsterSound(getPosition());
 			destroyable = true;
 		}
 
