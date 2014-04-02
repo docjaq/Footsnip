@@ -17,7 +17,7 @@ public class MonsterFactory {
 		model = new GLMesh(mesh.getTriangles(), mesh.getVertices());
 	}
 
-	public Monster create(GeometryFile mesh, GLShader shader, Vector3 monsterPos, float rotationDelta) {
+	public Monster create(Vector3 monsterPos, float rotationDelta) {
 
 		Vector3 monsterAngle = new Vector3(0, 0, 0);
 		float monsterScale = (float) (Math.random() * 2f);

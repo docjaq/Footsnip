@@ -18,6 +18,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 
 import math.types.Matrix4;
 
@@ -26,9 +28,9 @@ import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
@@ -122,7 +124,7 @@ public class GLUtilityMethods {
 		Display.destroy();
 	}
 
-	public static int loadPNGTexture(String filename, int textureUnit) {
+	public static int loadPNGTextureAsPictureAndBind(String filename, int textureUnit) {
 		ByteBuffer buf = null;
 		int tWidth = 0;
 		int tHeight = 0;
@@ -165,9 +167,9 @@ public class GLUtilityMethods {
 		// GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, tWidth, tHeight,
 		// GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
 
-		if (ENABLE_MIPMAPPING) {
-			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-		}
+		// if (ENABLE_MIPMAPPING) {
+		// GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+		// }
 
 		// Setup the ST coordinate system
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
@@ -182,6 +184,141 @@ public class GLUtilityMethods {
 		}
 
 		exitOnGLError("loadPNGTexture");
+
+		return texId;
+	}
+
+	public static int loadPNGTextureAsDataAndBind(String filename) {
+		ByteBuffer buf = null;
+		int tWidth = 0;
+		int tHeight = 0;
+
+		try {
+			// Open the PNG file as an InputStream
+			InputStream in = new FileInputStream(filename);
+			// Link the PNG decoder to this stream
+			PNGDecoder decoder = new PNGDecoder(in);
+
+			// Get the width and height of the texture
+			tWidth = decoder.getWidth();
+			tHeight = decoder.getHeight();
+
+			// Decode the PNG file in a ByteBuffer
+			buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
+			decoder.decodeFlipped(buf, decoder.getWidth() * 4, Format.RGBA);
+			buf.flip();
+
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		// Create a new texture object in memory and bind it
+		int texId = GL11.glGenTextures();
+		// GL13.glActiveTexture(textureUnit);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
+
+		// All RGB bytes are aligned to each other and each component is 1 byte
+		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+		// MAY NOT BE NECESSARY
+
+		// Upload the texture data and generate mip maps (for scaling)
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, tWidth, tHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
+
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_BASE_LEVEL, 0);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, 0);
+
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
+
+		exitOnGLError("loadPNGTexture");
+
+		return texId;
+	}
+
+	public static int loadArrayTextureAsDataAndBind(float[][] data) {
+		int tWidth = data.length;
+		int tHeight = data.length;
+
+		// Change this to
+		// http://stackoverflow.com/questions/7070576/get-one-dimensionial-array-from-a-mutlidimensional-array-in-java
+		// Float is four bytes
+		ByteBuffer buf = ByteBuffer.allocateDirect(tWidth * tHeight * 4);
+		buf.order(ByteOrder.nativeOrder());
+
+		FloatBuffer fBuf = buf.asFloatBuffer();
+		for (int y = 0; y < tHeight; y++) {
+			for (int x = 0; x < tWidth; x++) {
+				fBuf.put(data[x][y]);
+			}
+		}
+		fBuf.flip();
+
+		// Create a new texture object in memory and bind it
+		int texId = GL11.glGenTextures();
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
+
+		// All RGB bytes are aligned to each other and each component is 1 byte
+		// GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+		// MAY NOT BE NECESSARY
+
+		// Upload the texture data and generate mip maps (for scaling)
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RED, tWidth, tHeight, 0, GL11.GL_RED, GL11.GL_FLOAT, buf);
+
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_BASE_LEVEL, 0);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, 0);
+
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
+
+		return texId;
+	}
+
+	public static ByteBuffer loadPNG(String filename, int numColorChannels) {
+		ByteBuffer buf = null;
+		int tWidth = 0;
+		int tHeight = 0;
+
+		try {
+			// Open the PNG file as an InputStream
+			InputStream in = new FileInputStream(filename);
+			// Link the PNG decoder to this stream
+			PNGDecoder decoder = new PNGDecoder(in);
+
+			// Get the width and height of the texture
+			tWidth = decoder.getWidth();
+			tHeight = decoder.getHeight();
+
+			// Decode the PNG file in a ByteBuffer
+			buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
+			decoder.decodeFlipped(buf, decoder.getWidth() * 4, numColorChannels == 3 ? Format.RGB : Format.RGBA);
+			buf.flip();
+
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		return buf;
+	}
+
+	public static int bindBufferAs2DTexture(FloatBuffer buf, int dataType, int width, int height) {
+		int texId = GL11.glGenTextures();
+
+		// GL33.glClampColor(GL33.GL_CLAMP_READ_COLOR, GL_FALSE);
+		// glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE);
+		// glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
+
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
+
+		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, dataType, width, height, 0, dataType, GL11.GL_FLOAT, buf);
+
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_BASE_LEVEL, 0);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, 0);
+
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
 
 		return texId;
 	}

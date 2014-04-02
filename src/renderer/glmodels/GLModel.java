@@ -7,10 +7,13 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL40;
 
 import renderer.GLPosition;
 import renderer.GLWorld;
+import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
+import renderer.glshaders.GLWaterShader;
 
 /*
  * TODO: Need to set the model centres better, as currently they're on the
@@ -20,11 +23,6 @@ import renderer.glshaders.GLShader;
 
 public abstract class GLModel {
 
-	// Model positions
-	// public Vector3 modelPos;
-	// public Vector3 modelAngle;
-	// private Vector3 modelScale;
-
 	// Model GL Variables
 	protected int vaoId = 0;
 	protected int vboId = 0;
@@ -33,15 +31,7 @@ public abstract class GLModel {
 
 	protected float modelRadius;
 
-	// Collision variables
-	/* MAKE SURE THAT THIS RADIUS HAS BEEN SET BY THE IMPLEMENTING CLASS */
-	// private float radius;
-
 	public GLModel() {
-		// Set the default quad rotation, scale and position values
-		// this.modelPos = modelPos;
-		// this.modelAngle = modelAngle;
-		// setModelScale(modelScale);
 	}
 
 	protected void setModelRadius(float modelRadius) {
@@ -63,7 +53,9 @@ public abstract class GLModel {
 
 		modelMatrix.getTop().scale(position.modelScale);
 
-		shader.copySpecificUniformsToShader(modelMatrix);
+		shader.copyModelSpecificUniformsToShader(modelMatrix);
+
+		shader.copyShaderSpecificUniformsToShaderRuntime();
 
 		// Bind to the VAO that has all the information about the vertices
 		GL30.glBindVertexArray(vaoId);
@@ -79,11 +71,33 @@ public abstract class GLModel {
 		// the vertices
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
-		// Draw the vertices
-		// Currently, our GLModel, therefore, can only consist of triangles
-		GL11.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
-		// GL11.glDrawElements(GL11.GL_LINE_LOOP, indicesCount,
-		// GL11.GL_UNSIGNED_INT, 0);
+		// Debug mode
+		// GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+
+		if (shader instanceof GLWaterShader) {
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			((GLWaterShader) shader).bindCubeMap();
+		}
+
+		if (shader instanceof GLGaussianTessellationShader) {
+			((GLGaussianTessellationShader) shader).bindHeightmap();
+			// ((GLGaussianTessellationShader) shader).bindNormalmap();
+		}
+
+		if (shader instanceof GLGaussianTessellationShader) {
+			GL40.glPatchParameteri(GL40.GL_PATCH_VERTICES, 3);
+			GL11.glDrawElements(GL40.GL_PATCHES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+		} else {
+			GL11.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+		}
+
+		if (shader instanceof GLWaterShader) {
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		}
+
+		// Probably just have an unbind all. Or is no unbind required??
 
 		// Put everything back to default (deselect)
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);

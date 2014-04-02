@@ -4,15 +4,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import math.types.MatrixStack;
-import renderer.glmodels.factories.GLTileFactory;
 import renderer.glshaders.GLShader;
 import assets.entities.Player;
 import assets.world.AbstractTile;
+import assets.world.PolygonHeightmapTileFactory;
 import camera.CameraModel.ObjectPole;
 
 public interface TileDataStructure2D {
 
-	public void init(GLTileFactory glTileFactory, AbstractTile tile);
+	public void init(PolygonHeightmapTileFactory glTileFactory, AbstractTile tile);
 
 	/** TODO: Consider removing this **/
 	public List<AbstractTile> getTilesAsList();
@@ -34,7 +34,9 @@ public interface TileDataStructure2D {
 	 * someone adding a new data-structure that they must check to see if a tile
 	 * is not null
 	 **/
-	public void draw(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, Player player);
+	public void drawTerrain(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, Player player);
+
+	public void drawWater(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, Player player);
 
 	public AbstractTile getInitialTile();
 

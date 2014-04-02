@@ -25,10 +25,10 @@ import org.lwjgl.opengl.GL11;
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glmodels.factories.GLDefaultProjectileFactory;
-import renderer.glmodels.factories.GLTileFactory;
-import renderer.glmodels.factories.GLTileMidpointDisplacementFactory;
 import renderer.glshaders.GLGaussianShader;
+import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
+import renderer.glshaders.GLWaterShader;
 import thread.RendererThread;
 import assets.AssetContainer;
 import assets.entities.Entity;
@@ -38,7 +38,8 @@ import assets.entities.Player;
 import assets.entities.PolygonalScenery;
 import assets.entities.PolygonalSceneryFactory;
 import assets.entities.Projectile;
-import assets.world.PolygonHeightmapTile;
+import assets.world.AbstractTile;
+import assets.world.PolygonHeightmapTileFactory;
 import assets.world.datastructures.TileDataStructure2D;
 import camera.CameraModel.MouseButton;
 import camera.CameraModel.ObjectData;
@@ -54,16 +55,32 @@ public class Renderer_3_2 extends RendererThread {
 	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/lighting/gaussian_vert.glsl",
 			"resources/shaders/lighting/gaussian_frag.glsl" };
 
+	private final String[] WATER_SHADER_LOCATION = { "resources/shaders/water/water_vert.glsl", "resources/shaders/water/water_frag.glsl" };
+
+	private final String[] GAUSSIAN_TESS_SHADER_LOCATION = { "resources/shaders/tessellation/gaussian_vert.glsl",
+			"resources/shaders/tessellation/terrain_tessCont.glsl", "resources/shaders/tessellation/terrain_tessEval.glsl",
+			"resources/shaders/tessellation/terrain_geom.glsl", "resources/shaders/tessellation/gaussian_frag.glsl", };
+
+	// Something's not currently right with this. It's either not mapping the
+	// correct images to the correct cube faces, or my vector computation in the
+	// shader is not correct
+	private final String[] CUBE_MAP_LOCATION = { "resources/cubemaps/Maskonaive/posx.png", "resources/cubemaps/Maskonaive/negx.png",
+			"resources/cubemaps/Maskonaive/negy.png", "resources/cubemaps/Maskonaive/posy.png", "resources/cubemaps/Maskonaive/posz.png",
+			"resources/cubemaps/Maskonaive/negz.png" }; // x, y, down, up
+
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
-	private final int WIDTH = 1024;
-	private final int HEIGHT = 768;
+	private final int WIDTH = 1680;
+	private final int HEIGHT = 1050;
 
 	private final int MAX_FPS = 500;
 
 	private Map<Class<?>, GLShader> shaderMap;
+	private GLCubeMap cubeMap;
 
 	private Class<GLGaussianShader> defaultShaderClass = GLGaussianShader.class;
+	private Class<GLGaussianTessellationShader> tessellationShaderClass = GLGaussianTessellationShader.class;
+	private Class<GLWaterShader> waterShaderClass = GLWaterShader.class;
 
 	// The time of the last frame, to calculate the time delta for rotating
 	// monsters.
@@ -109,15 +126,36 @@ public class Renderer_3_2 extends RendererThread {
 		viewPole = new ViewPole(viewData, viewScale, MouseButton.LEFT_BUTTON);
 		objectPole = new ObjectPole(objectData, 90f / 250f, MouseButton.RIGHT_BUTTON, viewPole);
 
+		cubeMap = new GLCubeMap(CUBE_MAP_LOCATION, 2048, 2048, GL11.GL_RGB);
 		shaderMap = new HashMap<Class<?>, GLShader>();
 
+		// Load default shader
 		GLShader currentShader = new GLGaussianShader(projectionBlockIndex);
 		currentShader.create(DEFAULT_SHADER_LOCATION);
 		shaderMap.put(defaultShaderClass, currentShader);
 
-		createEntities(currentShader);
-		createWorld(currentShader);
-		createScenery(currentShader);
+		// Load terrain tessellation shader
+		GLShader tessellationShader = new GLGaussianTessellationShader(projectionBlockIndex);
+		tessellationShader.create(GAUSSIAN_TESS_SHADER_LOCATION);
+		tessellationShader.bindShader();
+		tessellationShader.copyShaderSpecificUniformsToShaderInit();
+		tessellationShader.unbindShader();
+		shaderMap.put(tessellationShaderClass, tessellationShader);
+
+		// Load water shader
+		GLShader waterShader = new GLWaterShader(projectionBlockIndex, cubeMap);
+		waterShader.create(WATER_SHADER_LOCATION);
+		waterShader.bindShader();
+		waterShader.copyShaderSpecificUniformsToShaderInit();
+		waterShader.unbindShader();
+		shaderMap.put(waterShaderClass, waterShader);
+
+		// ((GLGaussianTessellationShader)
+		// tessellationShader).bindSamplerUnit();
+
+		createEntities();
+		createWorld();
+		createScenery();
 
 	}
 
@@ -154,10 +192,8 @@ public class Renderer_3_2 extends RendererThread {
 		// modelToCamera matrix
 		modelMatrix.setTop(viewPole.calcMatrix());
 
-		// GLModel model = assContainer.getPlayer().getModel();
 		Vector4 worldLightPos = new Vector4(assContainer.getPlayer().getPosition().modelPos.x(),
 				(assContainer.getPlayer().getPosition().modelPos.y()), assContainer.getPlayer().getPosition().modelPos.z() + 0.3f, 1);
-		// Vector4 worldLightPos = calcLightPosition();
 
 		// Confused why I don't need to push/pop this...
 		Vector4 lightPosCameraSpace = modelMatrix.getTop().mult(worldLightPos);
@@ -169,46 +205,63 @@ public class Renderer_3_2 extends RendererThread {
 			{
 				renderPlayer(assContainer.getPlayer(), currentShader, modelMatrix);
 				renderMonsters(assContainer.getMonsters(), currentShader, modelMatrix);
-				renderTiles(assContainer.getTileDataStructure(), currentShader, modelMatrix, assContainer.getPlayer());
+				// renderMonsters(assContainer.getMonsters(), currentShader,
+				// modelMatrix);
+
 				renderScenery(assContainer.getPolygonalSceneries(), currentShader, modelMatrix);
 				renderProjectiles(assContainer.getProjectiles(), currentShader, modelMatrix);
 			}
 			modelMatrix.popMatrix();
 		}
-
 		currentShader.unbindShader();
+
+		{
+			modelMatrix.pushMatrix();
+			{
+				currentShader = shaderMap.get(tessellationShaderClass);
+				currentShader.bindShader();
+				currentShader.copySharedUniformsToShader(lightPosCameraSpace, new MaterialParams());
+				renderTilesTerrain(assContainer.getTileDataStructure(), currentShader, modelMatrix, assContainer.getPlayer());
+				currentShader.unbindShader();
+
+				currentShader = shaderMap.get(waterShaderClass);
+				currentShader.bindShader();
+				currentShader.copySharedUniformsToShader(lightPosCameraSpace, new MaterialParams(0.8f));
+				renderTilesWater(assContainer.getTileDataStructure(), currentShader, modelMatrix, assContainer.getPlayer());
+				currentShader.unbindShader();
+			}
+			modelMatrix.popMatrix();
+		}
 
 		exitOnGLError("logicCycle");
 	}
 
-	private void createWorld(GLShader shader) throws RendererException {
+	private void createWorld() throws RendererException {
 		Vector3 tilePos = new Vector3(0, 0, 0);
 		Vector3 tileAngle = new Vector3(0, 0, 0);
 		float tileScale = 1f;
 		GLPosition position = new GLPosition(tilePos, tileAngle, tileScale, 0);
 
-		PolygonHeightmapTile initialTile = new PolygonHeightmapTile(null, null, position);
-		GLTileFactory glTileFactory = new GLTileMidpointDisplacementFactory(129, assContainer.getTileDataStructure());
-		GLModel model = glTileFactory.create(initialTile);
-		initialTile.setModel(model);
+		PolygonHeightmapTileFactory glTileFactory = new PolygonHeightmapTileFactory(129, assContainer.getTileDataStructure());
+		AbstractTile initialTile = glTileFactory.create(null, position);
 
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
 	}
 
-	private void createScenery(GLShader shader) {
+	private void createScenery() {
 		// Hardcoded because Dave's mother is a prostitute
 
 		assContainer.setPolygonalSceneries(new ArrayList<PolygonalScenery>());
 		Vector3 sceneryPos = new Vector3(0.05f, 0.05f, 0);
-		assContainer.addPolygonalScenery(PolygonalSceneryFactory.create(shader, sceneryPos));
+		assContainer.addPolygonalScenery(PolygonalSceneryFactory.create(sceneryPos));
 	}
 
-	private void createEntities(GLShader shader) throws RendererException {
+	private void createEntities() throws RendererException {
 
 		Vector3 playerPos = new Vector3(0, 0, 0);
 		Vector3 playerAngle = new Vector3(0, 0, 0);
 		float playerScale = 1f;
-		Vector4 playerColor = new Vector4(0.4f, 0.4f, 1.0f, 1.0f);
+		Vector4 playerColor = new Vector4(0.8f, 0.4f, 0.5f, 1.0f);
 
 		Ply playerMesh = new Ply();
 		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"), playerColor);
@@ -233,15 +286,19 @@ public class Renderer_3_2 extends RendererThread {
 		for (int i = 0; i < 10; i++) {
 			Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
-			assContainer.addMonster(monsterFactory.create(monsterMesh, shader, monsterPos, rotationDelta));
+			assContainer.addMonster(monsterFactory.create(monsterPos, rotationDelta));
 		}
 
 		// Initialise projectile factory
 		assContainer.setProjectileFactory(GLDefaultProjectileFactory.getInstance());
 	}
 
-	private void renderTiles(TileDataStructure2D dataStructure, GLShader shader, MatrixStack modelMatrix, Player player) {
-		dataStructure.draw(shader, objectPole, modelMatrix, player);
+	private void renderTilesTerrain(TileDataStructure2D dataStructure, GLShader shader, MatrixStack modelMatrix, Player player) {
+		dataStructure.drawTerrain(shader, objectPole, modelMatrix, player);
+	}
+
+	private void renderTilesWater(TileDataStructure2D dataStructure, GLShader shader, MatrixStack modelMatrix, Player player) {
+		dataStructure.drawWater(shader, objectPole, modelMatrix, player);
 	}
 
 	private void renderScenery(List<PolygonalScenery> scenery, GLShader shader, MatrixStack modelMatrix) {

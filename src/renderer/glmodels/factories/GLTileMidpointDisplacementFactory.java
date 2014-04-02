@@ -35,6 +35,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	private List<GLTriangle> factoryTriangles;
 	private int tileComplexity;
 	private TileDataStructure2D tileDataStructure;
+	private int rangeMax;
 
 	final static float zOffset = -0.1f;
 	final static float zAdjust = 0.005f;
@@ -45,7 +46,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		// this.heightMap = new float[tileComplexity][tileComplexity];
 		this.factoryVertices = new ArrayList<GLVertex>(tileComplexity * tileComplexity);
 		this.factoryTriangles = new ArrayList<GLTriangle>((tileComplexity - 1) * (tileComplexity - 1) * 2);
-
+		rangeMax = (tileComplexity - 1) * (tileComplexity - 1) * 2;
 		generatePlanarMesh();
 	}
 
@@ -87,8 +88,15 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 
 		// Adjust mesh according to heightmap
 		adjustMeshAccordingToHeightmap(heightmap, this.factoryVertices);
+
 		// Compute normals for new vertexList
 		computeNormalsForAllTriangles(this.factoryTriangles, this.factoryVertices);
+
+		int debugValue = 0;
+		for (GLVertex v : this.factoryVertices) {
+			computeVertexNormal(v, debugValue);
+			debugValue++;
+		}
 
 		// Create mesh from vertexList and TriangleList
 		return new GLMesh(this.factoryTriangles, this.factoryVertices);
@@ -134,8 +142,8 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	private void adjustMeshAccordingToHeightmap(float[][] heightmap, List<GLVertex> vertices) {
 		int x = 0, y = 0;
 		for (GLVertex v : vertices) {
-			v.xyzw.z(heightmap[x][y] - 0.5f); // was 0.3f
-			v.rgba = new Vector4(Math.abs(v.xyzw.z() * 2) + 0.4f, 0.4f, 0.6f, 1f);
+			// v.xyzw.z(heightmap[x][y] - 0.5f); // was 0.3f
+			v.rgba = new Vector4(Math.abs(v.xyzw.z() * 2) + 0.4f, 0.4f, 0.9f, 1f);
 			x++;
 			if (x == tileComplexity) {
 				x = 0;
@@ -197,20 +205,43 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 	private void addTriangles(int index, int count, int numItems) {
 		if (count == 0) {
 		} else {
-			factoryTriangles.add(new GLTriangle(factoryVertices.get(index), factoryVertices.get(index - 1), factoryVertices.get(index
-					- numItems - 1)));
-			factoryTriangles.add(new GLTriangle(factoryVertices.get(index), factoryVertices.get(index - numItems - 1), factoryVertices
-					.get(index - numItems)));
+			addTriangle(factoryVertices.get(index), factoryVertices.get(index - 1), factoryVertices.get(index - numItems - 1));
+			addTriangle(factoryVertices.get(index), factoryVertices.get(index - numItems - 1), factoryVertices.get(index - numItems));
 		}
+	}
+
+	private void addTriangle(GLVertex v0, GLVertex v1, GLVertex v2) {
+		GLTriangle t0 = new GLTriangle(v0, v1, v2);
+		factoryTriangles.add(t0);
+		v0.addParentTriangle(t0);
+		v1.addParentTriangle(t0);
+		v2.addParentTriangle(t0);
+
 	}
 
 	private static void computeNormalsForAllTriangles(List<GLTriangle> triangles, List<GLVertex> vertices) {
 		for (GLTriangle triangle : triangles) {
-			addNormalToTriangle(triangle.v0, triangle.v1, triangle.v2);
+			// addNormalToTriangle(triangle.v0, triangle.v1, triangle.v2);
+			computeTriangleFaceNormal(triangle);
 		}
 	}
 
-	public static void addNormalToTriangle(GLVertex v0, GLVertex v1, GLVertex v2) {
+	private static void computeTriangleFaceNormal(GLTriangle t) {
+		t.normal = Vector3.sub(t.v1.getXYZ(), t.v0.getXYZ()).cross(Vector3.sub(t.v2.getXYZ(), t.v0.getXYZ()));
+		t.normal.normalize();
+
+	}
+
+	private static void computeVertexNormal(GLVertex v, int debugValue) {
+		Vector3 normal = new Vector3();
+		for (GLTriangle t : v.getParentTriangles()) {
+			normal.add(t.normal);
+		}
+		// normal.normalize();
+		v.setNXNYNZ(normal);
+	}
+
+	private static void addNormalToTriangle(GLVertex v0, GLVertex v1, GLVertex v2) {
 		Vector3 vn0 = Vector3.sub(v1.getXYZ(), v0.getXYZ()).cross(Vector3.sub(v2.getXYZ(), v0.getXYZ()));
 		vn0.normalize();
 		v0.setNXNYNZ(vn0);

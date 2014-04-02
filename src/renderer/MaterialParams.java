@@ -4,7 +4,11 @@ public class MaterialParams {
 	private float gaussianExponent;
 
 	public MaterialParams() {
-		gaussianExponent = 0.5f;
+		this.gaussianExponent = 0.5f;
+	}
+
+	public MaterialParams(float gaussianExponent) {
+		this.gaussianExponent = gaussianExponent;
 	}
 
 	public float getSpecularValue() {

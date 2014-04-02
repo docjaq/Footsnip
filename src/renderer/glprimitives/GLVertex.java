@@ -1,9 +1,25 @@
 package renderer.glprimitives;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import math.types.Vector3;
 import math.types.Vector4;
 
 public class GLVertex {
+
+	private List<GLTriangle> parentTriangles;
+
+	public void addParentTriangle(GLTriangle t) {
+		if (parentTriangles == null) {
+			parentTriangles = new ArrayList<GLTriangle>();
+		}
+		parentTriangles.add(t);
+	}
+
+	public List<GLTriangle> getParentTriangles() {
+		return parentTriangles;
+	}
 
 	// The amount of bytes an element has
 	public static final int elementBytes = 4;
