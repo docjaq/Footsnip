@@ -30,6 +30,8 @@ public class PolygonHeightmapTileFactory {
 
 	private final double waterChance = 0.6;
 
+	private final int COLOR_MAP_SIZE = 64;
+
 	public PolygonHeightmapTileFactory(int tileComplexity, TileDataStructure2D tileDataStructure) {
 		this.tileComplexity = tileComplexity;
 		this.tileDataStructure = tileDataStructure;
@@ -49,7 +51,8 @@ public class PolygonHeightmapTileFactory {
 		PlasmaFractalFactory.create(heightmap);
 		adjustHeightmapToNeighbours(tile, heightmap);
 		// FloatBuffer buf = generateNormalMap(heightmap);
-		// FloatBuffer buf = null;
+
+		FloatBuffer colorMapBuffer = generateColorMap();
 
 		if (PolygonHeightmapTile.class.isInstance(tile)) {
 			PolygonHeightmapTile polygonTile = ((PolygonHeightmapTile) tile);
@@ -57,6 +60,9 @@ public class PolygonHeightmapTileFactory {
 			polygonTile.setHeightmap(heightmap);
 			polygonTile.setHeightmapBuf(convertArrayToBuffer(heightmap));
 			polygonTile.setHeightmapSize(tileComplexity);
+
+			polygonTile.setColorMap(colorMapBuffer);
+			polygonTile.setColorMapSize(COLOR_MAP_SIZE);
 
 			// polygonTile.setNormalmapBuf(buf);
 			// polygonTile.setNormalmapSize(tileComplexity);
@@ -174,6 +180,40 @@ public class PolygonHeightmapTileFactory {
 				}
 			}
 		}
+	}
+
+	private FloatBuffer generateColorMap() {
+		ByteBuffer buf = ByteBuffer.allocateDirect(COLOR_MAP_SIZE * 4 * 4);
+		buf.order(ByteOrder.nativeOrder());
+
+		float fraction = 1f / (float) COLOR_MAP_SIZE;
+
+		FloatBuffer fBuf = buf.asFloatBuffer();
+		for (int i = 0; i < COLOR_MAP_SIZE; i++) {
+
+			float currentFraction = (fraction * i);
+			// float[] color = { i * fraction, 0f, i * fraction, 1 };
+			float[] color;
+
+			currentFraction += Math.random() * 0.025;
+
+			if (currentFraction < 0.37) {
+				color = new float[] { 0.6f, 0.594117f, 0.4686274509802f, 1 };
+			} else if (currentFraction < 0.42) {
+				color = new float[] { 1, 0.894117f, 0.7686274509802f, 1 };
+			} else if (currentFraction < 0.65) {
+				color = new float[] { 0.23921568627445f, 0.56862745098025f, 0.26921568627445f, 1 };
+			} else if (currentFraction < 0.85) {
+				color = new float[] { 0.3686274509803f, 0.1490196078431f, 0.0705882352941f, 1 };
+			} else {
+				color = new float[] { 1, 0.99f, 0.99f, 1 };
+			}
+
+			fBuf.put(color);
+		}
+		fBuf.flip();
+
+		return fBuf;
 	}
 
 	private FloatBuffer generateNormalMap(float[][] data) {

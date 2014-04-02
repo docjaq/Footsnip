@@ -35,6 +35,12 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 	// Opengl Shader binding
 	// private int glNormalmapUnit = GL13.GL_TEXTURE0;
 
+	protected int colorMapUniform;
+	// Not really sure that this is the best way to set the texture
+	private int colorMapLocation = -1;
+	// Shader binding subset
+	private int colorMapTexUnit = 1;
+
 	// Binding of texture as sampler
 	private int sampler;
 
@@ -44,14 +50,21 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		// Vertex shader uniforms
 		modelToCameraMatrixUniform = GL20.glGetUniformLocation(programID, "modelToCameraMatrix");
 		normalModelToCameraMatrixUniform = GL20.glGetUniformLocation(programID, "normalModelToCameraMatrix");
+		System.err.println("modelToCameraMatrixUniform " + modelToCameraMatrixUniform);
+		System.err.println("normalModelToCameraMatrixUniform " + normalModelToCameraMatrixUniform);
 
 		// Tessellation Control shader uniforms
 		tessLevelInner = GL20.glGetUniformLocation(programID, "tessLevelInner");
 		tesLevelOuter = GL20.glGetUniformLocation(programID, "tessLevelOuter");
+		System.err.println("tessLevelInner " + tessLevelInner);
+		System.err.println("tessLevelOuter " + tesLevelOuter);
 
 		// Tessellation Evaluation shader uniforms
 		heightMapUniform = GL20.glGetUniformLocation(programID, "heightMap");
 		// normalmapUniform = GL20.glGetUniformLocation(programID, "normalMap");
+		colorMapUniform = GL20.glGetUniformLocation(programID, "testColorMap");
+		System.err.println("height map " + heightMapUniform);
+		System.err.println("color map " + colorMapUniform);
 
 		// Fragment shader uniforms
 		lightIntensityUniform = GL20.glGetUniformLocation(programID, "lightIntensity");
@@ -59,6 +72,11 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		cameraSpaceLightPositionUniform = GL20.glGetUniformLocation(programID, "cameraSpaceLightPos");
 		lightAttenuationUniform = GL20.glGetUniformLocation(programID, "lightAttenuation");
 		shininessFactorUniform = GL20.glGetUniformLocation(programID, "shininessFactor");
+		System.err.println("lightIntensityUniform " + lightIntensityUniform);
+		System.err.println("ambientIntensityUniform " + ambientIntensityUniform);
+		System.err.println("cameraSpaceLightPositionUniform " + cameraSpaceLightPositionUniform);
+		System.err.println("lightAttenuationUniform " + lightAttenuationUniform);
+		System.err.println("shininessFactorUniform " + shininessFactorUniform);
 
 		int projectionBlock = GL31.glGetUniformBlockIndex(programID, "Projection");
 		GL31.glUniformBlockBinding(programID, projectionBlock, projectionBlockIndex);
@@ -79,6 +97,7 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		bindShader();
 		GL20.glUniform1i(heightMapUniform, heightmapTexUnit);
 		// GL20.glUniform1i(normalmapUniform, normalmapTexUnit);
+		GL20.glUniform1i(colorMapUniform, colorMapTexUnit);
 		unbindShader();
 	}
 
@@ -97,17 +116,23 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
 	}
 
-	public void bindHeightmap() {
+	public void bindTextures() {
 		GL13.glActiveTexture(GL13.GL_TEXTURE0 + heightmapTexUnit);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, heightmapLocation);
 		GL20.glUniform1i(heightMapUniform, heightmapTexUnit);// May be wrong
 		// GL33.glBindSampler(heightmapTexUnit, sampler);
 
+		GL13.glActiveTexture(GL13.GL_TEXTURE0 + colorMapTexUnit);
+		GL11.glBindTexture(GL11.GL_TEXTURE_1D, colorMapLocation);
+		GL20.glUniform1i(colorMapUniform, colorMapTexUnit);
 	}
 
-	public void unbindHeightmap() {
+	public void unbindTextures() {
 		GL33.glBindSampler(heightmapTexUnit, 0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
+		GL33.glBindSampler(colorMapTexUnit, 0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_1D, 0);
 	}
 
 	// public void bindNormalmap() {
@@ -123,16 +148,20 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 	// GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	// }
 
-	public int getHeightmapTexUnit() {
-		return heightmapTexUnit;
-	}
-
 	public void setHeightmapLocation(int heightmapLocation) {
 		this.heightmapLocation = heightmapLocation;
 	}
 
 	public int getHeightmapLocation() {
 		return heightmapLocation;
+	}
+
+	public void setColorMapLocation(int colorMapLocation) {
+		this.colorMapLocation = colorMapLocation;
+	}
+
+	public int getColorMapLocation() {
+		return colorMapLocation;
 	}
 
 	// public int getNormalmapTexUnit() {

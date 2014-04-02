@@ -322,4 +322,21 @@ public class GLUtilityMethods {
 
 		return texId;
 	}
+
+	public static int bindBufferAs1DTexture(FloatBuffer buf, int dataType, int size) {
+		int texId = GL11.glGenTextures();
+
+		GL11.glBindTexture(GL11.GL_TEXTURE_1D, texId);
+
+		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+
+		GL11.glTexImage1D(GL11.GL_TEXTURE_1D, 0, dataType, size, 0, dataType, GL11.GL_FLOAT, buf);
+
+		GL11.glTexParameteri(GL11.GL_TEXTURE_1D, GL12.GL_TEXTURE_BASE_LEVEL, 0);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_1D, GL12.GL_TEXTURE_MAX_LEVEL, 0);
+
+		GL11.glBindTexture(GL11.GL_TEXTURE_1D, texId);
+
+		return texId;
+	}
 }

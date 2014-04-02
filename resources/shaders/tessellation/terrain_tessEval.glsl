@@ -17,6 +17,7 @@ uniform Projection
 {
 	mat4 cameraToClipMatrix;
 };
+uniform sampler1D testColorMap;
 uniform sampler2D heightMap;
 
 float rand(vec2 co){
@@ -59,7 +60,8 @@ void main(){
     texCoordinates.y +=0.5;
     
     //Adjust position z according to heigtmap
-    tePosition.z = (texture(heightMap, texCoordinates).r*2-1)*0.8-0.3;
+    float heightMapZ = (texture(heightMap, texCoordinates).r*2-1);
+    tePosition.z = heightMapZ*0.8-0.3;
 
     //Compute normal and transform to camera coordinates
     teVertexNormal = normalModelToCameraMatrix * computeNormal(texCoordinates);
@@ -69,7 +71,7 @@ void main(){
     //teDiffuseColor.z-=tePosition.z;
     
     float noisyZ = tePosition.z+rand(texCoordinates)*0.05;
-    if(noisyZ < -0.3){
+    /*if(noisyZ < -0.3){
         teDiffuseColor.x=1;
         teDiffuseColor.y=0.894117;
         teDiffuseColor.z=0.7686274509802;
@@ -85,7 +87,9 @@ void main(){
         teDiffuseColor.x=1;
         teDiffuseColor.y=0.99;
         teDiffuseColor.z=0.99;
-    }
+    }*/
+    teDiffuseColor = texture(testColorMap,heightMapZ-0.45);
+    //teDiffuseColor.xyzw = vec4(1, 0, 0, 1);
     
     /*if(tePosition.z < -0.45){
         tePosition.z = -0.45;

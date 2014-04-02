@@ -81,7 +81,7 @@ public abstract class GLModel {
 		}
 
 		if (shader instanceof GLGaussianTessellationShader) {
-			((GLGaussianTessellationShader) shader).bindHeightmap();
+			((GLGaussianTessellationShader) shader).bindTextures();
 			// ((GLGaussianTessellationShader) shader).bindNormalmap();
 		}
 

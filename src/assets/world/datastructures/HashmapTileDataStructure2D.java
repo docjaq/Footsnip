@@ -121,6 +121,12 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 						}
 						((GLGaussianTessellationShader) shader).setHeightmapLocation(polygonTile.getHeightmapLocation());
 
+						if (polygonTile.getColorMapLocation() == -1) {
+							polygonTile.setColorMapLocation(GLUtilityMethods.bindBufferAs1DTexture(polygonTile.getColorMap(), GL11.GL_RGBA,
+									polygonTile.getColorMapSize()));
+						}
+						((GLGaussianTessellationShader) shader).setColorMapLocation(polygonTile.getColorMapLocation());
+
 						// Bind normalmap texture if not already bound
 						/*
 						 * if (polygonTile.getNormalmapLocation() == -1) {
