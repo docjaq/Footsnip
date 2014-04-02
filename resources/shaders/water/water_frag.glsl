@@ -40,7 +40,8 @@ mat4 rotationMatrix(vec3 axis, float angle)
 }
 
 vec4 calcCubeMapValue(vec3 viewDirection, vec3 normal){
-    vec3 r = reflect(viewDirection, normal);
+    float rIndex = 1.0/1.333333;
+    vec3 r = refract(viewDirection, normal, rIndex);
     //Currently have to do this stupid rotation because we're looking down the z axis, and the
     //sky box is not set up that way. Alternatively, could modify the cube map images
     //(i.e. replace *and* rotate), but... eugh.
@@ -54,7 +55,10 @@ void main()
 	float atten = calcAttenuation(cameraSpacePosition, lightDir);
 	vec4 attenIntensity = atten * lightIntensity;
 	
-	vec3 surfaceNormal = normalize(vec3(vertexNormal.x, vertexNormal.y, sin(vertexNormal.z)));
+	vec3 surfaceNormal = normalize(vec3(vertexNormal.x, vertexNormal.y, vertexNormal.z));
+	
+    
+    
 	float cosAngIncidence = dot(surfaceNormal, lightDir);
 	cosAngIncidence = clamp(cosAngIncidence, 0.0, 1.0);
 	
@@ -76,5 +80,5 @@ void main()
     vec4 cubeMapColor = calcCubeMapValue(viewDirection, surfaceNormal);
     //Blend cubemap color and gaussian color
     outputColor = outputColor * cubeMapColor;
-    outputColor.a = 0.80;
+    outputColor.a = 0.550;
 }

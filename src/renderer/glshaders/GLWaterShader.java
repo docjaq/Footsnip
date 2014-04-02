@@ -117,7 +117,7 @@ public class GLWaterShader extends GLShader {
 
 	@Override
 	public void copyShaderSpecificUniformsToShaderRuntime() {
-		time += 0.000005;
+		time += 0.000008;
 		glUniform1f(timeUniform, time);
 	}
 
