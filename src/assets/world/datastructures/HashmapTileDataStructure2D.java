@@ -75,8 +75,12 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	@Override
 	public void drawTerrain(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, Player player) {
 
+		((GLGaussianTessellationShader) shader).setTessLevelInner(2);
+		((GLGaussianTessellationShader) shader).setTessLevelOuter(2);
 		drawSingleTileTerrain(shader, objectPole, modelMatrix, player.getCurrentTile());
 
+		((GLGaussianTessellationShader) shader).setTessLevelInner(1);
+		((GLGaussianTessellationShader) shader).setTessLevelOuter(1);
 		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileTop(player.getCurrentTile()));
 		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileRight(player.getCurrentTile()));
 		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileBottom(player.getCurrentTile()));

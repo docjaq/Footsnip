@@ -20,10 +20,6 @@ uniform Projection
 uniform sampler1D testColorMap;
 uniform sampler2D heightMap;
 
-float rand(vec2 co){
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-}
-
 //Using this to simulate the 8 possible offsets. Simply pull out
 //values like .xx, .xz, etc. Saves a lot of local memory
 const ivec3 offset = ivec3(-1, 0, 1);
@@ -66,38 +62,8 @@ void main(){
     //Compute normal and transform to camera coordinates
     teVertexNormal = normalModelToCameraMatrix * computeNormal(texCoordinates);
     
-    //Compute vertex colours according to height
-    //teDiffuseColor.x=1+tePosition.z;
-    //teDiffuseColor.z-=tePosition.z;
-    
-    float noisyZ = tePosition.z+rand(texCoordinates)*0.05;
-    /*if(noisyZ < -0.3){
-        teDiffuseColor.x=1;
-        teDiffuseColor.y=0.894117;
-        teDiffuseColor.z=0.7686274509802;
-    }else if (noisyZ >= -0.3 && noisyZ < -0.2){
-        teDiffuseColor.x=0.23921568627445;
-        teDiffuseColor.y=0.56862745098025;
-        teDiffuseColor.z=0.26921568627445;
-    }else if (noisyZ >= -0.2 && noisyZ < -0.05){
-        teDiffuseColor.x=0.3686274509803;
-        teDiffuseColor.y=0.1490196078431;
-        teDiffuseColor.z=0.0705882352941;
-    }else{
-        teDiffuseColor.x=1;
-        teDiffuseColor.y=0.99;
-        teDiffuseColor.z=0.99;
-    }*/
+    //Compute vertex colours by mapping vertex z to colorMap
     teDiffuseColor = texture(testColorMap,heightMapZ-0.45);
-    //teDiffuseColor.xyzw = vec4(1, 0, 0, 1);
-    
-    /*if(tePosition.z < -0.45){
-        tePosition.z = -0.45;
-        teVertexNormal = vec3(rand(texCoordinates), rand(texCoordinates), 1)*normalModelToCameraMatrix;
-        teDiffuseColor.x=0;
-        teDiffuseColor.y=0.2;
-        teDiffuseColor.z=1;
-    }*/
     
     //Transform position to camera coordinates
     vec4 tempCamPosition = modelToCameraMatrix * vec4(tePosition, 1.0);

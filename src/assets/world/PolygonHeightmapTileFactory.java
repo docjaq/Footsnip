@@ -28,9 +28,9 @@ public class PolygonHeightmapTileFactory {
 
 	private final static float zOffset = 0f;
 
-	private final double waterChance = 0.6;
+	private final double waterChance = 0.5;
 
-	private final int COLOR_MAP_SIZE = 64;
+	private final int COLOR_MAP_SIZE = 32;
 
 	public PolygonHeightmapTileFactory(int tileComplexity, TileDataStructure2D tileDataStructure) {
 		this.tileComplexity = tileComplexity;
@@ -68,7 +68,7 @@ public class PolygonHeightmapTileFactory {
 			// polygonTile.setNormalmapSize(tileComplexity);
 
 			// Water stuff
-			polygonTile.setWater((Math.random() >= waterChance) ? true : false);
+			polygonTile.setWater((Math.random() < waterChance) ? true : false);
 			polygonTile.setWaterHeight((float) ((Math.random() * 0.05 - 0.025) + 0.45));
 		}
 
@@ -192,19 +192,21 @@ public class PolygonHeightmapTileFactory {
 		for (int i = 0; i < COLOR_MAP_SIZE; i++) {
 
 			float currentFraction = (fraction * i);
-			// float[] color = { i * fraction, 0f, i * fraction, 1 };
 			float[] color;
 
-			currentFraction += Math.random() * 0.025;
+			currentFraction += Math.random() < 0.5 ? -Math.random() * 0.01f : Math.random() * 0.01f;
 
+			// Probably pre-compute the buffer and just adjust it
 			if (currentFraction < 0.37) {
 				color = new float[] { 0.6f, 0.594117f, 0.4686274509802f, 1 };
 			} else if (currentFraction < 0.42) {
 				color = new float[] { 1, 0.894117f, 0.7686274509802f, 1 };
 			} else if (currentFraction < 0.65) {
 				color = new float[] { 0.23921568627445f, 0.56862745098025f, 0.26921568627445f, 1 };
-			} else if (currentFraction < 0.85) {
+			} else if (currentFraction < 0.82) {
 				color = new float[] { 0.3686274509803f, 0.1490196078431f, 0.0705882352941f, 1 };
+			} else if (currentFraction < 0.88) {
+				color = new float[] { 0.1686274509803f, 0.0290196078431f, 0.0305882352941f, 1 };
 			} else {
 				color = new float[] { 1, 0.99f, 0.99f, 1 };
 			}
@@ -212,6 +214,14 @@ public class PolygonHeightmapTileFactory {
 			fBuf.put(color);
 		}
 		fBuf.flip();
+
+		// Apply a low pass gaussian convolution filter to smooth the boundaries
+		for (int i = 12; i < fBuf.capacity() - 12; i++) {
+			fBuf.put(
+					i,
+					(fBuf.get(i - 12) * 0.06f + fBuf.get(i - 8) * 0.061f + fBuf.get(i - 4) * 0.242f + fBuf.get(i) * 0.383f
+							+ fBuf.get(i + 4) * 0.242f + fBuf.get(i + 8) * 0.061f + fBuf.get(i + 12) * 0.006f));
+		}
 
 		return fBuf;
 	}

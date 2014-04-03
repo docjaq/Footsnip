@@ -1,6 +1,8 @@
 package renderer.glshaders;
 
 import static org.lwjgl.opengl.GL20.glUniform1f;
+import math.types.Matrix3;
+import math.types.MatrixStack;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -11,12 +13,10 @@ import org.lwjgl.opengl.GL33;
 
 public class GLGaussianTessellationShader extends GLGaussianShader {
 
-	// Tessellation Control shader
-	protected int tessLevelInner;
-	protected int tesLevelOuter;
-
 	public GLGaussianTessellationShader(int projectionBlockIndex) {
 		super(projectionBlockIndex);
+		tessLevelInner = 2;
+		tessLevelOuter = 2;
 	}
 
 	protected int heightMapUniform;
@@ -44,27 +44,28 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 	// Binding of texture as sampler
 	private int sampler;
 
+	// Tessellation Control shader
+	private int tessLevelInnerUniform;
+	private int tessLevelOuterUniform;
+
+	private int tessLevelInner;
+	private int tessLevelOuter;
+
 	@Override
 	public void setupShaderVariables() {
 
 		// Vertex shader uniforms
 		modelToCameraMatrixUniform = GL20.glGetUniformLocation(programID, "modelToCameraMatrix");
 		normalModelToCameraMatrixUniform = GL20.glGetUniformLocation(programID, "normalModelToCameraMatrix");
-		System.err.println("modelToCameraMatrixUniform " + modelToCameraMatrixUniform);
-		System.err.println("normalModelToCameraMatrixUniform " + normalModelToCameraMatrixUniform);
 
 		// Tessellation Control shader uniforms
-		tessLevelInner = GL20.glGetUniformLocation(programID, "tessLevelInner");
-		tesLevelOuter = GL20.glGetUniformLocation(programID, "tessLevelOuter");
-		System.err.println("tessLevelInner " + tessLevelInner);
-		System.err.println("tessLevelOuter " + tesLevelOuter);
+		tessLevelInnerUniform = GL20.glGetUniformLocation(programID, "tessLevelInner");
+		tessLevelOuterUniform = GL20.glGetUniformLocation(programID, "tessLevelOuter");
 
 		// Tessellation Evaluation shader uniforms
 		heightMapUniform = GL20.glGetUniformLocation(programID, "heightMap");
 		// normalmapUniform = GL20.glGetUniformLocation(programID, "normalMap");
 		colorMapUniform = GL20.glGetUniformLocation(programID, "testColorMap");
-		System.err.println("height map " + heightMapUniform);
-		System.err.println("color map " + colorMapUniform);
 
 		// Fragment shader uniforms
 		lightIntensityUniform = GL20.glGetUniformLocation(programID, "lightIntensity");
@@ -72,11 +73,6 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		cameraSpaceLightPositionUniform = GL20.glGetUniformLocation(programID, "cameraSpaceLightPos");
 		lightAttenuationUniform = GL20.glGetUniformLocation(programID, "lightAttenuation");
 		shininessFactorUniform = GL20.glGetUniformLocation(programID, "shininessFactor");
-		System.err.println("lightIntensityUniform " + lightIntensityUniform);
-		System.err.println("ambientIntensityUniform " + ambientIntensityUniform);
-		System.err.println("cameraSpaceLightPositionUniform " + cameraSpaceLightPositionUniform);
-		System.err.println("lightAttenuationUniform " + lightAttenuationUniform);
-		System.err.println("shininessFactorUniform " + shininessFactorUniform);
 
 		int projectionBlock = GL31.glGetUniformBlockIndex(programID, "Projection");
 		GL31.glUniformBlockBinding(programID, projectionBlock, projectionBlockIndex);
@@ -87,8 +83,15 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 
 	@Override
 	public void copyShaderSpecificUniformsToShaderInit() {
-		glUniform1f(tessLevelInner, 2);
-		glUniform1f(tesLevelOuter, 2);
+	}
+
+	@Override
+	public void copyModelSpecificUniformsToShader(MatrixStack modelMatrix) {
+		// All for vertex shader
+		GL20.glUniformMatrix4(modelToCameraMatrixUniform, false, modelMatrix.getTop().toBuffer());
+		GL20.glUniformMatrix3(normalModelToCameraMatrixUniform, false, new Matrix3(modelMatrix.getTop()).inverse().transpose().toBuffer());
+		glUniform1f(tessLevelInnerUniform, tessLevelInner);
+		glUniform1f(tessLevelOuterUniform, tessLevelOuter);
 	}
 
 	private void setupSamplerUBO() {
@@ -162,6 +165,22 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 
 	public int getColorMapLocation() {
 		return colorMapLocation;
+	}
+
+	public int getTessLevelInner() {
+		return tessLevelInner;
+	}
+
+	public void setTessLevelInner(int tessLevelInner) {
+		this.tessLevelInner = tessLevelInner;
+	}
+
+	public int getTessLevelOuter() {
+		return tessLevelOuter;
+	}
+
+	public void setTessLevelOuter(int tessLevelOuter) {
+		this.tessLevelOuter = tessLevelOuter;
 	}
 
 	// public int getNormalmapTexUnit() {
