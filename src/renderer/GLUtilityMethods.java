@@ -188,7 +188,7 @@ public class GLUtilityMethods {
 		return texId;
 	}
 
-	public static int loadPNGTextureAsDataAndBind(String filename) {
+	public static int loadPNGTextureAsDataAndBind(String filename, int numColorChannels) {
 		ByteBuffer buf = null;
 		int tWidth = 0;
 		int tHeight = 0;
@@ -205,7 +205,7 @@ public class GLUtilityMethods {
 
 			// Decode the PNG file in a ByteBuffer
 			buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
-			decoder.decodeFlipped(buf, decoder.getWidth() * 4, Format.RGBA);
+			decoder.decodeFlipped(buf, decoder.getWidth() * 4, numColorChannels == 3 ? Format.RGB : Format.RGBA);
 			buf.flip();
 
 			in.close();
@@ -224,7 +224,8 @@ public class GLUtilityMethods {
 		// MAY NOT BE NECESSARY
 
 		// Upload the texture data and generate mip maps (for scaling)
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, tWidth, tHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, numColorChannels == 3 ? GL11.GL_RGB : GL11.GL_RGBA, tWidth, tHeight, 0,
+				numColorChannels == 3 ? GL11.GL_RGB : GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
 
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_BASE_LEVEL, 0);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, 0);

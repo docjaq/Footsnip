@@ -10,6 +10,8 @@ out vec3 teVertexNormal;
 out vec3 tePosition;
 out vec3 tePatchDistance;
 
+out vec2 teUvPosition;
+
 //From CPU
 uniform mat4 modelToCameraMatrix;
 uniform mat3 normalModelToCameraMatrix;
@@ -19,6 +21,7 @@ uniform Projection
 };
 uniform sampler1D testColorMap;
 uniform sampler2D heightMap;
+//uniform sampler2D normalMapA;
 
 //Using this to simulate the 8 possible offsets. Simply pull out
 //values like .xx, .xz, etc. Saves a lot of local memory
@@ -51,19 +54,20 @@ void main(){
     tePosition = vec3(p0 + p1 + p2);
 
     //Compute texture coords
-    vec2 texCoordinates = vec2(tePosition);
-    texCoordinates.x +=0.5;
-    texCoordinates.y +=0.5;
+    teUvPosition = vec2(tePosition);
+    teUvPosition.x +=0.5;
+    teUvPosition.y +=0.5;
     
     //Adjust position z according to heigtmap
-    float heightMapZ = (texture(heightMap, texCoordinates).r*2-1);
+    float heightMapZ = (texture(heightMap, teUvPosition).r*2-1);
     tePosition.z = heightMapZ*0.8-0.3;
 
     //Compute normal and transform to camera coordinates
-    teVertexNormal = normalModelToCameraMatrix * computeNormal(texCoordinates);
+    teVertexNormal = normalModelToCameraMatrix * computeNormal(teUvPosition);
     
     //Compute vertex colours by mapping vertex z to colorMap
     teDiffuseColor = texture(testColorMap,heightMapZ-0.45);
+    //teDiffuseColor = texture(normalMapA, teUvPosition);
     
     //Transform position to camera coordinates
     vec4 tempCamPosition = modelToCameraMatrix * vec4(tePosition, 1.0);

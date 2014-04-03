@@ -4,6 +4,7 @@
 in vec4 gDiffuseColor;
 in vec3 gVertexNormal;
 in vec3 gPosition;
+in vec2 gUvPosition;
 
 in vec3 gPatchDistance;
 
@@ -16,6 +17,8 @@ uniform vec3 cameraSpaceLightPos;
 uniform float lightAttenuation;
 const vec4 specularColor = vec4(0.25, 0.25, 0.25, 1.0);
 uniform float shininessFactor;
+
+uniform sampler2D normalMapA;
 
 float calcAttenuation(in vec3 gPosition, out vec3 lightDirection)
 {
@@ -32,7 +35,10 @@ void main()
 	float atten = calcAttenuation(gPosition, lightDir);
 	vec4 attenIntensity = atten * lightIntensity;
 	
-	vec3 surfaceNormal = normalize(gVertexNormal);
+	vec3 surfaceNormal = gVertexNormal;
+    surfaceNormal+= 2*(texture(normalMapA, gUvPosition).xyz)-1;
+    surfaceNormal = normalize(surfaceNormal);
+    
 	float cosAngIncidence = dot(surfaceNormal, lightDir);
 	cosAngIncidence = clamp(cosAngIncidence, 0.0, 1.0);
 	

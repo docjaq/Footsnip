@@ -68,6 +68,8 @@ public class Renderer_3_2 extends RendererThread {
 			"resources/cubemaps/Maskonaive/negy.png", "resources/cubemaps/Maskonaive/posy.png", "resources/cubemaps/Maskonaive/posz.png",
 			"resources/cubemaps/Maskonaive/negz.png" }; // x, y, down, up
 
+	private final String NORMALMAP_A_LOCATION = "resources/normalmaps/Test.png";
+
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
 	private final int WIDTH = 1680;
@@ -126,7 +128,10 @@ public class Renderer_3_2 extends RendererThread {
 		viewPole = new ViewPole(viewData, viewScale, MouseButton.LEFT_BUTTON);
 		objectPole = new ObjectPole(objectData, 90f / 250f, MouseButton.RIGHT_BUTTON, viewPole);
 
+		// Load textures
 		cubeMap = new GLCubeMap(CUBE_MAP_LOCATION, 2048, 2048, GL11.GL_RGB);
+		int normalMapALocation = GLUtilityMethods.loadPNGTextureAsDataAndBind(NORMALMAP_A_LOCATION, 4);
+
 		shaderMap = new HashMap<Class<?>, GLShader>();
 
 		// Load default shader
@@ -139,6 +144,7 @@ public class Renderer_3_2 extends RendererThread {
 		tessellationShader.create(GAUSSIAN_TESS_SHADER_LOCATION);
 		tessellationShader.bindShader();
 		tessellationShader.copyShaderSpecificUniformsToShaderInit();
+		((GLGaussianTessellationShader) tessellationShader).setNormalMapALocation(normalMapALocation);
 		tessellationShader.unbindShader();
 		shaderMap.put(tessellationShaderClass, tessellationShader);
 
