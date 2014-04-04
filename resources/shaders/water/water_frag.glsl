@@ -4,6 +4,7 @@
 in vec4 diffuseColor;
 in vec3 vertexNormal;
 in vec3 cameraSpacePosition;
+in vec2 uvPosition;
 
 out vec4 outputColor;
 
@@ -16,6 +17,7 @@ const vec4 specularColor = vec4(0.25, 0.25, 0.65, 1.0);
 uniform float shininessFactor;
 
 uniform samplerCube cubeMap;
+uniform sampler2D normalMap;
 
 float calcAttenuation(in vec3 cameraSpacePosition, out vec3 lightDirection)
 {
@@ -55,8 +57,11 @@ void main()
 	float atten = calcAttenuation(cameraSpacePosition, lightDir);
 	vec4 attenIntensity = atten * lightIntensity;
 	
-	vec3 surfaceNormal = normalize(vec3(vertexNormal.x, vertexNormal.y, vertexNormal.z));
-	
+    //Would be cool to use a proper wave texture here, but the uv coordinates
+    //would need to be rotated to match the normal map wave orientation
+	vec3 surfaceNormal = vertexNormal;
+	surfaceNormal+= (2*(texture(normalMap, uvPosition).xyz)-1)*0.6;
+    surfaceNormal = normalize(surfaceNormal);
     
     
 	float cosAngIncidence = dot(surfaceNormal, lightDir);

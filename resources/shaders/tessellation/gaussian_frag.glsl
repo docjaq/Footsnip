@@ -20,6 +20,10 @@ uniform float shininessFactor;
 
 uniform sampler2D normalMapA;
 
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
 float calcAttenuation(in vec3 gPosition, out vec3 lightDirection)
 {
 	vec3 lightDifference = cameraSpaceLightPos - gPosition;
@@ -36,7 +40,14 @@ void main()
 	vec4 attenIntensity = atten * lightIntensity;
 	
 	vec3 surfaceNormal = gVertexNormal;
-    surfaceNormal+= 2*(texture(normalMapA, gUvPosition).xyz)-1;
+    
+    //vec3 compareColor = vec3(0.90);
+    //float colorAverage = (gDiffuseColor.x+gDiffuseColor.y+gDiffuseColor.z)/3;
+    //if(all(lessThanEqual(gDiffuseColor.xyz, compareColor)))
+        surfaceNormal+= 2*(texture(normalMapA, gUvPosition).xyz)-1;
+    //else
+    //    surfaceNormal+= (2*(texture(normalMapA, gUvPosition).xyz)-1)*(1-pow(colorAverage, 2));
+    
     surfaceNormal = normalize(surfaceNormal);
     
 	float cosAngIncidence = dot(surfaceNormal, lightDir);

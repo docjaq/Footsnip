@@ -8,6 +8,7 @@ layout(location = 2) in vec3 normal;
 out vec4 diffuseColor;
 out vec3 vertexNormal;
 out vec3 cameraSpacePosition;
+out vec2 uvPosition;
 
 //From CPU
 uniform mat4 modelToCameraMatrix;
@@ -69,8 +70,13 @@ vec3 waveNormal(float x, float y) {
     return normalize(n);
 }
 
-void main()
-{
+void main(){
+    
+    //Compute texture coords
+    uvPosition = vec2(position);
+    uvPosition.x +=0.5;
+    uvPosition.y +=0.5;
+    
     vec4 adjustedPosition = vec4(position.x, position.y, position.z, 1);
     vec3 adjustedNormal = vec3(normal.xyz);
     

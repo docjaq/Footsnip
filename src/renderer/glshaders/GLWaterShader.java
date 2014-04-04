@@ -12,6 +12,8 @@ import math.types.Vector2;
 import math.types.Vector4;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL31;
 
@@ -42,8 +44,13 @@ public class GLWaterShader extends GLShader {
 	protected int speedUniform;
 	protected int directionUniform;
 
+	// Textures
 	private GLCubeMap cubeMap;
 	private int cubeMapUniform;
+
+	private int normalMapUniform;
+	private int normalMapLocation = -1;
+	private int normalMapTexUnit = 10;
 
 	public GLWaterShader(int projectionBlockIndex, GLCubeMap cubeMap) {
 		super(projectionBlockIndex);
@@ -78,6 +85,7 @@ public class GLWaterShader extends GLShader {
 
 		// Frag shader specific
 		cubeMapUniform = GL20.glGetUniformLocation(programID, "cuveMap");
+		normalMapUniform = GL20.glGetUniformLocation(programID, "normalMap");
 
 		int projectionBlock = GL31.glGetUniformBlockIndex(programID, "Projection");
 		GL31.glUniformBlockBinding(programID, projectionBlock, projectionBlockIndex);
@@ -89,6 +97,7 @@ public class GLWaterShader extends GLShader {
 
 		bindShader();
 		GL20.glUniform1i(cubeMapUniform, cubeMap.getTexId());
+		GL20.glUniform1i(normalMapUniform, normalMapTexUnit);
 		unbindShader();
 	}
 
@@ -129,7 +138,7 @@ public class GLWaterShader extends GLShader {
 		// looks really nice
 
 		// Supports up to four waves
-		int numberOfWaves = 3;
+		int numberOfWaves = 4;
 		float[] amplitude = new float[numberOfWaves];
 		float[] wavelength = new float[numberOfWaves];
 		float[] speed = new float[numberOfWaves];
@@ -140,14 +149,14 @@ public class GLWaterShader extends GLShader {
 
 		for (int i = 0; i < numberOfWaves; i++) {
 			// 0.004f / (i + 1)
-			amplitude[i] = 0.004f / (i + 1);
+			amplitude[i] = 0.006f / (i + 1); // 0.004
 			// (float) (0.055 * Math.PI / (float) (i + 1))
-			wavelength[i] = (float) (0.055 * Math.PI / (float) (i + 1));
+			wavelength[i] = (float) (0.06 * Math.PI / (float) (i + 1)); // 0.055
 			// 1.0f + 2 * i;
 			speed[i] = 1.0f + 2 * i;
 
 			// 2f rather than Math.random()
-			float angle = (float) Math.random() + 2 + (float) (-(Math.PI / 10) + (Math.PI / 10) * i);
+			float angle = (float) Math.random() + 2 + (float) (-(Math.PI / 12) + (Math.PI / 12) * i);
 			direction[i] = new Vector2((float) Math.cos(angle), (float) Math.sin(angle));
 		}
 
@@ -173,8 +182,11 @@ public class GLWaterShader extends GLShader {
 
 	}
 
-	public void bindCubeMap() {
+	public void bindTextures() {
 		cubeMap.bind();
+
+		GL13.glActiveTexture(GL13.GL_TEXTURE0 + normalMapTexUnit);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalMapLocation);
 	}
 
 	public void unbindCubeMap() {
@@ -186,5 +198,13 @@ public class GLWaterShader extends GLShader {
 		double n = Math.random();
 		double v = d + n * (e - d);
 		return (float) v;
+	}
+
+	public int getNormalMapLocation() {
+		return normalMapLocation;
+	}
+
+	public void setNormalMapLocation(int normalMapLocation) {
+		this.normalMapLocation = normalMapLocation;
 	}
 }

@@ -77,7 +77,7 @@ public abstract class GLModel {
 		if (shader instanceof GLWaterShader) {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			((GLWaterShader) shader).bindCubeMap();
+			((GLWaterShader) shader).bindTextures();
 		}
 
 		if (shader instanceof GLGaussianTessellationShader) {

@@ -58,7 +58,7 @@ void main(){
     teUvPosition.x +=0.5;
     teUvPosition.y +=0.5;
     
-    //Adjust position z according to heigtmap
+    //Adjust position z according to heigtmap and scale
     float heightMapZ = (texture(heightMap, teUvPosition).r*2-1);
     tePosition.z = heightMapZ*0.8-0.3;
 
