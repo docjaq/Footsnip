@@ -126,7 +126,7 @@ public class GLWaterShader extends GLShader {
 
 	@Override
 	public void copyShaderSpecificUniformsToShaderRuntime() {
-		time += 0.000008;
+		time += 0.000008; // 0.000008
 		glUniform1f(timeUniform, time);
 	}
 
@@ -147,17 +147,20 @@ public class GLWaterShader extends GLShader {
 		GL20.glUniform1i(numWavesUniform, numberOfWaves);
 		glUniform1f(waterHeightUniform, -0.45f);
 
+		float originalAngle = (float) (Math.random() * Math.PI * 2);
 		for (int i = 0; i < numberOfWaves; i++) {
 			// 0.004f / (i + 1)
-			amplitude[i] = 0.006f / (i + 1); // 0.004
+			amplitude[i] = 0.008f / (i + 1); // 0.004
 			// (float) (0.055 * Math.PI / (float) (i + 1))
 			wavelength[i] = (float) (0.06 * Math.PI / (float) (i + 1)); // 0.055
 			// 1.0f + 2 * i;
 			speed[i] = 1.0f + 2 * i;
 
 			// 2f rather than Math.random()
-			float angle = (float) Math.random() + 2 + (float) (-(Math.PI / 12) + (Math.PI / 12) * i);
+			float angle = (float) (originalAngle + ((Math.random() < 0.5) ? 1 : -1) * (float) (Math.PI / 20f * i));
 			direction[i] = new Vector2((float) Math.cos(angle), (float) Math.sin(angle));
+			// System.out.println("Angles: " + Math.atan2(direction[i].y(),
+			// direction[i].x()));
 		}
 
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(amplitude.length);
