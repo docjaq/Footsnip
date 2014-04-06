@@ -19,8 +19,8 @@ uniform float shininessFactor;
 uniform samplerCube cubeMap;
 
 uniform sampler2D normalMap;
-uniform vec2 direction[8];
-uniform int numWaves;
+uniform float time;
+uniform vec2 averageWaveDirection;
 
 float calcAttenuation(in vec3 cameraSpacePosition, out vec3 lightDirection)
 {
@@ -64,17 +64,18 @@ void main()
     //would need to be rotated to match the normal map wave orientation
 	vec3 surfaceNormal = vertexNormal;
     
+    //Shift the uv back from the centre
     vec4 transformedUvPosition = vec4(uvPosition.xy-0.5, 0, 1);
     
-    float avgDirection = 0;
-    for (int i = 0; i < numWaves; ++i){
-        avgDirection += -atan(direction[i].y, direction[i].x);
-    }
-    avgDirection/=numWaves;
+    //Compute the average direction of the waves (maybe should be done somewhere else to reduce computation...)
+    float avgDirection = -atan(averageWaveDirection.y, averageWaveDirection.x);
+    
+    //Rotate the uv point around the z axis
     mat4 uvRotation = rotationMatrix(vec3(0, 0, 1), avgDirection);
     transformedUvPosition*=uvRotation;
     
-	surfaceNormal+= (2*(texture(normalMap, transformedUvPosition.xy+0.5).xyz)-1)*0.6;
+    //Add the texture to the normal, whilst also moving the texture in the given direction
+	surfaceNormal+= (2*(texture(normalMap, transformedUvPosition.xy+0.5+time).xyz)-1)*0.75;
     surfaceNormal = normalize(surfaceNormal);
     
     

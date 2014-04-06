@@ -43,6 +43,7 @@ public class GLWaterShader extends GLShader {
 	protected int wavelengthUniform;
 	protected int speedUniform;
 	protected int directionUniform;
+	private int averageWaveDirectionUniform;
 
 	// Textures
 	private GLCubeMap cubeMap;
@@ -86,6 +87,7 @@ public class GLWaterShader extends GLShader {
 		// Frag shader specific
 		cubeMapUniform = GL20.glGetUniformLocation(programID, "cuveMap");
 		normalMapUniform = GL20.glGetUniformLocation(programID, "normalMap");
+		averageWaveDirectionUniform = GL20.glGetUniformLocation(programID, "averageWaveDirection");
 
 		int projectionBlock = GL31.glGetUniformBlockIndex(programID, "Projection");
 		GL31.glUniformBlockBinding(programID, projectionBlock, projectionBlockIndex);
@@ -143,6 +145,7 @@ public class GLWaterShader extends GLShader {
 		float[] wavelength = new float[numberOfWaves];
 		float[] speed = new float[numberOfWaves];
 		Vector2[] direction = new Vector2[numberOfWaves];
+		Vector2 averageWaveDirection = new Vector2();
 
 		GL20.glUniform1i(numWavesUniform, numberOfWaves);
 		glUniform1f(waterHeightUniform, -0.45f);
@@ -159,9 +162,13 @@ public class GLWaterShader extends GLShader {
 			// 2f rather than Math.random()
 			float angle = (float) (originalAngle + ((Math.random() < 0.5) ? 1 : -1) * (float) (Math.PI / 20f * i));
 			direction[i] = new Vector2((float) Math.cos(angle), (float) Math.sin(angle));
-			// System.out.println("Angles: " + Math.atan2(direction[i].y(),
-			// direction[i].x()));
+
+			averageWaveDirection.x(averageWaveDirection.x() + direction[i].x());
+			averageWaveDirection.y(averageWaveDirection.y() + direction[i].y());
 		}
+		averageWaveDirection.x(averageWaveDirection.x() / (float) numberOfWaves);
+		averageWaveDirection.y(averageWaveDirection.y() / (float) numberOfWaves);
+		GL20.glUniform2f(averageWaveDirectionUniform, averageWaveDirection.x(), averageWaveDirection.y());
 
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(amplitude.length);
 		buffer.put(amplitude);
