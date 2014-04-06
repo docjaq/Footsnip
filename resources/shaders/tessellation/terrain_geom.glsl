@@ -8,14 +8,14 @@ in vec3 teVertexNormal[3];
 in vec3 tePosition[3];
 in vec3 tePatchDistance[3];
 
-in vec2 teUvPosition[3];
+in vec3 teUvPosition[3];
 
 out vec4 gDiffuseColor;
 out vec3 gVertexNormal;
 out vec3 gPosition;
 out vec3 gPatchDistance;
 
-out vec2 gUvPosition;
+out vec3 gUvPosition;
 
 void main()
 {

@@ -100,5 +100,5 @@ void main()
     vec4 cubeMapColor = calcCubeMapValue(viewDirection, surfaceNormal);
     //Blend cubemap color and gaussian color
     outputColor = outputColor * cubeMapColor;
-    outputColor.a = 0.550;
+    outputColor.a = 0.350;
 }

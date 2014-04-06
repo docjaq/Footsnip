@@ -10,7 +10,7 @@ out vec3 teVertexNormal;
 out vec3 tePosition;
 out vec3 tePatchDistance;
 
-out vec2 teUvPosition;
+out vec3 teUvPosition;
 
 //From CPU
 uniform mat4 modelToCameraMatrix;
@@ -54,16 +54,17 @@ void main(){
     tePosition = vec3(p0 + p1 + p2);
 
     //Compute texture coords
-    teUvPosition = vec2(tePosition);
+    teUvPosition = vec3(tePosition);
     teUvPosition.x +=0.5;
     teUvPosition.y +=0.5;
     
     //Adjust position z according to heigtmap and scale
-    float heightMapZ = (texture(heightMap, teUvPosition).r*2-1);
+    float heightMapZ = (texture(heightMap, teUvPosition.xy).r*2-1);
     tePosition.z = heightMapZ*0.8-0.3;
+    teUvPosition.z = tePosition.z;
 
     //Compute normal and transform to camera coordinates
-    teVertexNormal = normalModelToCameraMatrix * computeNormal(teUvPosition);
+    teVertexNormal = normalModelToCameraMatrix * computeNormal(teUvPosition.xy);
     
     //Compute vertex colours by mapping vertex z to colorMap
     teDiffuseColor = texture(testColorMap,heightMapZ-0.45);

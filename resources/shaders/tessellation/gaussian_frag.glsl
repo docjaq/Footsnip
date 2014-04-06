@@ -1,10 +1,10 @@
-#version 400
+  #version 400
 
 //From vertex shader
 in vec4 gDiffuseColor;
 in vec3 gVertexNormal;
 in vec3 gPosition;
-in vec2 gUvPosition;
+in vec3 gUvPosition;
 
 in vec3 gPatchDistance;
 
@@ -35,7 +35,7 @@ float calcAttenuation(in vec3 gPosition, out vec3 lightDirection)
 
 void main()
 {
-	vec3 lightDir = vec3(0.0);
+	vec3 lightDir = vec3(0, 0, -1);
 	float atten = calcAttenuation(gPosition, lightDir);
 	vec4 attenIntensity = atten * lightIntensity;
 	
@@ -44,7 +44,7 @@ void main()
     //vec3 compareColor = vec3(0.90);
     //float colorAverage = (gDiffuseColor.x+gDiffuseColor.y+gDiffuseColor.z)/3;
     //if(all(lessThanEqual(gDiffuseColor.xyz, compareColor)))
-        surfaceNormal+= 2*(texture(normalMapA, gUvPosition).xyz)-1;
+        surfaceNormal+= (2*(texture(normalMapA, gUvPosition.xy).xyz)-1);
     //else
     //    surfaceNormal+= (2*(texture(normalMapA, gUvPosition).xyz)-1)*(1-pow(colorAverage, 2));
     
