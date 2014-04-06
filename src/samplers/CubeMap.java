@@ -1,4 +1,4 @@
-package renderer;
+package samplers;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -6,16 +6,13 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.GL42;
 
-public class GLCubeMap {
+import renderer.GLUtilityMethods;
+
+public class CubeMap extends Texture {
 
 	private static final int NUM_MIPMAPS = 3;
 
-	// private int width;
-	// private int height;
-	// private int numColorChannels;
-	private int texId;
-
-	public GLCubeMap(String[] textures, int width, int height, int numColorChannels) {
+	public CubeMap(String[] textures, int width, int height, int numColorChannels) {
 		// this.height = height;
 		// this.width = width;
 		// this.numColorChannels = numColorChannels;
@@ -36,15 +33,8 @@ public class GLCubeMap {
 		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 	}
 
-	public void destroy() {
-		GL11.glDeleteTextures(texId);
-	}
-
+	@Override
 	public void bind() {
 		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texId);
-	}
-
-	public int getTexId() {
-		return texId;
 	}
 }

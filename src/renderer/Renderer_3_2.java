@@ -29,6 +29,7 @@ import renderer.glshaders.GLGaussianShader;
 import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
 import renderer.glshaders.GLWaterShader;
+import samplers.CubeMap;
 import thread.RendererThread;
 import assets.AssetContainer;
 import assets.entities.Entity;
@@ -80,7 +81,7 @@ public class Renderer_3_2 extends RendererThread {
 	private final int MAX_FPS = 500;
 
 	private Map<Class<?>, GLShader> shaderMap;
-	private GLCubeMap cubeMap;
+	private CubeMap cubeMap;
 
 	private Class<GLGaussianShader> defaultShaderClass = GLGaussianShader.class;
 	private Class<GLGaussianTessellationShader> tessellationShaderClass = GLGaussianTessellationShader.class;
@@ -132,7 +133,7 @@ public class Renderer_3_2 extends RendererThread {
 
 		// Load textures
 
-		cubeMap = new GLCubeMap(CUBE_MAP_LOCATION, 2048, 2048, GL11.GL_RGB);
+		cubeMap = new CubeMap(CUBE_MAP_LOCATION, 2048, 2048, GL11.GL_RGB);
 		int normalMapALocation = GLUtilityMethods.loadPNGTextureAsDataAndBind(NORMALMAP_A_LOCATION, 4);
 
 		int normalMapWaterLocation = GLUtilityMethods.loadPNGTextureAsDataAndBind(NORMALMAP_WATER_LOCATION, 4);

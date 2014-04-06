@@ -17,8 +17,8 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL31;
 
-import renderer.GLCubeMap;
 import renderer.MaterialParams;
+import samplers.CubeMap;
 
 public class GLWaterShader extends GLShader {
 
@@ -46,14 +46,14 @@ public class GLWaterShader extends GLShader {
 	private int averageWaveDirectionUniform;
 
 	// Textures
-	private GLCubeMap cubeMap;
+	private CubeMap cubeMap;
 	private int cubeMapUniform;
 
 	private int normalMapUniform;
 	private int normalMapLocation = -1;
 	private int normalMapTexUnit = 10;
 
-	public GLWaterShader(int projectionBlockIndex, GLCubeMap cubeMap) {
+	public GLWaterShader(int projectionBlockIndex, CubeMap cubeMap) {
 		super(projectionBlockIndex);
 		this.cubeMap = cubeMap;
 	}
