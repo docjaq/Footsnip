@@ -209,11 +209,17 @@ public class Renderer_3_2 extends RendererThread {
 			modelMatrix.pushMatrix();
 			{
 				renderPlayer(assContainer.getPlayer(), currentShader, modelMatrix);
-				renderMonsters(assContainer.getMonsters(), currentShader, modelMatrix);
+				// renderMonsters(assContainer.getMonsters(), currentShader,
+				// modelMatrix);
+				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(),
+						Monster.class);
 
 				// renderScenery(assContainer.getPolygonalSceneries(),
 				// currentShader, modelMatrix);
-				renderProjectiles(assContainer.getProjectiles(), currentShader, modelMatrix);
+				// renderProjectiles(assContainer.getProjectiles(),
+				// currentShader, modelMatrix);
+				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(),
+						Projectile.class);
 			}
 			modelMatrix.popMatrix();
 		}
@@ -286,8 +292,8 @@ public class Renderer_3_2 extends RendererThread {
 
 		MonsterFactory monsterFactory = new MonsterFactory(monsterMesh);
 
-		float spread = 2;
-		for (int i = 0; i < 10; i++) {
+		float spread = 30;
+		for (int i = 0; i < 500; i++) {
 			Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
 			assContainer.addMonster(monsterFactory.create(monsterPos, rotationDelta));

@@ -5,6 +5,7 @@ import java.util.List;
 
 import math.types.MatrixStack;
 import renderer.glshaders.GLShader;
+import assets.entities.Entity;
 import assets.entities.Player;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTileFactory;
@@ -38,7 +39,12 @@ public interface TileDataStructure2D {
 
 	public void drawWater(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, Player player);
 
+	public void drawEntities(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, Player player,
+			Class<? extends Entity> entityClass);
+
 	public AbstractTile getInitialTile();
+
+	public List<AbstractTile> getAllNeighbouringTilesAndCurrentTileAsList(AbstractTile tile);
 
 	public AbstractTile getTileUsingKey(DataStructureKey2D key);
 

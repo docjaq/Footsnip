@@ -1,7 +1,7 @@
 package assets.world;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import renderer.GLPosition;
 import renderer.glmodels.GLModel;
@@ -26,7 +26,8 @@ public abstract class AbstractTile implements Asset {
 		this.model = model;
 		this.position = position;
 
-		containedEntities = new ArrayList<Entity>();
+		// Best fix for my shit code, ever.
+		containedEntities = new CopyOnWriteArrayList<Entity>();
 	}
 
 	public GLModel getModel() {

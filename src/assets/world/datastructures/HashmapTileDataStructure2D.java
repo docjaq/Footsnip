@@ -14,6 +14,7 @@ import renderer.GLPosition;
 import renderer.GLUtilityMethods;
 import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
+import assets.entities.Entity;
 import assets.entities.Player;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
@@ -106,6 +107,39 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		drawSingleTileWater(shader, objectPole, modelMatrix, getTileBottomRight(player.getCurrentTile()));
 		drawSingleTileWater(shader, objectPole, modelMatrix, getTileTopLeft(player.getCurrentTile()));
 		drawSingleTileWater(shader, objectPole, modelMatrix, getTileBottomLeft(player.getCurrentTile()));
+	}
+
+	@Override
+	public void drawEntities(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, Player player,
+			Class<? extends Entity> entityClass) {
+
+		for (AbstractTile tile : getAllNeighbouringTilesAndCurrentTileAsList(player.getCurrentTile())) {
+			if (tile != null) {
+
+				List<Entity> entities = tile.getContainedEntities();
+
+				List<Entity> toRemove = new ArrayList<Entity>();
+				for (Entity m : entities) {
+					if (entityClass.isAssignableFrom(m.getClass())) {
+						if (m.isDestroyable()) {
+							toRemove.add(m);
+						}
+					}
+				}
+				entities.removeAll(toRemove);
+				for (Entity m : entities) {
+					if (entityClass.isAssignableFrom(m.getClass())) {
+						modelMatrix.pushMatrix();
+						{
+							modelMatrix.getTop().mult(objectPole.calcMatrix());
+							m.getModel().draw(shader, modelMatrix, m.getPosition());
+						}
+						modelMatrix.popMatrix();
+					}
+				}
+			}
+		}
+
 	}
 
 	private void drawSingleTileTerrain(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix, AbstractTile tile) {
@@ -203,6 +237,23 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		} else {
 			map.put(key, glTileFactory.create(key, position));
 		}
+	}
+
+	@Override
+	public List<AbstractTile> getAllNeighbouringTilesAndCurrentTileAsList(AbstractTile tile) {
+		List<AbstractTile> tiles = new ArrayList<AbstractTile>();
+
+		tiles.add(tile);
+		tiles.add(getTileTop(tile));
+		tiles.add(getTileBottom(tile));
+		tiles.add(getTileLeft(tile));
+		tiles.add(getTileRight(tile));
+		tiles.add(getTileTopLeft(tile));
+		tiles.add(getTileTopRight(tile));
+		tiles.add(getTileBottomLeft(tile));
+		tiles.add(getTileBottomRight(tile));
+
+		return tiles;
 	}
 
 	@Override
@@ -305,4 +356,5 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	public Iterator<?> getIterator() {
 		return map.entrySet().iterator();
 	}
+
 }

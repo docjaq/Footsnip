@@ -104,9 +104,9 @@ public class Monster extends Entity {
 			destroyable = true;
 		}
 
-		if (destroyable) {
-			destroy();
-		}
+		// /if (destroyable) {
+		// destroy();
+		// }
 
 		return destroyable;
 	}

@@ -57,9 +57,9 @@ public class Entity extends AbstractEntity implements Collidable, Locatable {
 	}
 
 	public boolean isDestroyable() {
-		if (destroyable) {
-			destroy();
-		}
+		// if (destroyable) {
+		// destroy();
+		// }
 		return destroyable;
 	}
 
