@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class FootsnipProperties {
-	private static final String FILEPATH = "resources/conf/footsnip.properties";
+	private static final String FILEPATH = "resources/conf/default.properties";
 	private static Properties properties;
 
 	private synchronized static void init() {

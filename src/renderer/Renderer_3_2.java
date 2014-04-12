@@ -7,7 +7,6 @@ import static renderer.GLUtilityMethods.setupOpenGL;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import main.FootsnipProperties;
@@ -34,7 +33,6 @@ import samplers.CubeMap;
 import samplers.Texture2D;
 import thread.RendererThread;
 import assets.AssetContainer;
-import assets.entities.Entity;
 import assets.entities.Monster;
 import assets.entities.MonsterFactory;
 import assets.entities.Player;
@@ -210,15 +208,8 @@ public class Renderer_3_2 extends RendererThread {
 			modelMatrix.pushMatrix();
 			{
 				renderPlayer(assContainer.getPlayer(), currentShader, modelMatrix);
-				// renderMonsters(assContainer.getMonsters(), currentShader,
-				// modelMatrix);
 				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(),
 						Monster.class);
-
-				// renderScenery(assContainer.getPolygonalSceneries(),
-				// currentShader, modelMatrix);
-				// renderProjectiles(assContainer.getProjectiles(),
-				// currentShader, modelMatrix);
 				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(),
 						Projectile.class);
 			}
@@ -312,17 +303,6 @@ public class Renderer_3_2 extends RendererThread {
 		dataStructure.drawWater(shader, objectPole, modelMatrix, player);
 	}
 
-	private void renderScenery(List<PolygonalScenery> scenery, GLShader shader, MatrixStack modelMatrix) {
-		for (PolygonalScenery s : scenery) {
-			modelMatrix.pushMatrix();
-			{
-				modelMatrix.getTop().mult(objectPole.calcMatrix());
-				s.getModel().draw(shader, modelMatrix, s.getPosition());
-			}
-			modelMatrix.popMatrix();
-		}
-	}
-
 	private void renderPlayer(Player player, GLShader shader, MatrixStack modelMatrix) {
 		modelMatrix.pushMatrix();
 		{
@@ -330,54 +310,6 @@ public class Renderer_3_2 extends RendererThread {
 			player.getModel().draw(shader, modelMatrix, player.getPosition());
 		}
 		modelMatrix.popMatrix();
-	}
-
-	private void renderMonsters(List<Monster> monsters, GLShader shader, MatrixStack modelMatrix) {
-
-		List<Entity> toRemove = new ArrayList<Entity>();
-		for (Monster m : monsters) {
-			if (m.isDestroyable()) {
-				toRemove.add(m);
-			}
-		}
-		monsters.removeAll(toRemove);
-		for (Monster m : monsters) {
-			modelMatrix.pushMatrix();
-			{
-				modelMatrix.getTop().mult(objectPole.calcMatrix());
-				m.getModel().draw(shader, modelMatrix, m.getPosition());
-			}
-			modelMatrix.popMatrix();
-		}
-
-	}
-
-	private void renderProjectiles(List<Projectile> projectiles, GLShader shader, MatrixStack modelMatrix) {
-
-		List<Entity> toRemove = new ArrayList<Entity>();
-
-		if (projectiles.size() > 0) {
-			for (Projectile p : projectiles) {
-				if (p.isDestroyable()) {
-					toRemove.add(p);
-				}
-			}
-			projectiles.removeAll(toRemove);
-
-			for (Projectile p : projectiles) {
-				try {
-					modelMatrix.pushMatrix();
-					{
-						modelMatrix.getTop().mult(objectPole.calcMatrix());
-						p.getModel().draw(shader, modelMatrix, p.getPosition());
-					}
-					modelMatrix.popMatrix();
-				} catch (NullPointerException e) {
-					System.out.println("Exception: Projectile GLModel does not exist");
-				}
-
-			}
-		}
 	}
 
 	public void gameLoop() {
