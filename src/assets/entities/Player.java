@@ -41,8 +41,8 @@ public class Player extends Entity {
 
 	private Vector3 currentDirectionVector;
 
-	public Player(GLModel model, GLPosition position, String name, int age, float[] color) {
-		super(model, position, name);
+	public Player(GLModel model, GLPosition position, int age, float[] color) {
+		super(model, position);
 		this.age = age;
 		this.color = color;
 

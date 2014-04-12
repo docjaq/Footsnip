@@ -31,7 +31,7 @@ public class PolygonalSceneryFactory {
 		GLModel polygonalSceneryModel = new GLMesh(triangleList, vertexList);
 		GLPosition position = new GLPosition(sceneryPos, sceneryAngle, sceneryScale, polygonalSceneryModel.getModelRadius());
 
-		PolygonalScenery polygon = new PolygonalScenery(polygonalSceneryModel, position, "Scenery");
+		PolygonalScenery polygon = new PolygonalScenery(polygonalSceneryModel, position);
 
 		return polygon;
 	}

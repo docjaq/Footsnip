@@ -10,21 +10,11 @@ import collision.Collidable;
 
 public class Entity extends AbstractEntity implements Collidable, Locatable {
 
-	private String name;
 	protected AbstractTile currentTile;
 	protected boolean destroyable = false;
 
-	public Entity(GLModel model, GLPosition position, String name) {
+	public Entity(GLModel model, GLPosition position) {
 		super(model, position);
-		this.name = name;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public float getEuclideanDistance(Entity other) {

@@ -21,7 +21,7 @@ public class Projectile extends Entity {
 	private Vector3 movementVector;
 
 	public Projectile(GLModel model, GLPosition position, Vector3 movementVector) {
-		super(model, position, "Projectile " + System.currentTimeMillis());
+		super(model, position);
 
 		this.position.setEntityRadiusWithModelRadius(this.model.getModelRadius());
 		this.age = 0;

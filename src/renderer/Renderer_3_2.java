@@ -270,7 +270,7 @@ public class Renderer_3_2 extends RendererThread {
 		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices());
 		GLPosition playerPosition = new GLPosition(playerPos, playerAngle, playerScale, playerModel.getModelRadius());
 
-		assContainer.setPlayer(new Player(playerModel, playerPosition, "Dave", 0, new float[] { 1.0f, 0.0f, 0.0f }));
+		assContainer.setPlayer(new Player(playerModel, playerPosition, 0, new float[] { 1.0f, 0.0f, 0.0f }));
 		assContainer.setMonsters(new ArrayList<Monster>());
 
 		Vector4 monsterColor = new Vector4(1.0f, 0.6f, 0.0f, 1.0f);
