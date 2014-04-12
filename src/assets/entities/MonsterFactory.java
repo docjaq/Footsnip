@@ -5,7 +5,6 @@ import mesh.GeometryFile;
 import renderer.GLPosition;
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
-import renderer.glshaders.GLShader;
 
 public class MonsterFactory {
 
@@ -32,7 +31,7 @@ public class MonsterFactory {
 		GLPosition position = new GLPosition(monsterPos, monsterAngle, monsterScale, model.getModelRadius());
 		position.setEntityRadiusWithModelRadius(model.getModelRadius());
 
-		Monster monster = new Monster(model, position, "Monster_", 0);
+		Monster monster = new Monster(model, position, 0);
 		monster.setRotationDelta(rotationDelta);
 
 		return monster;
