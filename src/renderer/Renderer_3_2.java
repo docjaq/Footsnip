@@ -281,7 +281,7 @@ public class Renderer_3_2 extends RendererThread {
 		assContainer.setPlayer(new Player(playerModel, playerPosition, "Dave", 0, new float[] { 1.0f, 0.0f, 0.0f }));
 		assContainer.setMonsters(new ArrayList<Monster>());
 
-		Vector4 monsterColor = new Vector4(0.3f, 0.3f, 0.05f, 1.0f);
+		Vector4 monsterColor = new Vector4(1.0f, 0.6f, 0.0f, 1.0f);
 		Ply monsterMesh = new Ply();
 		monsterMesh.read(new File("resources/meshes/SmoothBlob_small.ply"), monsterColor);
 
