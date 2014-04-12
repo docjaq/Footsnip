@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import main.FootsnipProperties;
 import main.Main;
 import math.types.MatrixStack;
 import math.types.Quaternion;
@@ -56,8 +57,8 @@ public class Renderer_3_2 extends RendererThread {
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
-	private final int WIDTH = 1024;
-	private final int HEIGHT = 768;
+	private final int WIDTH = FootsnipProperties.getWidth();
+	private final int HEIGHT = FootsnipProperties.getHeight();
 
 	private final int MAX_FPS = 400;
 
