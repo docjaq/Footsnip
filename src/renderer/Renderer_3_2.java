@@ -70,14 +70,14 @@ public class Renderer_3_2 extends RendererThread {
 			"resources/cubemaps/Maskonaive/negy.png", "resources/cubemaps/Maskonaive/posy.png", "resources/cubemaps/Maskonaive/posz.png",
 			"resources/cubemaps/Maskonaive/negz.png" }; // x, y, down, up
 
-	private final String NORMALMAP_A_LOCATION = "resources/normalmaps/Test4.png";
+	private final String NORMALMAP_A_LOCATION = "resources/normalmaps/Terrain3.png";
 
-	private final String NORMALMAP_WATER_LOCATION = "resources/normalmaps/WaterTest2.png";
+	private final String NORMALMAP_WATER_LOCATION = "resources/normalmaps/Water0.png";
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
-	private final int WIDTH = 1680;
-	private final int HEIGHT = 1050;
+	private final int WIDTH = 1280;
+	private final int HEIGHT = 1024;
 
 	private final int MAX_FPS = 500;
 
