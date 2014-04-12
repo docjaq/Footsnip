@@ -51,7 +51,7 @@ import camera.CameraModel.ViewScale;
 import camera.CameraUtils;
 import exception.RendererException;
 
-public class Renderer_3_2 extends RendererThread {
+public class Renderer_4_0 extends RendererThread {
 
 	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/lighting/gaussian_vert.glsl",
 			"resources/shaders/lighting/gaussian_frag.glsl" };
@@ -103,7 +103,7 @@ public class Renderer_3_2 extends RendererThread {
 	private ViewPole viewPole;
 	private ObjectPole objectPole;
 
-	public Renderer_3_2(AssetContainer assContainer, Main mainApplication) {
+	public Renderer_4_0(AssetContainer assContainer, Main mainApplication) {
 		super(assContainer, mainApplication);
 
 		// Initialise FPS calculation fields.

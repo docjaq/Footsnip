@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import location.LocationThread;
-import renderer.Renderer_3_2;
+import renderer.Renderer_4_0;
 import thread.GameThread;
 import thread.ObservableThread;
 import thread.ThreadObserver;
@@ -50,7 +50,7 @@ public class Main implements GameListener {
 
 		final AssetContainer assContainer = new AssetContainer();
 
-		GameThread rendererThread = new Renderer_3_2(assContainer, this);
+		GameThread rendererThread = new Renderer_4_0(assContainer, this);
 		executor.execute(rendererThread);
 		childThreads.add(rendererThread);
 
