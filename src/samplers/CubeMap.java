@@ -18,7 +18,7 @@ public class CubeMap extends Texture {
 		// this.numColorChannels = numColorChannels;
 		texId = GL11.glGenTextures();
 
-		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texId);
+		bind();
 
 		GL11.glEnable(GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS);
 

@@ -35,7 +35,7 @@ float calcAttenuation(in vec3 gPosition, out vec3 lightDirection)
 
 void main()
 {
-	vec3 lightDir = vec3(0, 0, -1);
+	vec3 lightDir = vec3(0, 0, 0);
 	float atten = calcAttenuation(gPosition, lightDir);
 	vec4 attenIntensity = atten * lightIntensity;
 	

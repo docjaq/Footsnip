@@ -14,7 +14,7 @@ import renderer.MaterialParams;
 
 public class GLGaussianShader extends GLShader {
 
-	protected final float lightAttenuation = 3.7f;
+	protected final float lightAttenuation = 2.7f;
 
 	protected int modelToCameraMatrixUniform;
 
@@ -56,7 +56,7 @@ public class GLGaussianShader extends GLShader {
 
 		// All for fragment shader
 		glUniform4f(lightIntensityUniform, 1.8f, 1.8f, 1.8f, 1);
-		glUniform4f(ambientIntensityUniform, 0.05f, 0.05f, 0.05f, 1);
+		glUniform4f(ambientIntensityUniform, 0.01f, 0.01f, 0.01f, 1);
 		glUniform3(cameraSpaceLightPositionUniform, lightPosCameraSpace.toBuffer());
 		glUniform1f(lightAttenuationUniform, lightAttenuation);
 		glUniform1f(shininessFactorUniform, materialParams.getSpecularValue());

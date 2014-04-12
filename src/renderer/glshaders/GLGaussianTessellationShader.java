@@ -80,6 +80,7 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 	@Override
 	public void copyShaderSpecificUniformsToShaderInit() {
 		GL20.glUniform1i(normalMapAUniform, normalMapATexUnit);
+		System.out.println("LATE Normal map texID " + normalMapALocation + " and texUnit" + normalMapATexUnit);
 	}
 
 	@Override
@@ -91,13 +92,18 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		glUniform1f(tessLevelOuterUniform, tessLevelOuter);
 	}
 
+	// Uniform buffer objects
 	private void setupSamplerUBO() {
-		// This is an unusual one. Seems it only needs to be bound once, but
-		// needs the actual shader bound when doing it. How odd.
 		bindShader();
 		GL20.glUniform1i(heightMapUniform, heightmapTexUnit);
+		// System.out.println("Early height map texID " + heightmapLocation +
+		// " and texUnit " + heightmapTexUnit);
 		GL20.glUniform1i(colorMapUniform, colorMapTexUnit);
+		// System.out.println("Early colorMap map texID " + colorMapLocation +
+		// " and texUnit " + colorMapTexUnit);
 		GL20.glUniform1i(normalMapAUniform, normalMapATexUnit);
+		// System.out.println("Early Normal map texID " + normalMapALocation +
+		// " and texUnit " + normalMapATexUnit);
 		unbindShader();
 	}
 

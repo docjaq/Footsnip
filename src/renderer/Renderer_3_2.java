@@ -30,6 +30,7 @@ import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
 import renderer.glshaders.GLWaterShader;
 import samplers.CubeMap;
+import samplers.Texture2D;
 import thread.RendererThread;
 import assets.AssetContainer;
 import assets.entities.Entity;
@@ -69,7 +70,7 @@ public class Renderer_3_2 extends RendererThread {
 			"resources/cubemaps/Maskonaive/negy.png", "resources/cubemaps/Maskonaive/posy.png", "resources/cubemaps/Maskonaive/posz.png",
 			"resources/cubemaps/Maskonaive/negz.png" }; // x, y, down, up
 
-	private final String NORMALMAP_A_LOCATION = "resources/normalmaps/Test2.png";
+	private final String NORMALMAP_A_LOCATION = "resources/normalmaps/Test4.png";
 
 	private final String NORMALMAP_WATER_LOCATION = "resources/normalmaps/WaterTest2.png";
 
@@ -97,11 +98,11 @@ public class Renderer_3_2 extends RendererThread {
 	/** The number of frames rendered since lastFPSUpdate. */
 	private int framesThisSecond;
 
-	private int projectionUniformBuffer;
-	private final int projectionBlockIndex = 2;
+	// http://www.arcsynthesis.org/gltut/Positioning/Tut07%20Shared%20Uniforms.html
+	private int projectionUniformBuffer; // Default rendering buffer
+	private final int projectionBlockIndex = 0;
 	private ViewPole viewPole;
 	private ObjectPole objectPole;
-	float startTime = 0;
 
 	public Renderer_3_2(AssetContainer assContainer, Main mainApplication) {
 		super(assContainer, mainApplication);
@@ -114,7 +115,7 @@ public class Renderer_3_2 extends RendererThread {
 
 	protected void beforeLoop() throws RendererException {
 		float[] backgroundColor = { 1f, 1f, 1f, 1.0f };
-		setupOpenGL(WIDTH, HEIGHT, WINDOW_TITLE, backgroundColor, projectionUniformBuffer, projectionBlockIndex);
+		projectionUniformBuffer = setupOpenGL(WIDTH, HEIGHT, WINDOW_TITLE, backgroundColor, projectionBlockIndex);
 
 		// Vector3: Target position of camera focus
 		// Quaternion: Orientation of the camera relative to the target
@@ -136,7 +137,10 @@ public class Renderer_3_2 extends RendererThread {
 		cubeMap = new CubeMap(CUBE_MAP_LOCATION, 2048, 2048, GL11.GL_RGB);
 		int normalMapALocation = GLUtilityMethods.loadPNGTextureAsDataAndBind(NORMALMAP_A_LOCATION, 4);
 
-		int normalMapWaterLocation = GLUtilityMethods.loadPNGTextureAsDataAndBind(NORMALMAP_WATER_LOCATION, 4);
+		Texture2D waterNormalMap = new Texture2D(NORMALMAP_WATER_LOCATION, 4);
+		// int normalMapWaterLocation =
+		// GLUtilityMethods.loadPNGTextureAsDataAndBind(NORMALMAP_WATER_LOCATION,
+		// 4);
 
 		shaderMap = new HashMap<Class<?>, GLShader>();
 
@@ -155,11 +159,10 @@ public class Renderer_3_2 extends RendererThread {
 		shaderMap.put(tessellationShaderClass, tessellationShader);
 
 		// Load water shader
-		GLShader waterShader = new GLWaterShader(projectionBlockIndex, cubeMap);
+		GLShader waterShader = new GLWaterShader(projectionBlockIndex, cubeMap, waterNormalMap);
 		waterShader.create(WATER_SHADER_LOCATION);
 		waterShader.bindShader();
 		waterShader.copyShaderSpecificUniformsToShaderInit();
-		((GLWaterShader) waterShader).setNormalMapLocation(normalMapWaterLocation);
 		waterShader.unbindShader();
 		shaderMap.put(waterShaderClass, waterShader);
 
@@ -176,17 +179,6 @@ public class Renderer_3_2 extends RendererThread {
 		// TODO: Modify this to accept the whole entity data-structure
 		destroyOpenGL(assContainer.getPlayer());
 	}
-
-	// private Vector4 calcLightPosition() {
-	// float lightHeight = 0.1f, lightRadius = 0.5f;
-	// startTime += 0.003;
-	//
-	// Vector4 ret = new Vector4(1.0f, 0.0f, lightHeight, 1);
-	// ret.x((float) Math.cos(startTime * 2 * Math.PI) * lightRadius);
-	// ret.y((float) Math.sin(startTime * 2 * Math.PI) * lightRadius);
-	//
-	// return ret;
-	// }
 
 	private void logicCycle() {
 
@@ -218,10 +210,9 @@ public class Renderer_3_2 extends RendererThread {
 			{
 				renderPlayer(assContainer.getPlayer(), currentShader, modelMatrix);
 				renderMonsters(assContainer.getMonsters(), currentShader, modelMatrix);
-				// renderMonsters(assContainer.getMonsters(), currentShader,
-				// modelMatrix);
 
-				renderScenery(assContainer.getPolygonalSceneries(), currentShader, modelMatrix);
+				// renderScenery(assContainer.getPolygonalSceneries(),
+				// currentShader, modelMatrix);
 				renderProjectiles(assContainer.getProjectiles(), currentShader, modelMatrix);
 			}
 			modelMatrix.popMatrix();
@@ -274,7 +265,7 @@ public class Renderer_3_2 extends RendererThread {
 		Vector3 playerPos = new Vector3(0, 0, 0);
 		Vector3 playerAngle = new Vector3(0, 0, 0);
 		float playerScale = 1f;
-		Vector4 playerColor = new Vector4(0.8f, 0.4f, 0.5f, 1.0f);
+		Vector4 playerColor = new Vector4(0.6f, 0.6f, 0.0f, 1.0f);
 
 		Ply playerMesh = new Ply();
 		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"), playerColor);

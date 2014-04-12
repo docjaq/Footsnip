@@ -60,8 +60,7 @@ public class GLUtilityMethods {
 		}
 	}
 
-	public static void setupOpenGL(int width, int height, String windowTitle, float[] backgroundColor, int projectionUniformBuffer,
-			int projectionBlockIndex) {
+	public static int setupOpenGL(int width, int height, String windowTitle, float[] backgroundColor, int projectionBlockIndex) {
 
 		// Setup an OpenGL context with API version 3.2
 		try {
@@ -101,7 +100,7 @@ public class GLUtilityMethods {
 		glDepthRange(0, 1);
 		glEnable(GL_DEPTH_CLAMP);
 
-		projectionUniformBuffer = glGenBuffers();
+		int projectionUniformBuffer = glGenBuffers();
 		glBindBuffer(GL_UNIFORM_BUFFER, projectionUniformBuffer);
 		glBufferData(GL_UNIFORM_BUFFER, 16 * 4, GL_DYNAMIC_DRAW);
 		glBindBufferRange(GL_UNIFORM_BUFFER, projectionBlockIndex, projectionUniformBuffer, 0, 16 * 4);
@@ -110,6 +109,8 @@ public class GLUtilityMethods {
 		resized(width, height, projectionUniformBuffer);
 
 		exitOnGLError("setupOpenGL");
+
+		return projectionUniformBuffer;
 	}
 
 	public static void resized(int width, int height, int projectionUniformBuffer) {

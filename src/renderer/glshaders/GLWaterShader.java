@@ -12,13 +12,13 @@ import math.types.Vector2;
 import math.types.Vector4;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL31;
 
 import renderer.MaterialParams;
 import samplers.CubeMap;
+import samplers.Texture2D;
 
 public class GLWaterShader extends GLShader {
 
@@ -48,14 +48,19 @@ public class GLWaterShader extends GLShader {
 	// Textures
 	private CubeMap cubeMap;
 	private int cubeMapUniform;
+	private int cubeMapTexUnit = 4;
 
-	private int normalMapUniform;
-	private int normalMapLocation = -1;
-	private int normalMapTexUnit = 10;
+	private Texture2D normalMap;
+	private int normalMapTexUnit = 3;
 
-	public GLWaterShader(int projectionBlockIndex, CubeMap cubeMap) {
+	// private int normalMapUniform;
+	// private int normalMapLocation = -1;
+	// private int normalMapTexUnit = 10;
+
+	public GLWaterShader(int projectionBlockIndex, CubeMap cubeMap, Texture2D normalMap) {
 		super(projectionBlockIndex);
 		this.cubeMap = cubeMap;
+		this.normalMap = normalMap;
 	}
 
 	float time = 0;
@@ -86,7 +91,7 @@ public class GLWaterShader extends GLShader {
 
 		// Frag shader specific
 		cubeMapUniform = GL20.glGetUniformLocation(programID, "cuveMap");
-		normalMapUniform = GL20.glGetUniformLocation(programID, "normalMap");
+		normalMap.setUniformLocation(GL20.glGetUniformLocation(programID, "normalMap"));
 		averageWaveDirectionUniform = GL20.glGetUniformLocation(programID, "averageWaveDirection");
 
 		int projectionBlock = GL31.glGetUniformBlockIndex(programID, "Projection");
@@ -98,8 +103,12 @@ public class GLWaterShader extends GLShader {
 	private void setupSamplerUBO() {
 
 		bindShader();
-		GL20.glUniform1i(cubeMapUniform, cubeMap.getTexId());
-		GL20.glUniform1i(normalMapUniform, normalMapTexUnit);
+		GL20.glUniform1i(cubeMapUniform, cubeMapTexUnit);
+		// System.out.println("Cube map ID " + cubeMap.getTexId());
+		GL20.glUniform1i(normalMap.getUniformLocation(), normalMapTexUnit);
+		// System.out.println("Normal map ID " + normalMap.getTexId());
+		// System.out.println("Normal map uniform " +
+		// normalMap.getUniformLocation());
 		unbindShader();
 	}
 
@@ -135,10 +144,6 @@ public class GLWaterShader extends GLShader {
 	@Override
 	public void copyShaderSpecificUniformsToShaderInit() {
 
-		// This works really nicely, but strangely, not from all orientations.
-		// Maybe try and even further reduce the amplitude, or fix an angle that
-		// looks really nice
-
 		// Supports up to four waves
 		int numberOfWaves = 4;
 		float[] amplitude = new float[numberOfWaves];
@@ -148,7 +153,7 @@ public class GLWaterShader extends GLShader {
 		Vector2 averageWaveDirection = new Vector2();
 
 		GL20.glUniform1i(numWavesUniform, numberOfWaves);
-		glUniform1f(waterHeightUniform, -0.45f);
+		glUniform1f(waterHeightUniform, -0.39f);
 
 		float originalAngle = (float) (Math.random() * Math.PI * 2);
 		for (int i = 0; i < numberOfWaves; i++) {
@@ -193,28 +198,23 @@ public class GLWaterShader extends GLShader {
 	}
 
 	public void bindTextures() {
+		GL13.glActiveTexture(GL13.GL_TEXTURE0 + cubeMapTexUnit);
 		cubeMap.bind();
 
-		GL13.glActiveTexture(GL13.GL_TEXTURE0 + normalMapTexUnit);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalMapLocation);
+		// TODO: For some reason, I cannot enable this... :(
+		// GL13.glActiveTexture(GL13.GL_TEXTURE0 + normalMapTexUnit);
+		normalMap.bind();
+
+		// GL13.glActiveTexture(GL13.GL_TEXTURE0 + normalMap.getTexId());
+		// GL11.glBindTexture(GL11.GL_TEXTURE_2D,
+		// normalMap.getUniformLocation());
 	}
 
 	public void unbindCubeMap() {
 		// GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 
-	private float uniformRandomInRange(double d, double e) {
-		assert (d < e);
-		double n = Math.random();
-		double v = d + n * (e - d);
-		return (float) v;
-	}
-
-	public int getNormalMapLocation() {
-		return normalMapLocation;
-	}
-
-	public void setNormalMapLocation(int normalMapLocation) {
-		this.normalMapLocation = normalMapLocation;
+	public Texture2D getNormalMap() {
+		return normalMap;
 	}
 }
