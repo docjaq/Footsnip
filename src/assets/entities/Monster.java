@@ -22,9 +22,8 @@ public class Monster extends Entity {
 		this.rotationDelta = rotationDelta / 20.0f;
 	}
 
-	public Monster(GLModel model, GLPosition position, int level) {
+	public Monster(GLModel model, GLPosition position) {
 		super(model, position);
-		this.level = level;
 	}
 
 	public int getLevel() {

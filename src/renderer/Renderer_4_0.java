@@ -17,8 +17,6 @@ import math.types.Vector3;
 import math.types.Vector4;
 import mesh.Ply;
 
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.jse.JsePlatform;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
@@ -278,17 +276,15 @@ public class Renderer_4_0 extends RendererThread {
 		monsterMesh.read(new File("resources/meshes/SmoothBlob_small.ply"), monsterColor);
 
 		String script = "resources/lua/monsters.lua";
-		LuaValue _G = JsePlatform.standardGlobals();
-		_G.get("dofile").call(LuaValue.valueOf(script));
-		LuaValue getRotationDelta = _G.get("getRotationDelta");
 
 		MonsterFactory monsterFactory = new MonsterFactory(monsterMesh);
 
 		float spread = 30;
 		for (int i = 0; i < 500; i++) {
 			Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
-			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
-			assContainer.addMonster(monsterFactory.create(monsterPos, rotationDelta));
+			// float rotationDelta =
+			// getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
+			assContainer.addMonster(monsterFactory.create(monsterPos, script));
 		}
 
 		// Initialise projectile factory
