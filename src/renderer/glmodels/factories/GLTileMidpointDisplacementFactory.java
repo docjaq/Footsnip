@@ -8,7 +8,7 @@ import math.types.Vector4;
 import renderer.glmodels.GLMesh;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
-import terraingen.PlasmaFractalFactory;
+import terraingen.PlasmaFractal;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTile;
 import assets.world.datastructures.TileDataStructure2D;
@@ -66,7 +66,7 @@ public class GLTileMidpointDisplacementFactory implements GLTileFactory {
 		// Create heightmap
 		// resetHeights(this.factoryVertices);
 		float[][] heightmap = new float[tileComplexity][tileComplexity];
-		PlasmaFractalFactory.create(heightmap);
+		PlasmaFractal.create(heightmap);
 
 		if (PolygonHeightmapTile.class.isInstance(tile)) {
 			// Save the height-map to the tile for persistence

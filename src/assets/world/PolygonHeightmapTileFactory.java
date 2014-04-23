@@ -13,7 +13,7 @@ import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
-import terraingen.PlasmaFractalFactory;
+import terraingen.PlasmaFractal;
 import assets.world.datastructures.DataStructureKey2D;
 import assets.world.datastructures.TileDataStructure2D;
 
@@ -48,7 +48,7 @@ public class PolygonHeightmapTileFactory {
 		AbstractTile tile = new PolygonHeightmapTile(key, model, position);
 
 		float[][] heightmap = new float[tileComplexity][tileComplexity];
-		PlasmaFractalFactory.create(heightmap);
+		PlasmaFractal.create(heightmap);
 		adjustHeightmapToNeighbours(tile, heightmap);
 		// FloatBuffer buf = generateNormalMap(heightmap);
 

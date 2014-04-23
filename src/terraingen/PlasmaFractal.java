@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 
 /*TODO: Need to attribute the base code of this class, but I've forgotten where I got it from. Fix!! */
 
-public class PlasmaFractalFactory {
+public class PlasmaFractal {
 
 	private static final float variance = 0.4f;
 
