@@ -62,9 +62,6 @@ public class Renderer_4_0 extends RendererThread {
 			"resources/shaders/tessellation/terrain_tessCont.glsl", "resources/shaders/tessellation/terrain_tessEval.glsl",
 			"resources/shaders/tessellation/terrain_geom.glsl", "resources/shaders/tessellation/gaussian_frag.glsl", };
 
-	// Something's not currently right with this. It's either not mapping the
-	// correct images to the correct cube faces, or my vector computation in the
-	// shader is not correct
 	private final String[] CUBE_MAP_LOCATION = { "resources/cubemaps/Maskonaive/posx.png", "resources/cubemaps/Maskonaive/negx.png",
 			"resources/cubemaps/Maskonaive/negy.png", "resources/cubemaps/Maskonaive/posy.png", "resources/cubemaps/Maskonaive/posz.png",
 			"resources/cubemaps/Maskonaive/negz.png" }; // x, y, down, up
@@ -137,9 +134,6 @@ public class Renderer_4_0 extends RendererThread {
 		int normalMapALocation = GLUtilityMethods.loadPNGTextureAsDataAndBind(NORMALMAP_A_LOCATION, 4);
 
 		Texture2D waterNormalMap = new Texture2D(NORMALMAP_WATER_LOCATION, 4);
-		// int normalMapWaterLocation =
-		// GLUtilityMethods.loadPNGTextureAsDataAndBind(NORMALMAP_WATER_LOCATION,
-		// 4);
 
 		shaderMap = new HashMap<Class<?>, GLShader>();
 

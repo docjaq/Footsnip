@@ -11,38 +11,19 @@ import javax.imageio.ImageIO;
 public class PlasmaFractal {
 
 	private static final float variance = 0.4f;
+	private static int debugCounter = 0;
 
 	public static void create(float[][] inputMatrix) {
 		int size = inputMatrix.length;
 		recursiveGeneration(inputMatrix, 0, 0, size, size, 0, 0, 0, 0);
 		scale(inputMatrix, size);
-		// smooth(inputMatrix, size);
-		// debug(inputMatrix, size);
+		debug(inputMatrix, size);
 	}
 
 	private static void scale(float[][] matrix, int size) {
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
 				matrix[x][y] *= variance;
-			}
-		}
-	}
-
-	private static void smooth(float[][] matrix, int size) {
-		float maxZ = 0f, minZ = Float.MAX_VALUE;
-		for (int y = 0; y < size; y++) {
-			for (int x = 0; x < size; x++) {
-				if (matrix[x][y] > maxZ) {
-					maxZ = matrix[x][y];
-				} else if (matrix[x][y] < minZ) {
-					minZ = matrix[x][y];
-				}
-			}
-		}
-
-		for (int y = 0; y < size; y++) {
-			for (int x = 0; x < size; x++) {
-				matrix[x][y] = (matrix[x][y] - minZ) / ((maxZ - minZ) * 2);
 			}
 		}
 	}
@@ -54,12 +35,11 @@ public class PlasmaFractal {
 		float newHeight = height / 2f;
 
 		if (width > 2 || height > 2) {
-			Middle = (c1 + c2 + c3 + c4) / 4f + Displace(matrix.length, matrix.length, newWidth + newHeight); // Randomly
-			// displace
-			// the
-			// midpoint!
-			Edge1 = (c1 + c2) / 2; // Calculate the edges by averaging the two
-									// corners of each edge.
+			// Randomly displace the midpoint!
+			Middle = (c1 + c2 + c3 + c4) / 4f + Displace(matrix.length, matrix.length, newWidth + newHeight);
+
+			// Calculate the edges by averaging the two corners of each edge.
+			Edge1 = (c1 + c2) / 2;
 			Edge2 = (c2 + c3) / 2;
 			Edge3 = (c3 + c4) / 2;
 			Edge4 = (c4 + c1) / 2;
@@ -71,6 +51,10 @@ public class PlasmaFractal {
 			} else if (Middle > 1.0f) {
 				Middle = 1.0f;
 			}
+			/*
+			 * debug(matrix, 129); System.err.println(debugCounter); if
+			 * (debugCounter > 10) { System.exit(0); }
+			 */
 
 			// Do the operation over again for each of the four new grids.
 			recursiveGeneration(matrix, x, y, newWidth, newHeight, c1, Edge1, Middle, Edge4);
@@ -101,8 +85,9 @@ public class PlasmaFractal {
 
 		try {
 			// retrieve image
-			File outputfile = new File("saved" + Math.random() * 100 + ".png");
+			File outputfile = new File("saved_" + debugCounter + ".png");
 			ImageIO.write(myImage, "png", outputfile);
+			debugCounter++;
 		} catch (IOException e) {
 		}
 	}

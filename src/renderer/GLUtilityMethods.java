@@ -67,6 +67,8 @@ public class GLUtilityMethods {
 			PixelFormat pixelFormat = new PixelFormat();
 			// withForwardCompatible Forces older versions not to work.
 			// Doesn't work on OS X
+			// Have to specify 3.2 here; won't let you create a 4/4.2 instance
+			// in OSX
 			ContextAttribs contextAtrributes = new ContextAttribs(3, 2).withForwardCompatible(true).withProfileCore(true);
 
 			Display.setDisplayMode(new DisplayMode(width, height));
@@ -83,12 +85,7 @@ public class GLUtilityMethods {
 			System.exit(-1);
 		}
 
-		// Setup an XNA like background color
-		// GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f);
 		GL11.glClearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3]);
-
-		// Map the internal OpenGL coordinate system to the entire screen
-		// GL11.glViewport(0, 0, width, height);
 
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glCullFace(GL11.GL_BACK);
@@ -277,18 +274,12 @@ public class GLUtilityMethods {
 
 	public static ByteBuffer loadPNG(String filename, int numColorChannels) {
 		ByteBuffer buf = null;
-		int tWidth = 0;
-		int tHeight = 0;
 
 		try {
 			// Open the PNG file as an InputStream
 			InputStream in = new FileInputStream(filename);
 			// Link the PNG decoder to this stream
 			PNGDecoder decoder = new PNGDecoder(in);
-
-			// Get the width and height of the texture
-			tWidth = decoder.getWidth();
-			tHeight = decoder.getHeight();
 
 			// Decode the PNG file in a ByteBuffer
 			buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
