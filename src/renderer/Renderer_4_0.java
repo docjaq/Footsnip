@@ -53,11 +53,14 @@ import exception.RendererException;
 
 public class Renderer_4_0 extends RendererThread {
 
+	// For normal entities (player, monsters, etc)
 	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/lighting/gaussian_vert.glsl",
 			"resources/shaders/lighting/gaussian_frag.glsl" };
 
+	// For water
 	private final String[] WATER_SHADER_LOCATION = { "resources/shaders/water/water_vert.glsl", "resources/shaders/water/water_frag.glsl" };
 
+	// For terrain
 	private final String[] GAUSSIAN_TESS_SHADER_LOCATION = { "resources/shaders/tessellation/gaussian_vert.glsl",
 			"resources/shaders/tessellation/terrain_tessCont.glsl", "resources/shaders/tessellation/terrain_tessEval.glsl",
 			"resources/shaders/tessellation/terrain_geom.glsl", "resources/shaders/tessellation/gaussian_frag.glsl", };
@@ -66,7 +69,7 @@ public class Renderer_4_0 extends RendererThread {
 			"resources/cubemaps/Maskonaive/negy.png", "resources/cubemaps/Maskonaive/posy.png", "resources/cubemaps/Maskonaive/posz.png",
 			"resources/cubemaps/Maskonaive/negz.png" }; // x, y, down, up
 
-	private final String NORMALMAP_A_LOCATION = "resources/normalmaps/Terrain3.png";
+	private final String NORMALMAP_A_LOCATION = "resources/normalmaps/Terrain0.png";
 
 	private final String NORMALMAP_WATER_LOCATION = "resources/normalmaps/Water0.png";
 
@@ -238,7 +241,7 @@ public class Renderer_4_0 extends RendererThread {
 		float tileScale = 1f;
 		GLPosition position = new GLPosition(tilePos, tileAngle, tileScale, 0);
 
-		PolygonHeightmapTileFactory glTileFactory = new PolygonHeightmapTileFactory(129, assContainer.getTileDataStructure());
+		PolygonHeightmapTileFactory glTileFactory = new PolygonHeightmapTileFactory(128, assContainer.getTileDataStructure());
 		AbstractTile initialTile = glTileFactory.create(null, position);
 
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);

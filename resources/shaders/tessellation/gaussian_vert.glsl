@@ -13,5 +13,5 @@ void main()
     vDiffuseColor = inDiffuseColor;
 	vVertexNormal = normal;
     //Hack to remove seams for now
-	vPosition = position*1.004-0.002;
+	vPosition = position;//*1.008-0.004;
 }

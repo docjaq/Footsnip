@@ -13,11 +13,15 @@ import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
-import terraingen.PlasmaFractal;
+import terraingen.simplex.SimplexNoise;
 import assets.world.datastructures.DataStructureKey2D;
 import assets.world.datastructures.TileDataStructure2D;
 
 public class PolygonHeightmapTileFactory {
+
+	private final static float Z_OFFSET = 0f;
+	private final static double WATER_CHANCE = 1;
+	private final static int COLOR_MAP_SIZE = 32;
 
 	private List<GLVertex> factoryVertices;
 	private List<GLTriangle> factoryTriangles;
@@ -26,11 +30,7 @@ public class PolygonHeightmapTileFactory {
 	private int tileComplexity;
 	private TileDataStructure2D tileDataStructure;
 
-	private final static float zOffset = 0f;
-
-	private final double waterChance = 0.5;
-
-	private final int COLOR_MAP_SIZE = 32;
+	private SimplexNoise simplexNoise;
 
 	public PolygonHeightmapTileFactory(int tileComplexity, TileDataStructure2D tileDataStructure) {
 		this.tileComplexity = tileComplexity;
@@ -40,6 +40,11 @@ public class PolygonHeightmapTileFactory {
 
 		generatePlanarMesh();
 
+		// Function of number of octaves (noise complexity)
+		// Type of terrain (low = flat. High = rocky)
+		// Random seed
+		simplexNoise = new SimplexNoise(100, 0.5, 5000);
+
 		model = new GLMesh(this.factoryTriangles, this.factoryVertices);
 	}
 
@@ -47,9 +52,17 @@ public class PolygonHeightmapTileFactory {
 
 		AbstractTile tile = new PolygonHeightmapTile(key, model, position);
 
-		float[][] heightmap = new float[tileComplexity][tileComplexity];
-		PlasmaFractal.create(heightmap);
-		adjustHeightmapToNeighbours(tile, heightmap);
+		// float[][] heightmap = new float[tileComplexity][tileComplexity];
+		// PlasmaFractal.create(heightmap);
+
+		if (key == null)
+			key = new DataStructureKey2D(0, 0);
+
+		float[][] heightmap = simplexNoise.getSection(tileComplexity, key.x, key.y);
+		// float[][] heightmap = new float[tileComplexity][tileComplexity];
+
+		// adjustHeightmapToNeighbours(tile, heightmap);
+		System.out.println("Heightmap in PolygonHeightmapTileFactory");
 		// FloatBuffer buf = generateNormalMap(heightmap);
 
 		FloatBuffer colorMapBuffer = generateColorMap();
@@ -57,7 +70,10 @@ public class PolygonHeightmapTileFactory {
 		if (PolygonHeightmapTile.class.isInstance(tile)) {
 			PolygonHeightmapTile polygonTile = ((PolygonHeightmapTile) tile);
 
+			// Not currently used I think, but maybe if we want to look it up
+			// later
 			polygonTile.setHeightmap(heightmap);
+
 			polygonTile.setHeightmapBuf(convertArrayToBuffer(heightmap));
 			polygonTile.setHeightmapSize(tileComplexity);
 
@@ -68,7 +84,7 @@ public class PolygonHeightmapTileFactory {
 			// polygonTile.setNormalmapSize(tileComplexity);
 
 			// Water stuff
-			polygonTile.setWater((Math.random() < waterChance) ? true : false);
+			polygonTile.setWater((Math.random() < WATER_CHANCE) ? true : false);
 			polygonTile.setWaterHeight((float) ((Math.random() * 0.05 - 0.025) + 0.45));
 		}
 
@@ -88,7 +104,10 @@ public class PolygonHeightmapTileFactory {
 		FloatBuffer fBuf = buf.asFloatBuffer();
 		for (int y = 0; y < tHeight; y++) {
 			for (int x = 0; x < tWidth; x++) {
-				fBuf.put((array[x][y] + 1) / 2f);
+				// Scale it like this to make sure the value is always positive
+				// Due to texture format (unsigned int)
+				// (but over the same range. Invert in shader)
+				fBuf.put((array[x][y] + 1f) / 2f);
 			}
 		}
 		fBuf.flip();
@@ -97,7 +116,7 @@ public class PolygonHeightmapTileFactory {
 
 	private void generatePlanarMesh() {
 
-		int localTileComplexity = 64;
+		int localTileComplexity = 128;
 
 		float xInc = AbstractTile.SIZE / (float) (localTileComplexity - 1);
 		float yInc = AbstractTile.SIZE / (float) (localTileComplexity - 1);
@@ -114,7 +133,7 @@ public class PolygonHeightmapTileFactory {
 		}
 
 		for (int i = 0; i < localTileComplexity; i++) {
-			factoryVertices.get(index).setXYZ((float) (i * xInc - xyOffset), -xyOffset, zOffset);
+			factoryVertices.get(index).setXYZ((float) (i * xInc - xyOffset), -xyOffset, Z_OFFSET);
 			index++;
 		}
 
@@ -124,7 +143,7 @@ public class PolygonHeightmapTileFactory {
 		for (int i = 1; i < localTileComplexity; i++) {
 			int count = 0;
 			for (int j = 0; j < localTileComplexity; j++) {
-				factoryVertices.get(index).setXYZ((float) (j * xInc - xyOffset), (float) (i * yInc - xyOffset), zOffset);
+				factoryVertices.get(index).setXYZ((float) (j * xInc - xyOffset), (float) (i * yInc - xyOffset), Z_OFFSET);
 				addTriangles(index, count, numItems);
 				index++;
 				count++;

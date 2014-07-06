@@ -40,7 +40,7 @@ vec3 computeNormal(vec2 co){
     float dX = tr + 2 * r + br - tl - 2 * l - bl;
     float dY = bl + 2 * b + br - tl - 2 * t - tr;
     
-    vec3 normal = vec3(dX, dY, 0.1); //1.0f / 10 (1/strength) -> precompute
+    vec3 normal = vec3(dX, dY, 0.08); //1.0f / 10 (1/strength) -> precompute
     
     return normalize(normal);
 }
@@ -59,6 +59,7 @@ void main(){
     teUvPosition.y +=0.5;
     
     //Adjust position z according to heigtmap and scale
+    //Invert texture storage scale from earlier to make sure value can be +/-
     float heightMapZ = (texture(heightMap, teUvPosition.xy).r*2-1);
     tePosition.z = heightMapZ*0.5-0.3;
     teUvPosition.z = tePosition.z;
