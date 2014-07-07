@@ -115,8 +115,8 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		// Not sure whether this needs to happen after the OpenGL texture unit
 		// has been created
 		sampler = GL33.glGenSamplers();
-		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 
 		// This clamps the range of the sampler access. If enabled, it will be
 		// strictly more accurate, though will result in gaps

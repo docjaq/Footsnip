@@ -54,27 +54,50 @@ public class SimplexNoise {
 
 	public float[][] getSection(int resolution, int xOffset, int yOffset) {
 
-		System.err.println("Creating tile for " + xOffset + "," + yOffset);
+		// if (yOffset == 0 && xOffset >= 0)
+		// System.err.println("Creating tile for " + xOffset + "," + yOffset);
 
+		int xStart, yStart;
 		int offsetScale = resolution;
 
-		int xStart = xOffset * offsetScale;
-		int yStart = yOffset * offsetScale;
+		xStart = xOffset * (offsetScale - 1);
+		yStart = yOffset * (offsetScale - 1);
 
 		int xEnd = xStart + offsetScale;
 		int yEnd = yStart + offsetScale;
 
+		System.err.println("x = " + xOffset + "," + "y = " + yOffset);
+		System.err.println("x(" + xStart + "," + xEnd + ") " + "y(" + yStart + "," + yEnd + ")");
+
+		if (xOffset <= 0) {
+
+		} else {
+
+		}
+
 		float[][] result = new float[resolution][resolution];
 
+		// for (int i = 0; i < resolution; i++) {
+		// for (int j = 0; j < resolution; j++) {
+		// int x = (int) (xStart + i * ((xEnd - xStart) / (double) resolution));
+		// int y = (int) (yStart + j * ((yEnd - yStart) / (double) resolution));
+		// result[i][j] = (float) (0.5d * (1 + getNoise(x, y))) - 0.6f;
+		// }
+		// }
+
 		for (int i = 0; i < resolution; i++) {
+			// int x = xStart + i;
+			// if (yOffset == 0 && xOffset >= 0)
+			// System.err.print(x + " ");
 			for (int j = 0; j < resolution; j++) {
-				int x = (int) (xStart + i * ((xEnd - xStart) / (double) resolution));
-				int y = (int) (yStart + j * ((yEnd - yStart) / (double) resolution));
-				result[i][j] = (float) (0.5d * (1 + getNoise(x, y))) - 0.6f;
+				int x = (int) (xStart + i * ((xEnd - xStart) / (double) (resolution)));
+				int y = (int) (yStart + j * ((yEnd - yStart) / (double) (resolution)));
+				result[i][j] = (float) getNoise(x, y) * 0.7f + 0.1f;
 			}
 		}
+		// if (yOffset == 0 && xOffset >= 0)
+		// System.err.println();
 
 		return result;
 	}
-
 }

@@ -43,7 +43,7 @@ public class PolygonHeightmapTileFactory {
 		// Function of number of octaves (noise complexity)
 		// Type of terrain (low = flat. High = rocky)
 		// Random seed
-		simplexNoise = new SimplexNoise(100, 0.5, 5000);
+		simplexNoise = new SimplexNoise(320, 0.5, 5000);
 
 		model = new GLMesh(this.factoryTriangles, this.factoryVertices);
 	}
@@ -60,6 +60,13 @@ public class PolygonHeightmapTileFactory {
 
 		float[][] heightmap = simplexNoise.getSection(tileComplexity, key.x, key.y);
 		// float[][] heightmap = new float[tileComplexity][tileComplexity];
+		// for (int i = 0; i < tileComplexity; i++) {
+		// heightmap[0][i] = (i + 1) * 0.2f;
+		// heightmap[tileComplexity - 1][i] = (i + 1) * 0.2f;
+		// System.out.print((i + 1) * 0.2f + " ");
+		// }
+
+		System.out.println();
 
 		// adjustHeightmapToNeighbours(tile, heightmap);
 		System.out.println("Heightmap in PolygonHeightmapTileFactory");
