@@ -14,7 +14,7 @@ import renderer.MaterialParams;
 
 public class GLGaussianShader extends GLShader {
 
-	protected final float lightAttenuation = 2.7f;
+	protected final float lightAttenuation = 1.7f;
 
 	protected int modelToCameraMatrixUniform;
 

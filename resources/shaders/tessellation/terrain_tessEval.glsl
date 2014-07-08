@@ -40,7 +40,7 @@ vec3 computeNormal(vec2 co){
     float dX = tr + 2 * r + br - tl - 2 * l - bl;
     float dY = bl + 2 * b + br - tl - 2 * t - tr;
     
-    vec3 normal = vec3(dX, dY, 0.08); //1.0f / 10 (1/strength) -> precompute
+    vec3 normal = vec3(dX, dY, 0.12); //1.0f / 10 (1/strength) -> precompute
     
     return normalize(normal);
 }
@@ -68,8 +68,9 @@ void main(){
     teVertexNormal = normalModelToCameraMatrix * computeNormal(teUvPosition.xy);
     
     //Compute vertex colours by mapping vertex z to colorMap
-    teDiffuseColor = texture(testColorMap,heightMapZ-0.45);
+    teDiffuseColor = texture(testColorMap,heightMapZ-0.56);
     //teDiffuseColor = texture(normalMapA, teUvPosition);
+    //teDiffuseColor = vec4(0.5, 0, 0, 0);
     
     //Transform position to camera coordinates
     vec4 tempCamPosition = modelToCameraMatrix * vec4(tePosition, 1.0);

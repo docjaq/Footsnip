@@ -41,13 +41,7 @@ void main()
 	
 	vec3 surfaceNormal = gVertexNormal;
     
-    //vec3 compareColor = vec3(0.90);
-    //float colorAverage = (gDiffuseColor.x+gDiffuseColor.y+gDiffuseColor.z)/3;
-    //if(all(lessThanEqual(gDiffuseColor.xyz, compareColor)))
-        surfaceNormal+= (2*(texture(normalMapA, gUvPosition.xy).xyz)-1);
-    //else
-    //    surfaceNormal+= (2*(texture(normalMapA, gUvPosition).xyz)-1)*(1-pow(colorAverage, 2));
-    
+    surfaceNormal+= (2*(texture(normalMapA, gUvPosition.xy).xyz)-1);
     surfaceNormal = normalize(surfaceNormal);
     
 	float cosAngIncidence = dot(surfaceNormal, lightDir);

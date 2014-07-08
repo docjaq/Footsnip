@@ -38,7 +38,10 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 	private int normalMapATexUnit = 2;
 
 	// Binding of texture as sampler
-	private int sampler;
+	private int heightmapTextureSampler;
+
+	// Binding of texture as sampler
+	private int colormapTextureSampler;
 
 	// Tessellation Control shader
 	private int tessLevelInnerUniform;
@@ -76,7 +79,8 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		setupSamplerUBO();
 
 		// Create sampler object for use when binding textures at runtime
-		bindSamplerUnit();
+		setupHeightmapSampler();
+		setupColormapSampler();
 	}
 
 	@Override
@@ -111,25 +115,39 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 
 	// This actually stops the interpolation of values, and means that you get
 	// step functions rather than smooth values when sampling the heightmap
-	public void bindSamplerUnit() {
+	public void setupHeightmapSampler() {
 		// Not sure whether this needs to happen after the OpenGL texture unit
 		// has been created
-		sampler = GL33.glGenSamplers();
-		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+		heightmapTextureSampler = GL33.glGenSamplers();
+		GL33.glSamplerParameteri(heightmapTextureSampler, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+		GL33.glSamplerParameteri(heightmapTextureSampler, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
 
 		// This clamps the range of the sampler access. If enabled, it will be
 		// strictly more accurate, though will result in gaps
-		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-		GL33.glSamplerParameteri(sampler, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+		GL33.glSamplerParameteri(heightmapTextureSampler, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+		GL33.glSamplerParameteri(heightmapTextureSampler, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+	}
+
+	public void setupColormapSampler() {
+		// Not sure whether this needs to happen after the OpenGL texture unit
+		// has been created
+		colormapTextureSampler = GL33.glGenSamplers();
+		GL33.glSamplerParameteri(colormapTextureSampler, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+		GL33.glSamplerParameteri(colormapTextureSampler, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+
+		// This clamps the range of the sampler access. If enabled, it will be
+		// strictly more accurate, though will result in gaps
+		GL33.glSamplerParameteri(colormapTextureSampler, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+		GL33.glSamplerParameteri(colormapTextureSampler, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
 	}
 
 	public void bindTextures() {
+		GL33.glBindSampler(heightmapTexUnit, heightmapTextureSampler);
 		GL13.glActiveTexture(GL13.GL_TEXTURE0 + heightmapTexUnit);
-		GL33.glBindSampler(heightmapTexUnit, sampler);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, heightmapLocation);
 		// GL20.glUniform1i(heightMapUniform, heightmapTexUnit);// May be wrong
 
+		// GL33.glBindSampler(colorMapTexUnit, colormapTextureSampler);
 		GL13.glActiveTexture(GL13.GL_TEXTURE0 + colorMapTexUnit);
 		GL11.glBindTexture(GL11.GL_TEXTURE_1D, colorMapLocation);
 		// GL20.glUniform1i(colorMapUniform, colorMapTexUnit);
