@@ -71,7 +71,7 @@ public class Renderer_4_0 extends RendererThread {
 
 	private final String NORMALMAP_A_LOCATION = "resources/normalmaps/Terrain0.png";
 
-	private final String NORMALMAP_WATER_LOCATION = "resources/normalmaps/Water0.png";
+	private final String NORMALMAP_WATER_LOCATION = "resources/normalmaps/Noise2.png";
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
