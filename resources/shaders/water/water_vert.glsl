@@ -24,6 +24,9 @@ uniform float speed[8];
 uniform vec2 direction[8];
 const float pi = 3.14159;
 
+//Tile specific
+uniform vec2 tileIndex;
+
 uniform Projection
 {
 	mat4 cameraToClipMatrix;
@@ -71,6 +74,7 @@ vec3 waveNormal(float x, float y) {
 }
 
 void main(){
+
     
     //Compute texture coords
     uvPosition = vec2(position);
@@ -78,18 +82,19 @@ void main(){
     uvPosition.y +=0.5;
     
     vec4 adjustedPosition = vec4(position.x, position.y, position.z, 1);
-    vec3 adjustedNormal = vec3(normal.xyz);
+    adjustedPosition.xy*=3.0;
+    //vec3 adjustedNormal = vec3(normal.xyz);
     
     //Wave stuff
-    adjustedPosition.z = waterHeight + waveHeight(adjustedPosition.x, adjustedPosition.y);
-    adjustedNormal = waveNormal(adjustedPosition.x, adjustedPosition.y);
+    adjustedPosition.z = waterHeight + waveHeight(adjustedPosition.x+tileIndex.x, adjustedPosition.y+tileIndex.y);
+    vec3 adjustedNormal = waveNormal(adjustedPosition.x+tileIndex.x, adjustedPosition.y+tileIndex.y);
     float someVariable = waterHeight;
     
 	vec4 tempCamPosition = modelToCameraMatrix * adjustedPosition;
 	gl_Position = cameraToClipMatrix * tempCamPosition;
 	
 	vertexNormal = normalize(normalModelToCameraMatrix * adjustedNormal);
-	//diffuseColor = vec4(0.07686274509802, 0.46392156862734, 0.55176470588222, 0.35);
+	diffuseColor = vec4(0.07686274509802, 0.46392156862734, 0.55176470588222, 0.35);
     diffuseColor = vec4(0.7, 0.7, 0.8, 1);
 	cameraSpacePosition = vec3(tempCamPosition);
     

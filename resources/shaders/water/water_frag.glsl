@@ -16,6 +16,9 @@ uniform float lightAttenuation;
 const vec4 specularColor = vec4(0.25, 0.25, 0.65, 1.0);
 uniform float shininessFactor;
 
+//Tile specific
+uniform vec2 tileIndex;
+
 uniform samplerCube cubeMap;
 
 uniform sampler2D normalMap;
@@ -75,8 +78,9 @@ void main()
     transformedUvPosition*=uvRotation;
     
     //Add the texture to the normal, whilst also moving the texture in the given direction
-	surfaceNormal+= (2*(texture(normalMap, transformedUvPosition.xy+0.5+time).xyz)-1)*0.75;
-    surfaceNormal = normalize(surfaceNormal);
+	//surfaceNormal+= (2*(texture(normalMap, transformedUvPosition.xy+0.5+time).xyz)-1)*0.75;
+	//surfaceNormal+= (2*(texture(normalMap, transformedUvPosition.xy+0.5).xyz)-1)*0.75;
+    //surfaceNormal = normalize(surfaceNormal);
     
     
 	float cosAngIncidence = dot(surfaceNormal, lightDir);

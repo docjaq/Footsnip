@@ -66,10 +66,10 @@ public class PolygonHeightmapTileFactory {
 		// System.out.print((i + 1) * 0.2f + " ");
 		// }
 
-		System.out.println();
+		// System.out.println();
 
 		// adjustHeightmapToNeighbours(tile, heightmap);
-		System.out.println("Heightmap in PolygonHeightmapTileFactory");
+		// System.out.println("Heightmap in PolygonHeightmapTileFactory");
 		// FloatBuffer buf = generateNormalMap(heightmap);
 
 		FloatBuffer colorMapBuffer = generateColorMap();
@@ -123,7 +123,7 @@ public class PolygonHeightmapTileFactory {
 
 	private void generatePlanarMesh() {
 
-		int localTileComplexity = 128;
+		int localTileComplexity = 150;
 
 		float xInc = AbstractTile.SIZE / (float) (localTileComplexity - 1);
 		float yInc = AbstractTile.SIZE / (float) (localTileComplexity - 1);

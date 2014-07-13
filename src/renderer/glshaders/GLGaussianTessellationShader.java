@@ -152,6 +152,7 @@ public class GLGaussianTessellationShader extends GLGaussianShader {
 		GL11.glBindTexture(GL11.GL_TEXTURE_1D, colorMapLocation);
 		// GL20.glUniform1i(colorMapUniform, colorMapTexUnit);
 
+		// GL33.glBindSampler(heightmapTexUnit, heightmapTextureSampler);
 		GL13.glActiveTexture(GL13.GL_TEXTURE0 + normalMapATexUnit);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalMapALocation);
 	}

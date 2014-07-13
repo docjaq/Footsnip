@@ -70,7 +70,6 @@ void main(){
     //Compute vertex colours by mapping vertex z to colorMap
     teDiffuseColor = texture(testColorMap,heightMapZ-0.56);
     //teDiffuseColor = texture(normalMapA, teUvPosition);
-    //teDiffuseColor = vec4(0.5, 0, 0, 0);
     
     //Transform position to camera coordinates
     vec4 tempCamPosition = modelToCameraMatrix * vec4(tePosition, 1.0);

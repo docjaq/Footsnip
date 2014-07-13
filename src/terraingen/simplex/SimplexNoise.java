@@ -66,8 +66,9 @@ public class SimplexNoise {
 		int xEnd = xStart + offsetScale;
 		int yEnd = yStart + offsetScale;
 
-		System.err.println("x = " + xOffset + "," + "y = " + yOffset);
-		System.err.println("x(" + xStart + "," + xEnd + ") " + "y(" + yStart + "," + yEnd + ")");
+		// System.err.println("x = " + xOffset + "," + "y = " + yOffset);
+		// System.err.println("x(" + xStart + "," + xEnd + ") " + "y(" + yStart
+		// + "," + yEnd + ")");
 
 		if (xOffset <= 0) {
 

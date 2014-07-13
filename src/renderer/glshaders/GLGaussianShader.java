@@ -56,7 +56,7 @@ public class GLGaussianShader extends GLShader {
 
 		// All for fragment shader
 		glUniform4f(lightIntensityUniform, 1.8f, 1.8f, 1.8f, 1);
-		glUniform4f(ambientIntensityUniform, 0.01f, 0.01f, 0.01f, 1);
+		glUniform4f(ambientIntensityUniform, 0.1f, 0.1f, 0.1f, 1);
 		glUniform3(cameraSpaceLightPositionUniform, lightPosCameraSpace.toBuffer());
 		glUniform1f(lightAttenuationUniform, lightAttenuation);
 		glUniform1f(shininessFactorUniform, materialParams.getSpecularValue());

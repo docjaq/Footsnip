@@ -1,6 +1,7 @@
 package renderer.glshaders;
 
 import static org.lwjgl.opengl.GL20.glUniform1f;
+import static org.lwjgl.opengl.GL20.glUniform2f;
 import static org.lwjgl.opengl.GL20.glUniform3;
 import static org.lwjgl.opengl.GL20.glUniform4f;
 
@@ -45,6 +46,9 @@ public class GLWaterShader extends GLShader {
 	protected int directionUniform;
 	private int averageWaveDirectionUniform;
 
+	// Tile specific
+	protected int tileIndexUniform;
+
 	// Textures
 	private CubeMap cubeMap;
 	private int cubeMapUniform;
@@ -61,9 +65,12 @@ public class GLWaterShader extends GLShader {
 		super(projectionBlockIndex);
 		this.cubeMap = cubeMap;
 		this.normalMap = normalMap;
+
+		tileIndex = new float[2];
 	}
 
-	float time = 0;
+	private static float time = 0;
+	private float[] tileIndex;
 
 	// Bind the variables here
 	@Override
@@ -88,6 +95,9 @@ public class GLWaterShader extends GLShader {
 		wavelengthUniform = GL20.glGetUniformLocation(programID, "wavelength");
 		speedUniform = GL20.glGetUniformLocation(programID, "speed");
 		directionUniform = GL20.glGetUniformLocation(programID, "direction");
+
+		// Tile Index
+		tileIndexUniform = GL20.glGetUniformLocation(programID, "tileIndex");
 
 		// Frag shader specific
 		cubeMapUniform = GL20.glGetUniformLocation(programID, "cuveMap");
@@ -137,8 +147,12 @@ public class GLWaterShader extends GLShader {
 
 	@Override
 	public void copyShaderSpecificUniformsToShaderRuntime() {
-		time += 0.0000008; // 0.000008
+		time += 0.000008; // 0.000008
 		glUniform1f(timeUniform, time);
+
+		System.out.println("TileIndexForShader, " + tileIndex[0] + "," + tileIndex[1]);
+
+		glUniform2f(tileIndexUniform, tileIndex[0], tileIndex[1]);
 	}
 
 	@Override
@@ -156,12 +170,12 @@ public class GLWaterShader extends GLShader {
 		glUniform1f(waterHeightUniform, -0.39f);
 
 		float originalAngle = (float) (Math.random() * Math.PI * 2);
+		// 0.004f / (i + 1)
+		// (float) (0.055 * Math.PI / (float) (i + 1))
+		// 1.0f + 2 * i;
 		for (int i = 0; i < numberOfWaves; i++) {
-			// 0.004f / (i + 1)
-			amplitude[i] = 0.008f / (i + 1); // 0.004
-			// (float) (0.055 * Math.PI / (float) (i + 1))
-			wavelength[i] = (float) (0.06 * Math.PI / (float) (i + 1)); // 0.055
-			// 1.0f + 2 * i;
+			amplitude[i] = 0.008f / (i + 1);
+			wavelength[i] = (float) (0.06 * Math.PI / (float) (i + 1));
 			speed[i] = 1.0f + 2 * i;
 
 			// 2f rather than Math.random()
@@ -216,5 +230,10 @@ public class GLWaterShader extends GLShader {
 
 	public Texture2D getNormalMap() {
 		return normalMap;
+	}
+
+	public void setTileIndex(float x, float y) {
+		tileIndex[0] = x;
+		tileIndex[1] = y;
 	}
 }

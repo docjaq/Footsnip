@@ -14,6 +14,7 @@ import renderer.GLPosition;
 import renderer.GLUtilityMethods;
 import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
+import renderer.glshaders.GLWaterShader;
 import assets.entities.Entity;
 import assets.entities.Player;
 import assets.world.AbstractTile;
@@ -91,6 +92,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileBottomRight(player.getCurrentTile()));
 		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileTopLeft(player.getCurrentTile()));
 		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileBottomLeft(player.getCurrentTile()));
+
 	}
 
 	@Override
@@ -98,15 +100,22 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 		drawSingleTileWater(shader, objectPole, modelMatrix, player.getCurrentTile());
 
-		drawSingleTileWater(shader, objectPole, modelMatrix, getTileTop(player.getCurrentTile()));
-		drawSingleTileWater(shader, objectPole, modelMatrix, getTileRight(player.getCurrentTile()));
-		drawSingleTileWater(shader, objectPole, modelMatrix, getTileBottom(player.getCurrentTile()));
-		drawSingleTileWater(shader, objectPole, modelMatrix, getTileLeft(player.getCurrentTile()));
-
-		drawSingleTileWater(shader, objectPole, modelMatrix, getTileTopRight(player.getCurrentTile()));
-		drawSingleTileWater(shader, objectPole, modelMatrix, getTileBottomRight(player.getCurrentTile()));
-		drawSingleTileWater(shader, objectPole, modelMatrix, getTileTopLeft(player.getCurrentTile()));
-		drawSingleTileWater(shader, objectPole, modelMatrix, getTileBottomLeft(player.getCurrentTile()));
+		/*
+		 * drawSingleTileWater(shader, objectPole, modelMatrix,
+		 * getTileTop(player.getCurrentTile())); drawSingleTileWater(shader,
+		 * objectPole, modelMatrix, getTileRight(player.getCurrentTile()));
+		 * drawSingleTileWater(shader, objectPole, modelMatrix,
+		 * getTileBottom(player.getCurrentTile())); drawSingleTileWater(shader,
+		 * objectPole, modelMatrix, getTileLeft(player.getCurrentTile()));
+		 * 
+		 * drawSingleTileWater(shader, objectPole, modelMatrix,
+		 * getTileTopRight(player.getCurrentTile()));
+		 * drawSingleTileWater(shader, objectPole, modelMatrix,
+		 * getTileBottomRight(player.getCurrentTile()));
+		 * drawSingleTileWater(shader, objectPole, modelMatrix,
+		 * getTileTopLeft(player.getCurrentTile())); drawSingleTileWater(shader,
+		 * objectPole, modelMatrix, getTileBottomLeft(player.getCurrentTile()));
+		 */
 	}
 
 	@Override
@@ -185,7 +194,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("Tile hasn't been created yet! - This shouldn't really be happening!");
+			// System.out.println("Tile hasn't been created yet! - This shouldn't really be happening!");
 		}
 	}
 
@@ -196,6 +205,9 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 				try {
 					modelMatrix.pushMatrix();
 					{
+						if (shader instanceof GLWaterShader) {
+							((GLWaterShader) shader).setTileIndex(tile.getKey().x, tile.getKey().y);
+						}
 						modelMatrix.getTop().mult(objectPole.calcMatrix());
 						tile.getModel().draw(shader, modelMatrix, tile.getPosition());
 					}
@@ -206,7 +218,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 				}
 			}
 		} else {
-			System.out.println("Tile hasn't been created yet! - This shouldn't really be happening!");
+			// System.out.println("Tile hasn't been created yet! - This shouldn't really be happening!");
 		}
 	}
 
