@@ -32,6 +32,10 @@ public class PolygonHeightmapTileFactory {
 
 	private SimplexNoise simplexNoise;
 
+	// TODO: As this is only created once, should really only set it once in the
+	// shader...
+	private FloatBuffer colorMapBuffer;
+
 	public PolygonHeightmapTileFactory(int tileComplexity, TileDataStructure2D tileDataStructure) {
 		this.tileComplexity = tileComplexity;
 		this.tileDataStructure = tileDataStructure;
@@ -46,6 +50,9 @@ public class PolygonHeightmapTileFactory {
 		simplexNoise = new SimplexNoise(320, 0.5, 5000);
 
 		model = new GLMesh(this.factoryTriangles, this.factoryVertices);
+
+		colorMapBuffer = generateColorMap();
+
 	}
 
 	public AbstractTile create(DataStructureKey2D key, GLPosition position) {
@@ -72,7 +79,7 @@ public class PolygonHeightmapTileFactory {
 		// System.out.println("Heightmap in PolygonHeightmapTileFactory");
 		// FloatBuffer buf = generateNormalMap(heightmap);
 
-		FloatBuffer colorMapBuffer = generateColorMap();
+		// FloatBuffer colorMapBuffer = generateColorMap();
 
 		if (PolygonHeightmapTile.class.isInstance(tile)) {
 			PolygonHeightmapTile polygonTile = ((PolygonHeightmapTile) tile);
@@ -92,7 +99,7 @@ public class PolygonHeightmapTileFactory {
 
 			// Water stuff
 			polygonTile.setWater((Math.random() < WATER_CHANCE) ? true : false);
-			polygonTile.setWaterHeight((float) ((Math.random() * 0.05 - 0.025) + 0.45));
+			polygonTile.setWaterHeight((float) ((0.05 - 0.025) + 0.45));
 		}
 
 		return tile;
@@ -223,7 +230,9 @@ public class PolygonHeightmapTileFactory {
 			currentFraction += Math.random() < 0.5 ? -Math.random() * 0.01f : Math.random() * 0.01f;
 
 			// Probably pre-compute the buffer and just adjust it
-			if (currentFraction < 0.37) {
+			if (currentFraction < 0.23) {
+				color = new float[] { 0.3f, 0.294117f, 0.1686274509802f, 1 };
+			} else if (currentFraction < 0.37) {
 				color = new float[] { 0.6f, 0.594117f, 0.4686274509802f, 1 };
 			} else if (currentFraction < 0.42) {
 				color = new float[] { 1, 0.894117f, 0.7686274509802f, 1 };

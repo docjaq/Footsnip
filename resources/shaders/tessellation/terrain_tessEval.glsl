@@ -61,15 +61,15 @@ void main(){
     //Adjust position z according to heigtmap and scale
     //Invert texture storage scale from earlier to make sure value can be +/-
     float heightMapZ = (texture(heightMap, teUvPosition.xy).r*2-1);
-    tePosition.z = heightMapZ-0.7+.3;
+    tePosition.z = heightMapZ;//-0.7+.3;
     teUvPosition.z = tePosition.z;
 
     //Compute normal and transform to camera coordinates
     teVertexNormal = normalModelToCameraMatrix * computeNormal(teUvPosition.xy);
     
     //Compute vertex colours by mapping vertex z to colorMap
-    teDiffuseColor = texture(testColorMap,heightMapZ-0.56);
-    //teDiffuseColor = texture(normalMapA, teUvPosition);
+    teDiffuseColor = texture(testColorMap,tePosition.z);
+    //teDiffuseColor += texture(heightMap, teUvPosition.xy);
     
     //Transform position to camera coordinates
     vec4 tempCamPosition = modelToCameraMatrix * vec4(tePosition, 1.0);

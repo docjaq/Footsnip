@@ -93,7 +93,9 @@ public class SimplexNoise {
 			for (int j = 0; j < resolution; j++) {
 				int x = (int) (xStart + i * ((xEnd - xStart) / (double) (resolution)));
 				int y = (int) (yStart + j * ((yEnd - yStart) / (double) (resolution)));
-				result[i][j] = (float) getNoise(x, y) * 0.7f + 0.1f;
+				result[i][j] = ((float) getNoise(x, y) * 0.7f - 0.5f);// - 0.7f
+																		// +
+																		// 0.3f;
 			}
 		}
 		// if (yOffset == 0 && xOffset >= 0)

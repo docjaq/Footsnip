@@ -167,7 +167,7 @@ public class GLWaterShader extends GLShader {
 		Vector2 averageWaveDirection = new Vector2();
 
 		GL20.glUniform1i(numWavesUniform, numberOfWaves);
-		glUniform1f(waterHeightUniform, -0.39f);
+		glUniform1f(waterHeightUniform, -0.6f);
 
 		float originalAngle = (float) (Math.random() * Math.PI * 2);
 		// 0.004f / (i + 1)
