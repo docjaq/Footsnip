@@ -79,7 +79,7 @@ void main()
     
     //Add the texture to the normal, whilst also moving the texture in the given direction
 	//surfaceNormal+= (2*(texture(normalMap, transformedUvPosition.xy/3.0+0.5+time).xyz)-1)*0.15;
-	surfaceNormal+= (2*(texture(normalMap, transformedUvPosition.xy+0.5).xyz)-1)*0.15;
+	surfaceNormal+= (2*(texture(normalMap, transformedUvPosition.xy+0.5).xyz)-1)*0.45;
     //surfaceNormal = normalize(surfaceNormal);
     
     

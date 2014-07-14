@@ -69,7 +69,7 @@ public class Renderer_4_0 extends RendererThread {
 			"resources/cubemaps/Maskonaive/negy.png", "resources/cubemaps/Maskonaive/posy.png", "resources/cubemaps/Maskonaive/posz.png",
 			"resources/cubemaps/Maskonaive/negz.png" }; // x, y, down, up
 
-	private final String NORMALMAP_A_LOCATION = "resources/normalmaps/Terrain0.png";
+	private final String NORMALMAP_A_LOCATION = "resources/normalmaps/Terrain6.png";
 
 	private final String NORMALMAP_WATER_LOCATION = "resources/normalmaps/Noise2.png";
 

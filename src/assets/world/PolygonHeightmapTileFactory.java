@@ -230,8 +230,8 @@ public class PolygonHeightmapTileFactory {
 			currentFraction += Math.random() < 0.5 ? -Math.random() * 0.01f : Math.random() * 0.01f;
 
 			// Probably pre-compute the buffer and just adjust it
-			if (currentFraction < 0.23) {
-				color = new float[] { 0.3f, 0.294117f, 0.1686274509802f, 1 };
+			if (currentFraction < 0.3) {
+				color = new float[] { 0.2f, 0.294117f, 0.3286274509802f, 1 };
 			} else if (currentFraction < 0.37) {
 				color = new float[] { 0.6f, 0.594117f, 0.4686274509802f, 1 };
 			} else if (currentFraction < 0.42) {

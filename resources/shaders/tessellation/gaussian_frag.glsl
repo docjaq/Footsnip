@@ -41,7 +41,7 @@ void main()
 	
 	vec3 surfaceNormal = gVertexNormal;
     
-    surfaceNormal+= (2*(texture(normalMapA, gUvPosition.xy).xyz)-1);
+    surfaceNormal+= (2*(texture(normalMapA, gUvPosition.xy).xyz)-1)*0.3;
     surfaceNormal = normalize(surfaceNormal);
     
 	float cosAngIncidence = dot(surfaceNormal, lightDir);
