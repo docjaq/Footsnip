@@ -150,7 +150,8 @@ public class GLWaterShader extends GLShader {
 		time += 0.000008; // 0.000008
 		glUniform1f(timeUniform, time);
 
-		System.out.println("TileIndexForShader, " + tileIndex[0] + "," + tileIndex[1]);
+		// System.out.println("TileIndexForShader, " + tileIndex[0] + "," +
+		// tileIndex[1]);
 
 		glUniform2f(tileIndexUniform, tileIndex[0], tileIndex[1]);
 	}

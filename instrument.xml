@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="javabullet" default="instrument-classes" basedir=".">
+   <path id="instrument.classpath">
+       <pathelement path="bin"/>
+
+       <pathelement location="lib/jBullet/stack-alloc.jar/" />
+       <pathelement location="lib/jBullet/asm-all-3.1.jar" />
+       <pathelement location="lib/jBullet/vecmath.jar" />
+   	   <pathelement location="lib/jBullet/jbullet.jar" />
+   </path>
+
+   <target name="instrument-classes" >
+      <taskdef name="instrument-stack"
+         classname="cz.advel.stack.instrument.InstrumentationTask"
+         classpathref="instrument.classpath">
+      </taskdef>
+      <instrument-stack dest="bin" packageName="">
+         <fileset dir="bin" includes="**/*.class" />
+      </instrument-stack>
+   </target>
+ </project>

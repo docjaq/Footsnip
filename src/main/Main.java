@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import location.LocationThread;
+import physics.PhysicsThread;
 import renderer.Renderer_4_0;
 import thread.GameThread;
 import thread.ObservableThread;
@@ -19,11 +20,13 @@ import exception.RendererException;
 
 public class Main implements GameListener {
 
-	private List<GameThread> childThreads = new ArrayList<GameThread>(4);
+	private List<GameThread> childThreads = new ArrayList<GameThread>(5);
 
 	private long startMillis = System.currentTimeMillis();
 
-	final ExecutorService executor = Executors.newFixedThreadPool(4);
+	// TODO: define this threadpool size AFTER the threads have been defined so
+	// we don't have to hardcode a value
+	final ExecutorService executor = Executors.newFixedThreadPool(5);
 
 	/*********************************
 	 * JAQ Levels should maybe be entities, as it would seemingly make
@@ -69,6 +72,10 @@ public class Main implements GameListener {
 				GameThread locationThread = new LocationThread(assContainer, 10, Main.this);
 				childThreads.add(locationThread);
 				executor.execute(locationThread);
+
+				GameThread physicsThread = new PhysicsThread(assContainer, 10, Main.this);
+				childThreads.add(physicsThread);
+				executor.execute(physicsThread);
 			}
 		});
 

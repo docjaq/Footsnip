@@ -10,5 +10,9 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/luaj-jse-3.0-beta2.jar"/>
+	<classpathentry kind="lib" path="lib/jBullet/jbullet.jar"/>
+	<classpathentry kind="lib" path="lib/jBullet/stack-alloc.jar"/>
+	<classpathentry kind="lib" path="lib/jBullet/asm-all-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/jBullet/vecmath.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

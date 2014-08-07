@@ -16,6 +16,8 @@ public abstract class RendererThread extends GameThread {
 		super(assContainer, -1, mainApplication);
 	}
 
+	// Override this method so the renderer always runs as fast as possible (now
+	// wait());
 	@Override
 	public void run() {
 		setup();
