@@ -7,12 +7,16 @@ import assets.AssetContainer;
 //TODO: Write this class
 public class PhysicsThread extends GameThread {
 
+	private PhysicsEngine engine;
+
 	public PhysicsThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
 		super(assContainer, threadDelay, mainApplication);
+
+		engine = new PhysicsEngine();
 	}
 
 	@Override
 	protected void gameLoop() {
-		System.out.println("Phyiscs thread");
+		engine.stepSimulation();
 	}
 }
