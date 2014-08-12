@@ -73,7 +73,7 @@ public class Main implements GameListener {
 				childThreads.add(locationThread);
 				executor.execute(locationThread);
 
-				GameThread physicsThread = new PhysicsThread(assContainer, 10, Main.this);
+				GameThread physicsThread = new PhysicsThread(assContainer, 0, Main.this);
 				childThreads.add(physicsThread);
 				executor.execute(physicsThread);
 			}

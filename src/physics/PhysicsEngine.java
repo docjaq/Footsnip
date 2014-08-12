@@ -1,9 +1,14 @@
 package physics;
 
+import java.util.List;
+
 import javax.vecmath.Vector3f;
 
+import math.types.Vector3;
+import assets.AssetContainer;
+import assets.entities.Monster;
+
 import com.bulletphysics.BulletGlobals;
-import com.bulletphysics.BulletStats;
 import com.bulletphysics.ContactAddedCallback;
 import com.bulletphysics.collision.broadphase.BroadphaseInterface;
 import com.bulletphysics.collision.broadphase.DbvtBroadphase;
@@ -37,11 +42,63 @@ public class PhysicsEngine {
 	private DefaultCollisionConfiguration collisionConfiguration;
 
 	private DynamicsWorld dynamicsWorld = null;
+	private AssetContainer assContainer;
 
 	protected Clock clock = new Clock();
 	private static float offset = 0f;
 
-	public PhysicsEngine() {
+	public void stepSimulation() {
+
+		float dt = getDeltaTimeMicroseconds() * 0.000001f;
+
+		long t0 = System.nanoTime();
+
+		offset += 0.01f;
+
+		dynamicsWorld.stepSimulation(dt);
+		dynamicsWorld.debugDrawWorld();
+
+		// System.out.println(BulletStats.gNumGjkChecks + "," +
+		// BulletStats.gNumDeepPenetrationChecks);
+
+		updateEntities();
+	}
+
+	private void updateEntities() {
+		final Transform m = new Transform();
+		// System.out.println("Num bodies = " +
+		// dynamicsWorld.getNumCollisionObjects());
+
+		int count = 0;
+
+		for (int i = 0; i < dynamicsWorld.getNumCollisionObjects(); i++) {
+
+			CollisionObject colObj = dynamicsWorld.getCollisionObjectArray().getQuick(i);
+
+			RigidBody body = RigidBody.upcast(colObj);
+
+			if (body != null && body.getMotionState() != null) {
+				DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
+				m.set(myMotionState.graphicsWorldTrans);
+			} else {
+				colObj.getWorldTransform(m);
+			}
+
+			// Update object position
+			if (body.getUserPointer() == assContainer.getMonsters().get(0)) {
+				// System.out.println(m.origin);
+				assContainer.getMonsters().get(0).getPosition().setModelPos(new Vector3(m.origin.x, m.origin.z, m.origin.y));
+			}
+
+		}
+
+		System.out.println(count);
+
+	}
+
+	public PhysicsEngine(AssetContainer assContainer) {
+
+		this.assContainer = assContainer;
 
 		System.out.println("Instantiating physics engine");
 
@@ -80,16 +137,21 @@ public class PhysicsEngine {
 		solver = new SequentialImpulseConstraintSolver();
 		dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 
+		float mass = 0f;
+		Transform initialTransform = new Transform();
 		// Create some CollisionShape objects. If they're the same type of
 		// object, just create one, and add it multiple times with different
 		// transforms etc to the dynamics world. Example shape:
-		CollisionShape colShape = new BoxShape(new Vector3f(1f, 1f, 1f));
-		float mass = 0f;
-		Transform initialTransform = new Transform();
-		initialTransform.setIdentity();
-		initialTransform.origin.set(2f, 10f, 1f);
-		RigidBody body = localCreateRigidBody(1f, initialTransform, colShape);
+		/*
+		 * CollisionShape colShape = new BoxShape(new Vector3f(1f, 1f, 1f));
+		 * float mass = 0f; Transform initialTransform = new Transform();
+		 * initialTransform.setIdentity(); initialTransform.origin.set(2f, 10f,
+		 * 1f); RigidBody body = localCreateRigidBody(1f, initialTransform,
+		 * colShape);
+		 */
 		// dynamicsWorld.addRigidBody(body);
+
+		addAsCubes(initialTransform, assContainer.getMonsters());
 
 		// Add the static terrain to the dynamicsWorld. Allow material
 		// callbacks? Friction etc
@@ -97,6 +159,22 @@ public class PhysicsEngine {
 		RigidBody staticBody = localCreateRigidBody(mass, initialTransform, groundShape);
 		staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.STATIC_OBJECT);
 		staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
+	}
+
+	private void addAsCubes(Transform transform, List<Monster> entities) {
+
+		int count = 0;
+		for (Monster e : entities) {
+			transform.setIdentity();
+			CollisionShape colShape = new BoxShape(new Vector3f(1f, 1f, 1f));
+
+			transform.origin.set(e.getPosition().modelPos.x(), e.getPosition().modelPos.y(), e.getPosition().modelPos.z());
+			RigidBody body = localCreateRigidBody(1f, transform, colShape);
+			body.setUserPointer(e);
+			// dynamicsWorld.addRigidBody(body);
+			count++;
+		}
+		System.out.println("Added " + count + " entities to Physics Engine");
 	}
 
 	public RigidBody localCreateRigidBody(float mass, Transform startTransform, CollisionShape shape) {
@@ -179,34 +257,6 @@ public class PhysicsEngine {
 			// side: return false if you don't calculate friction
 			return true;
 		}
-	}
-
-	public void stepSimulation() {
-
-		float dt = getDeltaTimeMicroseconds() * 0.000001f;
-
-		long t0 = System.nanoTime();
-
-		offset += 0.01f;
-
-		// setVertexPositions(waveheight, offset);
-
-		// JAVA NOTE: 2.70b1: replace with proper code
-		// trimeshShape.refitTree(null, null);
-
-		// clear all contact points involving mesh proxy. Note: this is a
-		// slow/unoptimized operation.
-		// dynamicsWorld.getBroadphase().getOverlappingPairCache().cleanProxyFromPairs(staticBody.getBroadphaseHandle(),
-		// getDynamicsWorld().getDispatcher());
-
-		// BulletStats.updateTime = (System.nanoTime() - t0) / 1000000;
-
-		dynamicsWorld.stepSimulation(dt);
-
-		// optional but useful: debug drawing
-		dynamicsWorld.debugDrawWorld();
-
-		System.out.println(BulletStats.gNumGjkChecks + "," + BulletStats.gNumDeepPenetrationChecks);
 	}
 
 	public float getDeltaTimeMicroseconds() {

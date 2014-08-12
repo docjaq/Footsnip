@@ -12,11 +12,12 @@ public class PhysicsThread extends GameThread {
 	public PhysicsThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
 		super(assContainer, threadDelay, mainApplication);
 
-		engine = new PhysicsEngine();
+		engine = new PhysicsEngine(assContainer);
 	}
 
 	@Override
 	protected void gameLoop() {
 		engine.stepSimulation();
 	}
+
 }

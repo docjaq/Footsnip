@@ -15,12 +15,10 @@ import assets.world.datastructures.TileDataStructure2D;
 public class AssetContainer {
 
 	private Player player;
-
 	private List<Monster> monsters;
-
 	private List<Projectile> projectiles;
-
 	private List<PolygonalScenery> polygonalSceneries;
+	private TileDataStructure2D tiles;
 
 	public void setProjectiles(List<Projectile> projectiles) {
 		this.projectiles = projectiles;
@@ -35,8 +33,6 @@ public class AssetContainer {
 	public GLProjectileFactory getProjectileFactory() {
 		return projectileFactory;
 	}
-
-	private TileDataStructure2D tiles;
 
 	public AssetContainer() {
 		monsters = new ArrayList<Monster>(0);

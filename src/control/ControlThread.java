@@ -4,11 +4,11 @@ import main.Main;
 
 import org.lwjgl.input.Keyboard;
 
-import camera.CameraUtils;
 import thread.GameThread;
 import assets.AssetContainer;
 import assets.entities.Monster;
 import assets.entities.Projectile;
+import camera.CameraUtils;
 
 /**
  * First stab at a thread for handling input for player.
@@ -88,8 +88,8 @@ public class ControlThread extends GameThread {
 
 		for (Monster m : assContainer.getMonsters()) {
 			if (m != null) {
-				m.rotate(timeDelta);
-				m.moveRandom();
+				// m.rotate(timeDelta);
+				// m.moveRandom();
 			}
 		}
 
