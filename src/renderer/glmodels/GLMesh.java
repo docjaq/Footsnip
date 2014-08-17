@@ -2,8 +2,9 @@ package renderer.glmodels;
 
 import static renderer.GLUtilityMethods.exitOnGLError;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.List;
 
 import org.lwjgl.BufferUtils;
@@ -17,10 +18,25 @@ import renderer.glprimitives.GLVertex;
 
 public class GLMesh extends GLModel {
 
+	public int numTriangles;
+	public ByteBuffer indexByteBuffer;
+	public int indexStride;
+
+	public int numVertices;
+	public ByteBuffer verticesByteBuffer;
+	public int vertexStride;
+
 	public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList) {
 		super();
 
-		FloatBuffer verticesFloatBuffer = BufferUtils.createFloatBuffer(vertexList.size() * GLVertex.stride);
+		numTriangles = triangleList.size();
+		indexStride = 3 * 4; // TODO: Guess
+
+		numVertices = vertexList.size();
+		vertexStride = GLVertex.stride;
+
+		verticesByteBuffer = BufferUtils.createByteBuffer(vertexList.size() * GLVertex.stride).order(ByteOrder.nativeOrder());
+		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
 		for (GLVertex v : vertexList) {
 			verticesFloatBuffer.put(v.getElements());
 		}
@@ -36,9 +52,13 @@ public class GLMesh extends GLModel {
 		}
 
 		indicesCount = indices.length;
-		IntBuffer indicesBuffer = BufferUtils.createIntBuffer(indicesCount);
-		indicesBuffer.put(indices);
-		indicesBuffer.flip();
+		indexByteBuffer = BufferUtils.createByteBuffer(indicesCount * 4).order(ByteOrder.nativeOrder());
+		// IntBuffer indicesBuffer = indexByteBuffer.asIntBuffer();
+		for (int i = 0; i < indices.length; i++) {
+			indexByteBuffer.putInt(indices[i]);
+		}
+
+		indexByteBuffer.flip();
 
 		// Create a new Vertex Array Object in memory and select it (bind)
 		vaoId = GL30.glGenVertexArrays();
@@ -63,7 +83,7 @@ public class GLMesh extends GLModel {
 		// Create a new VBO for the indices and select it (bind) - INDICES
 		vboiId = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId);
-		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indexByteBuffer, GL15.GL_STATIC_DRAW);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		exitOnGLError("Creating mesh");

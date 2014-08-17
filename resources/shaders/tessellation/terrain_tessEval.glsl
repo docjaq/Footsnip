@@ -61,7 +61,7 @@ void main(){
     //Adjust position z according to heigtmap and scale
     //Invert texture storage scale from earlier to make sure value can be +/-
     float heightMapZ = (texture(heightMap, teUvPosition.xy).r*2-1);
-    tePosition.z = heightMapZ;//-0.7+.3;
+    //tePosition.z =  heightMapZ;//-0.7+.3;
     teUvPosition.z = tePosition.z;
 
     //Compute normal and transform to camera coordinates

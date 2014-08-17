@@ -15,6 +15,8 @@ public interface TileDataStructure2D {
 
 	public void init(PolygonHeightmapTileFactory glTileFactory, AbstractTile tile);
 
+	public PolygonHeightmapTileFactory getGlTileFactory();
+
 	/** TODO: Consider removing this **/
 	public List<AbstractTile> getTilesAsList();
 

@@ -19,7 +19,7 @@ public class MonsterFactory {
 	public Monster create(Vector3 monsterPos, float rotationDelta) {
 
 		Vector3 monsterAngle = new Vector3(0, 0, 0);
-		float monsterScale = (float) (Math.random() * 2f);
+		float monsterScale = (float) (Math.random() * 0.5f);
 
 		/**
 		 * TODO: Currently the color is actually set per vertex of the mesh when

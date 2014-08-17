@@ -240,7 +240,7 @@ public class Renderer_4_0 extends RendererThread {
 		float tileScale = 1f;
 		GLPosition position = new GLPosition(tilePos, tileAngle, tileScale, 0);
 
-		PolygonHeightmapTileFactory glTileFactory = new PolygonHeightmapTileFactory(129, assContainer.getTileDataStructure());
+		PolygonHeightmapTileFactory glTileFactory = new PolygonHeightmapTileFactory(257, assContainer.getTileDataStructure());
 		AbstractTile initialTile = glTileFactory.create(null, position);
 
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
@@ -280,11 +280,10 @@ public class Renderer_4_0 extends RendererThread {
 
 		MonsterFactory monsterFactory = new MonsterFactory(monsterMesh);
 
-		float spread = 30;
-		for (int i = 0; i < 1; i++) {
-			// Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) *
-			// spread, (float) (Math.random() - 0.5f) * spread, 0);
-			Vector3 monsterPos = new Vector3(0, 1, 0);
+		float spread = 0.8f;
+		for (int i = 0; i < 100; i++) {
+			Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
+			// Vector3 monsterPos = new Vector3(0, 0.1f, 0);
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
 			assContainer.addMonster(monsterFactory.create(monsterPos, rotationDelta));
 		}

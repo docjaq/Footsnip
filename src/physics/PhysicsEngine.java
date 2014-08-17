@@ -1,12 +1,16 @@
 package physics;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.vecmath.Vector3f;
 
 import math.types.Vector3;
+import renderer.glmodels.GLMesh;
 import assets.AssetContainer;
 import assets.entities.Monster;
+import assets.world.AbstractTile;
 
 import com.bulletphysics.BulletGlobals;
 import com.bulletphysics.ContactAddedCallback;
@@ -17,9 +21,10 @@ import com.bulletphysics.collision.dispatch.CollisionFlags;
 import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
 import com.bulletphysics.collision.narrowphase.ManifoldPoint;
-import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.BvhTriangleMeshShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
+import com.bulletphysics.collision.shapes.IndexedMesh;
+import com.bulletphysics.collision.shapes.SphereShape;
 import com.bulletphysics.collision.shapes.TriangleIndexVertexArray;
 import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
 import com.bulletphysics.dynamics.DynamicsWorld;
@@ -46,6 +51,11 @@ public class PhysicsEngine {
 
 	protected Clock clock = new Clock();
 	private static float offset = 0f;
+
+	private TriangleIndexVertexArray terrainMeshArray;
+
+	// TODO: Change all of this from monster to entity
+	private Map<RigidBody, Monster> objectMap;
 
 	public void stepSimulation() {
 
@@ -80,25 +90,54 @@ public class PhysicsEngine {
 			if (body != null && body.getMotionState() != null) {
 				DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
 				m.set(myMotionState.graphicsWorldTrans);
+
 			} else {
 				colObj.getWorldTransform(m);
 			}
 
+			// System.out.println("Number of objects in map = " +
+			// objectMap.size());
+
 			// Update object position
-			if (body.getUserPointer() == assContainer.getMonsters().get(0)) {
-				// System.out.println(m.origin);
-				assContainer.getMonsters().get(0).getPosition().setModelPos(new Vector3(m.origin.x, m.origin.z, m.origin.y));
-			}
+			// if (body.getUserPointer() == assContainer.getMonsters().get(0)) {
+			// System.out.println(m.origin);
+			if (objectMap.containsKey(body))
+				objectMap.get(body).getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
+			// }
 
 		}
 
-		System.out.println(count);
+		// System.out.println(count);
 
+	}
+
+	private void addTerrainMesh(GLMesh mesh) {
+
+		/*
+		 * public int numTriangles; public ByteBuffer triangleIndexBase; public
+		 * int triangleIndexStride; public int numVertices; public ByteBuffer
+		 * vertexBase; public int vertexStride;
+		 */
+		IndexedMesh indexedMesh = new IndexedMesh();
+		indexedMesh.numTriangles = mesh.numTriangles;
+		indexedMesh.triangleIndexBase = mesh.indexByteBuffer;
+		indexedMesh.triangleIndexStride = mesh.indexStride;
+
+		indexedMesh.numVertices = mesh.numVertices;
+		indexedMesh.vertexBase = mesh.verticesByteBuffer;
+		indexedMesh.vertexStride = mesh.vertexStride;
+
+		terrainMeshArray.addIndexedMesh(indexedMesh);
 	}
 
 	public PhysicsEngine(AssetContainer assContainer) {
 
 		this.assContainer = assContainer;
+
+		terrainMeshArray = new TriangleIndexVertexArray();
+		for (AbstractTile tile : assContainer.getTileDataStructure().getTilesAsList()) {
+			addTerrainMesh((GLMesh) tile.getModel());
+		}
 
 		System.out.println("Instantiating physics engine");
 
@@ -108,14 +147,17 @@ public class PhysicsEngine {
 		// Init mesh
 		// Create TriangleIndexVertexArray object.
 		// Do I have to make one, or can I just implement an interface?
-		TestGeometryCreation testGeometry = new TestGeometryCreation();
-		TriangleIndexVertexArray indexVertexArrays = new TriangleIndexVertexArray(testGeometry.totalTriangles, testGeometry.gIndices,
-				testGeometry.indexStride, testGeometry.totalVerts, testGeometry.gVertices, testGeometry.vertStride);
+		// TestGeometryCreation testGeometry = new TestGeometryCreation();
+		// TriangleIndexVertexArray indexVertexArrays = new
+		// TriangleIndexVertexArray(testGeometry.totalTriangles,
+		// testGeometry.gIndices,
+		// testGeometry.indexStride, testGeometry.totalVerts,
+		// testGeometry.gVertices, testGeometry.vertStride);
 
 		// Look at what BvhTriangleMeshShape is. Maybe I can pass it something
 		// else, if it's implemented
 		boolean useQuantizedAabbCompression = true;
-		trimeshShape = new BvhTriangleMeshShape(indexVertexArrays, useQuantizedAabbCompression);
+		trimeshShape = new BvhTriangleMeshShape(terrainMeshArray, useQuantizedAabbCompression);
 		collisionShapes.add(trimeshShape);
 
 		// Store a reference to the terrain collision shape
@@ -137,6 +179,8 @@ public class PhysicsEngine {
 		solver = new SequentialImpulseConstraintSolver();
 		dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 
+		dynamicsWorld.setGravity(new Vector3f(0, 0, -1f));
+
 		float mass = 0f;
 		Transform initialTransform = new Transform();
 		// Create some CollisionShape objects. If they're the same type of
@@ -150,6 +194,8 @@ public class PhysicsEngine {
 		 * colShape);
 		 */
 		// dynamicsWorld.addRigidBody(body);
+
+		objectMap = new HashMap<RigidBody, Monster>();
 
 		addAsCubes(initialTransform, assContainer.getMonsters());
 
@@ -166,11 +212,15 @@ public class PhysicsEngine {
 		int count = 0;
 		for (Monster e : entities) {
 			transform.setIdentity();
-			CollisionShape colShape = new BoxShape(new Vector3f(1f, 1f, 1f));
+			// TODO: Radius hack as it seems too big
+			CollisionShape colShape = new SphereShape(e.getModel().getModelRadius() * 0.8f);
 
-			transform.origin.set(e.getPosition().modelPos.x(), e.getPosition().modelPos.y(), e.getPosition().modelPos.z());
+			transform.origin.set(e.getPosition().modelPos.x(), e.getPosition().modelPos.y(), e.getPosition().modelPos.z() + 0.2f);
 			RigidBody body = localCreateRigidBody(1f, transform, colShape);
 			body.setUserPointer(e);
+
+			objectMap.put(body, e);
+
 			// dynamicsWorld.addRigidBody(body);
 			count++;
 		}

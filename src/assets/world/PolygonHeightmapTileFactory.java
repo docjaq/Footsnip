@@ -49,9 +49,15 @@ public class PolygonHeightmapTileFactory {
 		// Random seed
 		simplexNoise = new SimplexNoise(320, 0.5, 5000);
 
+		adjustMeshToHeightmap(this.factoryVertices, simplexNoise.getSection(tileComplexity, 0, 0));
+
 		model = new GLMesh(this.factoryTriangles, this.factoryVertices);
 
 		colorMapBuffer = generateColorMap();
+
+		for (GLVertex v : this.factoryVertices) {
+			System.out.print(v.xyzw.z() + ",");
+		}
 
 	}
 
@@ -66,6 +72,7 @@ public class PolygonHeightmapTileFactory {
 			key = new DataStructureKey2D(0, 0);
 
 		float[][] heightmap = simplexNoise.getSection(tileComplexity, key.x, key.y);
+
 		// float[][] heightmap = new float[tileComplexity][tileComplexity];
 		// for (int i = 0; i < tileComplexity; i++) {
 		// heightmap[0][i] = (i + 1) * 0.2f;
@@ -103,6 +110,16 @@ public class PolygonHeightmapTileFactory {
 		}
 
 		return tile;
+	}
+
+	private void adjustMeshToHeightmap(List<GLVertex> vertices, float[][] heightmap) {
+		// float step = 1f / (float) heightmap.length;
+		int numCells = heightmap.length - 1;
+		for (GLVertex v : vertices) {
+			Vector4 pos = v.xyzw;
+			// System.out.print("(" + pos.x() + "," + pos.y() + "), ");
+			v.xyzw.z(heightmap[(int) ((pos.x() + 0.5f) * numCells)][(int) ((pos.y() + 0.5f) * numCells)]);
+		}
 	}
 
 	private FloatBuffer convertArrayToBuffer(float[][] array) {

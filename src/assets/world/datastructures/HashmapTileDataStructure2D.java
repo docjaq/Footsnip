@@ -81,17 +81,26 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		((GLGaussianTessellationShader) shader).setTessLevelOuter(1);
 		drawSingleTileTerrain(shader, objectPole, modelMatrix, player.getCurrentTile());
 
-		((GLGaussianTessellationShader) shader).setTessLevelInner(1);
-		((GLGaussianTessellationShader) shader).setTessLevelOuter(1);
-		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileTop(player.getCurrentTile()));
-		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileRight(player.getCurrentTile()));
-		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileBottom(player.getCurrentTile()));
-		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileLeft(player.getCurrentTile()));
-
-		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileTopRight(player.getCurrentTile()));
-		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileBottomRight(player.getCurrentTile()));
-		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileTopLeft(player.getCurrentTile()));
-		drawSingleTileTerrain(shader, objectPole, modelMatrix, getTileBottomLeft(player.getCurrentTile()));
+		/*
+		 * ((GLGaussianTessellationShader) shader).setTessLevelInner(1);
+		 * ((GLGaussianTessellationShader) shader).setTessLevelOuter(1);
+		 * drawSingleTileTerrain(shader, objectPole, modelMatrix,
+		 * getTileTop(player.getCurrentTile())); drawSingleTileTerrain(shader,
+		 * objectPole, modelMatrix, getTileRight(player.getCurrentTile()));
+		 * drawSingleTileTerrain(shader, objectPole, modelMatrix,
+		 * getTileBottom(player.getCurrentTile()));
+		 * drawSingleTileTerrain(shader, objectPole, modelMatrix,
+		 * getTileLeft(player.getCurrentTile()));
+		 * 
+		 * drawSingleTileTerrain(shader, objectPole, modelMatrix,
+		 * getTileTopRight(player.getCurrentTile()));
+		 * drawSingleTileTerrain(shader, objectPole, modelMatrix,
+		 * getTileBottomRight(player.getCurrentTile()));
+		 * drawSingleTileTerrain(shader, objectPole, modelMatrix,
+		 * getTileTopLeft(player.getCurrentTile()));
+		 * drawSingleTileTerrain(shader, objectPole, modelMatrix,
+		 * getTileBottomLeft(player.getCurrentTile()));
+		 */
 
 	}
 
@@ -367,6 +376,11 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	@Override
 	public Iterator<?> getIterator() {
 		return map.entrySet().iterator();
+	}
+
+	@Override
+	public PolygonHeightmapTileFactory getGlTileFactory() {
+		return glTileFactory;
 	}
 
 }
