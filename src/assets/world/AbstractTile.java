@@ -21,6 +21,8 @@ public abstract class AbstractTile implements Asset {
 
 	public static final float SIZE = 1.0f;
 
+	private boolean isActive;
+
 	public AbstractTile(DataStructureKey2D key, GLModel model, GLPosition position) {
 		this.key = key;
 		this.model = model;
@@ -65,5 +67,13 @@ public abstract class AbstractTile implements Asset {
 
 	public List<Entity> getContainedEntities() {
 		return containedEntities;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 }

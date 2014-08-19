@@ -180,6 +180,8 @@ public class Player extends Entity {
 				tile.getContainedEntities().add(this);
 				currentTile = tile;
 			}
+			// This method actually checks if the tiles already exist before
+			// population.
 			data.populateNeighbouringTiles(currentTile);
 			System.out.println(tile.getKey().x + "," + tile.getKey().y);
 		}

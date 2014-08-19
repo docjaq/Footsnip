@@ -63,30 +63,13 @@ public class PolygonHeightmapTileFactory {
 
 	public AbstractTile create(DataStructureKey2D key, GLPosition position) {
 
+		System.out.println("Creating new tile");
+
 		AbstractTile tile = new PolygonHeightmapTile(key, model, position);
-
-		// float[][] heightmap = new float[tileComplexity][tileComplexity];
-		// PlasmaFractal.create(heightmap);
-
 		if (key == null)
 			key = new DataStructureKey2D(0, 0);
 
 		float[][] heightmap = simplexNoise.getSection(tileComplexity, key.x, key.y);
-
-		// float[][] heightmap = new float[tileComplexity][tileComplexity];
-		// for (int i = 0; i < tileComplexity; i++) {
-		// heightmap[0][i] = (i + 1) * 0.2f;
-		// heightmap[tileComplexity - 1][i] = (i + 1) * 0.2f;
-		// System.out.print((i + 1) * 0.2f + " ");
-		// }
-
-		// System.out.println();
-
-		// adjustHeightmapToNeighbours(tile, heightmap);
-		// System.out.println("Heightmap in PolygonHeightmapTileFactory");
-		// FloatBuffer buf = generateNormalMap(heightmap);
-
-		// FloatBuffer colorMapBuffer = generateColorMap();
 
 		if (PolygonHeightmapTile.class.isInstance(tile)) {
 			PolygonHeightmapTile polygonTile = ((PolygonHeightmapTile) tile);
@@ -100,9 +83,6 @@ public class PolygonHeightmapTileFactory {
 
 			polygonTile.setColorMap(colorMapBuffer);
 			polygonTile.setColorMapSize(COLOR_MAP_SIZE);
-
-			// polygonTile.setNormalmapBuf(buf);
-			// polygonTile.setNormalmapSize(tileComplexity);
 
 			// Water stuff
 			polygonTile.setWater((Math.random() < WATER_CHANCE) ? true : false);
