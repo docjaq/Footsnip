@@ -29,6 +29,8 @@ public abstract class AbstractTile implements Asset {
 		this.position = position;
 
 		// Best fix for my shit code, ever.
+		// Solves some concurrency issue. When rendering. Look into why; I
+		// forget
 		containedEntities = new CopyOnWriteArrayList<Entity>();
 	}
 

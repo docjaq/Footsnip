@@ -3,7 +3,6 @@ package assets.world.datastructures;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import math.types.MatrixStack;
@@ -30,8 +29,9 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	 * populateNeighbouringTiles() to play nicely. Ultimately, rendering should
 	 * probably take precedence, but this seemed like a decent solution for now
 	 */
-	private ConcurrentHashMap<DataStructureKey2D, AbstractTile> activeMap;
-	private ConcurrentHashMap<DataStructureKey2D, AbstractTile> inactiveMap;
+	private ConcurrentHashMap<DataStructureKey2D, AbstractTile> allMap;
+	private List<AbstractTile> currentTileList;
+	private List<AbstractTile> tilesJustRemoved;
 
 	// private List<AbstractTile> list; // Backed by map
 	private static final DataStructureKey2D INITIAL_KEY = new DataStructureKey2D(0, 0);
@@ -39,25 +39,28 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	private PolygonHeightmapTileFactory glTileFactory;
 
 	public HashmapTileDataStructure2D() {
-		activeMap = new ConcurrentHashMap<DataStructureKey2D, AbstractTile>();
-		inactiveMap = new ConcurrentHashMap<DataStructureKey2D, AbstractTile>();
+		allMap = new ConcurrentHashMap<DataStructureKey2D, AbstractTile>();
+		currentTileList = new ArrayList<AbstractTile>(9);
+		tilesJustRemoved = new ArrayList<AbstractTile>(9);
 	}
 
 	public void init(PolygonHeightmapTileFactory glTileFactory, AbstractTile initialTile) {
 		this.glTileFactory = glTileFactory;
 		this.initialTile = initialTile;
 		initialTile.setKey(INITIAL_KEY);
-		activeMap.put(INITIAL_KEY, initialTile);
+		allMap.put(INITIAL_KEY, initialTile);
 	}
 
 	public List<AbstractTile> getTilesAsList() {
-		return new ArrayList<AbstractTile>(activeMap.values());
+		ArrayList<AbstractTile> list = new ArrayList<AbstractTile>(allMap.values());
+		// list.addAll(inactiveMap.values());
+		return list;
 	}
 
 	// Old draw method to render all scenes
 	public void drawAlt(GLShader shader, ObjectPole objectPole, MatrixStack modelMatrix) {
 		int renderCount = 0;
-		for (AbstractTile t : activeMap.values()) {
+		for (AbstractTile t : allMap.values()) {
 			// if (t.getModel() == null) {
 			// t.createModel(glTileFactory);
 			// }
@@ -74,7 +77,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Rendering = " + renderCount + " of " + activeMap.size() + " tiles");
+		System.out.println("Rendering = " + renderCount + " of " + allMap.size() + " tiles");
 
 	}
 
@@ -221,9 +224,27 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	@Override
 	public void populateNeighbouringTiles(AbstractTile tile) {
 
-		for (Entry<DataStructureKey2D, AbstractTile> e : activeMap.entrySet()) {
-			e.getValue().setActive(false);
-		}
+		// DataStructureKey2D debugKey = new DataStructureKey2D(0, 0);
+
+		/*
+		 * if (activeMap.containsKey(INITIAL_KEY)) {
+		 * System.out.println("START: Root tile has " +
+		 * activeMap.get(INITIAL_KEY).getContainedEntities().size() +
+		 * " entities (active)"); } else if
+		 * (currentMap.containsKey(INITIAL_KEY)) { System.out
+		 * .println("START: Root tile has " +
+		 * currentMap.get(INITIAL_KEY).getContainedEntities().size() +
+		 * " entities (inactive)"); } else {
+		 * System.out.println("START: Initial key not in any map"); }
+		 * 
+		 * for (Entry<DataStructureKey2D, AbstractTile> e :
+		 * activeMap.entrySet()) { e.getValue().setActive(false); }
+		 */
+		tile.setActive(true);
+
+		tilesJustRemoved.clear();
+		tilesJustRemoved.addAll(currentTileList);
+		currentTileList.clear();
 
 		DataStructureKey2D parentKey = tile.getKey();
 		addTile(parentKey, 0, 1, tile);
@@ -234,18 +255,25 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		addTile(parentKey, -1, -1, tile);
 		addTile(parentKey, -1, 0, tile);
 		addTile(parentKey, -1, +1, tile);
+		currentTileList.add(tile);
 
-		tile.setActive(true);
+		tilesJustRemoved.removeAll(currentTileList);
 
-		for (Entry<DataStructureKey2D, AbstractTile> e : activeMap.entrySet()) {
-			if (!e.getValue().isActive()) {
-				// This is the problematic code. For some reason, moving this
-				// kills the reference to the entities :(
-				// inactiveMap.put(e.getKey(), e.getValue());
-				// activeMap.remove(e.getKey());
-				System.out.println("Setting tile as inactive");
-			}
-		}
+		System.out.println("Size of previous list = " + tilesJustRemoved.size());
+
+		// for (Entry<DataStructureKey2D, AbstractTile> e : allMap.entrySet()) {
+		// if (!e.getValue().isActive()) {
+		// This is the problematic code. For some reason, moving this
+		// kills the reference to the entities :(
+		// inactiveMap.put(e.getKey(), e.getValue());
+		// activeMap.remove(e.getKey());
+		// System.out.println("Setting tile as inactive");
+		// }
+		// }
+
+		// for (DataStructureKey2D e : activeMap.keySet()) {
+		// System.out.println("Key: " + e.x + "," + e.y);
+		// }
 
 		// Iterator<Map.Entry<DataStructureKey2D, AbstractTile>> iter =
 		// activeMap.entrySet().iterator();
@@ -257,11 +285,25 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		// }
 		// }
 
-		System.out.println("Number of active tiles = " + activeMap.size());
-		System.out.println("Number of inactive tiles = " + inactiveMap.size());
+		/*
+		 * System.out.println("Number of active tiles = " + activeMap.size());
+		 * System.out.println("Number of inactive tiles = " +
+		 * currentMap.size());
+		 * 
+		 * if (activeMap.containsKey(INITIAL_KEY)) {
+		 * System.out.println("FINISH: Root tile has " +
+		 * activeMap.get(INITIAL_KEY).getContainedEntities().size() +
+		 * " entities (active)"); } else if
+		 * (currentMap.containsKey(INITIAL_KEY)) {
+		 * System.out.println("FINISH: Root tile has " +
+		 * currentMap.get(INITIAL_KEY).getContainedEntities().size() +
+		 * " entities (inactive)"); } else {
+		 * System.out.println("FINISH: Initial key not in any map"); }
+		 */
+
 	}
 
-	private void addTile(DataStructureKey2D parentKey, int xAdjust, int yAdjust, AbstractTile parentTile) {
+	private AbstractTile addTile(DataStructureKey2D parentKey, int xAdjust, int yAdjust, AbstractTile parentTile) {
 
 		int adjustedX = parentKey.x + xAdjust;
 		int adjustedY = parentKey.y + yAdjust;
@@ -271,21 +313,18 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		DataStructureKey2D key = new DataStructureKey2D(adjustedX, adjustedY);
 
 		AbstractTile tile = null;
-		if (activeMap.containsKey(key)) {
-			// map.remove(key);
-			tile = activeMap.get(key);
-			System.out.println("Tile already active");
-		} else if (inactiveMap.containsKey(key)) {
-			tile = inactiveMap.get(key);
-			activeMap.put(key, tile);
-			inactiveMap.remove(key);
-			System.out.println("Setting tile as active");
+		if (allMap.containsKey(key)) {
+			tile = allMap.get(key);
 		} else {
 			tile = glTileFactory.create(key, position);
-			activeMap.put(key, tile);
+			allMap.put(key, tile);
 		}
-		System.out.println("Num entities: " + tile.getContainedEntities().size());
+
 		tile.setActive(true);
+
+		currentTileList.add(tile);
+
+		return tile;
 	}
 
 	@Override
@@ -309,7 +348,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	public AbstractTile getTileTop(AbstractTile tile) {
 		AbstractTile neighbourTile = null;
 		try {
-			neighbourTile = activeMap.get(new DataStructureKey2D(tile.getKey().x, tile.getKey().y + 1));
+			neighbourTile = allMap.get(new DataStructureKey2D(tile.getKey().x, tile.getKey().y + 1));
 		} catch (NullPointerException e) {
 		}
 		return neighbourTile;
@@ -319,7 +358,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	public AbstractTile getTileBottom(AbstractTile tile) {
 		AbstractTile neighbourTile = null;
 		try {
-			neighbourTile = activeMap.get(new DataStructureKey2D(tile.getKey().x, tile.getKey().y - 1));
+			neighbourTile = allMap.get(new DataStructureKey2D(tile.getKey().x, tile.getKey().y - 1));
 		} catch (NullPointerException e) {
 		}
 		return neighbourTile;
@@ -329,7 +368,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	public AbstractTile getTileRight(AbstractTile tile) {
 		AbstractTile neighbourTile = null;
 		try {
-			neighbourTile = activeMap.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y));
+			neighbourTile = allMap.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y));
 		} catch (NullPointerException e) {
 		}
 		return neighbourTile;
@@ -339,7 +378,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	public AbstractTile getTileLeft(AbstractTile tile) {
 		AbstractTile neighbourTile = null;
 		try {
-			neighbourTile = activeMap.get(new DataStructureKey2D(tile.getKey().x - 1, tile.getKey().y));
+			neighbourTile = allMap.get(new DataStructureKey2D(tile.getKey().x - 1, tile.getKey().y));
 		} catch (NullPointerException e) {
 		}
 		return neighbourTile;
@@ -349,7 +388,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	public AbstractTile getTileTopLeft(AbstractTile tile) {
 		AbstractTile neighbourTile = null;
 		try {
-			neighbourTile = activeMap.get(new DataStructureKey2D(tile.getKey().x - 1, tile.getKey().y + 1));
+			neighbourTile = allMap.get(new DataStructureKey2D(tile.getKey().x - 1, tile.getKey().y + 1));
 		} catch (NullPointerException e) {
 		}
 		return neighbourTile;
@@ -359,7 +398,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	public AbstractTile getTileTopRight(AbstractTile tile) {
 		AbstractTile neighbourTile = null;
 		try {
-			neighbourTile = activeMap.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y + 1));
+			neighbourTile = allMap.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y + 1));
 		} catch (NullPointerException e) {
 		}
 		return neighbourTile;
@@ -369,7 +408,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	public AbstractTile getTileBottomLeft(AbstractTile tile) {
 		AbstractTile neighbourTile = null;
 		try {
-			neighbourTile = activeMap.get(new DataStructureKey2D(tile.getKey().x - 1, tile.getKey().y - 1));
+			neighbourTile = allMap.get(new DataStructureKey2D(tile.getKey().x - 1, tile.getKey().y - 1));
 		} catch (NullPointerException e) {
 		}
 		return neighbourTile;
@@ -379,7 +418,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	public AbstractTile getTileBottomRight(AbstractTile tile) {
 		AbstractTile neighbourTile = null;
 		try {
-			neighbourTile = activeMap.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y - 1));
+			neighbourTile = allMap.get(new DataStructureKey2D(tile.getKey().x + 1, tile.getKey().y - 1));
 		} catch (NullPointerException e) {
 		}
 		return neighbourTile;
@@ -393,7 +432,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	// TODO: Need to handle returning the null type properly
 	@Override
 	public AbstractTile getTileUsingKey(DataStructureKey2D key) {
-		AbstractTile tile = activeMap.get(key);
+		AbstractTile tile = allMap.get(key);
 		if (tile != null) {
 			return tile;
 		} else {
@@ -403,7 +442,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 	@Override
 	public Iterator<?> getIterator() {
-		return activeMap.entrySet().iterator();
+		return allMap.entrySet().iterator();
 	}
 
 	@Override
