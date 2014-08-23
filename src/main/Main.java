@@ -2,9 +2,7 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import location.LocationThread;
 import renderer.Renderer_4_0;
@@ -37,13 +35,13 @@ public class Main implements GameListener {
 	public static void main(String[] args) {
 		try {
 			new Main();
-		} catch (RendererException ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			System.exit(-1);
 		}
 	}
 
-	public Main() throws RendererException {
+	public Main() throws RendererException, ExecutionException, InterruptedException {
 		// Tell GameControl that this class wants to know when big stuff
 		// happens.
 		GameControl.registerGameListener(this);
@@ -51,8 +49,8 @@ public class Main implements GameListener {
 		final AssetContainer assContainer = new AssetContainer();
 
 		GameThread rendererThread = new Renderer_4_0(assContainer, this);
-		executor.execute(rendererThread);
-		childThreads.add(rendererThread);
+        Future<?> rendererFuture = executor.submit(rendererThread);
+        childThreads.add(rendererThread);
 
 		rendererThread.registerSetupObserver(new ThreadObserver() {
 			@Override
@@ -73,7 +71,14 @@ public class Main implements GameListener {
 		});
 
 		AudioEngine.getInstance();
+
+        quitWhenRendererFinishes(rendererFuture);
 	}
+
+    private void quitWhenRendererFinishes(Future<?> rendererFuture) throws ExecutionException, InterruptedException {
+        rendererFuture.get();
+        quitGame();
+    }
 
 	public void quitGame() {
 
@@ -85,7 +90,7 @@ public class Main implements GameListener {
 
 		executor.shutdown();
 		try {
-			if (!executor.awaitTermination(1L, TimeUnit.SECONDS)) {
+			if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
 				executor.shutdownNow();
 				if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
 					System.err.println("Thread pool did not terminate");
