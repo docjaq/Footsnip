@@ -1,5 +1,6 @@
 package thread;
 
+import main.GameControl;
 import main.Main;
 import assets.AssetContainer;
 
@@ -22,7 +23,7 @@ public abstract class RendererThread extends GameThread {
 	public void run() {
 		setup();
 
-		while (!timeToStop) {
+		while (GameControl.isPlaying()) {
 			gameLoop();
 		}
 

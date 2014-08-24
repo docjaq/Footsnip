@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import main.FootsnipProperties;
+import main.GameControl;
 import main.Main;
 import math.types.MatrixStack;
 import math.types.Quaternion;
@@ -323,13 +324,16 @@ public class Renderer_4_0 extends RendererThread {
 
 		updateFPS();
 
-		// TODO: Should this really be in the renderer?
-		if (Display.isCloseRequested()) {
-			mainApplication.quitGame();
-		}
-	}
+        waitForWindowClosed();
+    }
 
-	/**
+    private void waitForWindowClosed() {
+        if (Display.isCloseRequested()) {
+            GameControl.stopGame();
+        }
+    }
+
+    /**
 	 * Calculate the frames per second, by counting the number of frames every
 	 * second, and resetting that count at the end of each second.
 	 * 

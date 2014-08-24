@@ -83,7 +83,8 @@ public class AudioEngine {
 	}
 
 	public void close() {
-		monsterSound.killALData();
+        // TODO: Do we need to do this for all the sounds?
+//		monsterSound.killALData();
 		AL.destroy();
 	}
 }

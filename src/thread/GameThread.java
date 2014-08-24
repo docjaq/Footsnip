@@ -3,6 +3,7 @@ package thread;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.GameControl;
 import main.Main;
 import assets.AssetContainer;
 
@@ -14,9 +15,6 @@ public abstract class GameThread implements Runnable, ObservableThread {
 	/** List of listeners that care about when the initial setup is complete. */
 	private List<ThreadObserver> setupObservers = new ArrayList<ThreadObserver>();
 
-	/** Flag to determine when to stop the loop. */
-	protected boolean timeToStop = false;
-
 	/** Pause between iterations. */
 	private int threadDelay;
 
@@ -26,15 +24,11 @@ public abstract class GameThread implements Runnable, ObservableThread {
 		this.mainApplication = mainApplication;
 	}
 
-	public void stopThread() {
-		timeToStop = true;
-	}
-
 	public void run() {
 		setup();
 
 		try {
-			while (!timeToStop) {
+			while (GameControl.isPlaying()) {
 				gameLoop();
 				Thread.sleep(threadDelay);
 			}
@@ -47,10 +41,12 @@ public abstract class GameThread implements Runnable, ObservableThread {
 
 	protected void beforeLoop() {
 		// No default functionality.
+        System.out.println("beforeLoop: " + this.toString());
 	}
 
 	protected void afterLoop() {
 		// No default functionality.
+        System.out.println("afterLoop: " + this.toString());
 	}
 
 	protected abstract void gameLoop();
