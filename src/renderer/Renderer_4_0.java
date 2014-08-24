@@ -18,8 +18,6 @@ import math.types.Vector3;
 import math.types.Vector4;
 import mesh.Ply;
 
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.jse.JsePlatform;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 

@@ -11,6 +11,9 @@ import assets.world.datastructures.TileDataStructure2D;
 import audio.AudioEngine;
 import collision.Collidable;
 
+import javax.script.*;
+import java.io.FileNotFoundException;
+
 public class Player extends Entity {
 
 	private static final float DEFAULT_ROTATION_SPEED = 0.1f;
@@ -41,9 +44,25 @@ public class Player extends Entity {
 
 	private Vector3 currentDirectionVector;
 
+    private ScriptEngineManager manager = new ScriptEngineManager();
+    private ScriptEngine engine = manager.getEngineByName("JavaScript");
+    Invocable inv;
+
 	public Player(GLModel model, GLPosition position, int age, float[] color) {
-		super(model, position);
-		this.age = age;
+
+        super(model, position);
+
+        try {
+            this.engine.eval(new java.io.FileReader("resources/js/player.js"));
+        } catch (ScriptException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        this.inv = (Invocable) engine;
+
+        this.age = age;
 		this.color = color;
 
 		rotationDelta = DEFAULT_ROTATION_SPEED;
@@ -67,8 +86,21 @@ public class Player extends Entity {
 	}
 
 	public void move(int timeDelta) {
-		position.modelPos.x(position.modelPos.x() + movementVector.x() * DEFAULT_MOVEMENT_SPEED * timeDelta);
-		position.modelPos.y(position.modelPos.y() + movementVector.y() * DEFAULT_MOVEMENT_SPEED * timeDelta);
+
+        float currentMovementSpeed = DEFAULT_MOVEMENT_SPEED;
+
+
+
+        try {
+            currentMovementSpeed = Float.parseFloat(String.valueOf(inv.invokeFunction("getDefaultMovementSpeed", String.valueOf(this.health))));
+        } catch (ScriptException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+		position.modelPos.x(position.modelPos.x() + movementVector.x() * currentMovementSpeed * timeDelta);
+		position.modelPos.y(position.modelPos.y() + movementVector.y() * currentMovementSpeed * timeDelta);
 	}
 
 	public void rotateCCW(int timeDelta) {
