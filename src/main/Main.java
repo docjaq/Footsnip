@@ -72,6 +72,8 @@ public class Main implements GameListener {
 
 		AudioEngine.getInstance();
 
+        GameControl.startGame();
+
         quitWhenRendererFinishes(rendererFuture);
 	}
 
@@ -81,26 +83,26 @@ public class Main implements GameListener {
     }
 
 	public void quitGame() {
-
+        GameControl.stopGame();
 		AudioEngine.getInstance().close();
-
-		for (GameThread thread : childThreads) {
-			thread.stopThread();
-		}
-
-		executor.shutdown();
-		try {
-			if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
-				executor.shutdownNow();
-				if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
-					System.err.println("Thread pool did not terminate");
-				}
-			}
-		} catch (InterruptedException ie) {
-			executor.shutdownNow();
-			Thread.currentThread().interrupt();
-		}
+        shutdownExecutor();
 	}
+
+    private void shutdownExecutor() {
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
+                System.err.println("Gave up waiting for threads to end naturally; killing them...");
+                executor.shutdownNow();
+                if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
+                    System.err.println("Thread pool did not terminate");
+                }
+            }
+        } catch (InterruptedException ie) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
 
 	@Override
 	public void gameOver(boolean playerWon) {
