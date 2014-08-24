@@ -288,9 +288,6 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 			t.setPhysicsModel(meshPool.borrowObject(((PolygonHeightmapTile) t).getHeightmap()));
 		}
 
-		// System.out.println("Size of previous list = " +
-		// tilesJustRemoved.size());
-
 	}
 
 	private AbstractTile addTile(DataStructureKey2D parentKey, int xAdjust, int yAdjust, AbstractTile parentTile) {
