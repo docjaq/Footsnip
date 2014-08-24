@@ -34,7 +34,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	private ConcurrentHashMap<DataStructureKey2D, AbstractTile> allMap;
 	private List<AbstractTile> currentTileList;
 	private List<AbstractTile> tilesJustRemoved;
-	private List<AbstractTile> newTileList;
+	private List<AbstractTile> tilesNeedingNewModels;
 
 	// private List<AbstractTile> list; // Backed by map
 	private static final DataStructureKey2D INITIAL_KEY = new DataStructureKey2D(0, 0);
@@ -45,7 +45,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 	public HashmapTileDataStructure2D() {
 		allMap = new ConcurrentHashMap<DataStructureKey2D, AbstractTile>();
-		newTileList = new ArrayList<AbstractTile>(9);
+		tilesNeedingNewModels = new ArrayList<AbstractTile>(9);
 		currentTileList = new ArrayList<AbstractTile>(9);
 		tilesJustRemoved = new ArrayList<AbstractTile>(9);
 
@@ -237,7 +237,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	public void populateNeighbouringTiles(AbstractTile tile) {
 		tile.setActive(true);
 
-		newTileList.clear();
+		tilesNeedingNewModels.clear();
 		tilesJustRemoved.clear();
 		tilesJustRemoved.addAll(currentTileList);
 		currentTileList.clear();
@@ -255,29 +255,41 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 		tilesJustRemoved.removeAll(currentTileList);
 
+		// TilesJustRemoved now contains JUST the tiles that the player has
+		// moved away from
+		System.out.printf("Freeing up models for %d tiles\n", tilesJustRemoved.size());
+
 		// Freeuptiles from pool
 		for (AbstractTile t : tilesJustRemoved) {
 			meshPool.returnObject((GLMesh) t.getPhysicsModel());
+			t.setPhysicsModel(null);
 		}
 
-		// Workout new tiles
+		tilesNeedingNewModels.addAll(currentTileList);
+
+		// Work out new tiles
 		List<AbstractTile> tilesThatAlreadyHaveModels = new ArrayList<AbstractTile>();
-		for (AbstractTile t : currentTileList) {
-			// If mesh object in tile is not null
+		for (AbstractTile t : tilesNeedingNewModels) {
+			// If mesh object in tile is not null, remove it from
+			// currentTileList
 			if (t.getPhysicsModel() != null) {
 				tilesThatAlreadyHaveModels.add(t);
 			}
-			// remove it from currentTileList
 		}
-		currentTileList.removeAll(tilesThatAlreadyHaveModels);
+		tilesNeedingNewModels.removeAll(tilesThatAlreadyHaveModels);
+
+		// CurrentTilesList now contains JUST the tiles that we want to get new
+		// models for
+		System.out.printf("Assigning models to %d tiles\n", tilesNeedingNewModels.size());
 
 		// populate remaining currentTileList objects from objectPool
 		// TODO:Replace with ExecutorService threading
-		for (AbstractTile t : currentTileList) {
+		for (AbstractTile t : tilesNeedingNewModels) {
 			t.setPhysicsModel(meshPool.borrowObject(((PolygonHeightmapTile) t).getHeightmap()));
 		}
 
-		System.out.println("Size of previous list = " + tilesJustRemoved.size());
+		// System.out.println("Size of previous list = " +
+		// tilesJustRemoved.size());
 
 	}
 
