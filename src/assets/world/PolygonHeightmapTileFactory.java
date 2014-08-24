@@ -6,12 +6,12 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import terraingen.MapGenerationUtilities;
-import terraingen.MeshGenerationUtilities;
 import renderer.GLPosition;
 import renderer.glmodels.GLMesh;
 import renderer.glprimitives.GLTriangle;
 import renderer.glprimitives.GLVertex;
+import terraingen.MapGenerationUtilities;
+import terraingen.MeshGenerationUtilities;
 import terraingen.simplex.SimplexNoise;
 import assets.world.datastructures.DataStructureKey2D;
 import assets.world.datastructures.TileDataStructure2D;
@@ -22,9 +22,9 @@ public class PolygonHeightmapTileFactory {
 	private final static double WATER_CHANCE = 1;
 	private final static int COLOR_MAP_SIZE = 32;
 
-	//private List<GLVertex> factoryVertices;
-	//private List<GLTriangle> factoryTriangles;
-	//private GLModel openGLReferenceMesh;
+	// private List<GLVertex> factoryVertices;
+	// private List<GLTriangle> factoryTriangles;
+	// private GLModel openGLReferenceMesh;
 
 	private int tileComplexity;
 	private TileDataStructure2D tileDataStructure;
@@ -35,31 +35,32 @@ public class PolygonHeightmapTileFactory {
 	// shader...
 	private FloatBuffer colorMapBuffer;
 
-    public GLMesh getOpenGLReferenceMesh() {
-        return openGLReferenceMesh;
-    }
+	public GLMesh getOpenGLReferenceMesh() {
+		return openGLReferenceMesh;
+	}
 
-    private GLMesh openGLReferenceMesh;
+	private GLMesh openGLReferenceMesh;
 
 	public PolygonHeightmapTileFactory(int tileComplexity, TileDataStructure2D tileDataStructure) {
 		this.tileComplexity = tileComplexity;
 		this.tileDataStructure = tileDataStructure;
 
-
-		//MeshGenerationUtilities.generatePlanarMesh(this.factoryVertices, this.factoryTriangles);
+		// MeshGenerationUtilities.generatePlanarMesh(this.factoryVertices,
+		// this.factoryTriangles);
 
 		// Function of number of octaves (noise complexity)
 		// Type of terrain (low = flat. High = rocky)
 		// Random seed
 		simplexNoise = new SimplexNoise(320, 0.5, 5000);
 
-		//adjustMeshToHeightmap(this.factoryVertices, simplexNoise.getSection(tileComplexity, 0, 0));
+		// adjustMeshToHeightmap(this.factoryVertices,
+		// simplexNoise.getSection(tileComplexity, 0, 0));
 
-        List<GLVertex> vertices = new ArrayList<GLVertex>(tileComplexity * tileComplexity);
-        List<GLTriangle> triangles= new ArrayList<GLTriangle>((tileComplexity - 1) * (tileComplexity - 1) * 2);
-        MeshGenerationUtilities.generatePlanarMesh(vertices, triangles);
+		List<GLVertex> vertices = new ArrayList<GLVertex>(tileComplexity * tileComplexity);
+		List<GLTriangle> triangles = new ArrayList<GLTriangle>((tileComplexity - 1) * (tileComplexity - 1) * 2);
+		MeshGenerationUtilities.generatePlanarMesh(vertices, triangles);
 		openGLReferenceMesh = new GLMesh(triangles, vertices);
-        openGLReferenceMesh.pushToGPU();
+		openGLReferenceMesh.pushToGPU();
 
 		colorMapBuffer = MapGenerationUtilities.generateColorMap(COLOR_MAP_SIZE);
 
@@ -69,7 +70,7 @@ public class PolygonHeightmapTileFactory {
 
 		System.out.println("Creating new tile");
 
-		AbstractTile tile = new PolygonHeightmapTile(key, null, position);
+		AbstractTile tile = new PolygonHeightmapTile(key, openGLReferenceMesh, position);
 		if (key == null)
 			key = new DataStructureKey2D(0, 0);
 
@@ -81,8 +82,8 @@ public class PolygonHeightmapTileFactory {
 			// Not currently used I think, but maybe if we want to look it up
 			// later
 
-            //REMOVED
-            polygonTile.setHeightmap(heightmap);
+			// REMOVED
+			polygonTile.setHeightmap(heightmap);
 
 			polygonTile.setHeightmapBuf(convertArrayToBuffer(heightmap));
 			polygonTile.setHeightmapSize(tileComplexity);
@@ -97,8 +98,6 @@ public class PolygonHeightmapTileFactory {
 
 		return tile;
 	}
-
-
 
 	private FloatBuffer convertArrayToBuffer(float[][] array) {
 		int tWidth = array.length;

@@ -11,7 +11,6 @@ import math.types.Vector3;
 import org.lwjgl.opengl.GL11;
 
 import pooling.DefaultMeshPool;
-import pooling.ObjectPool;
 import renderer.GLPosition;
 import renderer.GLUtilityMethods;
 import renderer.glmodels.GLMesh;
@@ -35,22 +34,22 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	private ConcurrentHashMap<DataStructureKey2D, AbstractTile> allMap;
 	private List<AbstractTile> currentTileList;
 	private List<AbstractTile> tilesJustRemoved;
-    private List<AbstractTile> newTileList;
+	private List<AbstractTile> newTileList;
 
 	// private List<AbstractTile> list; // Backed by map
 	private static final DataStructureKey2D INITIAL_KEY = new DataStructureKey2D(0, 0);
 	private AbstractTile initialTile;
 	private PolygonHeightmapTileFactory glTileFactory;
 
-    private DefaultMeshPool meshPool;
+	private DefaultMeshPool meshPool;
 
 	public HashmapTileDataStructure2D() {
 		allMap = new ConcurrentHashMap<DataStructureKey2D, AbstractTile>();
-        newTileList = new ArrayList<AbstractTile>(9);
+		newTileList = new ArrayList<AbstractTile>(9);
 		currentTileList = new ArrayList<AbstractTile>(9);
 		tilesJustRemoved = new ArrayList<AbstractTile>(9);
 
-        meshPool = new DefaultMeshPool(9, 16, 5, 129);
+		meshPool = new DefaultMeshPool(9, 16, 5, 129);
 	}
 
 	public void init(PolygonHeightmapTileFactory glTileFactory, AbstractTile initialTile) {
@@ -194,9 +193,9 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 						 * (polygonTile.getNormalmapLocation());
 						 */
 					}
-                    if(tile.getModel() != null) {
-                        tile.getModel().draw(shader, modelMatrix, tile.getPosition());
-                    }
+					if (tile.getModel() != null) {
+						tile.getModel().draw(shader, modelMatrix, tile.getPosition());
+					}
 				}
 				modelMatrix.popMatrix();
 			} catch (NullPointerException e) {
@@ -219,9 +218,9 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 							((GLWaterShader) shader).setTileIndex(tile.getKey().x, tile.getKey().y);
 						}
 						modelMatrix.getTop().mult(objectPole.calcMatrix());
-                        if(tile.getModel() != null) {
-                            tile.getModel().draw(shader, modelMatrix, tile.getPosition());
-                        }
+						if (tile.getModel() != null) {
+							tile.getModel().draw(shader, modelMatrix, tile.getPosition());
+						}
 					}
 					modelMatrix.popMatrix();
 				} catch (NullPointerException e) {
@@ -238,7 +237,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	public void populateNeighbouringTiles(AbstractTile tile) {
 		tile.setActive(true);
 
-        newTileList.clear();
+		newTileList.clear();
 		tilesJustRemoved.clear();
 		tilesJustRemoved.addAll(currentTileList);
 		currentTileList.clear();
@@ -256,30 +255,27 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 		tilesJustRemoved.removeAll(currentTileList);
 
-        //Freeuptiles from pool
-        for(AbstractTile t: tilesJustRemoved){
-            meshPool.returnObject((GLMesh)t.getModel());
-        }
+		// Freeuptiles from pool
+		for (AbstractTile t : tilesJustRemoved) {
+			meshPool.returnObject((GLMesh) t.getPhysicsModel());
+		}
 
-        //Workout new tiles
-        List<AbstractTile> tilesThatAlreadyHaveModels = new ArrayList<AbstractTile>();
-        for(AbstractTile t: currentTileList){
-            //If mesh object in tile is not null
-            if(t.getModel() != null){
-                tilesThatAlreadyHaveModels.add(t);
-            }
-                //remove it from currentTileList
-        }
-        currentTileList.removeAll(tilesThatAlreadyHaveModels);
+		// Workout new tiles
+		List<AbstractTile> tilesThatAlreadyHaveModels = new ArrayList<AbstractTile>();
+		for (AbstractTile t : currentTileList) {
+			// If mesh object in tile is not null
+			if (t.getPhysicsModel() != null) {
+				tilesThatAlreadyHaveModels.add(t);
+			}
+			// remove it from currentTileList
+		}
+		currentTileList.removeAll(tilesThatAlreadyHaveModels);
 
-
-        //populate remaining currentTileList objects from objectPool
-        //TODO:Replace with ExecutorService threading
-        for(AbstractTile t: currentTileList){
-            t.setModel(meshPool.borrowObject(((PolygonHeightmapTile)t).getHeightmap()));
-            GLMesh glMesh = ((PolygonHeightmapTileFactory)glTileFactory).getOpenGLReferenceMesh();
-            ((GLMesh)t.getModel()).setBuffers(glMesh.getVaoId(), glMesh.getVboId(), glMesh.getVboiId());
-        }
+		// populate remaining currentTileList objects from objectPool
+		// TODO:Replace with ExecutorService threading
+		for (AbstractTile t : currentTileList) {
+			t.setPhysicsModel(meshPool.borrowObject(((PolygonHeightmapTile) t).getHeightmap()));
+		}
 
 		System.out.println("Size of previous list = " + tilesJustRemoved.size());
 

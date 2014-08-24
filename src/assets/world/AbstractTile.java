@@ -13,6 +13,7 @@ import assets.world.datastructures.DataStructureKey2D;
 public abstract class AbstractTile implements Asset {
 
 	protected GLModel model;
+	protected GLModel physicsModel;
 	protected GLPosition position;
 	// protected Vector3 tilePos; // I don't like this, it should be temporary
 	protected DataStructureKey2D key;
@@ -49,10 +50,10 @@ public abstract class AbstractTile implements Asset {
 	public abstract void createModel(GLTileFactory glTileFactory);
 
 	public void setModel(GLModel model) {
-        //TODO: Check that this is OK to comment out
-		//if (this.model != null) {
-		//	throw new RuntimeException("You can only set the model once.");
-		//}
+		// TODO: Check that this is OK to comment out
+		// if (this.model != null) {
+		// throw new RuntimeException("You can only set the model once.");
+		// }
 		this.model = model;
 	}
 
@@ -78,5 +79,13 @@ public abstract class AbstractTile implements Asset {
 
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public GLModel getPhysicsModel() {
+		return physicsModel;
+	}
+
+	public void setPhysicsModel(GLModel physicsModel) {
+		this.physicsModel = physicsModel;
 	}
 }
