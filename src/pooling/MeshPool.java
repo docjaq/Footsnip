@@ -1,24 +1,25 @@
 package pooling;
 
-public abstract class MeshPool<T> extends ObjectPool<T> {
+import renderer.glmodels.GLMesh;
 
-    public MeshPool(int minPoolSize, int maxPoolSize, long updateInterval){
+public abstract class MeshPool<T extends GLMesh> extends ObjectPool<T> {
+
+    protected int tileComplexity;
+
+    public MeshPool(int minPoolSize, int maxPoolSize, long updateInterval, int tileComplexity){
         super(minPoolSize, maxPoolSize, updateInterval);
+
+        this.tileComplexity = tileComplexity;
     }
 
-    @Override
-    protected T borrowObject(){
-        T object = super.borrowObject();
+    public GLMesh borrowObject(float[][] heightmap){
+        GLMesh object = borrowObject();
 
-        //Create heightmap
-        generateHeightmap();
-
-        //Modify mesh to heightmap
-        transformMeshFromHeightmap();
+        transformMeshFromHeightmap(object, heightmap);
 
         return object;
     }
 
-    protected abstract float[][] generateHeightmap();
-    protected abstract void transformMeshFromHeightmap();
+    //protected abstract float[][] generateHeightmap();
+    protected abstract void transformMeshFromHeightmap(GLMesh mesh, float[][] heightmap);
 }

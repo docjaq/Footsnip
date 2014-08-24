@@ -49,9 +49,10 @@ public abstract class AbstractTile implements Asset {
 	public abstract void createModel(GLTileFactory glTileFactory);
 
 	public void setModel(GLModel model) {
-		if (this.model != null) {
-			throw new RuntimeException("You can only set the model once.");
-		}
+        //TODO: Check that this is OK to comment out
+		//if (this.model != null) {
+		//	throw new RuntimeException("You can only set the model once.");
+		//}
 		this.model = model;
 	}
 

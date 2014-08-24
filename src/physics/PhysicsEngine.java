@@ -136,7 +136,9 @@ public class PhysicsEngine {
 
 		terrainMeshArray = new TriangleIndexVertexArray();
 		for (AbstractTile tile : assContainer.getTileDataStructure().getTilesAsList()) {
-			addTerrainMesh((GLMesh) tile.getModel());
+            if(tile.getModel() != null) {
+                addTerrainMesh((GLMesh) tile.getModel());
+            }
 		}
 
 		System.out.println("Instantiating physics engine");
@@ -157,11 +159,12 @@ public class PhysicsEngine {
 		// Look at what BvhTriangleMeshShape is. Maybe I can pass it something
 		// else, if it's implemented
 		boolean useQuantizedAabbCompression = true;
-		trimeshShape = new BvhTriangleMeshShape(terrainMeshArray, useQuantizedAabbCompression);
-		collisionShapes.add(trimeshShape);
+
+		//TEMP trimeshShape = new BvhTriangleMeshShape(terrainMeshArray, useQuantizedAabbCompression);
+        //TEMP collisionShapes.add(trimeshShape);
 
 		// Store a reference to the terrain collision shape
-		CollisionShape groundShape = trimeshShape;
+        //TEMP CollisionShape groundShape = trimeshShape;
 		collisionConfiguration = new DefaultCollisionConfiguration();
 
 		// Init dispatcher
@@ -202,9 +205,9 @@ public class PhysicsEngine {
 		// Add the static terrain to the dynamicsWorld. Allow material
 		// callbacks? Friction etc
 		initialTransform.setIdentity();
-		RigidBody staticBody = localCreateRigidBody(mass, initialTransform, groundShape);
-		staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.STATIC_OBJECT);
-		staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
+        //TEMP RigidBody staticBody = localCreateRigidBody(mass, initialTransform, groundShape);
+        //TEMP staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.STATIC_OBJECT);
+        //TEMP staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
 	}
 
 	private void addAsCubes(Transform transform, List<Monster> entities) {

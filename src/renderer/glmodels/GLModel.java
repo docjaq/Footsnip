@@ -23,7 +23,19 @@ import renderer.glshaders.GLWaterShader;
 
 public abstract class GLModel {
 
-	// Model GL Variables
+    public int getVaoId() {
+        return vaoId;
+    }
+
+    public int getVboId() {
+        return vboId;
+    }
+
+    public int getVboiId() {
+        return vboiId;
+    }
+
+    // Model GL Variables
 	protected int vaoId = 0;
 	protected int vboId = 0;
 	protected int vboiId = 0;
@@ -33,6 +45,8 @@ public abstract class GLModel {
 
 	public GLModel() {
 	}
+
+    public abstract void pushToGPU();
 
 	protected void setModelRadius(float modelRadius) {
 		this.modelRadius = modelRadius;

@@ -26,8 +26,23 @@ public class GLMesh extends GLModel {
 	public ByteBuffer verticesByteBuffer;
 	public int vertexStride;
 
-	public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList) {
-		super();
+    private List<GLTriangle> triangleList;
+    private List<GLVertex> vertexList;
+
+    public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList){
+        super();
+
+        this.triangleList = triangleList;
+        this.vertexList = vertexList;
+    }
+
+    public void setBuffers(int vaoId, int vboId, int vboiId){
+        this.vaoId = vaoId;
+        this.vboId = vboId;
+        this.vboiId = vboiId;
+    }
+
+	public void pushToGPU() {
 
 		numTriangles = triangleList.size();
 		indexStride = 3 * 4; // TODO: Guess
@@ -123,4 +138,17 @@ public class GLMesh extends GLModel {
 	 * null), Vector3f.sub(v1.getXYZ(), v2.getXYZ(), null), null);
 	 * vn2.normalise(); v2.setNXNYNZ(vn2); }
 	 */
+    public List<GLTriangle> getTriangles() {
+        return triangleList;
+    }
+    public void setTriangles(List<GLTriangle> triangleList) {
+        this.triangleList = triangleList;
+    }
+    public List<GLVertex> getVertices() {
+        return vertexList;
+    }
+    public void setVertices(List<GLVertex> vertexList) {
+        this.vertexList = vertexList;
+    }
+
 }

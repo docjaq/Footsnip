@@ -19,6 +19,7 @@ public class GLDefaultProjectileFactory implements GLProjectileFactory {
 		mesh = new Ply();
 		mesh.read(new File("resources/meshes/projectile_small.ply"), projectileColor);
 		this.model = new GLMesh(mesh.getTriangles(), mesh.getVertices());
+        this.model.pushToGPU();
 	}
 
 	public synchronized static GLDefaultProjectileFactory getInstance() {

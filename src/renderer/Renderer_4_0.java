@@ -265,6 +265,7 @@ public class Renderer_4_0 extends RendererThread {
 		Ply playerMesh = new Ply();
 		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"), playerColor);
 		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices());
+        playerModel.pushToGPU();
 		GLPosition playerPosition = new GLPosition(playerPos, playerAngle, playerScale, playerModel.getModelRadius());
 
 		assContainer.setPlayer(new Player(playerModel, playerPosition, 0, new float[] { 1.0f, 0.0f, 0.0f }));

@@ -14,6 +14,7 @@ public class MonsterFactory {
 	public MonsterFactory(GeometryFile mesh) {
 		this.mesh = mesh;
 		model = new GLMesh(mesh.getTriangles(), mesh.getVertices());
+        model.pushToGPU();
 	}
 
 	public Monster create(Vector3 monsterPos, float rotationDelta) {
