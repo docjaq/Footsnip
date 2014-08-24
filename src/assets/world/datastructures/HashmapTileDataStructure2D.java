@@ -259,47 +259,14 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 		tilesJustRemoved.removeAll(currentTileList);
 
+        //Freeuptiles from pool
+
+
+        //Workout new tiles
+        //Use executor service
+            //populate all new tiles from objectPool
+
 		System.out.println("Size of previous list = " + tilesJustRemoved.size());
-
-		// for (Entry<DataStructureKey2D, AbstractTile> e : allMap.entrySet()) {
-		// if (!e.getValue().isActive()) {
-		// This is the problematic code. For some reason, moving this
-		// kills the reference to the entities :(
-		// inactiveMap.put(e.getKey(), e.getValue());
-		// activeMap.remove(e.getKey());
-		// System.out.println("Setting tile as inactive");
-		// }
-		// }
-
-		// for (DataStructureKey2D e : activeMap.keySet()) {
-		// System.out.println("Key: " + e.x + "," + e.y);
-		// }
-
-		// Iterator<Map.Entry<DataStructureKey2D, AbstractTile>> iter =
-		// activeMap.entrySet().iterator();
-		// while (iter.hasNext()) {
-		// Map.Entry<DataStructureKey2D, AbstractTile> entry = iter.next();
-		// if (!entry.getValue().isActive()) {
-		// iter.remove();
-		// inactiveMap.put(entry.getKey(), entry.getValue());
-		// }
-		// }
-
-		/*
-		 * System.out.println("Number of active tiles = " + activeMap.size());
-		 * System.out.println("Number of inactive tiles = " +
-		 * currentMap.size());
-		 * 
-		 * if (activeMap.containsKey(INITIAL_KEY)) {
-		 * System.out.println("FINISH: Root tile has " +
-		 * activeMap.get(INITIAL_KEY).getContainedEntities().size() +
-		 * " entities (active)"); } else if
-		 * (currentMap.containsKey(INITIAL_KEY)) {
-		 * System.out.println("FINISH: Root tile has " +
-		 * currentMap.get(INITIAL_KEY).getContainedEntities().size() +
-		 * " entities (inactive)"); } else {
-		 * System.out.println("FINISH: Initial key not in any map"); }
-		 */
 
 	}
 

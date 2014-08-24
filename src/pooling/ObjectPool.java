@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class ObjectPool<T>
 {
-    private ConcurrentLinkedQueue<T> pool;
+    protected ConcurrentLinkedQueue<T> pool;
 
     private ScheduledExecutorService executorService;
 
@@ -30,7 +30,7 @@ public abstract class ObjectPool<T>
                 if (size < minIdle) {
                     int sizeToBeAdded = minIdle - size;
                     for (int i = 0; i < sizeToBeAdded; i++) {
-                        pool.add(createObject());
+                        pool.add(initaliseObject());
                     }
                 } else if (size > maxIdle) {
                     int sizeToBeRemoved = size - maxIdle;
@@ -42,14 +42,16 @@ public abstract class ObjectPool<T>
         }, validationInterval, validationInterval, TimeUnit.SECONDS);
     }
 
-    public T borrowObject() {
+    protected T borrowObject() {
         T object;
         if ((object = pool.poll()) == null) {
-            object = createObject();
+            object = initaliseObject();
         }
 
         return object;
     }
+
+    protected abstract T initaliseObject();
 
     public void returnObject(T object) {
         if (object == null) {
@@ -65,13 +67,11 @@ public abstract class ObjectPool<T>
         }
     }
 
-    protected abstract T createObject();
-
     private void initialize(final int minIdle) {
         pool = new ConcurrentLinkedQueue<T>();
 
         for (int i = 0; i < minIdle; i++) {
-            pool.add(createObject());
+            pool.add(initaliseObject());
         }
     }
 }

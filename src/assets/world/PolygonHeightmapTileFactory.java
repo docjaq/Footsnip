@@ -8,6 +8,8 @@ import java.util.List;
 
 import math.types.Vector3;
 import math.types.Vector4;
+import pooling.MeshPool;
+import pooling.ObjectPool;
 import terraingen.MapGenerationUtilities;
 import terraingen.MeshGenerationUtilities;
 import renderer.GLPosition;
@@ -38,6 +40,8 @@ public class PolygonHeightmapTileFactory {
 	// shader...
 	private FloatBuffer colorMapBuffer;
 
+    private ObjectPool meshPool;
+
 	public PolygonHeightmapTileFactory(int tileComplexity, TileDataStructure2D tileDataStructure) {
 		this.tileComplexity = tileComplexity;
 		this.tileDataStructure = tileDataStructure;
@@ -57,10 +61,7 @@ public class PolygonHeightmapTileFactory {
 
 		colorMapBuffer = MapGenerationUtilities.generateColorMap(COLOR_MAP_SIZE);
 
-		for (GLVertex v : this.factoryVertices) {
-			System.out.print(v.xyzw.z() + ",");
-		}
-
+		meshPool = new MeshPool(9, 16, 5);
 	}
 
 	public AbstractTile create(DataStructureKey2D key, GLPosition position) {
@@ -78,10 +79,12 @@ public class PolygonHeightmapTileFactory {
 
 			// Not currently used I think, but maybe if we want to look it up
 			// later
-			polygonTile.setHeightmap(heightmap);
 
-			polygonTile.setHeightmapBuf(convertArrayToBuffer(heightmap));
-			polygonTile.setHeightmapSize(tileComplexity);
+            //REMOVED
+            //polygonTile.setHeightmap(heightmap);
+
+			//polygonTile.setHeightmapBuf(convertArrayToBuffer(heightmap));
+			//polygonTile.setHeightmapSize(tileComplexity);
 
 			polygonTile.setColorMap(colorMapBuffer);
 			polygonTile.setColorMapSize(COLOR_MAP_SIZE);
