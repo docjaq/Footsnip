@@ -42,7 +42,6 @@ import com.bulletphysics.util.ObjectArrayList;
 public class PhysicsEngine implements Observer {
 
 	private ObjectArrayList<CollisionShape> collisionShapes = new ObjectArrayList<CollisionShape>();
-	private static BvhTriangleMeshShape trimeshShape;
 	private CollisionDispatcher dispatcher;
 	private BroadphaseInterface broadphase;
 	private ConstraintSolver solver;
@@ -56,7 +55,7 @@ public class PhysicsEngine implements Observer {
 
 	private Transform initialTransform;
 
-	private TriangleIndexVertexArray terrainMeshArray;
+	// private TriangleIndexVertexArray terrainMeshArray;
 
 	// TODO: Change all of this from monster to entity
 	private Map<RigidBody, Monster> objectMap;
@@ -92,31 +91,39 @@ public class PhysicsEngine implements Observer {
 
 			RigidBody body = RigidBody.upcast(colObj);
 
-			if (body != null && body.getMotionState() != null) {
-				DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
-				m.set(myMotionState.graphicsWorldTrans);
+			// If that entity is contained within the map
+			if (objectMap.containsKey(body)) {
+				Monster monster = objectMap.get(body);
 
-			} else {
-				colObj.getWorldTransform(m);
+				// Check that the tile rigid body is active, if not, suspend
+				// the model
+				if (monster.getCurrentTile().getRigidBody() == null) {
+					body.setActivationState(0);
+				} else {
+					if (body.getActivationState() == 0) {
+						body.setActivationState(1);
+						body.applyImpulse(new Vector3f(0, 0, 1), new Vector3f(0, 0, 0));
+					}
+
+					if (body != null && body.getMotionState() != null) {
+						DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
+						m.set(myMotionState.graphicsWorldTrans);
+
+					} else {
+						colObj.getWorldTransform(m);
+					}
+
+					// Update its rendering position
+					monster.getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
+				}
 			}
-
-			// System.out.println("Number of objects in map = " +
-			// objectMap.size());
-
-			// Update object position
-			// if (body.getUserPointer() == assContainer.getMonsters().get(0)) {
-			// System.out.println(m.origin);
-			if (objectMap.containsKey(body))
-				objectMap.get(body).getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
-			// }
-
 		}
 
 		// System.out.println(count);
 
 	}
 
-	private void addTerrainMesh(GLMesh mesh) {
+	private IndexedMesh addTerrainMesh(GLMesh mesh) {
 
 		/*
 		 * public int numTriangles; public ByteBuffer triangleIndexBase; public
@@ -132,7 +139,7 @@ public class PhysicsEngine implements Observer {
 		indexedMesh.vertexBase = mesh.verticesByteBuffer;
 		indexedMesh.vertexStride = mesh.vertexStride;
 
-		terrainMeshArray.addIndexedMesh(indexedMesh);
+		return indexedMesh;
 	}
 
 	public PhysicsEngine(AssetContainer assContainer) {
@@ -147,7 +154,7 @@ public class PhysicsEngine implements Observer {
 		// }
 		// }
 
-		terrainMeshArray = new TriangleIndexVertexArray();
+		// terrainMeshArray = new TriangleIndexVertexArray();
 
 		System.out.println("Instantiating physics engine");
 
@@ -242,22 +249,35 @@ public class PhysicsEngine implements Observer {
 	}
 
 	private void addAbstractTile(Transform transform, AbstractTile tile) {
-		// TODO: Maybe remove it here if null, or maybe earlier
-		if (tile.getModel() != null) {
-			addTerrainMesh((GLMesh) tile.getPhysicsModel());
-		}
+
+		GLMesh model = (GLMesh) tile.getPhysicsModel();
+
+		TriangleIndexVertexArray terrainMeshArray = new TriangleIndexVertexArray();
+
+		terrainMeshArray.addIndexedMesh(addTerrainMesh(model));
 
 		boolean useQuantizedAabbCompression = true;
 
-		trimeshShape = new BvhTriangleMeshShape(terrainMeshArray, useQuantizedAabbCompression);
-		collisionShapes.add(trimeshShape);
+		BvhTriangleMeshShape trimeshShape = new BvhTriangleMeshShape(terrainMeshArray, useQuantizedAabbCompression);
+		// collisionShapes.add(trimeshShape);
 
-		CollisionShape groundShape = trimeshShape;
+		// CollisionShape groundShape = trimeshShape;
+
+		transform.origin.set(tile.getPosition().modelPos.x(), tile.getPosition().modelPos.y(), tile.getPosition().modelPos.z());
 
 		float mass = 0f;
-		RigidBody staticBody = localCreateRigidBody(mass, initialTransform, groundShape);
+		RigidBody staticBody = localCreateRigidBody(mass, transform, trimeshShape);
 		staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.STATIC_OBJECT);
 		staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
+
+		tile.setRigidBody(staticBody);
+	}
+
+	// TODO: Not sure this is all correct, and not sure I defo want to throw
+	// away the reference.
+	private void removeAbstractTile(AbstractTile tile) {
+		dynamicsWorld.removeRigidBody(tile.getRigidBody());
+		tile.setRigidBody(null);
 	}
 
 	private void addAsCube(Transform transform, Monster entity) {
@@ -377,9 +397,14 @@ public class PhysicsEngine implements Observer {
 		}
 
 		if (arg0 instanceof AbstractTile) {
-			System.out.println("Adding an abstract tile to physics engine");
-			initialTransform.setIdentity();
-			addAbstractTile(initialTransform, (AbstractTile) arg0);
+			if (((AbstractTile) arg0).getPhysicsModel() == null) {
+				System.out.println("Removing tile from physics engine");
+				removeAbstractTile((AbstractTile) arg0);
+			} else {
+				System.out.println("Adding tile to physics engine");
+				initialTransform.setIdentity();
+				addAbstractTile(initialTransform, (AbstractTile) arg0);
+			}
 		}
 
 	}

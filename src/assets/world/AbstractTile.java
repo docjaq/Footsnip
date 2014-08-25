@@ -11,12 +11,13 @@ import assets.Asset;
 import assets.entities.Entity;
 import assets.world.datastructures.DataStructureKey2D;
 
+import com.bulletphysics.dynamics.RigidBody;
+
 public abstract class AbstractTile extends Observable implements Asset {
 
 	protected GLModel model;
 	protected GLModel physicsModel;
 	protected GLPosition position;
-	// protected Vector3 tilePos; // I don't like this, it should be temporary
 	protected DataStructureKey2D key;
 
 	protected List<Entity> containedEntities;
@@ -24,6 +25,9 @@ public abstract class AbstractTile extends Observable implements Asset {
 	public static final float SIZE = 1.0f;
 
 	private boolean isActive;
+
+	// Physics stuff
+	private RigidBody rigidBody;
 
 	public AbstractTile(DataStructureKey2D key, GLModel model, GLPosition position) {
 		this.key = key;
@@ -90,5 +94,13 @@ public abstract class AbstractTile extends Observable implements Asset {
 		this.physicsModel = physicsModel;
 		setChanged();
 		notifyObservers(physicsModel);
+	}
+
+	public RigidBody getRigidBody() {
+		return rigidBody;
+	}
+
+	public void setRigidBody(RigidBody rigidBody) {
+		this.rigidBody = rigidBody;
 	}
 }
