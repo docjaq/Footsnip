@@ -24,26 +24,20 @@ public class GLMesh extends GLModel {
 
 	public int numVertices;
 	public ByteBuffer verticesByteBuffer;
+	private FloatBuffer verticesFloatBuffer;
 	public int vertexStride;
 
-    private List<GLTriangle> triangleList;
-    private List<GLVertex> vertexList;
+	private List<GLTriangle> triangleList;
+	private List<GLVertex> vertexList;
 
-    public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList){
-        super();
+	public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList) {
+		super();
 
-        this.triangleList = triangleList;
-        this.vertexList = vertexList;
-    }
+		this.triangleList = triangleList;
+		this.vertexList = vertexList;
+	}
 
-    public void setBuffers(int vaoId, int vboId, int vboiId){
-        this.vaoId = vaoId;
-        this.vboId = vboId;
-        this.vboiId = vboiId;
-    }
-
-	public void pushToGPU() {
-
+	public void instantiateBuffersLocally() {
 		numTriangles = triangleList.size();
 		indexStride = 3 * 4; // TODO: Guess
 
@@ -51,7 +45,7 @@ public class GLMesh extends GLModel {
 		vertexStride = GLVertex.stride;
 
 		verticesByteBuffer = BufferUtils.createByteBuffer(vertexList.size() * GLVertex.stride).order(ByteOrder.nativeOrder());
-		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
+		verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
 		for (GLVertex v : vertexList) {
 			verticesFloatBuffer.put(v.getElements());
 		}
@@ -74,6 +68,11 @@ public class GLMesh extends GLModel {
 		}
 
 		indexByteBuffer.flip();
+	}
+
+	public void pushToGPU() {
+
+		instantiateBuffersLocally();
 
 		// Create a new Vertex Array Object in memory and select it (bind)
 		vaoId = GL30.glGenVertexArrays();
@@ -138,17 +137,20 @@ public class GLMesh extends GLModel {
 	 * null), Vector3f.sub(v1.getXYZ(), v2.getXYZ(), null), null);
 	 * vn2.normalise(); v2.setNXNYNZ(vn2); }
 	 */
-    public List<GLTriangle> getTriangles() {
-        return triangleList;
-    }
-    public void setTriangles(List<GLTriangle> triangleList) {
-        this.triangleList = triangleList;
-    }
-    public List<GLVertex> getVertices() {
-        return vertexList;
-    }
-    public void setVertices(List<GLVertex> vertexList) {
-        this.vertexList = vertexList;
-    }
+	public List<GLTriangle> getTriangles() {
+		return triangleList;
+	}
+
+	public void setTriangles(List<GLTriangle> triangleList) {
+		this.triangleList = triangleList;
+	}
+
+	public List<GLVertex> getVertices() {
+		return vertexList;
+	}
+
+	public void setVertices(List<GLVertex> vertexList) {
+		this.vertexList = vertexList;
+	}
 
 }

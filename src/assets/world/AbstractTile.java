@@ -1,6 +1,7 @@
 package assets.world;
 
 import java.util.List;
+import java.util.Observable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import renderer.GLPosition;
@@ -10,7 +11,7 @@ import assets.Asset;
 import assets.entities.Entity;
 import assets.world.datastructures.DataStructureKey2D;
 
-public abstract class AbstractTile implements Asset {
+public abstract class AbstractTile extends Observable implements Asset {
 
 	protected GLModel model;
 	protected GLModel physicsModel;
@@ -87,5 +88,7 @@ public abstract class AbstractTile implements Asset {
 
 	public void setPhysicsModel(GLModel physicsModel) {
 		this.physicsModel = physicsModel;
+		setChanged();
+		notifyObservers(physicsModel);
 	}
 }

@@ -1,10 +1,12 @@
 package assets.entities;
 
+import java.util.Observable;
+
 import renderer.GLPosition;
 import renderer.glmodels.GLModel;
 import assets.Asset;
 
-public abstract class AbstractEntity implements Asset {
+public abstract class AbstractEntity extends Observable implements Asset {
 
 	private static int globalEntityIdCounter = 0;
 	protected GLModel model;
@@ -36,6 +38,7 @@ public abstract class AbstractEntity implements Asset {
 	}
 
 	public void destroy() {
+		notifyObservers(model);
 		model.cleanUp();
 		// TODO: Cleanup non-gl stuff
 	}

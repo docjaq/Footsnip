@@ -25,6 +25,7 @@ public class Monster extends Entity {
 	public Monster(GLModel model, GLPosition position, int level) {
 		super(model, position);
 		this.level = level;
+		setChanged();
 	}
 
 	public int getLevel() {

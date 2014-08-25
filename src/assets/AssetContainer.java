@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import physics.PhysicsEngine;
 import renderer.glmodels.factories.GLProjectileFactory;
 import assets.entities.Monster;
 import assets.entities.Player;
@@ -19,6 +20,7 @@ public class AssetContainer {
 	private List<Projectile> projectiles;
 	private List<PolygonalScenery> polygonalSceneries;
 	private TileDataStructure2D tiles;
+	private PhysicsEngine physicsEngine;
 
 	public void setProjectiles(List<Projectile> projectiles) {
 		this.projectiles = projectiles;
@@ -38,7 +40,7 @@ public class AssetContainer {
 		monsters = new ArrayList<Monster>(0);
 		// So the list can be rendered and added to at the same time
 		projectiles = new CopyOnWriteArrayList<Projectile>();
-		tiles = new HashmapTileDataStructure2D();
+		tiles = new HashmapTileDataStructure2D(this);
 	}
 
 	/** AbstractTiles **/
@@ -95,5 +97,13 @@ public class AssetContainer {
 
 	public void addPolygonalScenery(PolygonalScenery polygonalScenery) {
 		this.polygonalSceneries.add(polygonalScenery);
+	}
+
+	public PhysicsEngine getPhysicsEngine() {
+		return physicsEngine;
+	}
+
+	public void setPhysicsEngine(PhysicsEngine physicsEngine) {
+		this.physicsEngine = physicsEngine;
 	}
 }

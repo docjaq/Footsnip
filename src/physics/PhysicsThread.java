@@ -13,6 +13,7 @@ public class PhysicsThread extends GameThread {
 		super(assContainer, threadDelay, mainApplication);
 
 		engine = new PhysicsEngine(assContainer);
+		assContainer.setPhysicsEngine(engine);
 	}
 
 	@Override

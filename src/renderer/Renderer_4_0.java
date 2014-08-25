@@ -265,7 +265,7 @@ public class Renderer_4_0 extends RendererThread {
 		Ply playerMesh = new Ply();
 		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"), playerColor);
 		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices());
-        playerModel.pushToGPU();
+		playerModel.pushToGPU();
 		GLPosition playerPosition = new GLPosition(playerPos, playerAngle, playerScale, playerModel.getModelRadius());
 
 		assContainer.setPlayer(new Player(playerModel, playerPosition, 0, new float[] { 1.0f, 0.0f, 0.0f }));
@@ -287,7 +287,10 @@ public class Renderer_4_0 extends RendererThread {
 			Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 			// Vector3 monsterPos = new Vector3(0, 0.1f, 0);
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
-			assContainer.addMonster(monsterFactory.create(monsterPos, rotationDelta));
+			Monster monster = monsterFactory.create(monsterPos, rotationDelta);
+			monster.addObserver(assContainer.getPhysicsEngine());
+			monster.notifyObservers(monster.getModel());
+			assContainer.addMonster(monster);
 		}
 
 		// Initialise projectile factory
@@ -325,16 +328,16 @@ public class Renderer_4_0 extends RendererThread {
 
 		updateFPS();
 
-        waitForWindowClosed();
-    }
+		waitForWindowClosed();
+	}
 
-    private void waitForWindowClosed() {
-        if (Display.isCloseRequested()) {
-            GameControl.stopGame();
-        }
-    }
+	private void waitForWindowClosed() {
+		if (Display.isCloseRequested()) {
+			GameControl.stopGame();
+		}
+	}
 
-    /**
+	/**
 	 * Calculate the frames per second, by counting the number of frames every
 	 * second, and resetting that count at the end of each second.
 	 * 

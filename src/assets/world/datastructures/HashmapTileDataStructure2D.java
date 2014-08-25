@@ -17,6 +17,7 @@ import renderer.glmodels.GLMesh;
 import renderer.glshaders.GLGaussianTessellationShader;
 import renderer.glshaders.GLShader;
 import renderer.glshaders.GLWaterShader;
+import assets.AssetContainer;
 import assets.entities.Entity;
 import assets.entities.Player;
 import assets.world.AbstractTile;
@@ -42,8 +43,10 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	private PolygonHeightmapTileFactory glTileFactory;
 
 	private DefaultMeshPool meshPool;
+	private AssetContainer assContainer;
 
-	public HashmapTileDataStructure2D() {
+	public HashmapTileDataStructure2D(AssetContainer assContainer) {
+		this.assContainer = assContainer;
 		allMap = new ConcurrentHashMap<DataStructureKey2D, AbstractTile>();
 		tilesNeedingNewModels = new ArrayList<AbstractTile>(9);
 		currentTileList = new ArrayList<AbstractTile>(9);
@@ -57,6 +60,8 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		this.initialTile = initialTile;
 		initialTile.setKey(INITIAL_KEY);
 		allMap.put(INITIAL_KEY, initialTile);
+
+		initialTile.addObserver(assContainer.getPhysicsEngine());
 	}
 
 	public List<AbstractTile> getTilesAsList() {
@@ -285,7 +290,10 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		// populate remaining currentTileList objects from objectPool
 		// TODO:Replace with ExecutorService threading
 		for (AbstractTile t : tilesNeedingNewModels) {
-			t.setPhysicsModel(meshPool.borrowObject(((PolygonHeightmapTile) t).getHeightmap()));
+			GLMesh physicsModel = meshPool.borrowObject(((PolygonHeightmapTile) t).getHeightmap());
+			physicsModel.instantiateBuffersLocally();
+			t.setPhysicsModel(physicsModel);
+
 		}
 
 	}
@@ -305,6 +313,7 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		} else {
 			tile = glTileFactory.create(key, position);
 			allMap.put(key, tile);
+			// tile.addObserver(assContainer.getPhysicsEngine());
 		}
 
 		tile.setActive(true);

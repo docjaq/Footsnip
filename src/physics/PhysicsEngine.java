@@ -3,6 +3,8 @@ package physics;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.vecmath.Vector3f;
 
@@ -37,7 +39,7 @@ import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
 import com.bulletphysics.util.ObjectArrayList;
 
-public class PhysicsEngine {
+public class PhysicsEngine implements Observer {
 
 	private ObjectArrayList<CollisionShape> collisionShapes = new ObjectArrayList<CollisionShape>();
 	private static BvhTriangleMeshShape trimeshShape;
@@ -51,6 +53,8 @@ public class PhysicsEngine {
 
 	protected Clock clock = new Clock();
 	private static float offset = 0f;
+
+	private Transform initialTransform;
 
 	private TriangleIndexVertexArray terrainMeshArray;
 
@@ -70,6 +74,7 @@ public class PhysicsEngine {
 
 		// System.out.println(BulletStats.gNumGjkChecks + "," +
 		// BulletStats.gNumDeepPenetrationChecks);
+		// System.out.println("Updating physics engine");
 
 		updateEntities();
 	}
@@ -134,12 +139,15 @@ public class PhysicsEngine {
 
 		this.assContainer = assContainer;
 
+		// terrainMeshArray = new TriangleIndexVertexArray();
+		// for (AbstractTile tile :
+		// assContainer.getTileDataStructure().getTilesAsList()) {
+		// if (tile.getModel() != null) {
+		// addTerrainMesh((GLMesh) tile.getModel());
+		// }
+		// }
+
 		terrainMeshArray = new TriangleIndexVertexArray();
-		for (AbstractTile tile : assContainer.getTileDataStructure().getTilesAsList()) {
-            if(tile.getModel() != null) {
-                addTerrainMesh((GLMesh) tile.getModel());
-            }
-		}
 
 		System.out.println("Instantiating physics engine");
 
@@ -158,13 +166,14 @@ public class PhysicsEngine {
 
 		// Look at what BvhTriangleMeshShape is. Maybe I can pass it something
 		// else, if it's implemented
-		boolean useQuantizedAabbCompression = true;
+		// TEMP boolean useQuantizedAabbCompression = true;
 
-		//TEMP trimeshShape = new BvhTriangleMeshShape(terrainMeshArray, useQuantizedAabbCompression);
-        //TEMP collisionShapes.add(trimeshShape);
+		// TEMP trimeshShape = new BvhTriangleMeshShape(terrainMeshArray,
+		// useQuantizedAabbCompression);
+		// TEMP collisionShapes.add(trimeshShape);
 
 		// Store a reference to the terrain collision shape
-        //TEMP CollisionShape groundShape = trimeshShape;
+		// TEMP CollisionShape groundShape = trimeshShape;
 		collisionConfiguration = new DefaultCollisionConfiguration();
 
 		// Init dispatcher
@@ -184,8 +193,7 @@ public class PhysicsEngine {
 
 		dynamicsWorld.setGravity(new Vector3f(0, 0, -1f));
 
-		float mass = 0f;
-		Transform initialTransform = new Transform();
+		initialTransform = new Transform();
 		// Create some CollisionShape objects. If they're the same type of
 		// object, just create one, and add it multiple times with different
 		// transforms etc to the dynamics world. Example shape:
@@ -200,14 +208,17 @@ public class PhysicsEngine {
 
 		objectMap = new HashMap<RigidBody, Monster>();
 
-		addAsCubes(initialTransform, assContainer.getMonsters());
+		// TEMP2 addAsCubes(initialTransform, assContainer.getMonsters());
 
 		// Add the static terrain to the dynamicsWorld. Allow material
 		// callbacks? Friction etc
 		initialTransform.setIdentity();
-        //TEMP RigidBody staticBody = localCreateRigidBody(mass, initialTransform, groundShape);
-        //TEMP staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.STATIC_OBJECT);
-        //TEMP staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
+		// TEMP RigidBody staticBody = localCreateRigidBody(mass,
+		// initialTransform, groundShape);
+		// TEMP staticBody.setCollisionFlags(staticBody.getCollisionFlags() |
+		// CollisionFlags.STATIC_OBJECT);
+		// TEMP staticBody.setCollisionFlags(staticBody.getCollisionFlags() |
+		// CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
 	}
 
 	private void addAsCubes(Transform transform, List<Monster> entities) {
@@ -227,6 +238,45 @@ public class PhysicsEngine {
 			// dynamicsWorld.addRigidBody(body);
 			count++;
 		}
+		System.out.println("Added " + count + " entities to Physics Engine");
+	}
+
+	private void addAbstractTile(Transform transform, AbstractTile tile) {
+		// TODO: Maybe remove it here if null, or maybe earlier
+		if (tile.getModel() != null) {
+			addTerrainMesh((GLMesh) tile.getPhysicsModel());
+		}
+
+		boolean useQuantizedAabbCompression = true;
+
+		trimeshShape = new BvhTriangleMeshShape(terrainMeshArray, useQuantizedAabbCompression);
+		collisionShapes.add(trimeshShape);
+
+		CollisionShape groundShape = trimeshShape;
+
+		float mass = 0f;
+		RigidBody staticBody = localCreateRigidBody(mass, initialTransform, groundShape);
+		staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.STATIC_OBJECT);
+		staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
+	}
+
+	private void addAsCube(Transform transform, Monster entity) {
+
+		int count = 0;
+
+		transform.setIdentity();
+		// TODO: Radius hack as it seems too big
+		CollisionShape colShape = new SphereShape(entity.getModel().getModelRadius() * 0.8f);
+
+		transform.origin
+				.set(entity.getPosition().modelPos.x(), entity.getPosition().modelPos.y(), entity.getPosition().modelPos.z() + 0.2f);
+		RigidBody body = localCreateRigidBody(1f, transform, colShape);
+		body.setUserPointer(entity);
+
+		objectMap.put(body, entity);
+
+		// dynamicsWorld.addRigidBody(body);
+		count++;
 		System.out.println("Added " + count + " entities to Physics Engine");
 	}
 
@@ -316,5 +366,21 @@ public class PhysicsEngine {
 		float dt = clock.getTimeMicroseconds();
 		clock.reset();
 		return dt;
+	}
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		if (arg0 instanceof Monster) {
+			initialTransform.setIdentity();
+			addAsCube(initialTransform, (Monster) arg0);
+
+		}
+
+		if (arg0 instanceof AbstractTile) {
+			System.out.println("Adding an abstract tile to physics engine");
+			initialTransform.setIdentity();
+			addAbstractTile(initialTransform, (AbstractTile) arg0);
+		}
+
 	}
 }

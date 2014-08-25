@@ -2,7 +2,11 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import location.LocationThread;
 import physics.PhysicsThread;
@@ -51,13 +55,20 @@ public class Main implements GameListener {
 
 		final AssetContainer assContainer = new AssetContainer();
 
+		GameThread physicsThread = new PhysicsThread(assContainer, 2, Main.this);
+
 		GameThread rendererThread = new Renderer_4_0(assContainer, this);
-        Future<?> rendererFuture = executor.submit(rendererThread);
-        childThreads.add(rendererThread);
+		Future<?> rendererFuture = executor.submit(rendererThread);
+		childThreads.add(rendererThread);
 
 		rendererThread.registerSetupObserver(new ThreadObserver() {
 			@Override
 			public void setupDone(ObservableThread subject) {
+
+				// Created before renderer to get reference
+				childThreads.add(physicsThread);
+				executor.execute(physicsThread);
+
 				// Renderer is set up, so start the control thread.
 				GameThread controlThread = new ControlThread(assContainer, 10, Main.this);
 				childThreads.add(controlThread);
@@ -70,46 +81,42 @@ public class Main implements GameListener {
 				GameThread locationThread = new LocationThread(assContainer, 10, Main.this);
 				childThreads.add(locationThread);
 				executor.execute(locationThread);
-
-				GameThread physicsThread = new PhysicsThread(assContainer, 2, Main.this);
-				childThreads.add(physicsThread);
-				executor.execute(physicsThread);
 			}
 		});
 
 		AudioEngine.getInstance();
 
-        GameControl.startGame();
+		GameControl.startGame();
 
-        quitWhenRendererFinishes(rendererFuture);
+		quitWhenRendererFinishes(rendererFuture);
 	}
 
-    private void quitWhenRendererFinishes(Future<?> rendererFuture) throws ExecutionException, InterruptedException {
-        rendererFuture.get();
-        quitGame();
-    }
+	private void quitWhenRendererFinishes(Future<?> rendererFuture) throws ExecutionException, InterruptedException {
+		rendererFuture.get();
+		quitGame();
+	}
 
 	public void quitGame() {
-        GameControl.stopGame();
+		GameControl.stopGame();
 		AudioEngine.getInstance().close();
-        shutdownExecutor();
+		shutdownExecutor();
 	}
 
-    private void shutdownExecutor() {
-        executor.shutdown();
-        try {
-            if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
-                System.err.println("Gave up waiting for threads to end naturally; killing them...");
-                executor.shutdownNow();
-                if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
-                    System.err.println("Thread pool did not terminate");
-                }
-            }
-        } catch (InterruptedException ie) {
-            executor.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
-    }
+	private void shutdownExecutor() {
+		executor.shutdown();
+		try {
+			if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
+				System.err.println("Gave up waiting for threads to end naturally; killing them...");
+				executor.shutdownNow();
+				if (!executor.awaitTermination(10L, TimeUnit.SECONDS)) {
+					System.err.println("Thread pool did not terminate");
+				}
+			}
+		} catch (InterruptedException ie) {
+			executor.shutdownNow();
+			Thread.currentThread().interrupt();
+		}
+	}
 
 	@Override
 	public void gameOver(boolean playerWon) {
