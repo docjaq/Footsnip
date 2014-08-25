@@ -30,6 +30,7 @@ public class PhysicsThread extends GameThread {
 			}
 			setupStage = false;
 		}
+		engine.finishedInitialisation();
 		engine.stepSimulation();
 	}
 

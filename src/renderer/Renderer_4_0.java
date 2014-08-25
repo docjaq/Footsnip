@@ -283,7 +283,7 @@ public class Renderer_4_0 extends RendererThread {
 		MonsterFactory monsterFactory = new MonsterFactory(monsterMesh);
 
 		float spread = 1.8f;
-		for (int i = 0; i < 300; i++) {
+		for (int i = 0; i < 50; i++) {
 			Vector3 monsterPos = new Vector3((float) (Math.random() - 0.5f) * spread, (float) (Math.random() - 0.5f) * spread, 0);
 			// Vector3 monsterPos = new Vector3(0, 0.1f, 0);
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
