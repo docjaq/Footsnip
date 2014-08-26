@@ -65,6 +65,8 @@ public class PhysicsEngine implements Observer {
 
 	private boolean finishedInitialisation = false;
 
+	private double debugFloatingAccumulator = 0;
+
 	public void stepSimulation() {
 
 		// Remove entities
@@ -96,6 +98,15 @@ public class PhysicsEngine implements Observer {
 
 		int count = 0;
 
+		debugFloatingAccumulator += 1;
+
+		double impulse = Math.sin(debugFloatingAccumulator);
+		if (impulse < 0) {
+			impulse = 0;
+		} else {
+			impulse *= 0.2;
+		}
+
 		for (int i = 0; i < dynamicsWorld.getNumCollisionObjects(); i++) {
 
 			CollisionObject colObj = dynamicsWorld.getCollisionObjectArray().getQuick(i);
@@ -114,8 +125,17 @@ public class PhysicsEngine implements Observer {
 					if (body.getActivationState() == 0) {
 						System.out.println("Applying an impulse");
 						body.setActivationState(1);
-						body.applyImpulse(new Vector3f(0, 0, 1), new Vector3f(0, 0, 0));
+						// body.applyImpulse(new Vector3f(0, 0, 1), new
+						// Vector3f(0, 0, 0));
 					}
+					body.activate();
+
+					Vector3f direction = new Vector3f((float) Math.random() * 2 - 1, (float) Math.random() * 2 - 1, 0);
+					direction.normalize();
+					direction.scale(0.01f);
+
+					body.applyCentralImpulse(direction);
+					body.applyCentralForce(new Vector3f(0, 0, 0.1f));
 
 					if (body != null && body.getMotionState() != null) {
 						DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
@@ -210,7 +230,7 @@ public class PhysicsEngine implements Observer {
 		solver = new SequentialImpulseConstraintSolver();
 		dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 
-		dynamicsWorld.setGravity(new Vector3f(0, 0, -1f));
+		dynamicsWorld.setGravity(new Vector3f(0, 0, -0.1f));
 
 		initialTransform = new Transform();
 		// Create some CollisionShape objects. If they're the same type of
@@ -251,7 +271,7 @@ public class PhysicsEngine implements Observer {
 			// TODO: Radius hack as it seems too big
 			CollisionShape colShape = new SphereShape(e.getModel().getModelRadius() * 1f);
 
-			transform.origin.set(e.getPosition().modelPos.x(), e.getPosition().modelPos.y(), e.getPosition().modelPos.z() + 0.2f);
+			transform.origin.set(e.getPosition().modelPos.x(), e.getPosition().modelPos.y(), e.getPosition().modelPos.z() + 0.0f);
 			RigidBody body = localCreateRigidBody(1f, transform, colShape);
 			body.setUserPointer(e);
 
@@ -312,10 +332,10 @@ public class PhysicsEngine implements Observer {
 
 		transform.setIdentity();
 		// TODO: Radius hack as it seems too big
-		CollisionShape colShape = new SphereShape(entity.getModel().getModelRadius() * 0.8f);
+		CollisionShape colShape = new SphereShape(entity.getModel().getModelRadius() * 1f);
 
 		transform.origin
-				.set(entity.getPosition().modelPos.x(), entity.getPosition().modelPos.y(), entity.getPosition().modelPos.z() + 0.2f);
+				.set(entity.getPosition().modelPos.x(), entity.getPosition().modelPos.y(), entity.getPosition().modelPos.z() + 0.0f);
 		RigidBody body = localCreateRigidBody(1f, transform, colShape);
 		body.setUserPointer(entity);
 
