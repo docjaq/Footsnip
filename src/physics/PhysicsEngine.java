@@ -100,12 +100,9 @@ public class PhysicsEngine implements Observer {
 
 		debugFloatingAccumulator += 1;
 
-		double impulse = Math.sin(debugFloatingAccumulator);
-		if (impulse < 0) {
-			impulse = 0;
-		} else {
-			impulse *= 0.2;
-		}
+		double impulse = Math.cos(debugFloatingAccumulator);
+		impulse *= 0.1;
+		System.out.println("impulse " + impulse);
 
 		for (int i = 0; i < dynamicsWorld.getNumCollisionObjects(); i++) {
 
@@ -135,7 +132,7 @@ public class PhysicsEngine implements Observer {
 					direction.scale(0.01f);
 
 					body.applyCentralImpulse(direction);
-					body.applyCentralForce(new Vector3f(0, 0, 0.1f));
+					body.applyCentralForce(new Vector3f(0, 0, (float) (0.1 + impulse)));
 
 					if (body != null && body.getMotionState() != null) {
 						DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
