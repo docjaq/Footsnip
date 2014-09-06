@@ -15,6 +15,13 @@ public class GLPosition {
 		setEntityRadiusWithModelRadius(modelRadius);
 	}
 
+	public GLPosition(Vector3 modelPos, float modelScale, float modelRadius) {
+		this.modelPos = modelPos;
+		this.modelAngle = new Vector3(0, 0, 0);
+		setModelScale(modelScale);
+		setEntityRadiusWithModelRadius(modelRadius);
+	}
+
 	public Vector3 getModelPos() {
 		return modelPos;
 	}

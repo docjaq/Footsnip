@@ -119,24 +119,6 @@ public class GLMesh extends GLModel {
 		return radius;
 	}
 
-	/*
-	 * I don't really think this should be here. GLMesh currently assumes it
-	 * already has normals
-	 */
-	/*
-	 * public static void addNormalToTriangle(GLVertex v0, GLVertex v1, GLVertex
-	 * v2) { Vector3f vn0 = Vector3f.cross(Vector3f.sub(v1.getXYZ(),
-	 * v0.getXYZ(), null), Vector3f.sub(v2.getXYZ(), v0.getXYZ(), null), null);
-	 * vn0.normalise(); v0.setNXNYNZ(vn0);
-	 * 
-	 * Vector3f vn1 = Vector3f.cross(Vector3f.sub(v2.getXYZ(), v1.getXYZ(),
-	 * null), Vector3f.sub(v0.getXYZ(), v1.getXYZ(), null), null);
-	 * vn1.normalise(); v1.setNXNYNZ(vn1);
-	 * 
-	 * Vector3f vn2 = Vector3f.cross(Vector3f.sub(v0.getXYZ(), v2.getXYZ(),
-	 * null), Vector3f.sub(v1.getXYZ(), v2.getXYZ(), null), null);
-	 * vn2.normalise(); v2.setNXNYNZ(vn2); }
-	 */
 	public List<GLTriangle> getTriangles() {
 		return triangleList;
 	}
