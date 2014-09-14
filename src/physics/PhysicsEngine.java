@@ -58,7 +58,7 @@ public class PhysicsEngine implements Observer {
 	private Transform initialTransform;
 
 	private Queue<AbstractTile> tilesToRemove;
-	private Queue<AbstractTile> tilesToAdd;
+	// private Queue<AbstractTile> tilesToAdd;
 
 	// TODO: Change all of this from monster to entity
 	private Map<RigidBody, Monster> objectMap;
@@ -257,7 +257,7 @@ public class PhysicsEngine implements Observer {
 		// CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
 
 		tilesToRemove = new ArrayBlockingQueue<AbstractTile>(20);
-		tilesToAdd = new ArrayBlockingQueue<AbstractTile>(20);
+		// tilesToAdd = new ArrayBlockingQueue<AbstractTile>(20);
 	}
 
 	private void addAsCubes(Transform transform, List<Monster> entities) {
@@ -328,7 +328,6 @@ public class PhysicsEngine implements Observer {
 		int count = 0;
 
 		transform.setIdentity();
-		// TODO: Radius hack as it seems too big
 		CollisionShape colShape = new SphereShape(entity.getModel().getModelRadius() * 1f);
 
 		transform.origin

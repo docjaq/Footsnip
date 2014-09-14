@@ -1,6 +1,7 @@
 package assets.world.datastructures;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,9 +46,9 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 	private DefaultMeshPool meshPool;
 	private AssetContainer assContainer;
 
-	private final DataStructureKey2D[] OFFSETS = { new DataStructureKey2D(0, 1), new DataStructureKey2D(1, 1),
-			new DataStructureKey2D(1, 0), new DataStructureKey2D(1, -1), new DataStructureKey2D(0, -1), new DataStructureKey2D(-1, -1),
-			new DataStructureKey2D(-1, 0), new DataStructureKey2D(-1, 1) };
+	private final List<DataStructureKey2D> OFFSETS = new ArrayList<>(Arrays.asList(new DataStructureKey2D[] { new DataStructureKey2D(0, 1),
+			new DataStructureKey2D(1, 1), new DataStructureKey2D(1, 0), new DataStructureKey2D(1, -1), new DataStructureKey2D(0, -1),
+			new DataStructureKey2D(-1, -1), new DataStructureKey2D(-1, 0), new DataStructureKey2D(-1, 1) }));
 
 	public HashmapTileDataStructure2D(AssetContainer assContainer) {
 		this.assContainer = assContainer;
@@ -239,10 +240,8 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		currentTileList.clear();
 		currentTileList.add(parentTile);
 
-		// TODO:Parallelise. May require using a concurrent collection.
-		for (DataStructureKey2D offset : OFFSETS) {
-			currentTileList.add(addTile(parentTile, offset));
-		}
+		// Add all the new tiles in parallel
+		OFFSETS.parallelStream().forEach(e -> currentTileList.add(addTile(parentTile, e)));
 
 		tilesJustRemoved.removeAll(currentTileList);
 		// TilesJustRemoved now contains JUST the tiles that the player has
@@ -271,15 +270,14 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 		// CurrentTilesList now contains JUST the tiles that we want to get new
 		// models for
+		tilesNeedingNewModels.parallelStream().forEach(e -> setupPhysicsModel(e));
 
-		// populate remaining currentTileList objects from objectPool
-		// TODO:Parallelise. Check concurrentness of meshPool
-		for (AbstractTile t : tilesNeedingNewModels) {
-			GLMesh physicsModel = meshPool.borrowObject(((PolygonHeightmapTile) t).getHeightmap());
-			physicsModel.instantiateBuffersLocally();
-			t.setPhysicsModel(physicsModel);
-		}
+	}
 
+	private void setupPhysicsModel(AbstractTile t) {
+		GLMesh physicsModel = meshPool.borrowObject(((PolygonHeightmapTile) t).getHeightmap());
+		physicsModel.instantiateBuffersLocally();
+		t.setPhysicsModel(physicsModel);
 	}
 
 	private AbstractTile addTile(final AbstractTile parentTile, final DataStructureKey2D offset) {
