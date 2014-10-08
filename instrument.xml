@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="javabullet" default="instrument-classes" basedir=".">
+<project name="footsnip" default="instrument-classes" basedir=".">
    <path id="instrument.classpath">
        <pathelement path="bin"/>
 

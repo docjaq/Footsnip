@@ -24,17 +24,22 @@ public class GLMesh extends GLModel {
 
 	public int numVertices;
 	public ByteBuffer verticesByteBuffer;
-	private FloatBuffer verticesFloatBuffer;
+	// private FloatBuffer verticesFloatBuffer;
 	public int vertexStride;
 
 	private List<GLTriangle> triangleList;
 	private List<GLVertex> vertexList;
+
+	// A state that is checked when pushing to GPU.
+	private boolean buffersInstantiated;
 
 	public GLMesh(List<GLTriangle> triangleList, List<GLVertex> vertexList) {
 		super();
 
 		this.triangleList = triangleList;
 		this.vertexList = vertexList;
+
+		buffersInstantiated = false;
 	}
 
 	public void instantiateBuffersLocally() {
@@ -45,11 +50,14 @@ public class GLMesh extends GLModel {
 		vertexStride = GLVertex.stride;
 
 		verticesByteBuffer = BufferUtils.createByteBuffer(vertexList.size() * GLVertex.stride).order(ByteOrder.nativeOrder());
-		verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
+		// Converted to a floatbuffer her to provide the convenience method of
+		// adding an array (the whole stride). If this turns out to be slow,
+		// implement another solution
+		FloatBuffer verticesFloatBuffer = verticesByteBuffer.asFloatBuffer();
 		for (GLVertex v : vertexList) {
 			verticesFloatBuffer.put(v.getElements());
 		}
-		verticesFloatBuffer.flip();
+		// verticesFloatBuffer.flip();
 
 		// OpenGL expects to draw vertices in counter clockwise order by default
 		int[] indices = new int[triangleList.size() * 3];
@@ -68,11 +76,14 @@ public class GLMesh extends GLModel {
 		}
 
 		indexByteBuffer.flip();
+
+		buffersInstantiated = true;
 	}
 
 	public void pushToGPU() {
 
-		instantiateBuffersLocally();
+		if (!buffersInstantiated)
+			instantiateBuffersLocally();
 
 		// Create a new Vertex Array Object in memory and select it (bind)
 		vaoId = GL30.glGenVertexArrays();
@@ -81,7 +92,7 @@ public class GLMesh extends GLModel {
 		// Create a new Vertex Buffer Object in memory and select it (bind)
 		vboId = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesFloatBuffer, GL15.GL_STATIC_DRAW);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesByteBuffer, GL15.GL_STATIC_DRAW);
 
 		// Loads all vertex data into a single VBO to save memory on overheads,
 		// and to reduce the number of GL calls made

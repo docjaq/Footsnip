@@ -102,7 +102,7 @@ public class PhysicsEngine implements Observer {
 
 		double impulse = Math.cos(debugFloatingAccumulator);
 		impulse *= 0.1;
-		System.out.println("impulse " + impulse);
+		// System.out.println("impulse " + impulse);
 
 		for (int i = 0; i < dynamicsWorld.getNumCollisionObjects(); i++) {
 
@@ -114,36 +114,41 @@ public class PhysicsEngine implements Observer {
 			if (objectMap.containsKey(body)) {
 				Monster monster = objectMap.get(body);
 
-				// Check that the tile rigid body is active, if not, suspend
-				// the model
-				if (monster.getCurrentTile().getRigidBody() == null) {
-					body.setActivationState(0);
-				} else {
-					if (body.getActivationState() == 0) {
-						System.out.println("Applying an impulse");
-						body.setActivationState(1);
-						// body.applyImpulse(new Vector3f(0, 0, 1), new
-						// Vector3f(0, 0, 0));
-					}
-					body.activate();
+				// Check here, as if things are initialised late, can cause a
+				// problem
+				if (monster.getCurrentTile() != null) {
 
-					Vector3f direction = new Vector3f((float) Math.random() * 2 - 1, (float) Math.random() * 2 - 1, 0);
-					direction.normalize();
-					direction.scale(0.01f);
-
-					body.applyCentralImpulse(direction);
-					body.applyCentralForce(new Vector3f(0, 0, (float) (0.1 + impulse)));
-
-					if (body != null && body.getMotionState() != null) {
-						DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
-						m.set(myMotionState.graphicsWorldTrans);
-
+					// Check that the tile rigid body is active, if not, suspend
+					// the model
+					if (monster.getCurrentTile().getRigidBody() == null) {
+						body.setActivationState(0);
 					} else {
-						colObj.getWorldTransform(m);
-					}
+						if (body.getActivationState() == 0) {
+							System.out.println("Applying an impulse");
+							body.setActivationState(1);
+							// body.applyImpulse(new Vector3f(0, 0, 1), new
+							// Vector3f(0, 0, 0));
+						}
+						body.activate();
 
-					// Update its rendering position
-					monster.getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
+						Vector3f direction = new Vector3f((float) Math.random() * 2 - 1, (float) Math.random() * 2 - 1, 0);
+						direction.normalize();
+						direction.scale(0.01f);
+
+						body.applyCentralImpulse(direction);
+						body.applyCentralForce(new Vector3f(0, 0, (float) (0.1 + impulse)));
+
+						if (body != null && body.getMotionState() != null) {
+							DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
+							m.set(myMotionState.graphicsWorldTrans);
+
+						} else {
+							colObj.getWorldTransform(m);
+						}
+
+						// Update its rendering position
+						monster.getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
+					}
 				}
 			}
 		}
@@ -291,6 +296,8 @@ public class PhysicsEngine implements Observer {
 		}
 
 		TriangleIndexVertexArray terrainMeshArray = new TriangleIndexVertexArray();
+		// Create the physics mesh object from the buffers and strides in the
+		// GLMesh
 		terrainMeshArray.addIndexedMesh(addTerrainMesh(model));
 
 		boolean useQuantizedAabbCompression = true;

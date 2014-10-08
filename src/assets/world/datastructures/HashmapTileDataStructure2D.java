@@ -274,10 +274,13 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 	}
 
-	private void setupPhysicsModel(AbstractTile t) {
-		GLMesh physicsModel = meshPool.borrowObject(((PolygonHeightmapTile) t).getHeightmap());
+	private void setupPhysicsModel(AbstractTile tile) {
+		GLMesh physicsModel = meshPool.borrowObject(((PolygonHeightmapTile) tile).getHeightmap(),
+				((PolygonHeightmapTile) tile).getHeightmapBuf());
+		// This needs to be a bytebuffer, not a floatbuffer
+
 		physicsModel.instantiateBuffersLocally();
-		t.setPhysicsModel(physicsModel);
+		tile.setPhysicsModel(physicsModel);
 	}
 
 	private AbstractTile addTile(final AbstractTile parentTile, final DataStructureKey2D offset) {
