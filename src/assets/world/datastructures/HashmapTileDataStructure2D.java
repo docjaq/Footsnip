@@ -167,8 +167,9 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 						// Bind heightmap texture if not already bound
 						if (polygonTile.getHeightmapLocation() == -1) {
-							polygonTile.setHeightmapLocation(GLUtilityMethods.bindBufferAs2DTexture(polygonTile.getHeightmapBuf(),
-									GL11.GL_RED, polygonTile.getHeightmapSize(), polygonTile.getHeightmapSize()));
+							polygonTile.setHeightmapLocation(GLUtilityMethods.bindBufferAs2DTexture(polygonTile.getHeightmapBuf()
+									.asFloatBuffer(), GL11.GL_RED, polygonTile.getHeightmapSize(), polygonTile.getHeightmapSize()));
+
 						}
 						((GLGaussianTessellationShader) shader).setHeightmapLocation(polygonTile.getHeightmapLocation());
 

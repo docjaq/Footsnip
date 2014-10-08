@@ -99,15 +99,19 @@ public class PolygonHeightmapTileFactory {
 		return tile;
 	}
 
-	private FloatBuffer convertArrayToBuffer(float[][] array) {
+	// TODO: Replace this method by generating the simplex output as a buffer
+	// directly
+	private ByteBuffer convertArrayToBuffer(float[][] array) {
 		int tWidth = array.length;
 		int tHeight = array.length;
 
 		// Change this to
 		// http://stackoverflow.com/questions/7070576/get-one-dimensionial-array-from-a-mutlidimensional-array-in-java
 		// Float is four bytes
-		ByteBuffer buf = ByteBuffer.allocateDirect(tWidth * tHeight * 4);
-		buf.order(ByteOrder.nativeOrder());
+		ByteBuffer buf = ByteBuffer.allocateDirect(tWidth * tHeight * 4).order(ByteOrder.nativeOrder());
+
+		// verticesByteBuffer = BufferUtils.createByteBuffer(vertexList.size() *
+		// GLVertex.stride).order(ByteOrder.nativeOrder());
 
 		FloatBuffer fBuf = buf.asFloatBuffer();
 		for (int y = 0; y < tHeight; y++) {
@@ -119,7 +123,7 @@ public class PolygonHeightmapTileFactory {
 			}
 		}
 		fBuf.flip();
-		return fBuf;
+		return buf;
 	}
 
 }

@@ -1,5 +1,6 @@
 package assets.world;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import renderer.GLPosition;
@@ -10,7 +11,7 @@ import assets.world.datastructures.DataStructureKey2D;
 public class PolygonHeightmapTile extends AbstractTile {
 
 	private float[][] heightmap;
-	private FloatBuffer heightmapBuf;
+	private ByteBuffer heightmapBuf;
 	private int heightmapLocation = -1;
 	private int heightmapSize;
 
@@ -52,11 +53,11 @@ public class PolygonHeightmapTile extends AbstractTile {
 		this.heightmapLocation = textureLocation;
 	}
 
-	public FloatBuffer getHeightmapBuf() {
+	public ByteBuffer getHeightmapBuf() {
 		return heightmapBuf;
 	}
 
-	public void setHeightmapBuf(FloatBuffer heightmapBuf) {
+	public void setHeightmapBuf(ByteBuffer heightmapBuf) {
 		this.heightmapBuf = heightmapBuf;
 	}
 

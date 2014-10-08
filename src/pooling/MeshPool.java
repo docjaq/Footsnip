@@ -1,7 +1,6 @@
 package pooling;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 
 import renderer.glmodels.GLMesh;
 
@@ -15,7 +14,7 @@ public abstract class MeshPool<T extends GLMesh> extends ObjectPool<T> {
 		this.tileComplexity = tileComplexity;
 	}
 
-	public GLMesh borrowObject(float[][] heightmap, FloatBuffer heightmapBuff) {
+	public GLMesh borrowObject(float[][] heightmap, ByteBuffer heightmapBuff) {
 		GLMesh object = borrowObject();
 
 		transformMeshFromHeightmap(object, heightmap);
