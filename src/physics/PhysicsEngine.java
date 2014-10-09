@@ -124,7 +124,7 @@ public class PhysicsEngine implements Observer {
 						body.setActivationState(0);
 					} else {
 						if (body.getActivationState() == 0) {
-							System.out.println("Applying an impulse");
+							// System.out.println("Applying an impulse");
 							body.setActivationState(1);
 							// body.applyImpulse(new Vector3f(0, 0, 1), new
 							// Vector3f(0, 0, 0));

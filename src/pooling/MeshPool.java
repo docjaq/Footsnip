@@ -17,14 +17,22 @@ public abstract class MeshPool<T extends GLMesh> extends ObjectPool<T> {
 	public GLMesh borrowObject(float[][] heightmap, ByteBuffer heightmapBuff) {
 		GLMesh object = borrowObject();
 
-		transformMeshFromHeightmap(object, heightmap);
-		// transformMeshFromHeightmap(object, heightmapBuff);
+		transformMeshFromHeightmap(object, heightmap, true);
+		transformMeshFromHeightmap(object, heightmapBuff);
+
+		return object;
+	}
+
+	public GLMesh borrowObject(float[][] heightmap) {
+		GLMesh object = borrowObject();
+
+		transformMeshFromHeightmap(object, heightmap, false);
 
 		return object;
 	}
 
 	// protected abstract float[][] generateHeightmap();
-	protected abstract void transformMeshFromHeightmap(GLMesh mesh, float[][] heightmap);
+	protected abstract void transformMeshFromHeightmap(GLMesh mesh, float[][] heightmap, boolean debug);
 
 	protected abstract void transformMeshFromHeightmap(GLMesh mesh, ByteBuffer heightmap);
 }

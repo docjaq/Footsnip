@@ -1,5 +1,7 @@
 package terraingen.simplex;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Random;
 
 public class SimplexNoise {
@@ -54,8 +56,37 @@ public class SimplexNoise {
 
 	public float[][] getSection(int resolution, int xOffset, int yOffset) {
 
-		// if (yOffset == 0 && xOffset >= 0)
-		// System.err.println("Creating tile for " + xOffset + "," + yOffset);
+		int xStart, yStart;
+		int offsetScale = resolution;
+
+		xStart = xOffset * (offsetScale - 1);
+		yStart = yOffset * (offsetScale - 1);
+
+		int xEnd = xStart + offsetScale;
+		int yEnd = yStart + offsetScale;
+
+		float[][] result = new float[resolution][resolution];
+
+		for (int i = 0; i < resolution; i++) {
+			for (int j = 0; j < resolution; j++) {
+				int x = (int) (xStart + i * ((xEnd - xStart) / (double) (resolution)));
+				int y = (int) (yStart + j * ((yEnd - yStart) / (double) (resolution)));
+				result[i][j] = ((float) getNoise(x, y) * 0.7f - 0.5f);// - 0.7f
+																		// +
+																		// 0.3f;
+			}
+		}
+
+		/*
+		 * System.out.println("Heightmap creation test: array"); for (int i = 0;
+		 * i < 10; i++) { System.out.print(result[0][i]); }
+		 * System.out.println();
+		 */
+
+		return result;
+	}
+
+	public ByteBuffer getSectionAsByteBuffer(int resolution, int xOffset, int yOffset) {
 
 		int xStart, yStart;
 		int offsetScale = resolution;
@@ -66,40 +97,27 @@ public class SimplexNoise {
 		int xEnd = xStart + offsetScale;
 		int yEnd = yStart + offsetScale;
 
-		// System.err.println("x = " + xOffset + "," + "y = " + yOffset);
-		// System.err.println("x(" + xStart + "," + xEnd + ") " + "y(" + yStart
-		// + "," + yEnd + ")");
-
-		if (xOffset <= 0) {
-
-		} else {
-
-		}
-
-		float[][] result = new float[resolution][resolution];
-
-		// for (int i = 0; i < resolution; i++) {
-		// for (int j = 0; j < resolution; j++) {
-		// int x = (int) (xStart + i * ((xEnd - xStart) / (double) resolution));
-		// int y = (int) (yStart + j * ((yEnd - yStart) / (double) resolution));
-		// result[i][j] = (float) (0.5d * (1 + getNoise(x, y))) - 0.6f;
-		// }
-		// }
+		ByteBuffer result = ByteBuffer.allocateDirect(resolution * resolution * 4).order(ByteOrder.nativeOrder());
 
 		for (int i = 0; i < resolution; i++) {
-			// int x = xStart + i;
-			// if (yOffset == 0 && xOffset >= 0)
-			// System.err.print(x + " ");
 			for (int j = 0; j < resolution; j++) {
-				int x = (int) (xStart + i * ((xEnd - xStart) / (double) (resolution)));
-				int y = (int) (yStart + j * ((yEnd - yStart) / (double) (resolution)));
-				result[i][j] = ((float) getNoise(x, y) * 0.7f - 0.5f);// - 0.7f
+				int x = (int) (xStart + i * ((xEnd - xStart) / (float) (resolution)));
+				int y = (int) (yStart + j * ((yEnd - yStart) / (float) (resolution)));
+				result.putFloat(((float) getNoise(x, y) * 0.7f - 0.5f));// -
+																		// 0.7f
 																		// +
 																		// 0.3f;
 			}
 		}
-		// if (yOffset == 0 && xOffset >= 0)
-		// System.err.println();
+
+		result.flip();
+		/*
+		 * System.out.println("Heightmap creation test: buffer"); for (int i =
+		 * 0; i < 10; i++) { System.out.print(result.getFloat()); }
+		 * result.rewind();
+		 */
+
+		System.out.println();
 
 		return result;
 	}

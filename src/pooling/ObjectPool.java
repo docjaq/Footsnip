@@ -5,73 +5,85 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public abstract class ObjectPool<T>
-{
-    protected ConcurrentLinkedQueue<T> pool;
+public abstract class ObjectPool<T> {
+	protected ConcurrentLinkedQueue<T> pool;
 
-    private ScheduledExecutorService executorService;
+	private ScheduledExecutorService executorService;
 
-    public ObjectPool(final int minIdle) {
-        // initialize pool
-        initialize(minIdle);
-    }
+	private int minIdle;
+	private int maxIdle;
+	private long validationInterval;
 
-    public ObjectPool(final int minIdle, final int maxIdle, final long validationInterval) {
-        // initialize pool
-        initialize(minIdle);
+	/*
+	 * Don't start pool in constructor, otherwise we can never have any
+	 * dependencies from extender constructors.
+	 */
 
-        // check pool conditions in a separate thread
-        executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleWithFixedDelay(new Runnable()
-        {
-            @Override
-            public void run() {
-                int size = pool.size();
-                if (size < minIdle) {
-                    int sizeToBeAdded = minIdle - size;
-                    for (int i = 0; i < sizeToBeAdded; i++) {
-                        pool.add(initaliseObject());
-                    }
-                } else if (size > maxIdle) {
-                    int sizeToBeRemoved = size - maxIdle;
-                    for (int i = 0; i < sizeToBeRemoved; i++) {
-                        pool.poll();
-                    }
-                }
-            }
-        }, validationInterval, validationInterval, TimeUnit.SECONDS);
-    }
+	// public ObjectPool(final int minIdle) {
+	// this.minIdle = minIdle;
+	// }
 
-    protected T borrowObject() {
-        T object;
-        if ((object = pool.poll()) == null) {
-            object = initaliseObject();
-        }
+	public ObjectPool(final int minIdle, final int maxIdle, final long validationInterval) {
+		this.minIdle = minIdle;
+		this.maxIdle = maxIdle;
+		this.validationInterval = validationInterval;
+	}
 
-        return object;
-    }
+	public void startup() {
+		// initialize pool
+		initialize(minIdle);
 
-    protected abstract T initaliseObject();
+		// check pool conditions in a separate thread
+		executorService = Executors.newSingleThreadScheduledExecutor();
+		executorService.scheduleWithFixedDelay(new Runnable() {
+			@Override
+			public void run() {
+				int size = pool.size();
+				if (size < minIdle) {
+					int sizeToBeAdded = minIdle - size;
+					for (int i = 0; i < sizeToBeAdded; i++) {
+						pool.add(initaliseObject());
+					}
+				} else if (size > maxIdle) {
+					int sizeToBeRemoved = size - maxIdle;
+					for (int i = 0; i < sizeToBeRemoved; i++) {
+						pool.poll();
+					}
+				}
+			}
+		}, validationInterval, validationInterval, TimeUnit.SECONDS);
+	}
 
-    public void returnObject(T object) {
-        if (object == null) {
-            return;
-        }
+	protected T borrowObject() {
+		T object;
+		if ((object = pool.poll()) == null) {
+			object = initaliseObject();
+		}
 
-        this.pool.offer(object);
-    }
+		return object;
+	}
 
-    public void shutdown() {
-        if (executorService != null) {
-            executorService.shutdown();
-        }
-    }
+	protected abstract T initaliseObject();
 
-    private void initialize(final int minIdle) {
-        pool = new ConcurrentLinkedQueue<T>();
+	public void returnObject(T object) {
+		if (object == null) {
+			return;
+		}
 
-        for (int i = 0; i < minIdle; i++) {
-            pool.add(initaliseObject());
-        }
-    }
+		this.pool.offer(object);
+	}
+
+	public void shutdown() {
+		if (executorService != null) {
+			executorService.shutdown();
+		}
+	}
+
+	private void initialize(final int minIdle) {
+		pool = new ConcurrentLinkedQueue<T>();
+
+		for (int i = 0; i < minIdle; i++) {
+			pool.add(initaliseObject());
+		}
+	}
 }

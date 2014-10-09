@@ -241,7 +241,9 @@ public class Renderer_4_0 extends RendererThread {
 		float tileScale = 1f;
 		GLPosition position = new GLPosition(tilePos, tileAngle, tileScale, 0);
 
-		PolygonHeightmapTileFactory glTileFactory = new PolygonHeightmapTileFactory(128, assContainer.getTileDataStructure());
+		// Complexity here covers terrain mesh and heightmap complexity, just
+		// for rendering. For Physics mesh, see HashmapTileDataStructure.java
+		PolygonHeightmapTileFactory glTileFactory = new PolygonHeightmapTileFactory(10, assContainer.getTileDataStructure());
 		AbstractTile initialTile = glTileFactory.create(null, position);
 
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);

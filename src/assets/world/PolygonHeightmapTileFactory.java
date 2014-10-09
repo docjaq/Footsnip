@@ -58,7 +58,8 @@ public class PolygonHeightmapTileFactory {
 
 		List<GLVertex> vertices = new ArrayList<GLVertex>(tileComplexity * tileComplexity);
 		List<GLTriangle> triangles = new ArrayList<GLTriangle>((tileComplexity - 1) * (tileComplexity - 1) * 2);
-		MeshGenerationUtilities.generatePlanarMesh(vertices, triangles);
+		System.out.println("Tile complexity from PolygonHeightmap = " + tileComplexity);
+		MeshGenerationUtilities.generatePlanarMesh(vertices, triangles, tileComplexity);
 		openGLReferenceMesh = new GLMesh(triangles, vertices);
 		openGLReferenceMesh.pushToGPU();
 
@@ -70,6 +71,7 @@ public class PolygonHeightmapTileFactory {
 
 		System.out.println("Creating new tile");
 
+		// TODO: I think it just passes this for the GPU... maybe clean this up
 		AbstractTile tile = new PolygonHeightmapTile(key, openGLReferenceMesh, position);
 		if (key == null)
 			key = new DataStructureKey2D(0, 0);
@@ -85,7 +87,9 @@ public class PolygonHeightmapTileFactory {
 			// REMOVED
 			polygonTile.setHeightmap(heightmap);
 
-			polygonTile.setHeightmapBuf(convertArrayToBuffer(heightmap));
+			polygonTile.setHeightmapBuf(convertArrayToBuffer(heightmap)); // simplexNoise.getSectionAsByteBuffer(tileComplexity,
+																			// key.x,
+																			// key.y)
 			polygonTile.setHeightmapSize(tileComplexity);
 
 			polygonTile.setColorMap(colorMapBuffer);
