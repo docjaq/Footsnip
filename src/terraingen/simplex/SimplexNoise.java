@@ -67,10 +67,12 @@ public class SimplexNoise {
 
 		float[][] result = new float[resolution][resolution];
 
+		// System.out.println("array: ");
 		for (int i = 0; i < resolution; i++) {
 			for (int j = 0; j < resolution; j++) {
 				int x = (int) (xStart + i * ((xEnd - xStart) / (double) (resolution)));
 				int y = (int) (yStart + j * ((yEnd - yStart) / (double) (resolution)));
+				// System.out.println(x + " , " + y);
 				result[i][j] = ((float) getNoise(x, y) * 0.7f - 0.5f);// - 0.7f
 																		// +
 																		// 0.3f;
@@ -78,8 +80,9 @@ public class SimplexNoise {
 		}
 
 		/*
-		 * System.out.println("Heightmap creation test: array"); for (int i = 0;
-		 * i < 10; i++) { System.out.print(result[0][i]); }
+		 * for (int i = 0; i < resolution; i++) { for (int j = 0; j <
+		 * resolution; j++) { System.out.print(result[i][j] + " "); } }
+		 * 
 		 * System.out.println();
 		 */
 
@@ -97,27 +100,41 @@ public class SimplexNoise {
 		int xEnd = xStart + offsetScale;
 		int yEnd = yStart + offsetScale;
 
-		ByteBuffer result = ByteBuffer.allocateDirect(resolution * resolution * 4).order(ByteOrder.nativeOrder());
+		int bufferSize = resolution * resolution * 4;
 
+		ByteBuffer result = ByteBuffer.allocateDirect(bufferSize).order(ByteOrder.nativeOrder());
+
+		System.out.println("buffer: ");
 		for (int i = 0; i < resolution; i++) {
 			for (int j = 0; j < resolution; j++) {
-				int x = (int) (xStart + i * ((xEnd - xStart) / (float) (resolution)));
-				int y = (int) (yStart + j * ((yEnd - yStart) / (float) (resolution)));
-				result.putFloat(((float) getNoise(x, y) * 0.7f - 0.5f));// -
-																		// 0.7f
-																		// +
-																		// 0.3f;
+				int x = (int) (xStart + j * ((xEnd - xStart) / (float) (resolution)));
+				int y = (int) (yStart + i * ((yEnd - yStart) / (float) (resolution)));
+				// System.out.println(x + " , " + y);
+
+				// Careful here, as had to flip the xy to get the same ordering
+				// as the array above
+				result.putFloat((((float) getNoise(x, y) * 0.7f - 0.5f) + 1f) / 2f);// -
+																					// +
+				// 1f)
+				// /
+				// 2f
+				// 0.7f
+				// +
+				// 0.3f;
 			}
 		}
+		// System.out.println();
 
-		result.flip();
+		result.rewind();
+
 		/*
-		 * System.out.println("Heightmap creation test: buffer"); for (int i =
-		 * 0; i < 10; i++) { System.out.print(result.getFloat()); }
-		 * result.rewind();
+		 * int numItems = resolution * resolution;
+		 * 
+		 * for (int i = 0; i < numItems; i++) {
+		 * System.out.print(result.getFloat() + " "); } result.rewind();
+		 * 
+		 * System.out.println();
 		 */
-
-		System.out.println();
 
 		return result;
 	}
