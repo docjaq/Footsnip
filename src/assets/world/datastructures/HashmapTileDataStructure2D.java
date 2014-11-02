@@ -244,8 +244,8 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 		currentTileList.add(parentTile);
 
 		// Add all the new tiles in parallel
-		// TODO: Reparallelize this
-		OFFSETS.stream().forEach(e -> currentTileList.add(addTile(parentTile, e)));
+		// Note: Parallel, bad for debugging
+		OFFSETS.parallelStream().forEach(e -> currentTileList.add(addTile(parentTile, e)));
 
 		tilesJustRemoved.removeAll(currentTileList);
 		// TilesJustRemoved now contains JUST the tiles that the player has
@@ -274,8 +274,8 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 		// CurrentTilesList now contains JUST the tiles that we want to get new
 		// models for
-		// TODO: Change this back to parallel
-		tilesNeedingNewModels.stream().forEach(e -> setupPhysicsModel(e));
+		// Note: Parallel, bad for debugging
+		tilesNeedingNewModels.parallelStream().forEach(e -> setupPhysicsModel(e));
 
 	}
 
@@ -283,13 +283,8 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 
 	private void setupPhysicsModel(AbstractTile tile) {
 		GLMesh physicsModel;
-		if (temp == 0) {
-			physicsModel = meshPool.borrowObject(((PolygonHeightmapTile) tile).getHeightmap(),
-					((PolygonHeightmapTile) tile).getHeightmapBuf());
-		} else {
-			physicsModel = meshPool.borrowObject(((PolygonHeightmapTile) tile).getHeightmap());
-		}
-		temp++;
+
+		physicsModel = meshPool.borrowObject(((PolygonHeightmapTile) tile).getHeightmapBuf());
 		// This needs to be a bytebuffer, not a floatbuffer
 
 		physicsModel.instantiateBuffersLocally();

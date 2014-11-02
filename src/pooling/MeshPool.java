@@ -14,25 +14,25 @@ public abstract class MeshPool<T extends GLMesh> extends ObjectPool<T> {
 		this.tileComplexity = tileComplexity;
 	}
 
-	public GLMesh borrowObject(float[][] heightmap, ByteBuffer heightmapBuff) {
+	public GLMesh borrowObject(ByteBuffer heightmapBuff) {
 		GLMesh object = borrowObject();
 
-		transformMeshFromHeightmap(object, heightmap, true);
 		transformMeshFromHeightmap(object, heightmapBuff);
 
 		return object;
 	}
 
+	// Deprecated from current Footsnip
 	public GLMesh borrowObject(float[][] heightmap) {
 		GLMesh object = borrowObject();
 
-		transformMeshFromHeightmap(object, heightmap, false);
+		transformMeshFromHeightmap(object, heightmap);
 
 		return object;
 	}
 
-	// protected abstract float[][] generateHeightmap();
-	protected abstract void transformMeshFromHeightmap(GLMesh mesh, float[][] heightmap, boolean debug);
+	// //Deprecated from current Footsnip
+	protected abstract void transformMeshFromHeightmap(GLMesh mesh, float[][] heightmap);
 
 	protected abstract void transformMeshFromHeightmap(GLMesh mesh, ByteBuffer heightmap);
 }

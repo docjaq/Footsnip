@@ -10,7 +10,7 @@ import assets.world.datastructures.DataStructureKey2D;
 
 public class PolygonHeightmapTile extends AbstractTile {
 
-	private float[][] heightmap;
+	// private float[][] heightmap;
 	private ByteBuffer heightmapBuf;
 	private int heightmapLocation = -1;
 	private int heightmapSize;
@@ -25,13 +25,13 @@ public class PolygonHeightmapTile extends AbstractTile {
 	private boolean water;
 	private float waterHeight;
 
-	public float[][] getHeightmap() {
-		return heightmap;
-	}
+	// public float[][] getHeightmap() {
+	// return heightmap;
+	// }
 
-	public void setHeightmap(float[][] heightmap) {
-		this.heightmap = heightmap;
-	}
+	// public void setHeightmap(float[][] heightmap) {
+	// this.heightmap = heightmap;
+	// }
 
 	public PolygonHeightmapTile(DataStructureKey2D key, GLModel model, GLPosition position) {
 		super(key, model, position);

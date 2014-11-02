@@ -251,7 +251,6 @@ public class Renderer_4_0 extends RendererThread {
 
 	private void createScenery() {
 		// Hardcoded because Dave's mother is a prostitute
-
 		assContainer.setPolygonalSceneries(new ArrayList<PolygonalScenery>());
 		Vector3 sceneryPos = new Vector3(0.05f, 0.05f, 0);
 		assContainer.addPolygonalScenery(PolygonalSceneryFactory.create(sceneryPos));

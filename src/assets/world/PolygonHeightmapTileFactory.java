@@ -1,7 +1,6 @@
 package assets.world;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,16 +66,6 @@ public class PolygonHeightmapTileFactory {
 
 	}
 
-	private void debugTraceArray(float[][] heightmap, String debugName) {
-		System.out.println(debugName);
-		for (int y = 0; y < heightmap.length; y++) {
-			for (int x = 0; x < heightmap.length; x++) {
-				System.out.print((heightmap[y][x]) + " ");
-			}
-		}
-		System.out.println();
-	}
-
 	public AbstractTile create(DataStructureKey2D key, GLPosition position) {
 
 		System.out.println("Creating new tile");
@@ -86,25 +75,13 @@ public class PolygonHeightmapTileFactory {
 		if (key == null)
 			key = new DataStructureKey2D(0, 0);
 
-		float[][] heightmap = simplexNoise.getSection(tileComplexity, key.x, key.y);
-
-		// debugTraceArray(heightmap, "heightmap array after creation");
-
 		ByteBuffer heightmapBuff = simplexNoise.getSectionAsByteBuffer(tileComplexity, key.x, key.y);
 
 		if (PolygonHeightmapTile.class.isInstance(tile)) {
 			PolygonHeightmapTile polygonTile = ((PolygonHeightmapTile) tile);
 
-			polygonTile.setHeightmap(heightmap);
 			polygonTile.setHeightmapBuf(heightmapBuff);
 
-			// convertArrayToBuffer(heightmap);
-			// polygonTile.setHeightmapBuf(convertArrayToBuffer(heightmap));
-
-			// polygonTile.setHeightmapBuf(heightmapBuff); //
-			// simplexNoise.getSectionAsByteBuffer(tileComplexity,
-			// key.x,
-			// key.y)
 			polygonTile.setHeightmapSize(tileComplexity);
 
 			polygonTile.setColorMap(colorMapBuffer);
@@ -122,43 +99,45 @@ public class PolygonHeightmapTileFactory {
 
 	// TODO: Replace this method by generating the simplex output as a buffer
 	// directly
-	private ByteBuffer convertArrayToBuffer(float[][] array) {
-		int tWidth = array.length;
-		int tHeight = array.length;
-
-		// Change this to
-		// http://stackoverflow.com/questions/7070576/get-one-dimensionial-array-from-a-mutlidimensional-array-in-java
-		// Float is four bytes
-		ByteBuffer buf = ByteBuffer.allocateDirect(tWidth * tHeight * 4).order(ByteOrder.nativeOrder());
-
-		// verticesByteBuffer = BufferUtils.createByteBuffer(vertexList.size() *
-		// GLVertex.stride).order(ByteOrder.nativeOrder());
-
-		System.out.println("Converted array pre-buffer");
-		FloatBuffer fBuf = buf.asFloatBuffer();
-		for (int y = 0; y < tHeight; y++) {
-			for (int x = 0; x < tWidth; x++) {
-				// Scale it like this to make sure the value is always positive
-				// Due to texture format (unsigned int)
-				// (but over the same range. Invert in shader)
-
-				System.out.print((array[x][y]) + " ");
-				fBuf.put((array[x][y] + 1f) / 2f);// (x +1f) / 2f;
-			}
-		}
-		System.out.println();
-
-		fBuf.flip();
-
-		int numItems = tWidth * tWidth;
-
-		System.out.println("Converted Array");
-		for (int i = 0; i < numItems; i++) {
-			System.out.print(fBuf.get() + " ");
-		}
-		fBuf.rewind();
-		System.out.println();
-
-		return buf;
-	}
+	// private ByteBuffer convertArrayToBuffer(float[][] array) {
+	// int tWidth = array.length;
+	// int tHeight = array.length;
+	//
+	// // Change this to
+	// //
+	// http://stackoverflow.com/questions/7070576/get-one-dimensionial-array-from-a-mutlidimensional-array-in-java
+	// // Float is four bytes
+	// ByteBuffer buf = ByteBuffer.allocateDirect(tWidth * tHeight *
+	// 4).order(ByteOrder.nativeOrder());
+	//
+	// // verticesByteBuffer = BufferUtils.createByteBuffer(vertexList.size() *
+	// // GLVertex.stride).order(ByteOrder.nativeOrder());
+	//
+	// System.out.println("Converted array pre-buffer");
+	// FloatBuffer fBuf = buf.asFloatBuffer();
+	// for (int y = 0; y < tHeight; y++) {
+	// for (int x = 0; x < tWidth; x++) {
+	// // Scale it like this to make sure the value is always positive
+	// // Due to texture format (unsigned int)
+	// // (but over the same range. Invert in shader)
+	//
+	// System.out.print((array[x][y]) + " ");
+	// fBuf.put((array[x][y] + 1f) / 2f);// (x +1f) / 2f;
+	// }
+	// }
+	// System.out.println();
+	//
+	// fBuf.flip();
+	//
+	// int numItems = tWidth * tWidth;
+	//
+	// System.out.println("Converted Array");
+	// for (int i = 0; i < numItems; i++) {
+	// System.out.print(fBuf.get() + " ");
+	// }
+	// fBuf.rewind();
+	// System.out.println();
+	//
+	// return buf;
+	// }
 }

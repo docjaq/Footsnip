@@ -69,10 +69,12 @@ public class PhysicsEngine implements Observer {
 
 	public void stepSimulation() {
 
+		System.out.print(tilesToRemove.size() + " ");
 		// Remove entities
 		while (!tilesToRemove.isEmpty()) {
-			removeAbstractTile(tilesToRemove.poll());
+			removeAbstractTile(tilesToRemove.remove());
 		}
+		System.out.println(tilesToRemove.size());
 
 		// while (!tilesToAdd.isEmpty()) {
 		// addAbstractTile(tilesToAdd.poll());
@@ -135,8 +137,9 @@ public class PhysicsEngine implements Observer {
 						direction.normalize();
 						direction.scale(0.01f);
 
-						body.applyCentralImpulse(direction);
-						body.applyCentralForce(new Vector3f(0, 0, (float) (0.1 + impulse)));
+						// body.applyCentralImpulse(direction);
+						// body.applyCentralForce(new Vector3f(0, 0, (float)
+						// (0.1 + impulse)));
 
 						if (body != null && body.getMotionState() != null) {
 							DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
@@ -327,6 +330,8 @@ public class PhysicsEngine implements Observer {
 			dynamicsWorld.removeRigidBody(tile.getRigidBody());
 			tile.getRigidBody().getMotionState();
 			tile.setRigidBody(null);
+		} else {
+			System.out.println("Tile is null");
 		}
 	}
 
@@ -447,10 +452,10 @@ public class PhysicsEngine implements Observer {
 
 		if (arg0 instanceof AbstractTile) {
 			if (((AbstractTile) arg0).getPhysicsModel() == null) {
-				System.out.println("Removing tile from physics engine");
+				// System.out.println("Removing tile from physics engine");
 				tilesToRemove.add((AbstractTile) arg0);
 			} else {
-				System.out.println("Adding tile to physics engine");
+				// System.out.println("Adding tile to physics engine");
 				// if (finishedInitialisation) {
 				// initialTransform.setIdentity();
 				// tilesToAdd.add((AbstractTile) arg0);

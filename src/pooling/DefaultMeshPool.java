@@ -17,51 +17,23 @@ public class DefaultMeshPool extends MeshPool<GLMesh> {
 	}
 
 	@Override
-	protected void transformMeshFromHeightmap(GLMesh mesh, float[][] heightmap, boolean debug) {
-		// float step = 1f / (float) heightmap.length;
+	protected void transformMeshFromHeightmap(GLMesh mesh, float[][] heightmap) {
 		int numCells = heightmap.length - 1;
-		if (debug)
-			System.out.println("Size of heightmap is " + numCells + ", " + numCells);
-		if (debug)
-			System.out.println("Number of vertices is " + mesh.getVertices().size());
-		int count = 0;
-		if (debug)
-			System.out.println("\nArray:");
 		for (GLVertex v : mesh.getVertices()) {
 			Vector4 pos = v.xyzw;
-			// System.out.print("(" + pos.x() + "," + pos.y() + "), ");
 			v.xyzw.z(heightmap[(int) ((pos.x() + 0.5f) * numCells)][(int) ((pos.y() + 0.5f) * numCells)]);
-			if (debug) {
-				// System.out.print("(" + (int) ((pos.x() + 0.5f) * numCells) +
-				// "," + (int) ((pos.y() + 0.5f) * numCells) + "), ");
-				System.out.print(v.xyzw.z() + " ");
-			}
-			count++;
 		}
 		System.out.println();
 	}
 
 	protected void transformMeshFromHeightmap(GLMesh mesh, ByteBuffer heightmap) {
 		int numCells = (int) Math.sqrt((heightmap.limit() - 1) / 4);
-		int count = 0;
-		System.out.println("\nBuffer:");
-		System.out.print(" ");
 		for (GLVertex v : mesh.getVertices()) {
 			Vector4 pos = v.xyzw;
-			// v.xyzw.z(heightmap.get((int) (pos.x() + 0.5f * numCells) * (int)
-			// (pos.y() + 0.5f * numCells)));
-			// if (count < 20) {
-			// System.out.print(((int) ((pos.x() + 0.5f) * numCells) + (int)
-			// ((pos.y() + 0.5f) * numCells) * numCells + ",     "));
-			// System.out.print(heightmap.getFloat((int) (pos.x() + 0.5f *
-			// numCells) + (int) (pos.y() + 0.5f * numCells)) + " ");
-			// }
-			int bufferPosition = (int) ((pos.x() + 0.5f) * numCells) + (int) ((pos.y() + 0.5f) * numCells) * (numCells + 1);
-			// System.out.print(bufferPosition + ",     ");
-			System.out.print(heightmap.getFloat(bufferPosition) + " ");
-			count++;
+			int bufferPosition = (int) ((pos.x() + 0.5f) * numCells) + ((int) ((pos.y() + 0.5f) * numCells) * (numCells + 1));
+			pos.z(heightmap.getFloat(bufferPosition * 4) * 2f - 1f);
 		}
-		System.out.println();
+		heightmap.rewind();
 	}
 
 	@Override
