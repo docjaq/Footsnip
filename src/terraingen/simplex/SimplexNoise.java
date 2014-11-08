@@ -104,7 +104,7 @@ public class SimplexNoise {
 
 		ByteBuffer result = ByteBuffer.allocateDirect(bufferSize).order(ByteOrder.nativeOrder());
 
-		System.out.println("buffer: ");
+		// System.out.println("buffer: ");
 		for (int i = 0; i < resolution; i++) {
 			for (int j = 0; j < resolution; j++) {
 				int x = (int) (xStart + j * ((xEnd - xStart) / (float) (resolution)));

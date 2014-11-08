@@ -1,7 +1,6 @@
 package physics;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -58,38 +57,39 @@ public class PhysicsEngine implements Observer {
 	private Transform initialTransform;
 
 	private Queue<AbstractTile> tilesToRemove;
-	// private Queue<AbstractTile> tilesToAdd;
+	private Queue<AbstractTile> tilesToAdd;
 
 	// TODO: Change all of this from monster to entity
 	private Map<RigidBody, Monster> objectMap;
 
 	private boolean finishedInitialisation = false;
 
+	private int debugTerrainAddedCount = 0;
+
 	private double debugFloatingAccumulator = 0;
 
 	public void stepSimulation() {
 
-		System.out.print(tilesToRemove.size() + " ");
+		// System.out.print(">Step");
+
+		// System.out.print(tilesToRemove.size() + " ");
 		// Remove entities
 		while (!tilesToRemove.isEmpty()) {
+			// System.out.print("\nTrying to remove... ");
 			removeAbstractTile(tilesToRemove.remove());
+			// System.out.println("done.");
 		}
-		System.out.println(tilesToRemove.size());
 
-		// while (!tilesToAdd.isEmpty()) {
-		// addAbstractTile(tilesToAdd.poll());
-		// }
+		while (!tilesToAdd.isEmpty()) {
+			addAbstractTile(tilesToAdd.remove());
+		}
 
 		float dt = getDeltaTimeMicroseconds() * 0.000001f;
-		long t0 = System.nanoTime();
+		// long t0 = System.nanoTime();
 		offset += 0.01f;
 
 		dynamicsWorld.stepSimulation(dt);
-		// dynamicsWorld.debugDrawWorld();
 
-		// System.out.println(BulletStats.gNumGjkChecks + "," +
-		// BulletStats.gNumDeepPenetrationChecks);
-		// System.out.println("Updating physics engine");
 		updateEntities();
 	}
 
@@ -265,27 +265,7 @@ public class PhysicsEngine implements Observer {
 		// CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
 
 		tilesToRemove = new ArrayBlockingQueue<AbstractTile>(20);
-		// tilesToAdd = new ArrayBlockingQueue<AbstractTile>(20);
-	}
-
-	private void addAsCubes(Transform transform, List<Monster> entities) {
-
-		int count = 0;
-		for (Monster e : entities) {
-			transform.setIdentity();
-			// TODO: Radius hack as it seems too big
-			CollisionShape colShape = new SphereShape(e.getModel().getModelRadius() * 1f);
-
-			transform.origin.set(e.getPosition().modelPos.x(), e.getPosition().modelPos.y(), e.getPosition().modelPos.z() + 0.0f);
-			RigidBody body = localCreateRigidBody(1f, transform, colShape);
-			body.setUserPointer(e);
-
-			objectMap.put(body, e);
-
-			// dynamicsWorld.addRigidBody(body);
-			count++;
-		}
-		System.out.println("Added " + count + " entities to Physics Engine");
+		tilesToAdd = new ArrayBlockingQueue<AbstractTile>(20);
 	}
 
 	private void addAbstractTile(AbstractTile tile) {
@@ -319,19 +299,33 @@ public class PhysicsEngine implements Observer {
 		staticBody.setCollisionFlags(staticBody.getCollisionFlags() | CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
 
 		tile.setRigidBody(staticBody);
+
+		debugTerrainAddedCount++;
+		System.out.printf("Added %d tiles\n", debugTerrainAddedCount);
 	}
 
-	// TODO: Not sure this is all correct, and not sure I defo want to throw
-	// away the reference.
+	// TODO: Something is buggy here. It's not removing something, so
+	// eventually, something gets too much, and the queue that these objects are
+	// stored in gets full and CRASH BOOM.
 	// http://stackoverflow.com/questions/16774336/removing-a-rigid-body-but-still-getting-collisions-for-it
 	private void removeAbstractTile(AbstractTile tile) {
 		if (tile.getRigidBody() != null) {
-			System.out.println("Actually removing a tile");
+			// System.out.print("removing...");
 			dynamicsWorld.removeRigidBody(tile.getRigidBody());
-			tile.getRigidBody().getMotionState();
+
+			if (tile.getRigidBody().isInWorld()) {
+				System.err.println("RIGID BODY STILL EXISTS AFTER DELETION");
+			}
+
+			// dynamicsWorld.removeCollisionObject((CollisionObject)
+
+			tile.getRigidBody().setMotionState(null);
+			tile.getRigidBody().destroy();
 			tile.setRigidBody(null);
+			// System.out.print("removed...");
+
 		} else {
-			System.out.println("Tile is null");
+			System.err.println("Tile is null");
 		}
 	}
 
@@ -351,7 +345,7 @@ public class PhysicsEngine implements Observer {
 
 		// dynamicsWorld.addRigidBody(body);
 		count++;
-		System.out.println("Added " + count + " entities to Physics Engine");
+		// System.out.println("Added " + count + " entities to Physics Engine");
 	}
 
 	public RigidBody localCreateRigidBody(float mass, Transform startTransform, CollisionShape shape) {
@@ -415,12 +409,12 @@ public class PhysicsEngine implements Observer {
 			float restitution1 = colObj1.getRestitution();
 
 			if ((colObj0.getCollisionFlags() & CollisionFlags.CUSTOM_MATERIAL_CALLBACK) != 0) {
-				friction0 = 1f; // partId0,index0
+				friction0 = 0.2f; // partId0,index0
 				restitution0 = 0f;
 			}
 			if ((colObj1.getCollisionFlags() & CollisionFlags.CUSTOM_MATERIAL_CALLBACK) != 0) {
 				if ((index1 & 1) != 0) {
-					friction1 = 1f; // partId1,index1
+					friction1 = 0.2f; // partId1,index1
 				} else {
 					friction1 = 0f;
 				}
@@ -460,7 +454,7 @@ public class PhysicsEngine implements Observer {
 				// initialTransform.setIdentity();
 				// tilesToAdd.add((AbstractTile) arg0);
 				// } else {
-				addAbstractTile((AbstractTile) arg0);
+				tilesToAdd.add((AbstractTile) arg0);
 				// }
 			}
 		}

@@ -68,7 +68,7 @@ public class PolygonHeightmapTileFactory {
 
 	public AbstractTile create(DataStructureKey2D key, GLPosition position) {
 
-		System.out.println("Creating new tile");
+		// System.out.println("Creating new tile");
 
 		// TODO: I think it just passes this for the GPU... maybe clean this up
 		AbstractTile tile = new PolygonHeightmapTile(key, openGLReferenceMesh, position);
@@ -92,7 +92,7 @@ public class PolygonHeightmapTileFactory {
 			polygonTile.setWaterHeight((float) ((0.05 - 0.025) + 0.45));
 		}
 
-		System.out.print("\n\n");
+		// System.out.print("\n\n");
 
 		return tile;
 	}
