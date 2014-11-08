@@ -12,7 +12,9 @@ import javax.vecmath.Vector3f;
 import math.types.Vector3;
 import renderer.glmodels.GLMesh;
 import assets.AssetContainer;
+import assets.entities.Entity;
 import assets.entities.Monster;
+import assets.entities.Player;
 import assets.world.AbstractTile;
 
 import com.bulletphysics.BulletGlobals;
@@ -60,7 +62,7 @@ public class PhysicsEngine implements Observer {
 	private Queue<AbstractTile> tilesToAdd;
 
 	// TODO: Change all of this from monster to entity
-	private Map<RigidBody, Monster> objectMap;
+	private Map<RigidBody, Entity> objectMap;
 
 	private boolean finishedInitialisation = false;
 
@@ -114,43 +116,57 @@ public class PhysicsEngine implements Observer {
 
 			// If that entity is contained within the map
 			if (objectMap.containsKey(body)) {
-				Monster monster = objectMap.get(body);
+				Entity entity = objectMap.get(body);
+				if (entity instanceof Monster) {
+					Monster monster = (Monster) entity;
 
-				// Check here, as if things are initialised late, can cause a
-				// problem
-				if (monster.getCurrentTile() != null) {
+					// Check here, as if things are initialised late, can cause
+					// a
+					// problem
+					if (monster.getCurrentTile() != null) {
 
-					// Check that the tile rigid body is active, if not, suspend
-					// the model
-					if (monster.getCurrentTile().getRigidBody() == null) {
-						body.setActivationState(0);
-					} else {
-						if (body.getActivationState() == 0) {
-							// System.out.println("Applying an impulse");
-							body.setActivationState(1);
-							// body.applyImpulse(new Vector3f(0, 0, 1), new
-							// Vector3f(0, 0, 0));
-						}
-						body.activate();
-
-						Vector3f direction = new Vector3f((float) Math.random() * 2 - 1, (float) Math.random() * 2 - 1, 0);
-						direction.normalize();
-						direction.scale(0.01f);
-
-						// body.applyCentralImpulse(direction);
-						// body.applyCentralForce(new Vector3f(0, 0, (float)
-						// (0.1 + impulse)));
-
-						if (body != null && body.getMotionState() != null) {
-							DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
-							m.set(myMotionState.graphicsWorldTrans);
-
+						// Check that the tile rigid body is active, if not,
+						// suspend
+						// the model
+						if (monster.getCurrentTile().getRigidBody() == null) {
+							body.setActivationState(0);
 						} else {
-							colObj.getWorldTransform(m);
-						}
+							if (body.getActivationState() == 0) {
+								// System.out.println("Applying an impulse");
+								body.setActivationState(1);
+								// body.applyImpulse(new Vector3f(0, 0, 1), new
+								// Vector3f(0, 0, 0));
+							}
+							body.activate();
 
-						// Update its rendering position
-						monster.getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
+							// Vector3f direction = new Vector3f((float)
+							// Math.random() * 2 - 1, (float) Math.random() * 2
+							// - 1,
+							// 0);
+							// direction.normalize();
+							// direction.scale(0.01f);
+
+							// Vector3f direction = new Vector3f(0f, 0f,
+							// 0.000755f);
+
+							// body.applyCentralImpulse(direction);
+							body.applyCentralForce(new Vector3f(0, 0, (float) (0.100075)));
+
+							if (body != null && body.getMotionState() != null) {
+								DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
+								m.set(myMotionState.graphicsWorldTrans);
+
+							} else {
+								colObj.getWorldTransform(m);
+							}
+
+							// Update its rendering position
+							monster.getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
+						}
+					}
+				} else {
+					if (entity instanceof Player) {
+						System.out.println("Applying physics to player");
 					}
 				}
 			}
@@ -250,7 +266,7 @@ public class PhysicsEngine implements Observer {
 		 */
 		// dynamicsWorld.addRigidBody(body);
 
-		objectMap = new HashMap<RigidBody, Monster>();
+		objectMap = new HashMap<RigidBody, Entity>();
 
 		// TEMP2 addAsCubes(initialTransform, assContainer.getMonsters());
 
@@ -329,9 +345,7 @@ public class PhysicsEngine implements Observer {
 		}
 	}
 
-	private void addAsCube(Transform transform, Monster entity) {
-
-		int count = 0;
+	private void addRigidBodyAsSphere(Transform transform, Entity entity) {
 
 		transform.setIdentity();
 		CollisionShape colShape = new SphereShape(entity.getModel().getModelRadius() * 1f);
@@ -342,10 +356,6 @@ public class PhysicsEngine implements Observer {
 		body.setUserPointer(entity);
 
 		objectMap.put(body, entity);
-
-		// dynamicsWorld.addRigidBody(body);
-		count++;
-		// System.out.println("Added " + count + " entities to Physics Engine");
 	}
 
 	public RigidBody localCreateRigidBody(float mass, Transform startTransform, CollisionShape shape) {
@@ -438,24 +448,21 @@ public class PhysicsEngine implements Observer {
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		if (arg0 instanceof Monster) {
+		if (arg0 instanceof Entity) {
+			System.out.println("Monster being added to physics engine!");
 			initialTransform.setIdentity();
-			addAsCube(initialTransform, (Monster) arg0);
-
+			addRigidBodyAsSphere(initialTransform, (Entity) arg0);
 		}
+
+		// if (arg0 instanceof Player) {
+		// System.out.println("Player being added to physics engine!");
+		// }
 
 		if (arg0 instanceof AbstractTile) {
 			if (((AbstractTile) arg0).getPhysicsModel() == null) {
-				// System.out.println("Removing tile from physics engine");
 				tilesToRemove.add((AbstractTile) arg0);
 			} else {
-				// System.out.println("Adding tile to physics engine");
-				// if (finishedInitialisation) {
-				// initialTransform.setIdentity();
-				// tilesToAdd.add((AbstractTile) arg0);
-				// } else {
 				tilesToAdd.add((AbstractTile) arg0);
-				// }
 			}
 		}
 

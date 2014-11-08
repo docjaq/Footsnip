@@ -51,6 +51,8 @@ public class Player extends Entity {
 		this.currentDirectionVector = new Vector3(0f, 0f, 0f);
 
 		this.defaultYaw = position.modelAngle.x();
+
+		setChanged();
 	}
 
 	public void setModel(GLModel model) {
