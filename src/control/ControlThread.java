@@ -84,7 +84,8 @@ public class ControlThread extends GameThread {
 	}
 
 	private void moveEntities(int timeDelta) {
-		assContainer.getPlayer().move(timeDelta);
+		// Disabled for now for physics engine
+		// assContainer.getPlayer().move(timeDelta);
 
 		for (Monster m : assContainer.getMonsters()) {
 			if (m != null) {

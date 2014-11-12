@@ -92,10 +92,10 @@ public class PhysicsEngine implements Observer {
 
 		dynamicsWorld.stepSimulation(dt);
 
-		updateEntities();
+		updateEntities(dt);
 	}
 
-	private void updateEntities() {
+	private void updateEntities(float deltaTime) {
 		final Transform m = new Transform();
 		// System.out.println("Num bodies = " +
 		// dynamicsWorld.getNumCollisionObjects());
@@ -160,15 +160,60 @@ public class PhysicsEngine implements Observer {
 								colObj.getWorldTransform(m);
 							}
 
+							// Force the body to hover on a plane. May cause
+							// z-oscillations; I don't fucking know, I'm not a
+							// physicist.
+							body.applyCentralImpulse(new Vector3f(0, 0, 0 - m.origin.z));
+
 							// Update its rendering position
 							monster.getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
 						}
 					}
-				} else {
-					if (entity instanceof Player) {
-						System.out.println("Applying physics to player");
+				} else if (entity instanceof Player) {
+					Player player = (Player) entity;
+
+					if (body.getActivationState() == 0) {
+						body.setActivationState(1);
 					}
+					body.activate();
+
+					// TODO: Clean this up so A) it uses a pool not a queue, and
+					// B) don't have to fucking convert vector formats
+					Vector3f velocity = new Vector3f();
+					while (!player.getControlInputMovement().isEmpty()) {
+						Vector3 vec = player.getControlInputMovement().remove();
+						velocity.x += vec.x() * 4;
+						velocity.y += vec.y() * 4;
+						velocity.z += vec.z() * 4;
+					}
+					body.applyCentralForce(velocity);
+					body.getLinearVelocity(velocity);
+					float speed = velocity.length();
+
+					if (speed > Player.MAX_MOVEMENT_SPEED) {
+						velocity.scale(Player.MAX_MOVEMENT_SPEED / speed);
+						body.setLinearVelocity(velocity);
+					}
+
+					if (body != null && body.getMotionState() != null) {
+						DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
+						m.set(myMotionState.graphicsWorldTrans);
+
+					} else {
+						colObj.getWorldTransform(m);
+					}
+
+					// System.err.println("Player Z = " + m.origin.z);
+
+					// Force the body to hover on a plane. May cause
+					// z-oscillations; I don't fucking know, I'm not a
+					// physicist.
+					body.applyCentralImpulse(new Vector3f(0, 0, 0 - m.origin.z));
+
+					// Update its rendering position
+					player.getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
 				}
+
 			}
 		}
 

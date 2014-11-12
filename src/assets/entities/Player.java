@@ -1,5 +1,8 @@
 package assets.entities;
 
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+
 import main.GameControl;
 import math.LinearAlgebra;
 import math.types.Vector3;
@@ -15,31 +18,24 @@ public class Player extends Entity {
 
 	private static final float DEFAULT_ROTATION_SPEED = 0.1f;
 	private static final float ROTATION_ACCELERATION = 0.001f;
-
-	private static final float DEFAULT_MOVEMENT_SPEED = 0.00001f;
+	public static final float DEFAULT_MOVEMENT_SPEED = 0.00001f;
 	private static final float MOVEMENT_ACCELERATION = 0.5f;
-
-	private static final float MAX_MOVEMENT_SPEED = 100f;
+	public static final float MAX_MOVEMENT_SPEED = 1.5f;
 
 	private float defaultYaw;
-	/*
-	 * private float yawDiff; private static final float MAX_YAW_DIFF = 45f;
-	 */
-
 	private int age;
 	private float[] color;
-
 	private int health = 100;
-
 	private float rotationDelta;
-
 	private Vector3 movementVector;
 
-	public Vector3 getMovementVector() {
-		return movementVector;
-	}
+	// This queue takes all the input from the control thread, converted into
+	// scaled vectors in this class, and stores them to be used by the physics
+	// engine
+	// TODO: Probably turn this into a pool, to save on memory usage
+	private Queue<Vector3> controlInputMovement;
 
-	private Vector3 currentDirectionVector;
+	// private Vector3 currentDirectionVector;
 
 	public Player(GLModel model, GLPosition position, int age, float[] color) {
 		super(model, position);
@@ -48,9 +44,11 @@ public class Player extends Entity {
 
 		rotationDelta = DEFAULT_ROTATION_SPEED;
 		this.movementVector = new Vector3(0f, 0f, 0f);
-		this.currentDirectionVector = new Vector3(0f, 0f, 0f);
+		// this.currentDirectionVector = new Vector3(0f, 0f, 0f);
 
 		this.defaultYaw = position.modelAngle.x();
+
+		controlInputMovement = new ArrayBlockingQueue<Vector3>(20);
 
 		setChanged();
 	}
@@ -68,10 +66,12 @@ public class Player extends Entity {
 		return color;
 	}
 
-	public void move(int timeDelta) {
-		position.modelPos.x(position.modelPos.x() + movementVector.x() * DEFAULT_MOVEMENT_SPEED * timeDelta);
-		position.modelPos.y(position.modelPos.y() + movementVector.y() * DEFAULT_MOVEMENT_SPEED * timeDelta);
-	}
+	// public void move(int timeDelta) {
+	// position.modelPos.x(position.modelPos.x() + movementVector.x() *
+	// DEFAULT_MOVEMENT_SPEED * timeDelta);
+	// position.modelPos.y(position.modelPos.y() + movementVector.y() *
+	// DEFAULT_MOVEMENT_SPEED * timeDelta);
+	// }
 
 	public void rotateCCW(int timeDelta) {
 		position.modelAngle.z(position.modelAngle.z() + rotationDelta * timeDelta);
@@ -105,31 +105,38 @@ public class Player extends Entity {
 
 		AudioEngine.getInstance().playPlayerSound();
 
-		currentDirectionVector.x((float) Math.cos(LinearAlgebra.degreesToRadians(position.modelAngle.z())));
-		currentDirectionVector.y((float) Math.sin(LinearAlgebra.degreesToRadians(position.modelAngle.z())));
-		currentDirectionVector.mult(MOVEMENT_ACCELERATION);
+		Vector3 movement = new Vector3();
+		movement.x((float) Math.cos(LinearAlgebra.degreesToRadians(position.modelAngle.z())));
+		movement.y((float) Math.sin(LinearAlgebra.degreesToRadians(position.modelAngle.z())));
+		movement.mult(MOVEMENT_ACCELERATION);
 
-		movementVector.add(currentDirectionVector);
-		capMaxMovementSpeed();
+		controlInputMovement.add(movement);
+
+		// movementVector.add(movement);
+		// capMaxMovementSpeed();
 	}
 
 	public void decelerateMovement() {
-		currentDirectionVector.x((float) Math.cos(LinearAlgebra.degreesToRadians(position.modelAngle.z())));
-		currentDirectionVector.y((float) Math.sin(LinearAlgebra.degreesToRadians(position.modelAngle.z())));
-		currentDirectionVector.mult(MOVEMENT_ACCELERATION);
 
-		movementVector.sub(currentDirectionVector);
-		capMaxMovementSpeed();
+		Vector3 movement = new Vector3();
+		movement.x(-(float) Math.cos(LinearAlgebra.degreesToRadians(position.modelAngle.z())));
+		movement.y(-(float) Math.sin(LinearAlgebra.degreesToRadians(position.modelAngle.z())));
+		movement.mult(MOVEMENT_ACCELERATION);
+
+		controlInputMovement.add(movement);
+
+		// movementVector.sub(movement);
+		// capMaxMovementSpeed();
 	}
 
-	private void capMaxMovementSpeed() {
-		float currentSpeed = movementVector.length();
-		if (currentSpeed > MAX_MOVEMENT_SPEED) {
-			float diff = MAX_MOVEMENT_SPEED / currentSpeed;
-			movementVector.x(movementVector.x() * diff);
-			movementVector.y(movementVector.y() * diff);
-		}
-	}
+	// private void capMaxMovementSpeed() {
+	// float currentSpeed = movementVector.length();
+	// if (currentSpeed > MAX_MOVEMENT_SPEED) {
+	// float diff = MAX_MOVEMENT_SPEED / currentSpeed;
+	// movementVector.x(movementVector.x() * diff);
+	// movementVector.y(movementVector.y() * diff);
+	// }
+	// }
 
 	public Projectile fireProjectile() {
 
@@ -189,4 +196,11 @@ public class Player extends Entity {
 		}
 	}
 
+	public Queue<Vector3> getControlInputMovement() {
+		return controlInputMovement;
+	}
+
+	public Vector3 getMovementVector() {
+		return movementVector;
+	}
 }
