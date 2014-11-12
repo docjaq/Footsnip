@@ -75,7 +75,7 @@ public class PolygonHeightmapTileFactory {
 		if (key == null)
 			key = new DataStructureKey2D(0, 0);
 
-		ByteBuffer heightmapBuff = simplexNoise.getSectionAsByteBuffer(tileComplexity, key.x, key.y);
+		ByteBuffer heightmapBuff = simplexNoise.getSectionAsByteBuffer(tileComplexity, key.x, key.y, 0.4f, 0.8f);
 
 		if (PolygonHeightmapTile.class.isInstance(tile)) {
 			PolygonHeightmapTile polygonTile = ((PolygonHeightmapTile) tile);

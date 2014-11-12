@@ -9,9 +9,9 @@ public class SimplexNoiseTest {
 
 		int resolution = 5;
 
-		ImageWriter.greyWriteImage(simplexNoise.getSection(resolution, -1, 0), "Image0.png");
-		ImageWriter.greyWriteImage(simplexNoise.getSection(resolution, 0, 0), "Image1.png");
-		ImageWriter.greyWriteImage(simplexNoise.getSection(resolution, 1, 0), "Image2.png");
+		ImageWriter.greyWriteImage(simplexNoise.getSection(resolution, -1, 0, 0, 0), "Image0.png");
+		ImageWriter.greyWriteImage(simplexNoise.getSection(resolution, 0, 0, 0, 0), "Image1.png");
+		ImageWriter.greyWriteImage(simplexNoise.getSection(resolution, 1, 0, 0, 0), "Image2.png");
 
 		System.out.println("Done");
 	}

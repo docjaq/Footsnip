@@ -54,7 +54,8 @@ public class SimplexNoise {
 
 	}
 
-	public float[][] getSection(int resolution, int xOffset, int yOffset) {
+	// Deprecated method, should not be used.
+	public float[][] getSection(int resolution, int xOffset, int yOffset, float zScale, float zOffset) {
 
 		int xStart, yStart;
 		int offsetScale = resolution;
@@ -67,29 +68,18 @@ public class SimplexNoise {
 
 		float[][] result = new float[resolution][resolution];
 
-		// System.out.println("array: ");
 		for (int i = 0; i < resolution; i++) {
 			for (int j = 0; j < resolution; j++) {
 				int x = (int) (xStart + i * ((xEnd - xStart) / (double) (resolution)));
 				int y = (int) (yStart + j * ((yEnd - yStart) / (double) (resolution)));
-				// System.out.println(x + " , " + y);
-				result[i][j] = ((float) getNoise(x, y) * 0.7f - 0.5f);// - 0.7f
-																		// +
-																		// 0.3f;
+				result[i][j] = ((float) getNoise(x, y) * zScale - zOffset);
 			}
 		}
-
-		/*
-		 * for (int i = 0; i < resolution; i++) { for (int j = 0; j <
-		 * resolution; j++) { System.out.print(result[i][j] + " "); } }
-		 * 
-		 * System.out.println();
-		 */
 
 		return result;
 	}
 
-	public ByteBuffer getSectionAsByteBuffer(int resolution, int xOffset, int yOffset) {
+	public ByteBuffer getSectionAsByteBuffer(int resolution, int xOffset, int yOffset, float zScale, float zOffset) {
 
 		int xStart, yStart;
 		int offsetScale = resolution;
@@ -103,38 +93,28 @@ public class SimplexNoise {
 		int bufferSize = resolution * resolution * 4;
 
 		ByteBuffer result = ByteBuffer.allocateDirect(bufferSize).order(ByteOrder.nativeOrder());
-
-		// System.out.println("buffer: ");
 		for (int i = 0; i < resolution; i++) {
 			for (int j = 0; j < resolution; j++) {
 				int x = (int) (xStart + j * ((xEnd - xStart) / (float) (resolution)));
 				int y = (int) (yStart + i * ((yEnd - yStart) / (float) (resolution)));
-				// System.out.println(x + " , " + y);
 
 				// Careful here, as had to flip the xy to get the same ordering
 				// as the array above
-				result.putFloat((((float) getNoise(x, y) * 0.7f - 0.5f) + 1f) / 2f);// -
-																					// +
-				// 1f)
-				// /
-				// 2f
-				// 0.7f
-				// +
-				// 0.3f;
+
+				// (* 0.7f - 0.5f)
+				// TODO: Bit of a hack here to get some relevant terrain
+				float noiseZ = (float) getNoise(x, y);
+				noiseZ += 1;
+				noiseZ = (float) Math.pow(noiseZ, 2);
+				noiseZ -= 0.2;
+
+				// (z + 1f) / 2f is for buffer embedding for gpu
+				result.putFloat(((noiseZ * zScale - zOffset) + 1f) / 2f);
+
 			}
 		}
-		// System.out.println();
 
 		result.rewind();
-
-		/*
-		 * int numItems = resolution * resolution;
-		 * 
-		 * for (int i = 0; i < numItems; i++) {
-		 * System.out.print(result.getFloat() + " "); } result.rewind();
-		 * 
-		 * System.out.println();
-		 */
 
 		return result;
 	}

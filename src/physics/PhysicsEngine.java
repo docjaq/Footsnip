@@ -186,10 +186,11 @@ public class PhysicsEngine implements Observer {
 						velocity.y += vec.y() * 4;
 						velocity.z += vec.z() * 4;
 					}
+
+					// Limit maximum speed
 					body.applyCentralForce(velocity);
 					body.getLinearVelocity(velocity);
 					float speed = velocity.length();
-
 					if (speed > Player.MAX_MOVEMENT_SPEED) {
 						velocity.scale(Player.MAX_MOVEMENT_SPEED / speed);
 						body.setLinearVelocity(velocity);
