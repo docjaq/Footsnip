@@ -12,8 +12,8 @@ public class Projectile extends Entity {
 
 	private static final int DAMAGE = 10;
 
-	private static final float DEFAULT_MOVEMENT_SPEED = 0.00001f;
-	private static final float ADDITIVE_VELOCITY_SCALE = 50.00f;
+	public static final float DEFAULT_MOVEMENT_SPEED = 0.00001f;
+	public static final float ADDITIVE_VELOCITY_SCALE = 50.00f;
 
 	private int age;
 	private float[] color;
@@ -42,6 +42,8 @@ public class Projectile extends Entity {
 		Vector3 vec3fAdditiveMovement = new Vector3(additiveMovement.x(), additiveMovement.y(), additiveMovement.z());
 
 		movementVector.add(vec3fAdditiveMovement);
+
+		setChanged();
 
 	}
 

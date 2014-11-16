@@ -53,7 +53,12 @@ public class ControlThread extends GameThread {
 			}
 
 			if (Keyboard.getEventKey() == Keyboard.KEY_SPACE && Keyboard.getEventKeyState()) {
-				assContainer.addProjectile(assContainer.getPlayer().fireProjectile());
+				// TODO: Feels a bit out of place here. Have a rethinking reg.
+				// refactoring.
+				Projectile projectile = assContainer.getPlayer().fireProjectile();
+				projectile.addObserver(assContainer.getPhysicsEngine());
+				projectile.notifyObservers(projectile.getModel());
+				assContainer.addProjectile(projectile);
 			}
 		}
 

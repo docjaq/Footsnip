@@ -7,7 +7,7 @@ import assets.AssetContainer;
 //TODO: Write this class
 public class PhysicsThread extends GameThread {
 
-	private PhysicsEngine engine;
+	private DefaultPhysicsEngine engine;
 
 	private long setupDelay = 2000;
 	private boolean setupStage = true;
@@ -15,7 +15,7 @@ public class PhysicsThread extends GameThread {
 	public PhysicsThread(AssetContainer assContainer, int threadDelay, Main mainApplication) {
 		super(assContainer, threadDelay, mainApplication);
 
-		engine = new PhysicsEngine(assContainer);
+		engine = new DefaultPhysicsEngine();
 		assContainer.setPhysicsEngine(engine);
 	}
 
@@ -30,7 +30,7 @@ public class PhysicsThread extends GameThread {
 			}
 			setupStage = false;
 		}
-		engine.finishedInitialisation();
+		// engine.finishedInitialisation();
 		engine.stepSimulation();
 	}
 
