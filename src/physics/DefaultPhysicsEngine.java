@@ -14,6 +14,7 @@ import renderer.glmodels.GLMesh;
 import assets.entities.Entity;
 import assets.entities.Monster;
 import assets.entities.Player;
+import assets.entities.Projectile;
 import assets.world.AbstractTile;
 
 import com.bulletphysics.BulletGlobals;
@@ -35,6 +36,8 @@ import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
 
 public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
+
+	private static final float STEP_ADJUSTMENT_FACTOR = 0.000001f;
 
 	private Transform initialTransform;
 
@@ -90,7 +93,7 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 			addAbstractTile(tilesToAdd.remove());
 		}
 
-		float dt = getDeltaTimeMicroseconds() * 0.000001f;
+		float dt = getDeltaTimeMicroseconds() * STEP_ADJUSTMENT_FACTOR;
 		// long t0 = System.nanoTime();
 		// offset += 0.01f;
 
@@ -190,6 +193,34 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 
 					// Update its rendering position
 					player.getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
+				} else if (entity instanceof Projectile) {
+					Projectile projectile = (Projectile) entity;
+
+					if (projectile.getAge() > Projectile.MAXIMUM_AGE) {
+						removeEntity(projectile, body);
+
+					} else {
+
+						if (body.getActivationState() == 0) {
+							body.setActivationState(1);
+						}
+						body.activate();
+
+						if (body != null && body.getMotionState() != null) {
+							DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
+							m.set(myMotionState.graphicsWorldTrans);
+						} else {
+							colObj.getWorldTransform(m);
+						}
+
+						// Force the body to hover on a plane. May cause
+						// z-oscillations; I don't fucking know, I'm not a
+						// physicist.
+						body.applyCentralImpulse(new Vector3f(0, 0, 0 - m.origin.z));
+
+						// Update its rendering position
+						projectile.getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
+					}
 				}
 
 			}
@@ -254,35 +285,35 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 	// TODO: Some unknowns here in terms of what needs to be deleted. Consider
 	// BvhTriangleMeshShame from before
 	private void removeAbstractTile(AbstractTile tile) {
-		if (tile.getRigidBody() != null) {
-			dynamicsWorld.removeRigidBody(tile.getRigidBody());
-
-			if (tile.getRigidBody().isInWorld()) {
-				System.err.println("RIGID BODY STILL EXISTS AFTER DELETION");
-			}
-
-			// dynamicsWorld.removeCollisionObject((CollisionObject)
-
-			tile.getRigidBody().setMotionState(null);
-			tile.getRigidBody().destroy();
-			tile.setRigidBody(null);
-
-		} else {
-			System.err.println("Tile is null");
-		}
+		removeRigidBody(tile.getRigidBody());
+		tile.setRigidBody(null);
 	}
 
-	private void addRigidBodyAsSphere(Transform transform, Entity entity) {
+	private void removeEntity(Entity entity, RigidBody body) {
+		removeRigidBody(body);
+		objectMap.remove(body);
+		entity.destroy();
+	}
+
+	private RigidBody addRigidBodyAsSphere(Transform transform, Entity entity) {
 
 		transform.setIdentity();
 		CollisionShape colShape = new SphereShape(entity.getModel().getModelRadius() * 1f);
 
-		transform.origin
-				.set(entity.getPosition().modelPos.x(), entity.getPosition().modelPos.y(), entity.getPosition().modelPos.z() + 0.0f);
+		transform.origin.set(entity.getPosition().modelPos.x(), entity.getPosition().modelPos.y(), entity.getPosition().modelPos.z());
 		RigidBody body = localCreateRigidBody(1f, transform, colShape);
+
+		// TODO: See if this user point enables a neater solution than the
+		// hashmap
 		body.setUserPointer(entity);
 
+		// TODO: Investigate and tweak these settings
+		body.setDamping(0.1f, 0.1f);
+		body.setRestitution(0.1f);
+
 		objectMap.put(body, entity);
+
+		return body;
 	}
 
 	public RigidBody localCreateRigidBody(float mass, Transform startTransform, CollisionShape shape) {
@@ -319,7 +350,12 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 	public void update(Observable arg0, Object arg1) {
 		if (arg0 instanceof Entity) {
 			initialTransform.setIdentity();
-			addRigidBodyAsSphere(initialTransform, (Entity) arg0);
+			RigidBody body = addRigidBodyAsSphere(initialTransform, (Entity) arg0);
+
+			if (arg0 instanceof Projectile) {
+				Vector3 force = ((Projectile) arg0).getMovementVector();
+				body.applyCentralForce(new Vector3f(force.x(), force.y(), force.z()));
+			}
 		}
 
 		if (arg0 instanceof AbstractTile) {

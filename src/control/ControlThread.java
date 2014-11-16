@@ -99,9 +99,9 @@ public class ControlThread extends GameThread {
 			}
 		}
 
-		for (Projectile projectile : assContainer.getProjectiles()) {
-			projectile.move(timeDelta);
-		}
+		// for (Projectile projectile : assContainer.getProjectiles()) {
+		// projectile.move(timeDelta);
+		// }
 	}
 
 	/**

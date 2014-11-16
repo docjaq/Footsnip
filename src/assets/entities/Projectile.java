@@ -15,7 +15,9 @@ public class Projectile extends Entity {
 	public static final float DEFAULT_MOVEMENT_SPEED = 0.00001f;
 	public static final float ADDITIVE_VELOCITY_SCALE = 50.00f;
 
-	private int age;
+	public static final long MAXIMUM_AGE = 1000;
+
+	private long spawnTime;
 	private float[] color;
 
 	private Vector3 movementVector;
@@ -24,9 +26,7 @@ public class Projectile extends Entity {
 		super(model, position);
 
 		this.position.setEntityRadiusWithModelRadius(this.model.getModelRadius());
-		this.age = 0;
-
-		position.modelPos.z(position.modelPos.z() - 0.01f);
+		this.spawnTime = System.currentTimeMillis();
 
 		this.movementVector = movementVector;
 
@@ -43,24 +43,32 @@ public class Projectile extends Entity {
 
 		movementVector.add(vec3fAdditiveMovement);
 
+		position.modelPos.z(position.modelPos.z() - 0.01f);
+		// position.modelPos.x(position.modelPos.x() + vec3fAdditiveMovement.x()
+		// * 0.5f);
+		// position.modelPos.y(position.modelPos.y() + vec3fAdditiveMovement.y()
+		// * 0.5f);
+
 		setChanged();
 
 	}
 
-	public int getAge() {
-		return age;
+	public long getAge() {
+		return System.currentTimeMillis() - spawnTime;
 	}
 
 	public float[] getColor() {
 		return color;
 	}
 
-	public void move(int timeDelta) {
-		if (model != null) {
-			position.modelPos.x(position.modelPos.x() + movementVector.x() * DEFAULT_MOVEMENT_SPEED * timeDelta);
-			position.modelPos.y(position.modelPos.y() + movementVector.y() * DEFAULT_MOVEMENT_SPEED * timeDelta);
-		}
-	}
+	// public void move(int timeDelta) {
+	// if (model != null) {
+	// position.modelPos.x(position.modelPos.x() + movementVector.x() *
+	// DEFAULT_MOVEMENT_SPEED * timeDelta);
+	// position.modelPos.y(position.modelPos.y() + movementVector.y() *
+	// DEFAULT_MOVEMENT_SPEED * timeDelta);
+	// }
+	// }
 
 	// public void createModel(GLProjectileFactory projectileFactory) {
 	// if (this.model != null) {
@@ -94,5 +102,9 @@ public class Projectile extends Entity {
 			}
 
 		}
+	}
+
+	public Vector3 getMovementVector() {
+		return movementVector;
 	}
 }

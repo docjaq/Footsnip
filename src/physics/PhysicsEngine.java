@@ -8,6 +8,7 @@ import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
 import com.bulletphysics.collision.narrowphase.ManifoldPoint;
 import com.bulletphysics.dynamics.DynamicsWorld;
+import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.dynamics.constraintsolver.ConstraintSolver;
 import com.bulletphysics.linearmath.Clock;
 
@@ -83,5 +84,23 @@ public abstract class PhysicsEngine {
 
 	private static float calculateCombinedRestitution(float restitution0, float restitution1) {
 		return restitution0 * restitution1;
+	}
+
+	protected void removeRigidBody(RigidBody body) {
+		if (body != null) {
+			dynamicsWorld.removeRigidBody(body);
+
+			if (body.isInWorld()) {
+				System.err.println("RIGID BODY STILL EXISTS AFTER DELETION");
+			}
+
+			// dynamicsWorld.removeCollisionObject((CollisionObject)
+
+			body.setMotionState(null);
+			body.destroy();
+
+		} else {
+			System.err.println("Tile is null");
+		}
 	}
 }
