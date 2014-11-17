@@ -43,6 +43,9 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 
 	private Queue<AbstractTile> tilesToRemove;
 	private Queue<AbstractTile> tilesToAdd;
+	private Queue<Entity> entitiesToRemove;
+	private Queue<Entity> entitiesToAdd;
+
 	private Map<RigidBody, Entity> objectMap;
 
 	private int debugTerrainAddedCount = 0;
@@ -81,9 +84,27 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 
 		tilesToRemove = new ArrayBlockingQueue<AbstractTile>(20);
 		tilesToAdd = new ArrayBlockingQueue<AbstractTile>(20);
+
+		entitiesToRemove = new ArrayBlockingQueue<Entity>(20);
+		// Needs to be large because of the init. Could probably have a better
+		// solution to this.
+		entitiesToAdd = new ArrayBlockingQueue<Entity>(1000);
 	}
 
 	public void stepSimulation() {
+
+		cleanUpRigidBodies();
+
+		float dt = getDeltaTimeMicroseconds() * STEP_ADJUSTMENT_FACTOR;
+		// long t0 = System.nanoTime();
+		// offset += 0.01f;
+
+		dynamicsWorld.stepSimulation(dt);
+
+		updateEntities(dt);
+	}
+
+	private void cleanUpRigidBodies() {
 
 		while (!tilesToRemove.isEmpty()) {
 			removeAbstractTile(tilesToRemove.remove());
@@ -93,13 +114,14 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 			addAbstractTile(tilesToAdd.remove());
 		}
 
-		float dt = getDeltaTimeMicroseconds() * STEP_ADJUSTMENT_FACTOR;
-		// long t0 = System.nanoTime();
-		// offset += 0.01f;
+		while (!entitiesToRemove.isEmpty()) {
+			removeEntity(entitiesToRemove.remove());
+		}
 
-		dynamicsWorld.stepSimulation(dt);
+		while (!entitiesToAdd.isEmpty()) {
+			addEntity(entitiesToAdd.remove());
+		}
 
-		updateEntities(dt);
 	}
 
 	protected void updateEntities(float deltaTime) {
@@ -197,8 +219,7 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 					Projectile projectile = (Projectile) entity;
 
 					if (projectile.getAge() > Projectile.MAXIMUM_AGE) {
-						removeEntity(projectile, body);
-
+						entitiesToRemove.add(projectile);
 					} else {
 
 						if (body.getActivationState() == 0) {
@@ -289,9 +310,19 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 		tile.setRigidBody(null);
 	}
 
-	private void removeEntity(Entity entity, RigidBody body) {
-		removeRigidBody(body);
-		objectMap.remove(body);
+	private void addEntity(Entity entity) {
+		initialTransform.setIdentity();
+		RigidBody body = addRigidBodyAsSphere(initialTransform, entity);
+		entity.setRigidBody(body);
+		if (entity instanceof Projectile) {
+			Vector3 force = ((Projectile) entity).getMovementVector();
+			body.applyCentralForce(new Vector3f(force.x(), force.y(), force.z()));
+		}
+	}
+
+	private void removeEntity(Entity entity) {
+		removeRigidBody(entity.getRigidBody());
+		objectMap.remove(entity.getRigidBody());
 		entity.destroy();
 	}
 
@@ -341,7 +372,9 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 		// body->setWorldTransform(startTransform);
 		// #endif//
 
+		// dynamicsWorld.addRigidBody(body);
 		dynamicsWorld.addRigidBody(body);
+		// dynamicsWorld.addCo
 
 		return body;
 	}
@@ -349,13 +382,7 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		if (arg0 instanceof Entity) {
-			initialTransform.setIdentity();
-			RigidBody body = addRigidBodyAsSphere(initialTransform, (Entity) arg0);
-
-			if (arg0 instanceof Projectile) {
-				Vector3 force = ((Projectile) arg0).getMovementVector();
-				body.applyCentralForce(new Vector3f(force.x(), force.y(), force.z()));
-			}
+			entitiesToAdd.add((Entity) arg0);
 		}
 
 		if (arg0 instanceof AbstractTile) {

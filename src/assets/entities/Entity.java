@@ -8,10 +8,13 @@ import assets.world.AbstractTile;
 import assets.world.datastructures.TileDataStructure2D;
 import collision.Collidable;
 
+import com.bulletphysics.dynamics.RigidBody;
+
 public class Entity extends AbstractEntity implements Collidable, Locatable {
 
 	protected AbstractTile currentTile;
 	protected boolean destroyable = false;
+	protected RigidBody rigidBody;
 
 	public Entity(GLModel model, GLPosition position) {
 		super(model, position);
@@ -59,5 +62,13 @@ public class Entity extends AbstractEntity implements Collidable, Locatable {
 
 	public AbstractTile getCurrentTile() {
 		return currentTile;
+	}
+
+	public RigidBody getRigidBody() {
+		return rigidBody;
+	}
+
+	public void setRigidBody(RigidBody rigidBody) {
+		this.rigidBody = rigidBody;
 	}
 }
