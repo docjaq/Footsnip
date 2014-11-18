@@ -47,6 +47,7 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 	private Queue<Entity> entitiesToAdd;
 
 	private Map<RigidBody, Entity> objectMap;
+	private Player playerEntity;
 
 	private int debugTerrainAddedCount = 0;
 
@@ -155,7 +156,8 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 
 							}
 							body.activate();
-							body.applyCentralForce(new Vector3f(0, 0, (float) (0.100075)));
+							// body.applyCentralForce(new Vector3f(0, 0, (float)
+							// (0.100075)));
 
 							if (body != null && body.getMotionState() != null) {
 								DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
@@ -178,6 +180,7 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 					Player player = (Player) entity;
 
 					if (body.getActivationState() == 0) {
+
 						body.setActivationState(1);
 					}
 					body.activate();
@@ -221,7 +224,6 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 					if (projectile.getAge() > Projectile.MAXIMUM_AGE) {
 						entitiesToRemove.add(projectile);
 					} else {
-
 						if (body.getActivationState() == 0) {
 							body.setActivationState(1);
 						}
@@ -232,6 +234,17 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 							m.set(myMotionState.graphicsWorldTrans);
 						} else {
 							colObj.getWorldTransform(m);
+						}
+
+						if (!projectile.getHasFired()) {
+							Vector3 force = ((Projectile) entity).getMovementVector();
+							Vector3f impulse = new Vector3f(force.x(), force.y(), force.z());
+							Vector3f playerVelocity = new Vector3f();
+							playerEntity.getRigidBody().getLinearVelocity(playerVelocity);
+							impulse.scale(0.01f);
+							impulse.add(playerVelocity);
+							body.applyCentralImpulse(impulse);
+							projectile.setHasFired(true);
 						}
 
 						// Force the body to hover on a plane. May cause
@@ -314,10 +327,10 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 		initialTransform.setIdentity();
 		RigidBody body = addRigidBodyAsSphere(initialTransform, entity);
 		entity.setRigidBody(body);
-		if (entity instanceof Projectile) {
-			Vector3 force = ((Projectile) entity).getMovementVector();
-			body.applyCentralForce(new Vector3f(force.x(), force.y(), force.z()));
-		}
+		body.setActivationState(0);
+		// if (entity instanceof Projectile) {
+		//
+		// }
 	}
 
 	private void removeEntity(Entity entity) {
@@ -348,7 +361,7 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 	}
 
 	public RigidBody localCreateRigidBody(float mass, Transform startTransform, CollisionShape shape) {
-		// rigidbody is dynamic if and only if mass is non zero, otherwise
+		// Rigidbody is dynamic if and only if mass is non zero, otherwise
 		// static
 		boolean isDynamic = (mass != 0f);
 
@@ -383,6 +396,10 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 	public void update(Observable arg0, Object arg1) {
 		if (arg0 instanceof Entity) {
 			entitiesToAdd.add((Entity) arg0);
+
+			if (arg0 instanceof Player) {
+				playerEntity = (Player) arg0;
+			}
 		}
 
 		if (arg0 instanceof AbstractTile) {

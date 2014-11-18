@@ -22,6 +22,8 @@ public class Projectile extends Entity {
 
 	private Vector3 movementVector;
 
+	private boolean hasFired;
+
 	public Projectile(GLModel model, GLPosition position, Vector3 movementVector) {
 		super(model, position);
 
@@ -43,11 +45,13 @@ public class Projectile extends Entity {
 
 		movementVector.add(vec3fAdditiveMovement);
 
+		// System.out.println("Position = (" + position.modelPos.x() + "," +
+		// position.modelPos.y() + "," + position.modelPos.z());
+		// System.out.println("AdditiveMovement = (" + vec3fAdditiveMovement.x()
+		// + "," + vec3fAdditiveMovement.y() + ","
+		// + vec3fAdditiveMovement.z());
 		position.modelPos.z(position.modelPos.z() - 0.01f);
-		// position.modelPos.x(position.modelPos.x() + vec3fAdditiveMovement.x()
-		// * 0.5f);
-		// position.modelPos.y(position.modelPos.y() + vec3fAdditiveMovement.y()
-		// * 0.5f);
+		position.modelPos.add(vec3fAdditiveMovement.normalize().mult(0.03f));
 
 		setChanged();
 
@@ -106,5 +110,13 @@ public class Projectile extends Entity {
 
 	public Vector3 getMovementVector() {
 		return movementVector;
+	}
+
+	public boolean getHasFired() {
+		return hasFired;
+	}
+
+	public void setHasFired(boolean hasFired) {
+		this.hasFired = hasFired;
 	}
 }
