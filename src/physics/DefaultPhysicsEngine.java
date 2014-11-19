@@ -58,7 +58,7 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 		System.out.println("Instantiating physics engine");
 
 		// Some sort of global callback state
-		BulletGlobals.setContactAddedCallback(new CustomMaterialCombinerCallback());
+		BulletGlobals.setContactAddedCallback(new CustomMaterialCombinerCallback(objectMap));
 
 		collisionConfiguration = new DefaultCollisionConfiguration();
 

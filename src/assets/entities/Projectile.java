@@ -92,17 +92,11 @@ public class Projectile extends Entity {
 			// too often
 			synchronized (subject) {
 				// If it hits a monster
-				if (Monster.class.isAssignableFrom(subject.getClass())) {
-					System.out.println("Hit");
-					((Monster) subject).modifyHealth(-DAMAGE);
-				}
-
-				// If it hits a monster
-				// if (!Entity.class.isAssignableFrom(subject.getClass())) {
-				if (Monster.class.isAssignableFrom(subject.getClass())) {
-					// System.out.println("Is this happening?");
-					destroyable = true;
-				}
+				// if (Monster.class.isAssignableFrom(subject.getClass())) {
+				// System.out.println("Hit");
+				// ((Monster) subject).modifyHealth(-DAMAGE);
+				// destroyable = true;
+				// }
 			}
 
 		}
