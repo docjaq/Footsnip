@@ -1,7 +1,7 @@
 package collision;
 
-public interface Collidable {
-	public void collidedWith(Collidable subject);
+import math.types.Vector3;
 
-	public boolean readyForCollisionDetection();
+public interface Collidable {
+	public void collidedWith(final Collidable subject, final Vector3 collisionNormal);
 }

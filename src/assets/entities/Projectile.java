@@ -10,7 +10,7 @@ import collision.Collidable;
 
 public class Projectile extends Entity {
 
-	private static final int DAMAGE = 10;
+	public static final int DAMAGE = 10;
 
 	public static final float DEFAULT_MOVEMENT_SPEED = 0.00001f;
 	public static final float ADDITIVE_VELOCITY_SCALE = 50.00f;
@@ -85,18 +85,18 @@ public class Projectile extends Entity {
 	// }
 
 	@Override
-	public void collidedWith(Collidable subject) {
+	public void collidedWith(final Collidable subject, final Vector3 collisionNormal) {
 		if (!destroyable) {
 			// Lock the subject so that multiple fast collisions (faster than
 			// the rendering thread) don't cause monster health to be reduced
 			// too often
 			synchronized (subject) {
 				// If it hits a monster
-				// if (Monster.class.isAssignableFrom(subject.getClass())) {
-				// System.out.println("Hit");
-				// ((Monster) subject).modifyHealth(-DAMAGE);
-				// destroyable = true;
-				// }
+				if (Monster.class.isAssignableFrom(subject.getClass())) {
+					// System.out.println("Hit");
+					// ((Monster) subject).modifyHealth(-DAMAGE);
+					destroyable = true;
+				}
 			}
 
 		}

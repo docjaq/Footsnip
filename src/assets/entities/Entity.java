@@ -2,6 +2,7 @@ package assets.entities;
 
 import location.Locatable;
 import math.LinearAlgebra;
+import math.types.Vector3;
 import renderer.GLPosition;
 import renderer.glmodels.GLModel;
 import assets.world.AbstractTile;
@@ -25,13 +26,8 @@ public class Entity extends AbstractEntity implements Collidable, Locatable {
 	}
 
 	@Override
-	public void collidedWith(Collidable subject) {
+	public void collidedWith(final Collidable subject, final Vector3 collisionNormal) {
 		System.out.println(this.toString() + " collided with " + subject.toString());
-	}
-
-	@Override
-	public boolean readyForCollisionDetection() {
-		return model != null;
 	}
 
 	public void locatedWithin(AbstractTile tile, TileDataStructure2D data) {

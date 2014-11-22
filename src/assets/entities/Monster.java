@@ -1,5 +1,6 @@
 package assets.entities;
 
+import math.types.Vector3;
 import renderer.GLPosition;
 import renderer.glmodels.GLModel;
 import audio.AudioEngine;
@@ -84,12 +85,18 @@ public class Monster extends Entity {
 	}
 
 	@Override
-	public void collidedWith(Collidable subject) {
+	public void collidedWith(final Collidable subject, final Vector3 collisionNormal) {
+
 		if (Player.class.isAssignableFrom(subject.getClass())) {
-			rotationDelta *= 1.01;
+			rotationDelta *= 2;
 		}
 		if (Monster.class.isAssignableFrom(subject.getClass())) {
 			// TODO: Do something
+		}
+		if (Projectile.class.isAssignableFrom(subject.getClass())) {
+			synchronized (subject) {
+				modifyHealth(-Projectile.DAMAGE);
+			}
 		}
 	}
 

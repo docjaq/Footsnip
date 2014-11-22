@@ -2,6 +2,7 @@ package physics;
 
 import javax.vecmath.Vector3f;
 
+import math.types.Vector3;
 import assets.entities.Entity;
 
 import com.bulletphysics.collision.broadphase.Dispatcher;
@@ -23,23 +24,31 @@ public class DefaultInternalTick extends InternalTickCallback {
 			// The following two lines are optional.
 			RigidBody object1 = (RigidBody) manifold.getBody0();
 			RigidBody object2 = (RigidBody) manifold.getBody1();
-			Entity physicsObject1 = (Entity) object1.getUserPointer();
-			Entity physicsObject2 = (Entity) object2.getUserPointer();
-			boolean hit = false;
-			Vector3f normal = null;
+			Entity entity0 = (Entity) object1.getUserPointer();
+			Entity entity1 = (Entity) object2.getUserPointer();
+			boolean hasCollided = false;
+			Vector3 collisionNormal = null;
 			for (int j = 0; j < manifold.getNumContacts(); j++) {
 				ManifoldPoint contactPoint = manifold.getContactPoint(j);
 				if (contactPoint.getDistance() < 0.0f) {
-					hit = true;
-					normal = contactPoint.normalWorldOnB;
+					hasCollided = true;
+					Vector3f normalf = contactPoint.normalWorldOnB;
+					collisionNormal = new Vector3(normalf.x, normalf.y, normalf.z);
 					break;
 				}
 			}
-			if (hit) {
-				// Collision happened between physicsObject1 and
-				// physicsObject2. Collision normal is in variable
-				// 'normal'.
-				System.err.println("DefaultInternalTick HIT");
+			if (hasCollided) {
+				// TODO: Should it be done in both directions? I.e. entity0
+				// affects itself based on entity1, then entity1 effects itself
+				// based on entity0?
+
+				if (entity0 != null && entity1 != null) {
+					entity0.collidedWith(entity1, collisionNormal);
+					entity1.collidedWith(entity0, collisionNormal);
+				} else {
+					// TODO: This happens if there is a terrain collision!
+					// Handle this. Probably better to check casts above!
+				}
 			}
 		}
 

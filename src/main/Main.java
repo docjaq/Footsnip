@@ -16,7 +16,6 @@ import thread.ObservableThread;
 import thread.ThreadObserver;
 import assets.AssetContainer;
 import audio.AudioEngine;
-import collision.CollisionThread;
 import control.ControlThread;
 import exception.RendererException;
 
@@ -74,9 +73,10 @@ public class Main implements GameListener {
 				childThreads.add(controlThread);
 				executor.execute(controlThread);
 
-				GameThread collisionThread = new CollisionThread(assContainer, 10, Main.this);
-				childThreads.add(collisionThread);
-				executor.execute(collisionThread);
+				// GameThread collisionThread = new
+				// CollisionThread(assContainer, 10, Main.this);
+				// childThreads.add(collisionThread);
+				// executor.execute(collisionThread);
 
 				GameThread locationThread = new LocationThread(assContainer, 10, Main.this);
 				childThreads.add(locationThread);

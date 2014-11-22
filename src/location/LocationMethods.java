@@ -54,9 +54,12 @@ public class LocationMethods {
 
 	public static void locateProjectiles(List<Projectile> projectiles, TileDataStructure2D data) {
 		for (Projectile p : projectiles) {
-			if (p.readyForCollisionDetection()) {
+			// Is disabling this going to break everything
+			// if (p.readyForCollisionDetection()) {
+			if (p.getModel() != null) {
 				p.locatedWithin(locateEntity(p, data), data);
 			}
+			// }
 		}
 	}
 }

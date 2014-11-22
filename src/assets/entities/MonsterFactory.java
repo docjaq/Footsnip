@@ -8,11 +8,11 @@ import renderer.glmodels.GLModel;
 
 public class MonsterFactory {
 
-	private GeometryFile mesh;
+	// private GeometryFile mesh;
 	private GLModel model;
 
 	public MonsterFactory(GeometryFile mesh) {
-		this.mesh = mesh;
+		// this.mesh = mesh;
 		model = new GLMesh(mesh.getTriangles(), mesh.getVertices());
 		model.pushToGPU();
 	}
