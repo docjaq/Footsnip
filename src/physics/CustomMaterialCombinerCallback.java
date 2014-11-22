@@ -1,26 +1,20 @@
 package physics;
 
-import java.util.Map;
-
-import assets.entities.Entity;
-
 import com.bulletphysics.ContactAddedCallback;
 import com.bulletphysics.collision.dispatch.CollisionFlags;
 import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.narrowphase.ManifoldPoint;
-import com.bulletphysics.dynamics.RigidBody;
 
 public class CustomMaterialCombinerCallback extends ContactAddedCallback {
 
-	private Map<RigidBody, Entity> objectMap;
-
-	public CustomMaterialCombinerCallback(Map<RigidBody, Entity> objectMap) {
+	public CustomMaterialCombinerCallback() {
 		super();
-		this.objectMap = objectMap;
+
 	}
 
 	public boolean contactAdded(ManifoldPoint cp, CollisionObject colObj0, int partId0, int index0, CollisionObject colObj1, int partId1,
 			int index1) {
+
 		float friction0 = colObj0.getFriction();
 		float friction1 = colObj1.getFriction();
 		float restitution0 = colObj0.getRestitution();
@@ -42,15 +36,10 @@ public class CustomMaterialCombinerCallback extends ContactAddedCallback {
 		cp.combinedFriction = calculateCombinedFriction(friction0, friction1);
 		cp.combinedRestitution = calculateCombinedRestitution(restitution0, restitution1);
 
-		RigidBody rigidBody0 = RigidBody.upcast(colObj0);
-		RigidBody rigidBody1 = RigidBody.upcast(colObj1);
-
 		// TODO: Here, call some sort of method like collidedWith on both
 		// objects, passing it the other object. Then sort out what we want to
 		// do with them in that objects themselves. Clearly I then need to
 		// update the physics engine. Needs some thought.
-
-		System.out.println("Handling a rigid body collision!");
 
 		// this return value is currently ignored, but to be on the safe
 		// side: return false if you don't calculate friction

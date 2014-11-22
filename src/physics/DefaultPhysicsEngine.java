@@ -1,7 +1,5 @@
 package physics;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Queue;
@@ -46,7 +44,7 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 	private Queue<Entity> entitiesToRemove;
 	private Queue<Entity> entitiesToAdd;
 
-	private Map<RigidBody, Entity> objectMap;
+	// private Map<RigidBody, Entity> objectMap;
 	private Player playerEntity;
 
 	private int debugTerrainAddedCount = 0;
@@ -58,7 +56,8 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 		System.out.println("Instantiating physics engine");
 
 		// Some sort of global callback state
-		BulletGlobals.setContactAddedCallback(new CustomMaterialCombinerCallback(objectMap));
+		BulletGlobals.setContactAddedCallback(new CustomMaterialCombinerCallback());
+		BulletGlobals.setContactProcessedCallback(new DefaultContactProcessedCallback());
 
 		collisionConfiguration = new DefaultCollisionConfiguration();
 
@@ -75,9 +74,11 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 
 		dynamicsWorld.setGravity(new Vector3f(0, 0, -0.1f));
 
+		dynamicsWorld.setInternalTickCallback(new DefaultInternalTick(), null);
+
 		initialTransform = new Transform();
 
-		objectMap = new HashMap<RigidBody, Entity>();
+		// objectMap = new HashMap<RigidBody, Entity>();
 
 		// Add the static terrain to the dynamicsWorld. Allow material
 		// callbacks? Friction etc
@@ -134,9 +135,10 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 
 			RigidBody body = RigidBody.upcast(colObj);
 
+			Entity entity = (Entity) body.getUserPointer();
 			// If that entity is contained within the map
-			if (objectMap.containsKey(body)) {
-				Entity entity = objectMap.get(body);
+			if (entity != null) {
+
 				if (entity instanceof Monster) {
 					Monster monster = (Monster) entity;
 
@@ -327,15 +329,15 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 		initialTransform.setIdentity();
 		RigidBody body = addRigidBodyAsSphere(initialTransform, entity);
 		entity.setRigidBody(body);
-		body.setActivationState(0);
-		// if (entity instanceof Projectile) {
-		//
-		// }
+		body.setActivationState(1);
+		body.setCollisionFlags(body.getCollisionFlags() | CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
+		// objectMap.put(body, entity);
+		body.setUserPointer(entity);
 	}
 
 	private void removeEntity(Entity entity) {
 		removeRigidBody(entity.getRigidBody());
-		objectMap.remove(entity.getRigidBody());
+		// objectMap.remove(entity.getRigidBody());
 		entity.destroy();
 	}
 
@@ -354,8 +356,6 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 		// TODO: Investigate and tweak these settings
 		body.setDamping(0.1f, 0.1f);
 		body.setRestitution(0.1f);
-
-		objectMap.put(body, entity);
 
 		return body;
 	}
