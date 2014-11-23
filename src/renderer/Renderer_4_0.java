@@ -289,7 +289,7 @@ public class Renderer_4_0 extends RendererThread {
 
 		float spread = 5.8f;
 		for (int i = 0; i < 300; i++) {
-			float offset = 0.25f;
+			float offset = 0.125f;
 			float spawnX = (float) (Math.random() - 0.5f) * spread;
 			spawnX = (spawnX < 0) ? spawnX - offset : spawnX + offset;
 			float spawnY = (float) (Math.random() - 0.5f) * spread;

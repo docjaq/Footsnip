@@ -6,7 +6,6 @@ import org.lwjgl.input.Keyboard;
 
 import thread.GameThread;
 import assets.AssetContainer;
-import assets.entities.Monster;
 import assets.entities.Projectile;
 import camera.CameraUtils;
 
@@ -52,7 +51,11 @@ public class ControlThread extends GameThread {
 				downPressed = Keyboard.getEventKeyState();
 			}
 
-			if (Keyboard.getEventKey() == Keyboard.KEY_SPACE && Keyboard.getEventKeyState()) {
+			if (Keyboard.getEventKey() == Keyboard.KEY_SPACE /*
+															 * && Keyboard.
+															 * getEventKeyState
+															 * ()
+															 */) {
 				// TODO: Feels a bit out of place here. Have a rethinking reg.
 				// refactoring.
 				Projectile projectile = assContainer.getPlayer().fireProjectile();
@@ -85,24 +88,24 @@ public class ControlThread extends GameThread {
 			}
 		}
 
-		moveEntities(timeDelta);
+		// moveEntities(timeDelta);
 	}
 
-	private void moveEntities(int timeDelta) {
-		// Disabled for now for physics engine
-		// assContainer.getPlayer().move(timeDelta);
-
-		for (Monster m : assContainer.getMonsters()) {
-			if (m != null) {
-				// m.rotate(timeDelta);
-				// m.moveRandom();
-			}
-		}
-
-		// for (Projectile projectile : assContainer.getProjectiles()) {
-		// projectile.move(timeDelta);
-		// }
-	}
+	// private void moveEntities(int timeDelta) {
+	// // Disabled for now for physics engine
+	// // assContainer.getPlayer().move(timeDelta);
+	//
+	// for (Monster m : assContainer.getMonsters()) {
+	// if (m != null) {
+	// // m.rotate(timeDelta);
+	// // m.moveRandom();
+	// }
+	// }
+	//
+	// // for (Projectile projectile : assContainer.getProjectiles()) {
+	// // projectile.move(timeDelta);
+	// // }
+	// }
 
 	/**
 	 * Calculate the time delta between now and the previous iteration.

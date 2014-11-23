@@ -106,7 +106,7 @@ public class SimplexNoise {
 				float noiseZ = (float) getNoise(x, y);
 				noiseZ += 1;
 				noiseZ = (float) Math.pow(noiseZ, 2);
-				noiseZ -= 0.2;
+				noiseZ -= 0.3;
 
 				// (z + 1f) / 2f is for buffer embedding for gpu
 				result.putFloat(((noiseZ * zScale - zOffset) + 1f) / 2f);
