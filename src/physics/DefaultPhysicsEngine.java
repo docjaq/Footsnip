@@ -229,10 +229,10 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 	private RigidBody addRigidBodyAsSphere(Transform transform, Entity entity) {
 
 		transform.setIdentity();
-		CollisionShape colShape = new SphereShape(entity.getModel().getModelRadius() * 1f);
+		CollisionShape colShape = new SphereShape(entity.getModel().getModelRadius());
 
 		transform.origin.set(entity.getPosition().modelPos.x(), entity.getPosition().modelPos.y(), entity.getPosition().modelPos.z());
-		RigidBody body = localCreateRigidBody(1f, transform, colShape);
+		RigidBody body = localCreateRigidBody(entity.getMass(), transform, colShape);
 
 		// TODO: See if this user point enables a neater solution than the
 		// hashmap

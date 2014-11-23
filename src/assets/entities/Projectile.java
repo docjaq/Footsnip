@@ -33,11 +33,12 @@ public class Projectile extends Entity {
 	public Projectile(GLModel model, Player player) {
 		super(model, null);
 		this.player = player;
+		this.mass = 0.8f;
 
 		// Set position and movement vector from player
 		Vector3 projPosition = new Vector3(player.position.modelPos);
 		Vector3 projAngle = new Vector3(player.position.modelAngle);
-		float projScale = 1.0f;
+		float projScale = 1.8f;
 		this.movementVector = new Vector3(player.getMovementVector());
 		this.position = new GLPosition(projPosition, projAngle, projScale, 0);
 

@@ -46,6 +46,7 @@ public class Player extends Entity {
 		super(model, position);
 		this.age = age;
 		this.color = color;
+		this.mass = 1.0f;
 
 		rotationDelta = DEFAULT_ROTATION_SPEED;
 		this.movementVector = new Vector3(0f, 0f, 0f);
