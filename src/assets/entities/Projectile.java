@@ -1,5 +1,7 @@
 package assets.entities;
 
+import javax.vecmath.Vector3f;
+
 import math.types.Matrix4;
 import math.types.Vector3;
 import math.types.Vector4;
@@ -7,6 +9,9 @@ import renderer.GLPosition;
 import renderer.GLWorld;
 import renderer.glmodels.GLModel;
 import collision.Collidable;
+
+import com.bulletphysics.collision.dispatch.CollisionObject;
+import com.bulletphysics.linearmath.DefaultMotionState;
 
 public class Projectile extends Entity {
 
@@ -21,16 +26,23 @@ public class Projectile extends Entity {
 	private float[] color;
 
 	private Vector3 movementVector;
+	private Player player;
 
 	private boolean hasFired;
 
-	public Projectile(GLModel model, GLPosition position, Vector3 movementVector) {
-		super(model, position);
+	public Projectile(GLModel model, Player player) {
+		super(model, null);
+		this.player = player;
+
+		// Set position and movement vector from player
+		Vector3 projPosition = new Vector3(player.position.modelPos);
+		Vector3 projAngle = new Vector3(player.position.modelAngle);
+		float projScale = 1.0f;
+		this.movementVector = new Vector3(player.getMovementVector());
+		this.position = new GLPosition(projPosition, projAngle, projScale, 0);
 
 		this.position.setEntityRadiusWithModelRadius(this.model.getModelRadius());
 		this.spawnTime = System.currentTimeMillis();
-
-		this.movementVector = movementVector;
 
 		Vector4 additiveMovement = new Vector4(ADDITIVE_VELOCITY_SCALE, 0.0f, 0.0f, 1.0f);
 
@@ -45,11 +57,6 @@ public class Projectile extends Entity {
 
 		movementVector.add(vec3fAdditiveMovement);
 
-		// System.out.println("Position = (" + position.modelPos.x() + "," +
-		// position.modelPos.y() + "," + position.modelPos.z());
-		// System.out.println("AdditiveMovement = (" + vec3fAdditiveMovement.x()
-		// + "," + vec3fAdditiveMovement.y() + ","
-		// + vec3fAdditiveMovement.z());
 		position.modelPos.z(position.modelPos.z() - 0.01f);
 		position.modelPos.add(vec3fAdditiveMovement.normalize().mult(0.03f));
 
@@ -64,25 +71,6 @@ public class Projectile extends Entity {
 	public float[] getColor() {
 		return color;
 	}
-
-	// public void move(int timeDelta) {
-	// if (model != null) {
-	// position.modelPos.x(position.modelPos.x() + movementVector.x() *
-	// DEFAULT_MOVEMENT_SPEED * timeDelta);
-	// position.modelPos.y(position.modelPos.y() + movementVector.y() *
-	// DEFAULT_MOVEMENT_SPEED * timeDelta);
-	// }
-	// }
-
-	// public void createModel(GLProjectileFactory projectileFactory) {
-	// if (this.model != null) {
-	// throw new RuntimeException("You can only set the model once.");
-	// }
-	// float[] color = { 0.0f, 0.4f, 1.0f, 1.0f };
-	//
-	// this.model = projectileFactory.create(color);
-	// this.position.setEntityRadiusWithModelRadius(this.model.getModelRadius());
-	// }
 
 	@Override
 	public void collidedWith(final Collidable subject, final Vector3 collisionNormal) {
@@ -99,6 +87,47 @@ public class Projectile extends Entity {
 				}
 			}
 
+		}
+	}
+
+	@Override
+	public void physicalStep(CollisionObject collisionObject) {
+
+		// TODO: Probably check which tile we're in, and if null, don't
+		// simulate, like monster
+		if (getAge() > Projectile.MAXIMUM_AGE) {
+			destroyable = true;
+		} else {
+			if (rigidBody.getActivationState() == 0) {
+				rigidBody.setActivationState(1);
+			}
+			rigidBody.activate();
+
+			if (rigidBody != null && rigidBody.getMotionState() != null) {
+				DefaultMotionState myMotionState = (DefaultMotionState) rigidBody.getMotionState();
+				physicsTransform.set(myMotionState.graphicsWorldTrans);
+			} else {
+				collisionObject.getWorldTransform(physicsTransform);
+			}
+
+			if (!getHasFired()) {
+				Vector3 force = getMovementVector();
+				Vector3f impulse = new Vector3f(force.x(), force.y(), force.z());
+				Vector3f playerVelocity = new Vector3f();
+				player.getRigidBody().getLinearVelocity(playerVelocity);
+				impulse.scale(0.01f);
+				impulse.add(playerVelocity);
+				rigidBody.applyCentralImpulse(impulse);
+				setHasFired(true);
+			}
+
+			// Force the body to hover on a plane. May cause
+			// z-oscillations; I don't fucking know, I'm not a
+			// physicist.
+			rigidBody.applyCentralImpulse(new Vector3f(0, 0, 0 - physicsTransform.origin.z));
+
+			// Update its rendering position
+			getPosition().setModelPos(new Vector3(physicsTransform.origin.x, physicsTransform.origin.y, physicsTransform.origin.z));
 		}
 	}
 

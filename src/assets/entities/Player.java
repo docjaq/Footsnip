@@ -3,6 +3,8 @@ package assets.entities;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import javax.vecmath.Vector3f;
+
 import main.GameControl;
 import math.LinearAlgebra;
 import math.types.Vector3;
@@ -13,6 +15,9 @@ import assets.world.AbstractTile;
 import assets.world.datastructures.TileDataStructure2D;
 import audio.AudioEngine;
 import collision.Collidable;
+
+import com.bulletphysics.collision.dispatch.CollisionObject;
+import com.bulletphysics.linearmath.DefaultMotionState;
 
 public class Player extends Entity {
 
@@ -142,15 +147,7 @@ public class Player extends Entity {
 
 		AudioEngine.getInstance().playProjectileSound();
 
-		Vector3 projPosition = new Vector3(this.position.modelPos);
-		Vector3 projAngle = new Vector3(this.position.modelAngle);
-		float projScale = 1.0f;
-
-		Vector3 movementVector = new Vector3(this.movementVector);
-
-		GLPosition position = new GLPosition(projPosition, projAngle, projScale, 0);
-
-		return new Projectile(GLDefaultProjectileFactory.getInstance().create(), position, movementVector);
+		return new Projectile(GLDefaultProjectileFactory.getInstance().create(), this);
 	}
 
 	/*
@@ -194,6 +191,51 @@ public class Player extends Entity {
 			data.populateNeighbouringTiles(currentTile);
 			System.out.println(tile.getKey().x + "," + tile.getKey().y);
 		}
+	}
+
+	@Override
+	public void physicalStep(CollisionObject collisionObject) {
+		// Check here, as if things are initialised late, can cause
+		// a problem
+		if (rigidBody.getActivationState() == 0) {
+
+			rigidBody.setActivationState(1);
+		}
+		rigidBody.activate();
+
+		// TODO: Clean this up so A) it uses a pool not a queue, and
+		// B) don't have to fucking convert vector formats
+		Vector3f velocity = new Vector3f();
+		while (!getControlInputMovement().isEmpty()) {
+			Vector3 vec = getControlInputMovement().remove();
+			velocity.x += vec.x() * 4;
+			velocity.y += vec.y() * 4;
+			velocity.z += vec.z() * 4;
+		}
+
+		// Limit maximum speed
+		rigidBody.applyCentralForce(velocity);
+		rigidBody.getLinearVelocity(velocity);
+		float speed = velocity.length();
+		if (speed > Player.MAX_MOVEMENT_SPEED) {
+			velocity.scale(Player.MAX_MOVEMENT_SPEED / speed);
+			rigidBody.setLinearVelocity(velocity);
+		}
+
+		if (rigidBody != null && rigidBody.getMotionState() != null) {
+			DefaultMotionState myMotionState = (DefaultMotionState) rigidBody.getMotionState();
+			physicsTransform.set(myMotionState.graphicsWorldTrans);
+		} else {
+			collisionObject.getWorldTransform(physicsTransform);
+		}
+
+		// Force the body to hover on a plane. May cause
+		// z-oscillations; I don't fucking know, I'm not a
+		// physicist.
+		rigidBody.applyCentralImpulse(new Vector3f(0, 0, 0 - physicsTransform.origin.z));
+
+		// Update its rendering position
+		getPosition().setModelPos(new Vector3(physicsTransform.origin.x, physicsTransform.origin.y, physicsTransform.origin.z));
 	}
 
 	public Queue<Vector3> getControlInputMovement() {

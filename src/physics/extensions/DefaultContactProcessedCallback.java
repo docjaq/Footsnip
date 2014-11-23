@@ -1,4 +1,4 @@
-package physics;
+package physics.extensions;
 
 import com.bulletphysics.ContactProcessedCallback;
 import com.bulletphysics.collision.narrowphase.ManifoldPoint;

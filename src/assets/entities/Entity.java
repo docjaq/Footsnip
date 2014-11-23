@@ -3,22 +3,28 @@ package assets.entities;
 import location.Locatable;
 import math.LinearAlgebra;
 import math.types.Vector3;
+import physics.Physical;
 import renderer.GLPosition;
 import renderer.glmodels.GLModel;
 import assets.world.AbstractTile;
 import assets.world.datastructures.TileDataStructure2D;
 import collision.Collidable;
 
+import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.dynamics.RigidBody;
+import com.bulletphysics.linearmath.DefaultMotionState;
+import com.bulletphysics.linearmath.Transform;
 
-public class Entity extends AbstractEntity implements Collidable, Locatable {
+public class Entity extends AbstractEntity implements Collidable, Locatable, Physical {
 
 	protected AbstractTile currentTile;
 	protected boolean destroyable = false;
 	protected RigidBody rigidBody;
+	protected Transform physicsTransform;
 
 	public Entity(GLModel model, GLPosition position) {
 		super(model, position);
+		physicsTransform = new Transform();
 	}
 
 	public float getEuclideanDistance(Entity other) {
@@ -30,6 +36,7 @@ public class Entity extends AbstractEntity implements Collidable, Locatable {
 		System.out.println(this.toString() + " collided with " + subject.toString());
 	}
 
+	@Override
 	public void locatedWithin(AbstractTile tile, TileDataStructure2D data) {
 		if (tile != currentTile) {
 			if (currentTile != null) {
@@ -42,6 +49,31 @@ public class Entity extends AbstractEntity implements Collidable, Locatable {
 				// If the tile doesn't exist at all, for now, remove the entity
 				destroyable = true;
 			}
+		}
+	}
+
+	@Override
+	public void physicalStep(CollisionObject colObj) {
+
+		// Perform a basic physical step that just updates the model position to
+		// that of the physics world
+
+		if (getCurrentTile().getRigidBody() == null) {
+			rigidBody.setActivationState(0);
+		} else {
+			rigidBody.setActivationState(1);
+			rigidBody.activate();
+
+			if (rigidBody != null && rigidBody.getMotionState() != null) {
+				DefaultMotionState myMotionState = (DefaultMotionState) rigidBody.getMotionState();
+				physicsTransform.set(myMotionState.graphicsWorldTrans);
+
+			} else {
+				colObj.getWorldTransform(physicsTransform);
+			}
+
+			// Update its rendering position
+			getPosition().setModelPos(new Vector3(physicsTransform.origin.x, physicsTransform.origin.y, physicsTransform.origin.z));
 		}
 	}
 

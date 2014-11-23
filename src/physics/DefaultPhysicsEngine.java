@@ -7,12 +7,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.vecmath.Vector3f;
 
-import math.types.Vector3;
+import physics.extensions.CustomMaterialCombinerCallback;
+import physics.extensions.DefaultContactProcessedCallback;
+import physics.extensions.DefaultInternalTick;
 import renderer.glmodels.GLMesh;
 import assets.entities.Entity;
-import assets.entities.Monster;
 import assets.entities.Player;
-import assets.entities.Projectile;
 import assets.world.AbstractTile;
 
 import com.bulletphysics.BulletGlobals;
@@ -127,7 +127,6 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 	}
 
 	protected void updateEntities(float deltaTime) {
-		final Transform m = new Transform();
 
 		for (int i = 0; i < dynamicsWorld.getNumCollisionObjects(); i++) {
 
@@ -139,126 +138,12 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 			// If that entity is contained within the map
 			if (entity != null) {
 
-				if (entity instanceof Monster) {
-					Monster monster = (Monster) entity;
+				entity.physicalStep(colObj);
 
-					// Check here, as if things are initialised late, can cause
-					// a problem
-					if (monster.getCurrentTile() != null) {
-
-						// Check that the tile rigid body is active, if not,
-						// suspend
-						// the model
-						if (monster.getCurrentTile().getRigidBody() == null) {
-							body.setActivationState(0);
-						} else {
-							if (body.getActivationState() == 0) {
-
-								body.setActivationState(1);
-
-							}
-							body.activate();
-							// body.applyCentralForce(new Vector3f(0, 0, (float)
-							// (0.100075)));
-
-							if (body != null && body.getMotionState() != null) {
-								DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
-								m.set(myMotionState.graphicsWorldTrans);
-
-							} else {
-								colObj.getWorldTransform(m);
-							}
-
-							// Force the body to hover on a plane. May cause
-							// z-oscillations; I don't fucking know, I'm not a
-							// physicist.
-							body.applyCentralImpulse(new Vector3f(0, 0, 0 - m.origin.z));
-
-							// Update its rendering position
-							monster.getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
-						}
-					}
-				} else if (entity instanceof Player) {
-					Player player = (Player) entity;
-
-					if (body.getActivationState() == 0) {
-
-						body.setActivationState(1);
-					}
-					body.activate();
-
-					// TODO: Clean this up so A) it uses a pool not a queue, and
-					// B) don't have to fucking convert vector formats
-					Vector3f velocity = new Vector3f();
-					while (!player.getControlInputMovement().isEmpty()) {
-						Vector3 vec = player.getControlInputMovement().remove();
-						velocity.x += vec.x() * 4;
-						velocity.y += vec.y() * 4;
-						velocity.z += vec.z() * 4;
-					}
-
-					// Limit maximum speed
-					body.applyCentralForce(velocity);
-					body.getLinearVelocity(velocity);
-					float speed = velocity.length();
-					if (speed > Player.MAX_MOVEMENT_SPEED) {
-						velocity.scale(Player.MAX_MOVEMENT_SPEED / speed);
-						body.setLinearVelocity(velocity);
-					}
-
-					if (body != null && body.getMotionState() != null) {
-						DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
-						m.set(myMotionState.graphicsWorldTrans);
-					} else {
-						colObj.getWorldTransform(m);
-					}
-
-					// Force the body to hover on a plane. May cause
-					// z-oscillations; I don't fucking know, I'm not a
-					// physicist.
-					body.applyCentralImpulse(new Vector3f(0, 0, 0 - m.origin.z));
-
-					// Update its rendering position
-					player.getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
-				} else if (entity instanceof Projectile) {
-					Projectile projectile = (Projectile) entity;
-
-					if (projectile.getAge() > Projectile.MAXIMUM_AGE) {
-						entitiesToRemove.add(projectile);
-					} else {
-						if (body.getActivationState() == 0) {
-							body.setActivationState(1);
-						}
-						body.activate();
-
-						if (body != null && body.getMotionState() != null) {
-							DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
-							m.set(myMotionState.graphicsWorldTrans);
-						} else {
-							colObj.getWorldTransform(m);
-						}
-
-						if (!projectile.getHasFired()) {
-							Vector3 force = ((Projectile) entity).getMovementVector();
-							Vector3f impulse = new Vector3f(force.x(), force.y(), force.z());
-							Vector3f playerVelocity = new Vector3f();
-							playerEntity.getRigidBody().getLinearVelocity(playerVelocity);
-							impulse.scale(0.01f);
-							impulse.add(playerVelocity);
-							body.applyCentralImpulse(impulse);
-							projectile.setHasFired(true);
-						}
-
-						// Force the body to hover on a plane. May cause
-						// z-oscillations; I don't fucking know, I'm not a
-						// physicist.
-						body.applyCentralImpulse(new Vector3f(0, 0, 0 - m.origin.z));
-
-						// Update its rendering position
-						projectile.getPosition().setModelPos(new Vector3(m.origin.x, m.origin.y, m.origin.z));
-					}
+				// If destroyable, add to remove queue
+				if (entity.isDestroyable()) {
+					entitiesToRemove.add(entity);
 				}
-
 			}
 		}
 	}

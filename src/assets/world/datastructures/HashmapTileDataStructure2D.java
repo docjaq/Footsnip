@@ -137,7 +137,11 @@ public class HashmapTileDataStructure2D implements TileDataStructure2D {
 				for (Entity m : entities) {
 					if (entityClass.isAssignableFrom(m.getClass())) {
 						if (m.isDestroyable()) {
-							toRemove.add(m);
+							// Check that the rigidbody has been removed before
+							// we remove the entity!
+							if (m.getRigidBody() == null) {
+								toRemove.add(m);
+							}
 						}
 					}
 				}

@@ -1,4 +1,4 @@
-package physics;
+package physics.extensions;
 
 import com.bulletphysics.ContactAddedCallback;
 import com.bulletphysics.collision.dispatch.CollisionFlags;
