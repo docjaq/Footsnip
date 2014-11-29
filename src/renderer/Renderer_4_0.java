@@ -34,8 +34,8 @@ import samplers.CubeMap;
 import samplers.Texture2D;
 import thread.RendererThread;
 import assets.AssetContainer;
-import assets.entities.Monster;
-import assets.entities.MonsterFactory;
+import assets.entities.Asteroid;
+import assets.entities.AsteroidFactory;
 import assets.entities.Player;
 import assets.entities.PolygonalScenery;
 import assets.entities.PolygonalSceneryFactory;
@@ -54,7 +54,7 @@ import exception.RendererException;
 
 public class Renderer_4_0 extends RendererThread {
 
-	// For normal entities (player, monsters, etc)
+	// For normal entities (player, asteroids, etc)
 	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/lighting/gaussian_vert.glsl",
 			"resources/shaders/lighting/gaussian_frag.glsl" };
 
@@ -88,7 +88,7 @@ public class Renderer_4_0 extends RendererThread {
 	private Class<GLWaterShader> waterShaderClass = GLWaterShader.class;
 
 	// The time of the last frame, to calculate the time delta for rotating
-	// monsters.
+	// asteroids.
 	private long lastFrameTime;
 
 	/** The time we started counting frames. */
@@ -206,7 +206,7 @@ public class Renderer_4_0 extends RendererThread {
 			{
 				renderPlayer(assContainer.getPlayer(), currentShader, modelMatrix);
 				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(),
-						Monster.class);
+						Asteroid.class);
 				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(),
 						Projectile.class);
 			}
@@ -274,18 +274,18 @@ public class Renderer_4_0 extends RendererThread {
 		player.addObserver(assContainer.getPhysicsEngine());
 		player.notifyObservers(player.getModel());
 
-		assContainer.setMonsters(new ArrayList<Monster>());
+		assContainer.setAsteroids(new ArrayList<Asteroid>());
 
-		Vector4 monsterColor = new Vector4(1.0f, 0.6f, 0.0f, 1.0f);
-		Ply monsterMesh = new Ply();
-		monsterMesh.read(new File("resources/meshes/SmoothBlob_small.ply"), monsterColor);
+		Vector4 asteroidColor = new Vector4(1.0f, 0.6f, 0.0f, 1.0f);
+		Ply asteroidMesh = new Ply();
+		asteroidMesh.read(new File("resources/meshes/SmoothBlob_small.ply"), asteroidColor);
 
-		String script = "resources/lua/monsters.lua";
+		String script = "resources/lua/asteroids.lua";
 		LuaValue _G = JsePlatform.standardGlobals();
 		_G.get("dofile").call(LuaValue.valueOf(script));
 		LuaValue getRotationDelta = _G.get("getRotationDelta");
 
-		MonsterFactory monsterFactory = new MonsterFactory(monsterMesh);
+		AsteroidFactory asteroidFactory = new AsteroidFactory(asteroidMesh);
 
 		float spread = 5.8f;
 		for (int i = 0; i < 300; i++) {
@@ -294,13 +294,13 @@ public class Renderer_4_0 extends RendererThread {
 			spawnX = (spawnX < 0) ? spawnX - offset : spawnX + offset;
 			float spawnY = (float) (Math.random() - 0.5f) * spread;
 			spawnY = (spawnY < 0) ? spawnY - offset : spawnY + offset;
-			Vector3 monsterPos = new Vector3(spawnX, spawnY, 0);
-			// Vector3 monsterPos = new Vector3(0, 0.1f, 0);
+			Vector3 asteroidPos = new Vector3(spawnX, spawnY, 0);
+			// Vector3 asteroidPos = new Vector3(0, 0.1f, 0);
 			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
-			Monster monster = monsterFactory.create(monsterPos, rotationDelta);
-			monster.addObserver(assContainer.getPhysicsEngine());
-			monster.notifyObservers(monster.getModel());
-			assContainer.addMonster(monster);
+			Asteroid asteroid = asteroidFactory.create(asteroidPos, rotationDelta);
+			asteroid.addObserver(assContainer.getPhysicsEngine());
+			asteroid.notifyObservers(asteroid.getModel());
+			assContainer.addAsteroid(asteroid);
 		}
 
 		// Initialise projectile factory

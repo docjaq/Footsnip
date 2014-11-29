@@ -34,7 +34,7 @@ public final class GameControl {
 		}
 	}
 
-	public static void monstersDead() {
+	public static void asteroidsDead() {
 		for (GameListener gameListener : gameListeners) {
 			gameListener.gameOver(true);
 		}

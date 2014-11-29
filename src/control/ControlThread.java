@@ -87,25 +87,7 @@ public class ControlThread extends GameThread {
 				assContainer.getPlayer().accelerateMovement();
 			}
 		}
-
-		// moveEntities(timeDelta);
 	}
-
-	// private void moveEntities(int timeDelta) {
-	// // Disabled for now for physics engine
-	// // assContainer.getPlayer().move(timeDelta);
-	//
-	// for (Monster m : assContainer.getMonsters()) {
-	// if (m != null) {
-	// // m.rotate(timeDelta);
-	// // m.moveRandom();
-	// }
-	// }
-	//
-	// // for (Projectile projectile : assContainer.getProjectiles()) {
-	// // projectile.move(timeDelta);
-	// // }
-	// }
 
 	/**
 	 * Calculate the time delta between now and the previous iteration.

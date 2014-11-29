@@ -6,7 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import physics.DefaultPhysicsEngine;
 import renderer.glmodels.factories.GLProjectileFactory;
-import assets.entities.Monster;
+import assets.entities.Asteroid;
 import assets.entities.Player;
 import assets.entities.PolygonalScenery;
 import assets.entities.Projectile;
@@ -16,7 +16,7 @@ import assets.world.datastructures.TileDataStructure2D;
 public class AssetContainer {
 
 	private Player player;
-	private List<Monster> monsters;
+	private List<Asteroid> asteroids;
 	private List<Projectile> projectiles;
 	private List<PolygonalScenery> polygonalSceneries;
 	private TileDataStructure2D tiles;
@@ -37,7 +37,7 @@ public class AssetContainer {
 	}
 
 	public AssetContainer() {
-		monsters = new ArrayList<Monster>(0);
+		asteroids = new ArrayList<Asteroid>(0);
 		// So the list can be rendered and added to at the same time
 		projectiles = new CopyOnWriteArrayList<Projectile>();
 		tiles = new HashmapTileDataStructure2D(this);
@@ -59,18 +59,18 @@ public class AssetContainer {
 		return player;
 	}
 
-	/** Monsters **/
+	/** Asteroids **/
 
-	public void addMonster(Monster monster) {
-		this.monsters.add(monster);
+	public void addAsteroid(Asteroid asteroid) {
+		this.asteroids.add(asteroid);
 	}
 
-	public void setMonsters(List<Monster> monsters) {
-		this.monsters = monsters;
+	public void setAsteroids(List<Asteroid> asteroids) {
+		this.asteroids = asteroids;
 	}
 
-	public List<Monster> getMonsters() {
-		return monsters;
+	public List<Asteroid> getAsteroids() {
+		return asteroids;
 	}
 
 	/** Projectiles **/

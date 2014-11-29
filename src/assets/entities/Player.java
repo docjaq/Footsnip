@@ -165,7 +165,7 @@ public class Player extends Entity {
 
 	@Override
 	public void collidedWith(final Collidable subject, final Vector3 collisionNormal) {
-		if (Monster.class.isAssignableFrom(subject.getClass())) {
+		if (Asteroid.class.isAssignableFrom(subject.getClass())) {
 			health--;
 			System.out.printf("Health: %d\n", health);
 

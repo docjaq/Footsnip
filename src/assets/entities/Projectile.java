@@ -76,13 +76,13 @@ public class Projectile extends Entity {
 	public void collidedWith(final Collidable subject, final Vector3 collisionNormal) {
 		if (!destroyable) {
 			// Lock the subject so that multiple fast collisions (faster than
-			// the rendering thread) don't cause monster health to be reduced
+			// the rendering thread) don't cause asteroid health to be reduced
 			// too often
 			synchronized (subject) {
-				// If it hits a monster
-				if (Monster.class.isAssignableFrom(subject.getClass())) {
+				// If it hits a asteroid
+				if (Asteroid.class.isAssignableFrom(subject.getClass())) {
 					// System.out.println("Hit");
-					// ((Monster) subject).modifyHealth(-DAMAGE);
+					// ((Asteroid) subject).modifyHealth(-DAMAGE);
 					destroyable = true;
 				}
 			}
@@ -94,7 +94,7 @@ public class Projectile extends Entity {
 	public void physicalStep() {
 
 		// TODO: Probably check which tile we're in, and if null, don't
-		// simulate, like monster
+		// simulate, like asteroid
 		if (getAge() > Projectile.MAXIMUM_AGE) {
 			destroyable = true;
 		} else {

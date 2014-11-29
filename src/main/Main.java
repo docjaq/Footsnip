@@ -178,7 +178,7 @@ public class Main implements GameListener {
  * 
  * TODO: PERSISTENCE:
  * 
- * - For defining a monster, game parameters. Perhaps JSON?
+ * - For defining a asteroid, game parameters. Perhaps JSON?
  * 
  * - Probably quite important so that we can get rid of some complexity in the
  * rendering/main methods?

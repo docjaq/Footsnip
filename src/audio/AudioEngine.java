@@ -8,7 +8,7 @@ import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 
 import renderer.GLPosition;
-import assets.entities.Monster;
+import assets.entities.Asteroid;
 import assets.entities.Player;
 import assets.entities.Projectile;
 
@@ -16,7 +16,7 @@ public class AudioEngine {
 
 	private static AudioEngine instance;
 
-	private EntitySound<Monster> monsterSound;
+	private EntitySound<Asteroid> asteroidSound;
 	private EntitySound<Projectile> projectileSound;
 	private EntitySound<Player> playerSound;
 
@@ -49,7 +49,7 @@ public class AudioEngine {
 	}
 
 	private void setupSounds() {
-		monsterSound = new MonsterSound();
+		asteroidSound = new AsteroidSound();
 		projectileSound = new ProjectileSound();
 		playerSound = new PlayerSound();
 	}
@@ -70,12 +70,12 @@ public class AudioEngine {
 		playerSound.play();
 	}
 
-	public void playMonsterSound(GLPosition glPosition) {
+	public void playAsteroidSound(GLPosition glPosition) {
 		FloatBuffer positionBuffer = (FloatBuffer) BufferUtils.createFloatBuffer(3)
 				.put(new float[] { glPosition.modelPos.x(), glPosition.modelPos.y(), glPosition.modelPos.z() }).rewind();
-		monsterSound.setSourcePosition(positionBuffer);
-		monsterSound.setSourceVelocity(BufferUtils.createFloatBuffer(3));
-		monsterSound.play();
+		asteroidSound.setSourcePosition(positionBuffer);
+		asteroidSound.setSourceVelocity(BufferUtils.createFloatBuffer(3));
+		asteroidSound.play();
 	}
 
 	public void playProjectileSound() {
@@ -83,8 +83,8 @@ public class AudioEngine {
 	}
 
 	public void close() {
-        // TODO: Do we need to do this for all the sounds?
-//		monsterSound.killALData();
+		// TODO: Do we need to do this for all the sounds?
+		// asteroidSound.killALData();
 		AL.destroy();
 	}
 }
