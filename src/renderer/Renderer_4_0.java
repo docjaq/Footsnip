@@ -5,10 +5,10 @@ import static renderer.GLUtilityMethods.exitOnGLError;
 import static renderer.GLUtilityMethods.setupOpenGL;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import assets.entities.*;
 import main.FootsnipProperties;
 import main.GameControl;
 import main.Main;
@@ -34,10 +34,6 @@ import samplers.CubeMap;
 import samplers.Texture2D;
 import thread.RendererThread;
 import assets.AssetContainer;
-import assets.entities.Asteroid;
-import assets.entities.AsteroidFactory;
-import assets.entities.Player;
-import assets.entities.Projectile;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTileFactory;
 import assets.world.datastructures.TileDataStructure2D;
@@ -203,6 +199,7 @@ public class Renderer_4_0 extends RendererThread {
 				renderPlayer(assContainer.getPlayer(), currentShader, modelMatrix);
 				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(),
 						Asteroid.class);
+				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(), Monster.class);
 				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(),
 						Projectile.class);
 			}
@@ -263,18 +260,15 @@ public class Renderer_4_0 extends RendererThread {
 		player.addObserver(assContainer.getPhysicsEngine());
 		player.notifyObservers(player.getModel());
 
-		assContainer.setAsteroids(new ArrayList<Asteroid>());
+		createAsteroids();
+		createMonsters();
 
-		Vector4 asteroidColor = new Vector4(1.0f, 0.6f, 0.0f, 1.0f);
-		Ply asteroidMesh = new Ply();
-		asteroidMesh.read(new File("resources/meshes/SmoothBlob_small.ply"), asteroidColor);
+		// Initialise projectile factory
+		assContainer.setProjectileFactory(GLDefaultProjectileFactory.getInstance());
+	}
 
-		String script = "resources/lua/asteroids.lua";
-		LuaValue _G = JsePlatform.standardGlobals();
-		_G.get("dofile").call(LuaValue.valueOf(script));
-		LuaValue getRotationDelta = _G.get("getRotationDelta");
-
-		AsteroidFactory asteroidFactory = new AsteroidFactory(asteroidMesh);
+	private void createAsteroids() {
+		AsteroidFactory factory = new AsteroidFactory();
 
 		float spread = 5.8f;
 		for (int i = 0; i < 300; i++) {
@@ -284,16 +278,29 @@ public class Renderer_4_0 extends RendererThread {
 			float spawnY = (float) (Math.random() - 0.5f) * spread;
 			spawnY = (spawnY < 0) ? spawnY - offset : spawnY + offset;
 			Vector3 asteroidPos = new Vector3(spawnX, spawnY, 0);
-			// Vector3 asteroidPos = new Vector3(0, 0.1f, 0);
-			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat() / 20f;
-			Asteroid asteroid = asteroidFactory.create(asteroidPos, rotationDelta);
+			Asteroid asteroid = factory.create(asteroidPos);
 			asteroid.addObserver(assContainer.getPhysicsEngine());
 			asteroid.notifyObservers(asteroid.getModel());
-			assContainer.addAsteroid(asteroid);
+			assContainer.addNonPlayers(asteroid);
 		}
+	}
 
-		// Initialise projectile factory
-		assContainer.setProjectileFactory(GLDefaultProjectileFactory.getInstance());
+	private void createMonsters() {
+		MonsterFactory factory = new MonsterFactory();
+
+		float spread = 5.8f;
+		for (int i = 0; i < 300; i++) {
+			float offset = 0.125f;
+			float spawnX = (float) (Math.random() - 0.5f) * spread;
+			spawnX = (spawnX < 0) ? spawnX - offset : spawnX + offset;
+			float spawnY = (float) (Math.random() - 0.5f) * spread;
+			spawnY = (spawnY < 0) ? spawnY - offset : spawnY + offset;
+			Vector3 position = new Vector3(spawnX, spawnY, 0);
+			Monster monster = factory.create(position);
+			monster.addObserver(assContainer.getPhysicsEngine());
+			monster.notifyObservers(monster.getModel());
+			assContainer.addNonPlayers(monster);
+		}
 	}
 
 	private void renderTilesTerrain(TileDataStructure2D dataStructure, GLShader shader, MatrixStack modelMatrix, Player player) {

@@ -3,7 +3,6 @@ package location;
 import java.util.List;
 
 import math.types.Vector3;
-import assets.entities.Asteroid;
 import assets.entities.Entity;
 import assets.entities.NonPlayer;
 import assets.entities.Projectile;
@@ -44,11 +43,8 @@ public class LocationMethods {
 		entity.locatedWithin(locateEntity(entity, data), data);
 	}
 
-	// TODO: Had to change this to List<Asteroids> from List<Entity> because it
-	// said the type was wrong. This confused me entirely as Asteroid subclasses
-	// Entity, but I changed it for now.
-	public static void locateAsteroids(List<Asteroid> asteroids, TileDataStructure2D data) {
-		for (NonPlayer m : asteroids) {
+	public static void locateNonPlayers(List<NonPlayer> nonPlayers, TileDataStructure2D data) {
+		for (NonPlayer m : nonPlayers) {
 			m.locatedWithin(locateEntity(m, data), data);
 		}
 	}

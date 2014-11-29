@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import assets.entities.NonPlayer;
 import physics.DefaultPhysicsEngine;
 import renderer.glmodels.factories.GLProjectileFactory;
-import assets.entities.Asteroid;
 import assets.entities.Player;
 import assets.entities.Projectile;
 import assets.world.datastructures.HashmapTileDataStructure2D;
@@ -15,7 +15,7 @@ import assets.world.datastructures.TileDataStructure2D;
 public class AssetContainer {
 
 	private Player player;
-	private List<Asteroid> asteroids;
+	private List<NonPlayer> nonPlayers;
 	private List<Projectile> projectiles;
 	private TileDataStructure2D tiles;
 	private DefaultPhysicsEngine physicsEngine;
@@ -35,7 +35,7 @@ public class AssetContainer {
 	}
 
 	public AssetContainer() {
-		asteroids = new ArrayList<Asteroid>(0);
+		nonPlayers = new ArrayList<>(0);
 		// So the list can be rendered and added to at the same time
 		projectiles = new CopyOnWriteArrayList<Projectile>();
 		tiles = new HashmapTileDataStructure2D(this);
@@ -57,18 +57,18 @@ public class AssetContainer {
 		return player;
 	}
 
-	/** Asteroids **/
+	/** Non Players **/
 
-	public void addAsteroid(Asteroid asteroid) {
-		this.asteroids.add(asteroid);
+	public void addNonPlayers(NonPlayer nonPlayer) {
+		this.nonPlayers.add(nonPlayer);
 	}
 
-	public void setAsteroids(List<Asteroid> asteroids) {
-		this.asteroids = asteroids;
+	public void setNonPlayers(List<NonPlayer> nonPlayers) {
+		this.nonPlayers = nonPlayers;
 	}
 
-	public List<Asteroid> getAsteroids() {
-		return asteroids;
+	public List<NonPlayer> getNonPlayers() {
+		return nonPlayers;
 	}
 
 	/** Projectiles **/

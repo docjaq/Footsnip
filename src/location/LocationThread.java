@@ -15,7 +15,7 @@ public class LocationThread extends GameThread {
 	protected void gameLoop() {
 		/** Doing it as a single entity now to keep it simple **/
 		LocationMethods.locatePlayer(assContainer.getPlayer(), assContainer.getTileDataStructure());
-		LocationMethods.locateAsteroids(assContainer.getAsteroids(), assContainer.getTileDataStructure());
+		LocationMethods.locateNonPlayers(assContainer.getNonPlayers(), assContainer.getTileDataStructure());
 		LocationMethods.locateProjectiles(assContainer.getProjectiles(), assContainer.getTileDataStructure());
 	}
 }
