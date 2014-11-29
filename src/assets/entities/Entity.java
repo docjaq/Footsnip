@@ -10,7 +10,6 @@ import assets.world.AbstractTile;
 import assets.world.datastructures.TileDataStructure2D;
 import collision.Collidable;
 
-import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
@@ -55,7 +54,7 @@ public class Entity extends AbstractEntity implements Collidable, Locatable, Phy
 	}
 
 	@Override
-	public void physicalStep(CollisionObject colObj) {
+	public void physicalStep() {
 
 		// Perform a basic physical step that just updates the model position to
 		// that of the physics world
@@ -71,7 +70,7 @@ public class Entity extends AbstractEntity implements Collidable, Locatable, Phy
 				physicsTransform.set(myMotionState.graphicsWorldTrans);
 
 			} else {
-				colObj.getWorldTransform(physicsTransform);
+				rigidBody.getWorldTransform(physicsTransform);
 			}
 
 			// Update its rendering position

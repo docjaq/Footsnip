@@ -10,7 +10,6 @@ import renderer.GLWorld;
 import renderer.glmodels.GLModel;
 import collision.Collidable;
 
-import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.linearmath.DefaultMotionState;
 
 public class Projectile extends Entity {
@@ -92,7 +91,7 @@ public class Projectile extends Entity {
 	}
 
 	@Override
-	public void physicalStep(CollisionObject collisionObject) {
+	public void physicalStep() {
 
 		// TODO: Probably check which tile we're in, and if null, don't
 		// simulate, like monster
@@ -108,7 +107,7 @@ public class Projectile extends Entity {
 				DefaultMotionState myMotionState = (DefaultMotionState) rigidBody.getMotionState();
 				physicsTransform.set(myMotionState.graphicsWorldTrans);
 			} else {
-				collisionObject.getWorldTransform(physicsTransform);
+				rigidBody.getWorldTransform(physicsTransform);
 			}
 
 			if (!getHasFired()) {

@@ -8,7 +8,6 @@ import renderer.glmodels.GLModel;
 import audio.AudioEngine;
 import collision.Collidable;
 
-import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.linearmath.DefaultMotionState;
 
 //This should probably be a class NPC, which Monster then extends, but decided
@@ -107,7 +106,7 @@ public class Monster extends Entity {
 	}
 
 	@Override
-	public void physicalStep(CollisionObject collisionObject) {
+	public void physicalStep() {
 		// Check here, as if things are initialised late, can cause
 		// a problem
 		if (getCurrentTile() != null) {
@@ -124,7 +123,7 @@ public class Monster extends Entity {
 					physicsTransform.set(myMotionState.graphicsWorldTrans);
 
 				} else {
-					collisionObject.getWorldTransform(physicsTransform);
+					rigidBody.getWorldTransform(physicsTransform);
 				}
 
 				// Force the body to hover on a plane. May cause

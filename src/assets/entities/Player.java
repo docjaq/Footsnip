@@ -16,7 +16,6 @@ import assets.world.datastructures.TileDataStructure2D;
 import audio.AudioEngine;
 import collision.Collidable;
 
-import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.linearmath.DefaultMotionState;
 
 public class Player extends Entity {
@@ -195,7 +194,7 @@ public class Player extends Entity {
 	}
 
 	@Override
-	public void physicalStep(CollisionObject collisionObject) {
+	public void physicalStep() {
 		// Check here, as if things are initialised late, can cause
 		// a problem
 		if (rigidBody.getActivationState() == 0) {
@@ -227,7 +226,7 @@ public class Player extends Entity {
 			DefaultMotionState myMotionState = (DefaultMotionState) rigidBody.getMotionState();
 			physicsTransform.set(myMotionState.graphicsWorldTrans);
 		} else {
-			collisionObject.getWorldTransform(physicsTransform);
+			rigidBody.getWorldTransform(physicsTransform);
 		}
 
 		// Force the body to hover on a plane. May cause

@@ -138,7 +138,7 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 			// If that entity is contained within the map
 			if (entity != null) {
 
-				entity.physicalStep(colObj);
+				entity.physicalStep();
 
 				// If destroyable, add to remove queue
 				if (entity.isDestroyable()) {
