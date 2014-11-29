@@ -8,7 +8,6 @@ import physics.DefaultPhysicsEngine;
 import renderer.glmodels.factories.GLProjectileFactory;
 import assets.entities.Asteroid;
 import assets.entities.Player;
-import assets.entities.PolygonalScenery;
 import assets.entities.Projectile;
 import assets.world.datastructures.HashmapTileDataStructure2D;
 import assets.world.datastructures.TileDataStructure2D;
@@ -18,7 +17,6 @@ public class AssetContainer {
 	private Player player;
 	private List<Asteroid> asteroids;
 	private List<Projectile> projectiles;
-	private List<PolygonalScenery> polygonalSceneries;
 	private TileDataStructure2D tiles;
 	private DefaultPhysicsEngine physicsEngine;
 
@@ -85,18 +83,6 @@ public class AssetContainer {
 
 	public List<Projectile> getProjectiles() {
 		return projectiles;
-	}
-
-	public List<PolygonalScenery> getPolygonalSceneries() {
-		return polygonalSceneries;
-	}
-
-	public void setPolygonalSceneries(List<PolygonalScenery> polygonalSceneries) {
-		this.polygonalSceneries = polygonalSceneries;
-	}
-
-	public void addPolygonalScenery(PolygonalScenery polygonalScenery) {
-		this.polygonalSceneries.add(polygonalScenery);
 	}
 
 	public DefaultPhysicsEngine getPhysicsEngine() {

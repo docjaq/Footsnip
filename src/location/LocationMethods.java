@@ -5,6 +5,7 @@ import java.util.List;
 import math.types.Vector3;
 import assets.entities.Asteroid;
 import assets.entities.Entity;
+import assets.entities.NonPlayer;
 import assets.entities.Projectile;
 import assets.world.AbstractTile;
 import assets.world.datastructures.DataStructureKey2D;
@@ -47,7 +48,7 @@ public class LocationMethods {
 	// said the type was wrong. This confused me entirely as Asteroid subclasses
 	// Entity, but I changed it for now.
 	public static void locateAsteroids(List<Asteroid> asteroids, TileDataStructure2D data) {
-		for (Asteroid m : asteroids) {
+		for (NonPlayer m : asteroids) {
 			m.locatedWithin(locateEntity(m, data), data);
 		}
 	}

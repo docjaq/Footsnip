@@ -37,8 +37,6 @@ import assets.AssetContainer;
 import assets.entities.Asteroid;
 import assets.entities.AsteroidFactory;
 import assets.entities.Player;
-import assets.entities.PolygonalScenery;
-import assets.entities.PolygonalSceneryFactory;
 import assets.entities.Projectile;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTileFactory;
@@ -167,8 +165,6 @@ public class Renderer_4_0 extends RendererThread {
 
 		createEntities();
 		createWorld();
-		createScenery();
-
 	}
 
 	protected void afterLoop() {
@@ -249,13 +245,6 @@ public class Renderer_4_0 extends RendererThread {
 		assContainer.getTileDataStructure().init(glTileFactory, initialTile);
 	}
 
-	private void createScenery() {
-		// Hardcoded because Dave's mother is a prostitute
-		assContainer.setPolygonalSceneries(new ArrayList<PolygonalScenery>());
-		Vector3 sceneryPos = new Vector3(0.05f, 0.05f, 0);
-		assContainer.addPolygonalScenery(PolygonalSceneryFactory.create(sceneryPos));
-	}
-
 	private void createEntities() throws RendererException {
 
 		Vector3 playerPos = new Vector3(0, 0, 0);
@@ -269,7 +258,7 @@ public class Renderer_4_0 extends RendererThread {
 		playerModel.pushToGPU();
 		GLPosition playerPosition = new GLPosition(playerPos, playerAngle, playerScale, playerModel.getModelRadius());
 
-		Player player = new Player(playerModel, playerPosition, 0, new float[] { 1.0f, 0.0f, 0.0f });
+		Player player = new Player(playerModel, playerPosition, 1f, new float[] { 1.0f, 0.0f, 0.0f });
 		assContainer.setPlayer(player);
 		player.addObserver(assContainer.getPhysicsEngine());
 		player.notifyObservers(player.getModel());
@@ -296,7 +285,7 @@ public class Renderer_4_0 extends RendererThread {
 			spawnY = (spawnY < 0) ? spawnY - offset : spawnY + offset;
 			Vector3 asteroidPos = new Vector3(spawnX, spawnY, 0);
 			// Vector3 asteroidPos = new Vector3(0, 0.1f, 0);
-			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat();
+			float rotationDelta = getRotationDelta.call(LuaValue.valueOf(i)).tofloat() / 20f;
 			Asteroid asteroid = asteroidFactory.create(asteroidPos, rotationDelta);
 			asteroid.addObserver(assContainer.getPhysicsEngine());
 			asteroid.notifyObservers(asteroid.getModel());

@@ -5,18 +5,13 @@ import javax.vecmath.Vector3f;
 import math.types.Vector3;
 import renderer.GLPosition;
 import renderer.glmodels.GLModel;
-import audio.AudioEngine;
 import collision.Collidable;
 
 import com.bulletphysics.linearmath.DefaultMotionState;
 
-//This should probably be a class NPC, which Asteroid then extends, but decided
-//to simplify it
-public class Asteroid extends NonPlayer {
+public class Monster extends NonPlayer {
 
-	public static final int DAMAGE = 2;
-
-	public Asteroid(GLModel model, GLPosition position, float mass) {
+	public Monster(GLModel model, GLPosition position, float mass) {
 		super(model, position, mass);
 		setChanged();
 	}
@@ -72,7 +67,7 @@ public class Asteroid extends NonPlayer {
 	public boolean isDestroyable() {
 
 		if (health <= 0) {
-			AudioEngine.getInstance().playAsteroidSound(getPosition());
+
 			destroyable = true;
 		}
 

@@ -32,8 +32,9 @@ public class AsteroidFactory {
 		GLPosition glPosition = new GLPosition(position, angle, scale, model.getModelRadius());
 		glPosition.setEntityRadiusWithModelRadius(model.getModelRadius());
 
-		Asteroid asteroid = new Asteroid(model, glPosition, 0);
-		asteroid.setRotationDelta(rotationDelta);
+		float mass = 4f;
+
+		Asteroid asteroid = new Asteroid(model, glPosition, mass);
 
 		return asteroid;
 	}

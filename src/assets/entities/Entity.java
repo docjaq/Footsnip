@@ -22,10 +22,10 @@ public class Entity extends AbstractEntity implements Collidable, Locatable, Phy
 	protected Transform physicsTransform;
 	protected float mass;
 
-	public Entity(GLModel model, GLPosition position) {
+	public Entity(GLModel model, GLPosition position, float mass) {
 		super(model, position);
 		physicsTransform = new Transform();
-		mass = 1f;
+		this.mass = mass;
 	}
 
 	public float getEuclideanDistance(Entity other) {

@@ -27,7 +27,6 @@ public class Player extends Entity {
 	public static final float MAX_MOVEMENT_SPEED = 1.5f;
 
 	private float defaultYaw;
-	private int age;
 	private float[] color;
 	private int health = 100;
 	private float rotationDelta;
@@ -41,11 +40,9 @@ public class Player extends Entity {
 
 	// private Vector3 currentDirectionVector;
 
-	public Player(GLModel model, GLPosition position, int age, float[] color) {
-		super(model, position);
-		this.age = age;
+	public Player(GLModel model, GLPosition position, float mass, float[] color) {
+		super(model, position, mass);
 		this.color = color;
-		this.mass = 1.0f;
 
 		rotationDelta = DEFAULT_ROTATION_SPEED;
 		this.movementVector = new Vector3(0f, 0f, 0f);
@@ -61,10 +58,6 @@ public class Player extends Entity {
 	public void setModel(GLModel model) {
 		super.setModel(model);
 		this.defaultYaw = position.modelAngle.x();
-	}
-
-	public int getAge() {
-		return age;
 	}
 
 	public float[] getColor() {
@@ -147,7 +140,9 @@ public class Player extends Entity {
 
 		AudioEngine.getInstance().playProjectileSound();
 
-		return new Projectile(GLDefaultProjectileFactory.getInstance().create(), this);
+		float projectileMass = 0.8f;
+
+		return new Projectile(GLDefaultProjectileFactory.getInstance().create(), projectileMass, this);
 	}
 
 	/*
@@ -219,7 +214,7 @@ public class Player extends Entity {
 		float speed = velocity.length();
 		if (speed > Player.MAX_MOVEMENT_SPEED) {
 			velocity.scale(Player.MAX_MOVEMENT_SPEED / speed);
-			rigidBody.setLinearVelocity(velocity);
+			// rigidBody.setLinearVelocity(velocity);
 		}
 
 		if (rigidBody != null && rigidBody.getMotionState() != null) {

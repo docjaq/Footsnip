@@ -29,10 +29,9 @@ public class Projectile extends Entity {
 
 	private boolean hasFired;
 
-	public Projectile(GLModel model, Player player) {
-		super(model, null);
+	public Projectile(GLModel model, float mass, Player player) {
+		super(model, null, mass);
 		this.player = player;
-		this.mass = 0.8f;
 
 		// Set position and movement vector from player
 		Vector3 projPosition = new Vector3(player.position.modelPos);
