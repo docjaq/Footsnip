@@ -1,13 +1,13 @@
 package assets.entities;
 
+import java.io.File;
+
 import math.types.Vector3;
 import math.types.Vector4;
 import mesh.Ply;
 import renderer.GLPosition;
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
-
-import java.io.File;
 
 public class MonsterFactory {
 
@@ -25,7 +25,7 @@ public class MonsterFactory {
 
 	public Monster create(Vector3 position) {
 		Vector3 angle = new Vector3(0, 0, 0);
-		float scale = (float) (Math.random() * 0.5 + 0.5f);
+		float scale = (float) (0.5);
 
 		GLPosition glPosition = new GLPosition(position, angle, scale, model.getModelRadius());
 		glPosition.setEntityRadiusWithModelRadius(model.getModelRadius());

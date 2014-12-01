@@ -1,14 +1,13 @@
 package assets.entities;
 
+import java.io.File;
+
 import math.types.Vector3;
 import math.types.Vector4;
-import mesh.GeometryFile;
 import mesh.Ply;
 import renderer.GLPosition;
 import renderer.glmodels.GLMesh;
 import renderer.glmodels.GLModel;
-
-import java.io.File;
 
 public class AsteroidFactory {
 
@@ -16,7 +15,7 @@ public class AsteroidFactory {
 	private GLModel model;
 
 	public AsteroidFactory() {
-		Vector4 asteroidColor = new Vector4(0.6f, 0.5f, 0.5f, 1.0f);
+		Vector4 asteroidColor = new Vector4(0.7f, 0.6f, 0.6f, 1.0f);
 		Ply mesh = new Ply();
 		mesh.read(new File("resources/meshes/SmoothBlob_small.ply"), asteroidColor);
 

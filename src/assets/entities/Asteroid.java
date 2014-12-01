@@ -10,8 +10,6 @@ import collision.Collidable;
 
 import com.bulletphysics.linearmath.DefaultMotionState;
 
-//This should probably be a class NPC, which Asteroid then extends, but decided
-//to simplify it
 public class Asteroid extends NonPlayer {
 
 	public static final int DAMAGE = 2;

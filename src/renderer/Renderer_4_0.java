@@ -8,7 +8,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import assets.entities.*;
 import main.FootsnipProperties;
 import main.GameControl;
 import main.Main;
@@ -18,8 +17,6 @@ import math.types.Vector3;
 import math.types.Vector4;
 import mesh.Ply;
 
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.jse.JsePlatform;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
@@ -34,6 +31,12 @@ import samplers.CubeMap;
 import samplers.Texture2D;
 import thread.RendererThread;
 import assets.AssetContainer;
+import assets.entities.Asteroid;
+import assets.entities.AsteroidFactory;
+import assets.entities.Monster;
+import assets.entities.MonsterFactory;
+import assets.entities.Player;
+import assets.entities.Projectile;
 import assets.world.AbstractTile;
 import assets.world.PolygonHeightmapTileFactory;
 import assets.world.datastructures.TileDataStructure2D;
@@ -199,7 +202,8 @@ public class Renderer_4_0 extends RendererThread {
 				renderPlayer(assContainer.getPlayer(), currentShader, modelMatrix);
 				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(),
 						Asteroid.class);
-				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(), Monster.class);
+				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(),
+						Monster.class);
 				assContainer.getTileDataStructure().drawEntities(currentShader, objectPole, modelMatrix, assContainer.getPlayer(),
 						Projectile.class);
 			}
@@ -260,18 +264,18 @@ public class Renderer_4_0 extends RendererThread {
 		player.addObserver(assContainer.getPhysicsEngine());
 		player.notifyObservers(player.getModel());
 
-		createAsteroids();
-		createMonsters();
+		createAsteroids(200);
+		createMonsters(200);
 
 		// Initialise projectile factory
 		assContainer.setProjectileFactory(GLDefaultProjectileFactory.getInstance());
 	}
 
-	private void createAsteroids() {
+	private void createAsteroids(int quantity) {
 		AsteroidFactory factory = new AsteroidFactory();
 
-		float spread = 5.8f;
-		for (int i = 0; i < 300; i++) {
+		float spread = 5f;
+		for (int i = 0; i < quantity; i++) {
 			float offset = 0.125f;
 			float spawnX = (float) (Math.random() - 0.5f) * spread;
 			spawnX = (spawnX < 0) ? spawnX - offset : spawnX + offset;
@@ -285,11 +289,12 @@ public class Renderer_4_0 extends RendererThread {
 		}
 	}
 
-	private void createMonsters() {
+	private void createMonsters(int quantity) {
 		MonsterFactory factory = new MonsterFactory();
+		// AsteroidFactory factory = new AsteroidFactory();
 
-		float spread = 5.8f;
-		for (int i = 0; i < 300; i++) {
+		float spread = 5f;
+		for (int i = 0; i < quantity; i++) {
 			float offset = 0.125f;
 			float spawnX = (float) (Math.random() - 0.5f) * spread;
 			spawnX = (spawnX < 0) ? spawnX - offset : spawnX + offset;

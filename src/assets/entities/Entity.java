@@ -39,6 +39,7 @@ public class Entity extends AbstractEntity implements Collidable, Locatable, Phy
 
 	@Override
 	public void locatedWithin(AbstractTile tile, TileDataStructure2D data) {
+
 		if (tile != currentTile) {
 			if (currentTile != null) {
 				currentTile.getContainedEntities().remove(this);
@@ -48,6 +49,14 @@ public class Entity extends AbstractEntity implements Collidable, Locatable, Phy
 				currentTile = tile;
 			} else {
 				// If the tile doesn't exist at all, for now, remove the entity
+				// if (this instanceof Monster) {
+				// System.err.println("Current tile is a monster!");
+				// System.err.println("\tcurrent tile is " + currentTile);
+				// }
+				// if (this instanceof Asteroid) {
+				// System.err.println("Current tile is an asteroid!");
+				// System.err.println("\tcurrent tile is " + currentTile);
+				// }
 				destroyable = true;
 			}
 		}
@@ -86,7 +95,11 @@ public class Entity extends AbstractEntity implements Collidable, Locatable, Phy
 	}
 
 	public void destroy() {
-		currentTile.getContainedEntities().remove(this);
+		if (currentTile != null) {
+			currentTile.getContainedEntities().remove(this);
+		} else {
+			System.err.println("Entity has no tile, cannot remove!");
+		}
 	}
 
 	public AbstractTile getCurrentTile() {
