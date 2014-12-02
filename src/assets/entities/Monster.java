@@ -5,6 +5,7 @@ import javax.vecmath.Vector3f;
 import math.types.Vector3;
 import renderer.GLPosition;
 import renderer.glmodels.GLModel;
+import scripts.MonsterScript;
 import collision.Collidable;
 
 import com.bulletphysics.linearmath.DefaultMotionState;
@@ -36,6 +37,15 @@ public class Monster extends NonPlayer {
 		// Check here, as if things are initialised late, can cause
 		// a problem
 		if (getCurrentTile() != null) {
+
+			Vector3 movementDirection = new Vector3();
+			for (Entity entity : getCurrentTile().getContainedEntities()) {
+				if (entity instanceof Player) {
+					movementDirection = MonsterScript.update(this, (Player) entity);
+					movementDirection.mult(0.001f);
+				}
+			}
+
 			// Check that the tile rigid body is active, if not,
 			// suspend the model
 			if (getCurrentTile().getRigidBody() == null) {
@@ -52,6 +62,7 @@ public class Monster extends NonPlayer {
 					rigidBody.getWorldTransform(physicsTransform);
 				}
 
+				rigidBody.applyCentralImpulse(new Vector3f(movementDirection.x(), movementDirection.y(), movementDirection.z()));
 				// Force the body to hover on a plane. May cause
 				// z-oscillations; I don't fucking know, I'm not a
 				// physicist.

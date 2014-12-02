@@ -69,16 +69,11 @@ public class Main implements GameListener {
 				executor.execute(physicsThread);
 
 				// Renderer is set up, so start the control thread.
-				GameThread controlThread = new ControlThread(assContainer, 10, Main.this);
+				GameThread controlThread = new ControlThread(assContainer, 8, Main.this);
 				childThreads.add(controlThread);
 				executor.execute(controlThread);
 
-				// GameThread collisionThread = new
-				// CollisionThread(assContainer, 10, Main.this);
-				// childThreads.add(collisionThread);
-				// executor.execute(collisionThread);
-
-				GameThread locationThread = new LocationThread(assContainer, 10, Main.this);
+				GameThread locationThread = new LocationThread(assContainer, 5, Main.this);
 				childThreads.add(locationThread);
 				executor.execute(locationThread);
 			}

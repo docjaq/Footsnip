@@ -168,6 +168,15 @@ public class Player extends Entity {
 				GameControl.playerDead();
 			}
 		}
+
+		if (Monster.class.isAssignableFrom(subject.getClass())) {
+			health--;
+			System.out.printf("Health: %d\n", health);
+
+			if (health < 1) {
+				GameControl.playerDead();
+			}
+		}
 	}
 
 	@Override

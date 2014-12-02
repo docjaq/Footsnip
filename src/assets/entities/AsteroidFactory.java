@@ -17,7 +17,7 @@ public class AsteroidFactory {
 	public AsteroidFactory() {
 		Vector4 asteroidColor = new Vector4(0.7f, 0.6f, 0.6f, 1.0f);
 		Ply mesh = new Ply();
-		mesh.read(new File("resources/meshes/SmoothBlob_small.ply"), asteroidColor);
+		mesh.read(new File("resources/meshes/Asteroid.ply"), asteroidColor);
 
 		model = new GLMesh(mesh.getTriangles(), mesh.getVertices());
 		model.pushToGPU();

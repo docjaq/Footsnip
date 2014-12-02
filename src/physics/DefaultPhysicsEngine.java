@@ -21,6 +21,7 @@ import com.bulletphysics.collision.dispatch.CollisionDispatcher;
 import com.bulletphysics.collision.dispatch.CollisionFlags;
 import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
+import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.BvhTriangleMeshShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.collision.shapes.IndexedMesh;
@@ -121,7 +122,7 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 		}
 
 		while (!entitiesToAdd.isEmpty()) {
-			addEntity(entitiesToAdd.remove());
+			addEntitySphere(entitiesToAdd.remove());
 		}
 
 	}
@@ -148,7 +149,7 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 		}
 	}
 
-	private IndexedMesh addTerrainMesh(GLMesh mesh) {
+	private IndexedMesh generateIndexedMesh(GLMesh mesh) {
 
 		/*
 		 * public int numTriangles; public ByteBuffer triangleIndexBase; public
@@ -180,7 +181,7 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 		TriangleIndexVertexArray terrainMeshArray = new TriangleIndexVertexArray();
 		// Create the physics mesh object from the buffers and strides in the
 		// GLMesh
-		terrainMeshArray.addIndexedMesh(addTerrainMesh(model));
+		terrainMeshArray.addIndexedMesh(generateIndexedMesh(model));
 
 		boolean useQuantizedAabbCompression = true;
 
@@ -210,13 +211,41 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 		tile.setRigidBody(null);
 	}
 
-	private void addEntity(Entity entity) {
+	private void addEntitySphere(Entity entity) {
 		initialTransform.setIdentity();
 		RigidBody body = addRigidBodyAsSphere(initialTransform, entity);
 		entity.setRigidBody(body);
 		body.setActivationState(1);
 		body.setCollisionFlags(body.getCollisionFlags() | CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
 		// objectMap.put(body, entity);
+		body.setUserPointer(entity);
+	}
+
+	private void addEntityMesh(Entity entity) {
+		initialTransform.setIdentity();
+
+		GLMesh model = (GLMesh) entity.getModel();
+
+		if (model == null) {
+			return;
+		}
+
+		TriangleIndexVertexArray meshArray = new TriangleIndexVertexArray();
+		meshArray.addIndexedMesh(generateIndexedMesh(model));
+
+		boolean useQuantizedAabbCompression = true;
+
+		BvhTriangleMeshShape trimeshShape = new BvhTriangleMeshShape(meshArray, useQuantizedAabbCompression);
+
+		initialTransform.origin
+				.set(entity.getPosition().modelPos.x(), entity.getPosition().modelPos.y(), entity.getPosition().modelPos.z());
+
+		RigidBody body = localCreateRigidBody(entity.getMass(), initialTransform, trimeshShape);
+		body.setActivationState(1);
+		body.setCollisionFlags(body.getCollisionFlags() | CollisionFlags.CUSTOM_MATERIAL_CALLBACK);
+
+		entity.setRigidBody(body);
+
 		body.setUserPointer(entity);
 	}
 
@@ -229,7 +258,46 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 	private RigidBody addRigidBodyAsSphere(Transform transform, Entity entity) {
 
 		transform.setIdentity();
-		CollisionShape colShape = new SphereShape(entity.getModel().getModelRadius());
+		CollisionShape colShape = new SphereShape(entity.getModel().getModelRadius() * entity.getPosition().getModelScale());
+
+		transform.origin.set(entity.getPosition().modelPos.x(), entity.getPosition().modelPos.y(), entity.getPosition().modelPos.z());
+		RigidBody body = localCreateRigidBody(entity.getMass(), transform, colShape);
+
+		// TODO: See if this user point enables a neater solution than the
+		// hashmap
+		body.setUserPointer(entity);
+
+		// TODO: Investigate and tweak these settings
+		body.setDamping(0.1f, 0.1f);
+		body.setRestitution(0.1f);
+
+		return body;
+	}
+
+	private RigidBody addRigidBodyAsBox(Transform transform, Entity entity) {
+
+		transform.setIdentity();
+		// TODO: Set this up
+		CollisionShape colShape = new BoxShape(new Vector3f());
+
+		transform.origin.set(entity.getPosition().modelPos.x(), entity.getPosition().modelPos.y(), entity.getPosition().modelPos.z());
+		RigidBody body = localCreateRigidBody(entity.getMass(), transform, colShape);
+
+		// TODO: See if this user point enables a neater solution than the
+		// hashmap
+		body.setUserPointer(entity);
+
+		// TODO: Investigate and tweak these settings
+		body.setDamping(0.1f, 0.1f);
+		body.setRestitution(0.1f);
+
+		return body;
+	}
+
+	private RigidBody addRigidBodyAsMesh(Transform transform, Entity entity) {
+
+		transform.setIdentity();
+		CollisionShape colShape = new SphereShape(entity.getModel().getModelRadius() * entity.getPosition().getModelScale());
 
 		transform.origin.set(entity.getPosition().modelPos.x(), entity.getPosition().modelPos.y(), entity.getPosition().modelPos.z());
 		RigidBody body = localCreateRigidBody(entity.getMass(), transform, colShape);
@@ -281,7 +349,6 @@ public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 	public void update(Observable arg0, Object arg1) {
 		if (arg0 instanceof Entity) {
 			entitiesToAdd.add((Entity) arg0);
-
 			if (arg0 instanceof Player) {
 				playerEntity = (Player) arg0;
 			}
