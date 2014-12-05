@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import main.GameControl;
+import main.GameState;
 import main.Main;
 import assets.AssetContainer;
 
@@ -28,7 +29,7 @@ public abstract class GameThread implements Runnable, ObservableThread {
 		setup();
 
 		try {
-			while (GameControl.isPlaying()) {
+			while (GameControl.getGameState() == GameState.PLAYING) {
 				gameLoop();
 				Thread.sleep(threadDelay);
 			}
@@ -41,12 +42,12 @@ public abstract class GameThread implements Runnable, ObservableThread {
 
 	protected void beforeLoop() {
 		// No default functionality.
-        System.out.println("beforeLoop: " + this.toString());
+		System.out.println("beforeLoop: " + this.toString());
 	}
 
 	protected void afterLoop() {
 		// No default functionality.
-        System.out.println("afterLoop: " + this.toString());
+		System.out.println("afterLoop: " + this.toString());
 	}
 
 	protected abstract void gameLoop();

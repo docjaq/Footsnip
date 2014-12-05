@@ -1,7 +1,5 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,8 +18,6 @@ import control.ControlThread;
 import exception.RendererException;
 
 public class Main implements GameListener {
-
-	private List<GameThread> childThreads = new ArrayList<GameThread>(4);
 
 	private long startMillis = System.currentTimeMillis();
 
@@ -59,30 +55,26 @@ public class Main implements GameListener {
 
 		GameThread rendererThread = new Renderer_4_0(assContainer, this);
 		Future<?> rendererFuture = executor.submit(rendererThread);
-		childThreads.add(rendererThread);
 
 		rendererThread.registerSetupObserver(new ThreadObserver() {
 			@Override
 			public void setupDone(ObservableThread subject) {
 
 				// Created before renderer to get reference
-				childThreads.add(physicsThread);
 				executor.execute(physicsThread);
 
 				// Renderer is set up, so start the control thread.
 				GameThread controlThread = new ControlThread(assContainer, 8, Main.this);
-				childThreads.add(controlThread);
 				executor.execute(controlThread);
 
 				GameThread locationThread = new LocationThread(assContainer, 5, Main.this);
-				childThreads.add(locationThread);
 				executor.execute(locationThread);
 			}
 		});
 
 		AudioEngine.getInstance();
 
-		GameControl.startGame();
+		GameControl.setGameState(GameState.PLAYING);
 
 		quitWhenRendererFinishes(rendererFuture);
 	}
@@ -93,7 +85,9 @@ public class Main implements GameListener {
 	}
 
 	public void quitGame() {
-		GameControl.stopGame();
+		if (GameControl.getGameState() == GameState.PLAYING) {
+			System.err.println("Quitting while we're still playing?");
+		}
 		AudioEngine.getInstance().close();
 		shutdownExecutor();
 	}
@@ -115,8 +109,8 @@ public class Main implements GameListener {
 	}
 
 	@Override
-	public void gameOver(boolean playerWon) {
-		if (playerWon) {
+	public void gameOver() {
+		if (GameControl.getGameState() == GameState.PLAYER_WON) {
 			System.out.println("You win.");
 		} else {
 			System.out.println("You lose.");
