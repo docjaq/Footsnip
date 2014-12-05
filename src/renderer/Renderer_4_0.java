@@ -110,6 +110,7 @@ public class Renderer_4_0 extends RendererThread {
 	}
 
 	protected void beforeLoop() throws RendererException {
+		System.out.println("beforeLoop: " + this.toString());
 		float[] backgroundColor = { 1f, 1f, 1f, 1.0f };
 		projectionUniformBuffer = setupOpenGL(WIDTH, HEIGHT, WINDOW_TITLE, backgroundColor, projectionBlockIndex);
 
@@ -164,11 +165,6 @@ public class Renderer_4_0 extends RendererThread {
 
 		createEntities();
 		createWorld();
-	}
-
-	protected void afterLoop() {
-		// TODO: Modify this to accept the whole entity data-structure
-		destroyOpenGL(assContainer.getPlayer());
 	}
 
 	private void logicCycle() {
@@ -325,6 +321,7 @@ public class Renderer_4_0 extends RendererThread {
 		modelMatrix.popMatrix();
 	}
 
+	@Override
 	public void gameLoop() {
 		// Update logic and render
 		logicCycle();
@@ -375,5 +372,11 @@ public class Renderer_4_0 extends RendererThread {
 		lastFrameTime = time;
 
 		return delta;
+	}
+
+	protected void afterLoop() {
+		System.out.println("afterLoop: " + this.toString());
+		// TODO: Modify this to accept the whole entity data-structure
+		destroyOpenGL(assContainer.getPlayer());
 	}
 }
