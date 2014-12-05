@@ -246,7 +246,7 @@ public class Renderer_4_0 extends RendererThread {
 
 		Vector3 playerPos = new Vector3(0, 0, 0);
 		Vector3 playerAngle = new Vector3(0, 0, 0);
-		float playerScale = 1f;
+		float playerScale = 1.0f;
 		Vector4 playerColor = new Vector4(0.6f, 0.6f, 0.0f, 1.0f);
 
 		Ply playerMesh = new Ply();
