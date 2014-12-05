@@ -10,6 +10,7 @@ import java.util.Map;
 
 import main.FootsnipProperties;
 import main.GameControl;
+import main.GameState;
 import main.Main;
 import math.types.MatrixStack;
 import math.types.Quaternion;
@@ -341,7 +342,7 @@ public class Renderer_4_0 extends RendererThread {
 
 	private void waitForWindowClosed() {
 		if (Display.isCloseRequested()) {
-			GameControl.stopGame();
+			GameControl.setGameState(GameState.PLAYER_QUIT);
 		}
 	}
 
