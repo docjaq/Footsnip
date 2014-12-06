@@ -55,10 +55,25 @@ public class Asteroid extends NonPlayer {
 					rigidBody.getWorldTransform(physicsTransform);
 				}
 
+				// btTransform tr;
+				// tr.setIdentity();
+				// btQuaternion quat;
+				// quat.setEuler(yaw,pitch,roll); //or quat.setEulerZYX
+				// depending on the ordering you want
+				// tr.setRotation(quat);
+				//
+				// rigidBody->setCenterOfMassTransform(tr);
+
 				// Force the body to hover on a plane. May cause
 				// z-oscillations; I don't fucking know, I'm not a
 				// physicist.
 				rigidBody.applyCentralImpulse(new Vector3f(0, 0, 0 - physicsTransform.origin.z));
+
+				// Quat4f quat = new Quat4f();
+				// QuaternionUtil.setEuler(quat, (float) Math.random() * 360,
+				// (float) Math.random(), (float) Math.random());
+				// physicsTransform.setRotation(quat);
+				// rigidBody.setCenterOfMassTransform(physicsTransform);
 
 				// Update its rendering position
 				getPosition().setModelPos(new Vector3(physicsTransform.origin.x, physicsTransform.origin.y, physicsTransform.origin.z));

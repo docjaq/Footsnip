@@ -57,7 +57,7 @@ public class Projectile extends Entity {
 		movementVector.add(vec3fAdditiveMovement);
 
 		position.modelPos.z(position.modelPos.z() - 0.01f);
-		position.modelPos.add(vec3fAdditiveMovement.normalize().mult(0.03f));
+		position.modelPos.add(vec3fAdditiveMovement.normalize().mult(0.06f));
 
 		setChanged();
 

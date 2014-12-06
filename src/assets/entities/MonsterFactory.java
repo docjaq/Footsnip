@@ -17,7 +17,7 @@ public class MonsterFactory {
 	public MonsterFactory() {
 		Vector4 color = new Vector4(1.0f, 0.2f, 0.0f, 1.0f);
 		Ply mesh = new Ply();
-		mesh.read(new File("resources/meshes/SmoothBlob_small.ply"), color);
+		mesh.read(new File("resources/meshes/Monster.ply"), color);
 
 		model = new GLMesh(mesh.getTriangles(), mesh.getVertices());
 		model.pushToGPU();
@@ -25,7 +25,7 @@ public class MonsterFactory {
 
 	public Monster create(Vector3 position) {
 		Vector3 angle = new Vector3(0, 0, 0);
-		float scale = (float) (0.5);
+		float scale = (float) (0.4);
 
 		GLPosition glPosition = new GLPosition(position, angle, scale, model.getModelRadius());
 		glPosition.setEntityRadiusWithModelRadius(model.getModelRadius());
