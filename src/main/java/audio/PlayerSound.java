@@ -13,7 +13,7 @@ public class PlayerSound extends EntitySound<Player> {
 
 	@Override
 	protected String getFilePath() {
-		return "resources/audio/Rocket_vshort.wav";
+		return "src/main/resources/audio/Rocket_vshort.wav";
 	}
 
 	@Override

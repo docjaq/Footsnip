@@ -17,7 +17,7 @@ public class MonsterFactory {
 	public MonsterFactory() {
 		Vector4 color = new Vector4(1.0f, 0.2f, 0.0f, 1.0f);
 		Ply mesh = new Ply();
-		mesh.read(new File("resources/meshes/Monster.ply"), color);
+		mesh.read(new File("src/main/resources/meshes/Monster.ply"), color);
 
 		model = new GLMesh(mesh.getTriangles(), mesh.getVertices());
 		model.pushToGPU();

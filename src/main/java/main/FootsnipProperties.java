@@ -7,8 +7,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class FootsnipProperties {
-	private static final String DEFAULT_FILEPATH = "resources/conf/default.properties";
-	private static final String LOCAL_FILEPATH = "resources/conf/local.properties";
+	private static final String DEFAULT_FILEPATH = "src/main/resources/conf/default.properties";
+	private static final String LOCAL_FILEPATH = "src/main/resources/conf/local.properties";
 
 	private static Properties properties;
 

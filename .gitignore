@@ -5,3 +5,5 @@
 footsnip.iml
 local.properties
 lib/jBullet/src/
+build/
+.gradle/

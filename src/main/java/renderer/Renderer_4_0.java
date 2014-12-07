@@ -53,23 +53,29 @@ import exception.RendererException;
 public class Renderer_4_0 extends RendererThread {
 
 	// For normal entities (player, asteroids, etc)
-	private final String[] DEFAULT_SHADER_LOCATION = { "resources/shaders/lighting/gaussian_vert.glsl",
-			"resources/shaders/lighting/gaussian_frag.glsl" };
+	private final String[] DEFAULT_SHADER_LOCATION = { "src/main/resources/shaders/lighting/gaussian_vert.glsl",
+			"src/main/resources/shaders/lighting/gaussian_frag.glsl" };
 
 	// For water
-	private final String[] WATER_SHADER_LOCATION = { "resources/shaders/water/water_vert.glsl", "resources/shaders/water/water_frag.glsl" };
+	private final String[] WATER_SHADER_LOCATION = { "src/main/resources/shaders/water/water_vert.glsl",
+			"src/main/resources/shaders/water/water_frag.glsl" };
 
 	// For terrain
-	private final String[] GAUSSIAN_TESS_SHADER_LOCATION = { "resources/shaders/tessellation/gaussian_vert.glsl",
-			"resources/shaders/tessellation/terrain_tessCont.glsl", "resources/shaders/tessellation/terrain_tessEval.glsl",
-			"resources/shaders/tessellation/terrain_geom.glsl", "resources/shaders/tessellation/gaussian_frag.glsl", };
+	private final String[] GAUSSIAN_TESS_SHADER_LOCATION = { "src/main/resources/shaders/tessellation/gaussian_vert.glsl",
+			"src/main/resources/shaders/tessellation/terrain_tessCont.glsl",
+			"src/main/resources/shaders/tessellation/terrain_tessEval.glsl", "src/main/resources/shaders/tessellation/terrain_geom.glsl",
+			"src/main/resources/shaders/tessellation/gaussian_frag.glsl", };
 
-	private final String[] CUBE_MAP_LOCATION = { "resources/cubemaps/Maskonaive/posx.png", "resources/cubemaps/Maskonaive/negx.png",
-			"resources/cubemaps/Maskonaive/negy.png", "resources/cubemaps/Maskonaive/posy.png", "resources/cubemaps/Maskonaive/posz.png",
-			"resources/cubemaps/Maskonaive/negz.png" }; // x, y, down, up
+	private final String[] CUBE_MAP_LOCATION = { "src/main/resources/cubemaps/Maskonaive/posx.png",
+			"src/main/resources/cubemaps/Maskonaive/negx.png", "src/main/resources/cubemaps/Maskonaive/negy.png",
+			"src/main/resources/cubemaps/Maskonaive/posy.png", "src/main/resources/cubemaps/Maskonaive/posz.png",
+			"src/main/resources/cubemaps/Maskonaive/negz.png" }; // x,
+																	// y,
+																	// down,
+																	// up
 
-	private final String NORMALMAP_A_LOCATION = "resources/normalmaps/Terrain6.png";
-	private final String NORMALMAP_WATER_LOCATION = "resources/normalmaps/Noise2.png";
+	private final String NORMALMAP_A_LOCATION = "src/main/resources/normalmaps/Terrain6.png";
+	private final String NORMALMAP_WATER_LOCATION = "src/main/resources/normalmaps/Noise2.png";
 
 	// Setup variables
 	private final String WINDOW_TITLE = "Footsnip";
@@ -251,7 +257,7 @@ public class Renderer_4_0 extends RendererThread {
 		Vector4 playerColor = new Vector4(0.6f, 0.6f, 0.0f, 1.0f);
 
 		Ply playerMesh = new Ply();
-		playerMesh.read(new File("resources/meshes/Spaceship2.ply"), playerColor);
+		playerMesh.read(new File("src/main/resources/meshes/Spaceship2.ply"), playerColor);
 		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices());
 		playerModel.pushToGPU();
 		GLPosition playerPosition = new GLPosition(playerPos, playerAngle, playerScale, playerModel.getModelRadius());

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry excluding="audio/|conf/|meshes/|cubemaps/Maskonaive/|images/|lua/|misc/|normalmaps/|shaders/lighting/|shaders/tessellation/|shaders/water/|cubemaps/|shaders/" kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/PNGDecoder.jar"/>
 	<classpathentry kind="lib" path="lib/LWJGL/lwjgl_util.jar"/>

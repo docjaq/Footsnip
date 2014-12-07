@@ -6,7 +6,7 @@ public class ProjectileSound extends EntitySound<Projectile> {
 
 	@Override
 	protected String getFilePath() {
-		return "resources/audio/Shot.wav";
+		return "src/main/resources/audio/Shot.wav";
 	}
 
 	@Override
