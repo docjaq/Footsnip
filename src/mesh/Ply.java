@@ -83,6 +83,17 @@ public class Ply extends AbstractGeometryFile {
 		for (int i = 0; i < numVertices; i++) {
 			String line = scanner.nextLine();
 			String[] elements = line.split(" ");
+
+			if (elements.length >= 9) {
+				color.x(Float.parseFloat(elements[6]) / 255f);
+				color.y(Float.parseFloat(elements[7]) / 255f);
+				color.z(Float.parseFloat(elements[8]) / 255f);
+			}
+
+			if (elements.length >= 10) {
+				color.w(Float.parseFloat(elements[9]) / 255f);
+			}
+
 			GLVertex vertex = new GLVertex(i, Float.parseFloat(elements[0]), Float.parseFloat(elements[1]), Float.parseFloat(elements[2]),
 					color);
 			if (elements.length >= 6) {

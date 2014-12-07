@@ -247,11 +247,11 @@ public class Renderer_4_0 extends RendererThread {
 
 		Vector3 playerPos = new Vector3(0, 0, 0);
 		Vector3 playerAngle = new Vector3(0, 0, 0);
-		float playerScale = 1.0f;
+		float playerScale = 0.09f;
 		Vector4 playerColor = new Vector4(0.6f, 0.6f, 0.0f, 1.0f);
 
 		Ply playerMesh = new Ply();
-		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"), playerColor);
+		playerMesh.read(new File("resources/meshes/Spaceship2.ply"), playerColor);
 		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices());
 		playerModel.pushToGPU();
 		GLPosition playerPosition = new GLPosition(playerPos, playerAngle, playerScale, playerModel.getModelRadius());
@@ -262,7 +262,7 @@ public class Renderer_4_0 extends RendererThread {
 		player.notifyObservers(player.getModel());
 
 		createAsteroids(200);
-		createMonsters(200);
+		createMonsters(50);
 
 		// Initialise projectile factory
 		assContainer.setProjectileFactory(GLDefaultProjectileFactory.getInstance());

@@ -24,7 +24,7 @@ public class AsteroidFactory {
 	}
 
 	public Asteroid create(Vector3 position) {
-		Vector3 angle = new Vector3(0, 0, 0);
+		Vector3 angle = new Vector3((float) Math.random() * 360, (float) Math.random() * 360, (float) Math.random() * 360);
 		float scale = (float) (Math.random() * 0.5 + 0.5f);
 
 		GLPosition glPosition = new GLPosition(position, angle, scale, model.getModelRadius());
