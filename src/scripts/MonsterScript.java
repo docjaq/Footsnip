@@ -16,6 +16,6 @@ public class MonsterScript {
 
 		direction = Vector3.sub(playerPos.getModelPos(), monsterPos.getModelPos());
 
-		return direction.normalize();
+		return direction.normalize().mult(0.1f);
 	}
 }

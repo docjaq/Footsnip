@@ -64,14 +64,18 @@ public class Asteroid extends NonPlayer {
 				//
 				// rigidBody->setCenterOfMassTransform(tr);
 
-				// Force the body to hover on a plane. May cause
-				// z-oscillations; I don't fucking know, I'm not a
-				// physicist.
+				// Force the body to hover on a plane. May cause z-oscillations
 				rigidBody.applyCentralImpulse(new Vector3f(0, 0, 0 - physicsTransform.origin.z));
 
+				// rigidBody.
+				// rigidBody.applyForce(force, rel_pos);
+				// rigidBody.applyTorque(new Vector3f(20.f, 100.0f, 0.0f));
+
 				// Quat4f quat = new Quat4f();
-				// QuaternionUtil.setEuler(quat, (float) Math.random() * 360,
-				// (float) Math.random(), (float) Math.random());
+				// float twoPi = (float) (Math.PI * 2);
+				// QuaternionUtil.setEuler(quat, (float) Math.random() * twoPi,
+				// (float) Math.random() * twoPi, (float) Math.random() *
+				// twoPi);
 				// physicsTransform.setRotation(quat);
 				// rigidBody.setCenterOfMassTransform(physicsTransform);
 
