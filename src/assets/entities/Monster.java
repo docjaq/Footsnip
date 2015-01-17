@@ -84,8 +84,9 @@ public class Monster extends NonPlayer {
 
     @Override
     public void physicalStep() {
-        Script.MONSTER.checkForUpdate();
-        Script.MONSTER.runFunction(ScriptFunction.UPDATE, 50f);
+        if (getCurrentTile() != null) {
+            Script.MONSTER.runFunction(ScriptFunction.UPDATE, this);
+        }
     }
 
 	@Override

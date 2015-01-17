@@ -28,7 +28,8 @@ public class Player extends Entity {
 
 	private float defaultYaw;
 	private float[] color;
-	private int health = 100;
+
+    private int health = 100;
 	private float rotationDelta;
 	private Vector3 movementVector;
 
@@ -249,4 +250,9 @@ public class Player extends Entity {
 	public Vector3 getMovementVector() {
 		return movementVector;
 	}
+
+
+    public int getHealth() {
+        return health;
+    }
 }
