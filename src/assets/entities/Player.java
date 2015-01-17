@@ -5,6 +5,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.vecmath.Vector3f;
 
+import com.bulletphysics.collision.dispatch.CollisionObject;
 import main.GameControl;
 import math.LinearAlgebra;
 import math.types.Vector3;
@@ -202,20 +203,24 @@ public class Player extends Entity {
 	public void physicalStep() {
 		// Check here, as if things are initialised late, can cause
 		// a problem
-		if (rigidBody.getActivationState() == 0) {
+		//if (rigidBody.getActivationState() == 0) {
 
-			rigidBody.setActivationState(1);
-		}
-		rigidBody.activate();
+        rigidBody.forceActivationState(CollisionObject.DISABLE_DEACTIVATION);
+		//rigidBody.setActivationState(1);
+		//}
+		//rigidBody.activate();
 
 		// TODO: Clean this up so A) it uses a pool not a queue, and
 		// B) don't have to fucking convert vector formats
 		Vector3f velocity = new Vector3f();
 		while (!getControlInputMovement().isEmpty()) {
+
 			Vector3 vec = getControlInputMovement().remove();
-			velocity.x += vec.x() * 4;
-			velocity.y += vec.y() * 4;
-			velocity.z += vec.z() * 4;
+			velocity.x += vec.x() * 0.75;
+			velocity.y += vec.y() * 0.75;
+			velocity.z += vec.z() * 0.75;
+
+            //System.out.println("Control vector = " + velocity.x + ", " + velocity.y + ", " + velocity.z);
 		}
 
 		// Limit maximum speed
@@ -224,7 +229,7 @@ public class Player extends Entity {
 		float speed = velocity.length();
 		if (speed > Player.MAX_MOVEMENT_SPEED) {
 			velocity.scale(Player.MAX_MOVEMENT_SPEED / speed);
-			// rigidBody.setLinearVelocity(velocity);
+			rigidBody.setLinearVelocity(velocity);
 		}
 
 		if (rigidBody != null && rigidBody.getMotionState() != null) {

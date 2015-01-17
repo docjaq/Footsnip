@@ -36,7 +36,7 @@ import com.bulletphysics.linearmath.Transform;
 
 public class DefaultPhysicsEngine extends PhysicsEngine implements Observer {
 
-	private static final float STEP_ADJUSTMENT_FACTOR = 0.000001f;
+	private static final float STEP_ADJUSTMENT_FACTOR = 0.001f;
 
 	private Transform initialTransform;
 

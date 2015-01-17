@@ -52,7 +52,7 @@ public class Main implements GameListener {
 
 		final AssetContainer assContainer = new AssetContainer();
 
-		GameThread physicsThread = new PhysicsThread(assContainer, 5, Main.this);
+		GameThread physicsThread = new PhysicsThread(assContainer, 2, Main.this);
 
 		GameThread rendererThread = new Renderer_4_0(assContainer, this);
 		Future<?> rendererFuture = executor.submit(rendererThread);
@@ -65,7 +65,7 @@ public class Main implements GameListener {
 				executor.execute(physicsThread);
 
 				// Renderer is set up, so start the control thread.
-				GameThread controlThread = new ControlThread(assContainer, 8, Main.this);
+				GameThread controlThread = new ControlThread(assContainer, 5, Main.this);
 				executor.execute(controlThread);
 
 				GameThread locationThread = new LocationThread(assContainer, 5, Main.this);
