@@ -2,6 +2,6 @@
 /.idea
 .DS_Store
 .metadata
-footsnip.iml
 local.properties
 lib/jBullet/src/
+

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="EclipseModuleManager">
+    <libelement value="jar://$MODULE_DIR$/lib/PNGDecoder.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LWJGL/lwjgl_util.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LWJGL/lwjgl.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/luaj-jse-3.0-beta2.jar!/" />
+    <src_description expected_position="0">
+      <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
+    </src_description>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/bin" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="module-library">
+      <library name="PNGDecoder.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/PNGDecoder.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="lwjgl_util.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LWJGL/lwjgl_util.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="lwjgl.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LWJGL/lwjgl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="luaj-jse-3.0-beta2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/luaj-jse-3.0-beta2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="jbullet" level="project" />
+    <orderEntry type="library" name="stack-alloc" level="project" />
+    <orderEntry type="library" name="vecmath" level="project" />
+    <orderEntry type="library" name="asm-all-3.1" level="project" />
+  </component>
+</module>
+
