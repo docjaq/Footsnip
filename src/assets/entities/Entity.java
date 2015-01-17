@@ -32,11 +32,7 @@ public class Entity extends AbstractEntity implements Collidable, Locatable, Phy
 		return LinearAlgebra.euclideanDistance(this.position.modelPos, other.position.modelPos);
 	}
 
-	@Override
-	public void collidedWith(final Collidable subject, final Vector3 collisionNormal) {
-		System.out.println(this.toString() + " collided with " + subject.toString());
-	}
-
+    //Callback from datastructure
 	@Override
 	public void locatedWithin(AbstractTile tile, TileDataStructure2D data) {
 
@@ -62,6 +58,13 @@ public class Entity extends AbstractEntity implements Collidable, Locatable, Phy
 		}
 	}
 
+    //Callback from physics engine interface
+    @Override
+    public void collidedWith(final Collidable subject, final Vector3 collisionNormal) {
+        System.out.println(this.toString() + " collided with " + subject.toString());
+    }
+
+    //Callback from the physics engine
 	@Override
 	public void physicalStep() {
 
