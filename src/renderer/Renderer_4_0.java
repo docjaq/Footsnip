@@ -247,11 +247,11 @@ public class Renderer_4_0 extends RendererThread {
 
 		Vector3 playerPos = new Vector3(0, 0, 0);
 		Vector3 playerAngle = new Vector3(0, 0, 0);
-		float playerScale = 0.09f;
+		float playerScale = 1.2f;
 		Vector4 playerColor = new Vector4(0.6f, 0.6f, 0.0f, 1.0f);
 
 		Ply playerMesh = new Ply();
-		playerMesh.read(new File("resources/meshes/Spaceship2.ply"), playerColor);
+		playerMesh.read(new File("resources/meshes/SpaceFighter_small.ply"), playerColor);
 		GLModel playerModel = new GLMesh(playerMesh.getTriangles(), playerMesh.getVertices());
 		playerModel.pushToGPU();
 		GLPosition playerPosition = new GLPosition(playerPos, playerAngle, playerScale, playerModel.getModelRadius());

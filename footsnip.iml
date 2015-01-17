@@ -5,6 +5,10 @@
     <libelement value="jar://$MODULE_DIR$/lib/LWJGL/lwjgl_util.jar!/" />
     <libelement value="jar://$MODULE_DIR$/lib/LWJGL/lwjgl.jar!/" />
     <libelement value="jar://$MODULE_DIR$/lib/luaj-jse-3.0-beta2.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/jBullet/jbullet.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/jBullet/stack-alloc.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/jBullet/asm-all-3.1.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/jBullet/vecmath.jar!/" />
     <src_description expected_position="0">
       <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
     </src_description>
@@ -53,10 +57,48 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="jbullet" level="project" />
-    <orderEntry type="library" name="stack-alloc" level="project" />
-    <orderEntry type="library" name="vecmath" level="project" />
+    <orderEntry type="module-library">
+      <library name="jbullet.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jBullet/jbullet.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jBullet/src" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="stack-alloc.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jBullet/stack-alloc.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="asm-all-3.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jBullet/asm-all-3.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="vecmath.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jBullet/vecmath.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="asm-all-3.1" level="project" />
+    <orderEntry type="library" name="stack-alloc" level="project" />
+    <orderEntry type="library" name="jbullet" level="project" />
+    <orderEntry type="library" name="vecmath" level="project" />
   </component>
 </module>
 
