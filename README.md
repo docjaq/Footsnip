@@ -1,0 +1,4 @@
+# Footsnip #
+
+
+### What is Footsnip? ###
