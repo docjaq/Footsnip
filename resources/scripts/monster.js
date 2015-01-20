@@ -39,6 +39,4 @@ function computeVector(monster, player) {
     var direction = Packages.math.types.Vector3.sub(playerPos.getModelPos(), monsterPos.getModelPos());
 
     return direction.normalize().mult(0.1);
-
-return 1;
 }
