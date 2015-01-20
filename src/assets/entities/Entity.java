@@ -19,7 +19,8 @@ public class Entity extends AbstractEntity implements Collidable, Locatable, Phy
 	protected AbstractTile currentTile;
 	protected boolean destroyable = false;
 	protected RigidBody rigidBody;
-	protected Transform physicsTransform;
+
+    protected Transform physicsTransform;
 	protected float mass;
 
 	public Entity(GLModel model, GLPosition position, float mass) {
@@ -116,6 +117,8 @@ public class Entity extends AbstractEntity implements Collidable, Locatable, Phy
 	public void setRigidBody(RigidBody rigidBody) {
 		this.rigidBody = rigidBody;
 	}
+
+    public Transform getPhysicsTransform() {return physicsTransform;}
 
 	public float getMass() {
 		return mass;

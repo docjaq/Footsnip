@@ -84,7 +84,13 @@ public class Monster extends NonPlayer {
 
     @Override
     public void physicalStep() {
+
+
+
         if (getCurrentTile() != null) {
+
+            //System.out.println(getCurrentTile().getContainedEntities().get(0).getClass());
+
             Script.MONSTER.runFunction(ScriptFunction.UPDATE, this);
         }
     }
